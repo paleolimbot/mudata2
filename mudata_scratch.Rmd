@@ -69,6 +69,12 @@ sample_data_expanded$tags <- NULL
 knitr::kable(head(sample_data_expanded))
 ```
 
+Condensing JSON from columns
+
+```{r}
+
+```
+
 Plotting
 
 ```{r}
@@ -77,10 +83,7 @@ ggplot(sample_data, aes(x=value, y=x)) + geom_path() +
   scale_y_reverse() +
   facet_wrap(~param, scales="free_x")
 
-library(ofcores)
-sdqtag <- as.qtag(sample_data, .qualifiers = c('dataset', 'location', 'x', 'param'), 
-                  .values = 'value')
-sample_data_wide <- wide(sdqtag)
+
 ```
 
 ### Getting data into the schema

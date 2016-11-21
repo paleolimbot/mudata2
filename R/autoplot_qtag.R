@@ -121,6 +121,34 @@ plotgg <- function(x, ...) {
   autoplot(as.qtag(x), ...)
 }
 
+guess.xy <- function(x, xvar, yvar) {
+  qualifiers <- qualifiers(x)
+  values <- values(x)
+  types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
+  numqualifiers <- qualifiers[types %in% c("numeric", "integer")]
+  if(numqualifiers > 0) {
+    if(missing(xvar) && missing(yvar)) {
+      yvar <- numqualifiers[length(numqualifiers)]
+      xvar <- values
+    } else if(missing(xvar)) {
+      if(yvar == values) {
+        xvar <- numqualifiers[length(numqualifiers)]
+      } else {
+        xvar <- values
+      }
+    } else if(missing(yvar)) {
+      if(xvar == values) {
+        yvar <- numqualifiers[length(numqualifiers)]
+      } else {
+        yvar <- values
+      }
+    }
+    return(list(xvar=xvar, yvar=yvar))
+  } else {
+    stop("Could not guess xvar and yvar")
+  }
+}
+
 .is_ad <- function(x) {
   r <- range(x)
   return((r[2] <= 2200) && (r[1] >= 1000))

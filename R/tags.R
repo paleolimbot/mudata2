@@ -29,8 +29,13 @@ expand.tags.raw <- function(x, ...) {
   dplyr::do(dplyr::group_by(data.frame(.row=1:length(x), .tags=as.character(x), 
                                        stringsAsFactors = FALSE), .row),
             {
-              as.data.frame(jsonlite::fromJSON(.$.tags))
-            })[-1]
+              df <- as.data.frame(jsonlite::fromJSON(.$.tags))
+              if(nrow(df) > 0) {
+                cbind(data.frame(TRUE), df)
+              } else {
+                cbind(data.frame(TRUE))
+              }
+            })[c(-1, -2)]
 }
 
 #' Condense multiple columns to a single JSON column

@@ -249,7 +249,12 @@ read.mudata <- function(zipfile, validate=TRUE, ...) {
     if(length(tagnames) > 0) {
       df$tags <- sapply(1:nrow(df), function(i) {
         vals <- sapply(tagnames, function(name) {
-          df[[name]][i]
+          v <- df[[name]][i]
+          if("numeric" %in% class(v) || "integer" %in% class(v)) {
+            return(v)
+          } else {
+            return(paste0('"', v, '"'))
+          }
         })
         vals <- vals[!is.na(vals)]
         paste0('{', paste0('"', names(vals), '": ', vals, collapse=", "), '}')

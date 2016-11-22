@@ -9,7 +9,17 @@
 #'
 expand.tags <- function(x, tagcolumn='tags', ...) {
   tags <- expand.tags.raw(x[[tagcolumn]])
-  cbind(x, tags)[c(names(x)[names(x) != tagcolumn], names(tags))]
+  if(ncol(tags) == 0) {
+    return(x)
+  } else {
+    tagcols <- names(x)[names(x) != tagcolumn]
+    out <- cbind(x, tags)[c(names(x)[names(x) != tagcolumn], names(tags))]
+    if('qtag' %in% class(x)) {
+      return(.reclass(out, qualifiers(x), values(x), tagcols, is.summarised(x)))
+    } else {
+      return(out)
+    }
+  }
 }
 
 expand.tags.raw <- function(x, ...) {

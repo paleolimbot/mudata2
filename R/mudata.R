@@ -14,7 +14,7 @@
 #' 
 mudata <- function(data, locations, params, datasets, 
                    dataset.id='default', location.id='default', 
-                   defactorize=TRUE, validate=TRUE) {
+                   defactorize=TRUE, validate=TRUE, expand.tags=TRUE) {
   if(!('dataset' %in% names(data))) {
     data$dataset <- dataset.id
   } else if(defactorize) {
@@ -62,8 +62,17 @@ mudata <- function(data, locations, params, datasets,
     params$param <- as.character(params$param)
     params$dataset <- as.character(params$dataset)
   }
-  md <- structure(.Data = list(data=data, locations=locations, params=params, datasets=datasets),
-            class=c('mudata', 'list'))
+  md <- NULL
+  if(expand.tags) {
+    md <- structure(.Data = list(data=expand.tags(data), 
+                                 locations=expand.tags(locations), 
+                                 params=expand.tags(params), 
+                                 datasets=expand.tags(datasets)),
+                    class=c('mudata', 'list'))
+  } else {
+    md <- structure(.Data = list(data=data, locations=locations, params=params, datasets=datasets),
+                    class=c('mudata', 'list'))
+  }
   if(validate) {
     .validate(md)
   }

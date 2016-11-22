@@ -4,7 +4,7 @@
 \alias{fortify.qtag}
 \title{Fortify a qualifier/tag structure for use in ggplot}
 \usage{
-fortify.qtag(x, skip_aggregate = FALSE, ...)
+\method{fortify}{qtag}(x, skip_aggregate = FALSE, ...)
 }
 \arguments{
 \item{x}{A \link{qtag} object}

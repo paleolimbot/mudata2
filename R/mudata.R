@@ -16,14 +16,20 @@ mudata <- function(data, locations, params, datasets,
                    dataset.id='default', location.id='default', 
                    defactorize=TRUE, validate=TRUE) {
   if(!('dataset' %in% names(data))) {
-    data$dataset <- dataset_id
+    data$dataset <- dataset.id
   } else if(defactorize) {
     data$dataset <- as.character(data$dataset)
   }
   if(!('location' %in% names(data))) {
-    data$location <- location_id
+    data$location <- location.id
   } else if(defactorize) {
     data$location <- as.character(data$location)
+  }
+  
+  if(!('param' %in% names(data))) {
+    stop('Column "param" required in data')
+  } else if(defactorize) {
+    data$param <- as.character(data$param)
   }
   
   data <- as.qtag(.tagify(data, exnames = c('dataset', 'location', 'x', 'param', 'value')),
@@ -31,14 +37,14 @@ mudata <- function(data, locations, params, datasets,
                   .values='value',
                   .tags='tags')
   if(missing(datasets)) {
-    datasets <- data.frame(dataset=unique(data$dataset), tags='{}', stringsAsFactors = FALSE)
+    datasets <- data.frame(dataset=unique(as.character(data$dataset)), tags='{}', stringsAsFactors = FALSE)
   } else {
     datasets <- .tagify(datasets, exnames = 'dataset')
     datasets$dataset <- as.character(datasets$dataset)
   }
   
   if(missing(locations)) {
-    locations <- expand.grid(dataset=datasets$dataset, location=unique(data$location),
+    locations <- expand.grid(dataset=datasets$dataset, location=unique(as.character(data$location)),
                              stringsAsFactors = FALSE)
     locations$tags <- '{}'
   } else {
@@ -48,13 +54,13 @@ mudata <- function(data, locations, params, datasets,
   }
   
   if(missing(params)) {
-    params <- expand.grid(dataset=datasets$dataset, param=unique(data$param), 
+    params <- expand.grid(dataset=datasets$dataset, param=c('x', unique(as.character(data$param))), 
                           stringsAsFactors = FALSE)
     params$tags <- '{}'
   } else {
     params <- .tagify(params, exnames = c('dataset', 'param'))
     params$param <- as.character(params$param)
-    params$datset <- as.character(params$dataset)
+    params$dataset <- as.character(params$dataset)
   }
   md <- structure(.Data = list(data=data, locations=locations, params=params, datasets=datasets),
             class=c('mudata', 'list'))
@@ -152,15 +158,80 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
   mudata(data=dta, locations=lc, params=pm, datasets=ds, validate=validate, defactorize = FALSE)
 }
 
+#' Autoplot a mudata object
+#'
+#' @param x A \link{mudata} object
+#' @param ... Passed on to \code{autoplot.qtag.long}
+#'
+#' @return A ggplot object
+#'
+#' @importFrom ggplot2 autoplot
+#' @export
+#'
+autoplot.mudata <- function(x, ...) {
+  autoplot(x$data, ...)
+}
+
+#' Read/Write a MuData zip file
+#'
+#' @param md a mudata object
+#' @param zipfile file to read/write
+#' @param validate flag to validate mudata object upon read
+#' @param ... passed to read/write.csv
+#'
+#' @export
+#'
+write.mudata <- function(md, zipfile, ...) {
+  if(missing(zipfile)) stop("Parameter zipfile is required")
+  zipfolder <- tempfile()
+  dir.create(zipfolder)
+  write.csv(md$data, file.path(zipfolder, "data.csv"), row.names = FALSE, ...)
+  write.csv(md$locations, file.path(zipfolder, "locations.csv"), row.names = FALSE, ...)
+  write.csv(md$params, file.path(zipfolder, "params.csv"), row.names = FALSE, ...)
+  write.csv(md$datasets, file.path(zipfolder, "datasets.csv"), row.names = FALSE, ...)
+  cwd <- getwd()
+  setwd(zipfolder)
+  tryCatch(zip("zipfile.zip", c("data.csv", "locations.csv", "params.csv", "datasets.csv")),
+           error=function(err) {
+             setwd(cwd)
+             unlink(zipfolder, recursive = TRUE)
+             stop(err)
+           })
+  setwd(cwd)
+  tmpzip <- file.path(zipfolder, "zipfile.zip")
+  file.copy(tmpzip, zipfile)
+  unlink(tmpzip)
+  unlink(zipfolder, recursive = TRUE)
+}
+
+#' @rdname write.mudata
+#' @export
+read.mudata <- function(zipfile, validate=TRUE, ...) {
+  tmpfold <- tempfile()
+  unzip(zipfile, exdir = tmpfold)
+  md <- tryCatch(mudata(
+    data=read.csv(file.path(tmpfold, "data.csv"), stringsAsFactors = FALSE, ...),
+    locations=read.csv(file.path(tmpfold, "locations.csv"), stringsAsFactors = FALSE, ...),
+    params=read.csv(file.path(tmpfold, "params.csv"), stringsAsFactors = FALSE, ...),
+    datasets = read.csv(file.path(tmpfold, "datasets.csv"), stringsAsFactors = FALSE, ...),
+    validate=validate
+  ), error=function(err) {
+    unlink(tmpfold, recursive = TRUE)
+    stop(err)
+  })
+  unlink(tmpfold, recursive = TRUE)
+  return(md)
+}
+
 .tagify <- function(df, exnames) {
   dfnames <- names(df)
   if('tags' %in% dfnames) {
     df$tags <- as.character(df$tags)
     df$tags[is.na(df$tags)] <- '{}'
   } else {
-    tagnames <- dnames[!(dfnames %in% exnames)]
+    tagnames <- dfnames[!(dfnames %in% exnames)]
     if(length(tagnames) > 0) {
-      df$tags <- sapply(1:nrow(dxmelt), function(i) {
+      df$tags <- sapply(1:nrow(df), function(i) {
         vals <- sapply(tagnames, function(name) {
           df[[name]][i]
         })

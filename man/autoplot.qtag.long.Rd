@@ -6,9 +6,9 @@
 \alias{plotgg}
 \title{Autoplot a qualifier/tag structure}
 \usage{
-autoplot.qtag.long(x, subset, xvar, yvar, facets, ...)
+\method{autoplot}{qtag.long}(x, subset, xvar, yvar, facets, ...)
 
-autoplot.qtag.wide(x, ...)
+\method{autoplot}{qtag.wide}(x, ...)
 
 plotgg(x, ...)
 }

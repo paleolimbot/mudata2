@@ -5,7 +5,7 @@
 \title{Create a MuData object}
 \usage{
 mudata(data, locations, params, datasets, dataset.id = "default",
-  location.id = "default", validate = TRUE)
+  location.id = "default", defactorize = TRUE, validate = TRUE)
 }
 \arguments{
 \item{data}{The data table}

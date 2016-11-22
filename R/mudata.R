@@ -8,6 +8,7 @@
 #' @param dataset.id The dataset id (if datasets is unspecified)
 #' @param location.id The location id (if locations is unspecified)
 #' @param validate Flag to validate input
+#' @param expand.tags Flag to expand JSON tags to columns
 #'
 #' @return A \code{mudata} object
 #' @export
@@ -32,23 +33,30 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     data$param <- as.character(data$param)
   }
   
-  data <- as.qtag(.tagify(data, exnames = c('dataset', 'location', 'x', 'param', 'value')),
+  data <- .tagify(data, exnames = c('dataset', 'location', 'x', 'param', 'value'), expand=expand.tags)
+  tagnames <- names(data)[!(names(data) %in% c('dataset', 'location', 'x', 'param', 'value'))]
+  data <- as.qtag(data,
                   .qualifiers = c('dataset', 'location', 'x', 'param'),
                   .values='value',
-                  .tags='tags')
+                  .tags=tagnames)
   if(is.null(datasets)) {
-    datasets <- data.frame(dataset=unique(as.character(data$dataset)), tags='{}', stringsAsFactors = FALSE)
+    datasets <- data.frame(dataset=unique(as.character(data$dataset)), stringsAsFactors = FALSE)
+    if(!expand.tags) {
+      datasets$tags <- '{}'
+    }
   } else {
-    datasets <- .tagify(datasets, exnames = 'dataset')
+    datasets <- .tagify(datasets, exnames = 'dataset', expand=expand.tags)
     datasets$dataset <- as.character(datasets$dataset)
   }
   
   if(is.null(locations)) {
     locations <- expand.grid(dataset=datasets$dataset, location=unique(as.character(data$location)),
                              stringsAsFactors = FALSE)
-    locations$tags <- '{}'
+    if(!expand.tags) {
+      locations$tags <- '{}'
+    }
   } else {
-    locations <- .tagify(locations, exnames = c('dataset', 'location'))
+    locations <- .tagify(locations, exnames = c('dataset', 'location'), expand=expand.tags)
     locations$dataset <- as.character(locations$dataset)
     locations$location <- as.character(locations$location)
   }
@@ -56,23 +64,17 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   if(is.null(params)) {
     params <- expand.grid(dataset=datasets$dataset, param=c('x', unique(as.character(data$param))), 
                           stringsAsFactors = FALSE)
-    params$tags <- '{}'
+    if(!expand.tags) {
+      params$tags <- '{}'
+    }
   } else {
-    params <- .tagify(params, exnames = c('dataset', 'param'))
+    params <- .tagify(params, exnames = c('dataset', 'param'), expand=expand.tags)
     params$param <- as.character(params$param)
     params$dataset <- as.character(params$dataset)
   }
   md <- NULL
-  if(expand.tags) {
-    md <- structure(.Data = list(data=expand.tags(data), 
-                                 locations=expand.tags(locations), 
-                                 params=expand.tags(params), 
-                                 datasets=expand.tags(datasets)),
+  md <- structure(.Data = list(data=data, locations=locations, params=params, datasets=datasets),
                     class=c('mudata', 'list'))
-  } else {
-    md <- structure(.Data = list(data=data, locations=locations, params=params, datasets=datasets),
-                    class=c('mudata', 'list'))
-  }
   if(validate) {
     .validate(md)
   }
@@ -185,11 +187,12 @@ plotgg.mudata <- function(x, ...) {
 #' @param md a mudata object
 #' @param zipfile file to read/write (can also be a directory)
 #' @param validate flag to validate mudata object upon read
+#' @param expand.tags flag to expand tags to columns
 #' @param ... passed to read/write.csv
 #'
 #' @export
 #'
-write.mudata <- function(md, zipfile, overwrite=FALSE, ...) {
+write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=FALSE, ...) {
   if(missing(zipfile)) stop("Parameter zipfile is required")
   if(file.exists(zipfile)) {
     if(overwrite) {
@@ -200,6 +203,11 @@ write.mudata <- function(md, zipfile, overwrite=FALSE, ...) {
   }
   zipfolder <- tempfile()
   dir.create(zipfolder)
+  if(expand.tags) {
+    md <- expand.tags(md)
+  } else {
+    md <- condense.tags(md)
+  }
   write.csv(md$data, file.path(zipfolder, "data.csv"), row.names = FALSE, ...)
   write.csv(md$locations, file.path(zipfolder, "locations.csv"), row.names = FALSE, ...)
   write.csv(md$params, file.path(zipfolder, "params.csv"), row.names = FALSE, ...)
@@ -221,7 +229,7 @@ write.mudata <- function(md, zipfile, overwrite=FALSE, ...) {
 
 #' @rdname write.mudata
 #' @export
-read.mudata <- function(zipfile, validate=TRUE, ...) {
+read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE, ...) {
   tmpfold <- tempfile()
   deleteOnExit <- TRUE
   if(dir.exists(zipfile)) {
@@ -255,7 +263,7 @@ read.mudata <- function(zipfile, validate=TRUE, ...) {
     }
     
     mudata(data=data, locations=locations, params=params, datasets = datasets,
-           validate=validate)
+           expand.tags=expand.tags, validate=validate)
   }, error=function(err) {
     if(deleteOnExit) {
       unlink(tmpfold, recursive = TRUE)
@@ -266,17 +274,5 @@ read.mudata <- function(zipfile, validate=TRUE, ...) {
     unlink(tmpfold, recursive = TRUE)
   }
   return(md)
-}
-
-.tagify <- function(df, exnames) {
-  dfnames <- names(df)
-  if('tags' %in% dfnames) {
-    df$tags <- as.character(df$tags)
-    df$tags[is.na(df$tags)] <- '{}'
-    return(df[c(exnames, 'tags')])
-  } else {
-    tagnames <- dfnames[!(dfnames %in% exnames)]
-    return(condense.tags(df, tagnames, 'tags'))
-  }
 }
 

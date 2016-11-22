@@ -2,9 +2,15 @@
 % Please edit documentation in R/tags.R
 \name{expand.tags}
 \alias{expand.tags}
+\alias{expand.tags.data.frame}
+\alias{expand.tags.mudata}
 \title{Expand JSON to multiple columns}
 \usage{
-expand.tags(x, tagcolumn = "tags", ...)
+expand.tags(x, ...)
+
+\method{expand.tags}{data.frame}(x, tagcolumn = "tags", lazy = FALSE, ...)
+
+\method{expand.tags}{mudata}(x, ...)
 }
 \arguments{
 \item{x}{a vector of JSON values or a data.frame with a 'tags' column}

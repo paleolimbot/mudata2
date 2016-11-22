@@ -2,14 +2,20 @@
 % Please edit documentation in R/tags.R
 \name{condense.tags}
 \alias{condense.tags}
+\alias{condense.tags.data.frame}
+\alias{condense.tags.mudata}
 \title{Condense multiple columns to a single JSON column}
 \usage{
-condense.tags(df, tagcolumns, tagcolumn = "tags")
+condense.tags(x, tagcolumns, tagcolumn)
+
+\method{condense.tags}{data.frame}(df, tagcolumns, tagcolumn = "tags")
+
+\method{condense.tags}{mudata}(x, ...)
 }
 \arguments{
-\item{df}{a data frame with tag columns}
-
 \item{tagcolumns}{column names to be condensed to JSON}
+
+\item{df}{a data frame with tag columns}
 }
 \value{
 A modified data.frame

@@ -22,6 +22,8 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
 \item{location.id}{The location id (if locations is unspecified)}
 
 \item{validate}{Flag to validate input}
+
+\item{expand.tags}{Flag to expand JSON tags to columns}
 }
 \value{
 A \code{mudata} object

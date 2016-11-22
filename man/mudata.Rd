@@ -4,8 +4,9 @@
 \alias{mudata}
 \title{Create a MuData object}
 \usage{
-mudata(data, locations, params, datasets, dataset.id = "default",
-  location.id = "default", defactorize = TRUE, validate = TRUE)
+mudata(data, locations = NULL, params = NULL, datasets = NULL,
+  dataset.id = "default", location.id = "default", defactorize = TRUE,
+  validate = TRUE, expand.tags = TRUE)
 }
 \arguments{
 \item{data}{The data table}

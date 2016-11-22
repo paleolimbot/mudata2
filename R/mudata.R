@@ -12,7 +12,7 @@
 #' @return A \code{mudata} object
 #' @export
 #' 
-mudata <- function(data, locations, params, datasets, 
+mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, 
                    dataset.id='default', location.id='default', 
                    defactorize=TRUE, validate=TRUE, expand.tags=TRUE) {
   if(!('dataset' %in% names(data))) {
@@ -36,14 +36,14 @@ mudata <- function(data, locations, params, datasets,
                   .qualifiers = c('dataset', 'location', 'x', 'param'),
                   .values='value',
                   .tags='tags')
-  if(missing(datasets)) {
+  if(is.null(datasets)) {
     datasets <- data.frame(dataset=unique(as.character(data$dataset)), tags='{}', stringsAsFactors = FALSE)
   } else {
     datasets <- .tagify(datasets, exnames = 'dataset')
     datasets$dataset <- as.character(datasets$dataset)
   }
   
-  if(missing(locations)) {
+  if(is.null(locations)) {
     locations <- expand.grid(dataset=datasets$dataset, location=unique(as.character(data$location)),
                              stringsAsFactors = FALSE)
     locations$tags <- '{}'
@@ -53,7 +53,7 @@ mudata <- function(data, locations, params, datasets,
     locations$location <- as.character(locations$location)
   }
   
-  if(missing(params)) {
+  if(is.null(params)) {
     params <- expand.grid(dataset=datasets$dataset, param=c('x', unique(as.character(data$param))), 
                           stringsAsFactors = FALSE)
     params$tags <- '{}'
@@ -170,21 +170,20 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
 #' Autoplot a mudata object
 #'
 #' @param x A \link{mudata} object
-#' @param ... Passed on to \code{autoplot.qtag.long}
+#' @param ... Passed on to \code{plotgg.qtag.long}
 #'
 #' @return A ggplot object
 #'
-#' @importFrom ggplot2 autoplot
 #' @export
 #'
-autoplot.mudata <- function(x, ...) {
-  autoplot(x$data, ...)
+plotgg.mudata <- function(x, ...) {
+  plotgg.qtag.long(x$data, ...)
 }
 
 #' Read/Write a MuData zip file
 #'
 #' @param md a mudata object
-#' @param zipfile file to read/write
+#' @param zipfile file to read/write (can also be a directory)
 #' @param validate flag to validate mudata object upon read
 #' @param ... passed to read/write.csv
 #'
@@ -224,18 +223,48 @@ write.mudata <- function(md, zipfile, overwrite=FALSE, ...) {
 #' @export
 read.mudata <- function(zipfile, validate=TRUE, ...) {
   tmpfold <- tempfile()
-  unzip(zipfile, exdir = tmpfold)
-  md <- tryCatch(mudata(
-    data=read.csv(file.path(tmpfold, "data.csv"), stringsAsFactors = FALSE, ...),
-    locations=read.csv(file.path(tmpfold, "locations.csv"), stringsAsFactors = FALSE, ...),
-    params=read.csv(file.path(tmpfold, "params.csv"), stringsAsFactors = FALSE, ...),
-    datasets = read.csv(file.path(tmpfold, "datasets.csv"), stringsAsFactors = FALSE, ...),
-    validate=validate
-  ), error=function(err) {
-    unlink(tmpfold, recursive = TRUE)
+  deleteOnExit <- TRUE
+  if(dir.exists(zipfile)) {
+    tmpfold <- zipfile
+    deleteOnExit <- FALSE
+  } else {
+    unzip(zipfile, exdir = tmpfold)
+  }
+  datafile <- list.files(tmpfold, pattern='data.csv', full.names = TRUE, recursive = TRUE)
+  locationsfile <- list.files(tmpfold, pattern='locations.csv', full.names = TRUE, recursive = TRUE)
+  paramsfile <- list.files(tmpfold, pattern='params.csv', full.names = TRUE, recursive = TRUE)
+  datasetsfile <- list.files(tmpfold, pattern='datasets.csv', full.names = TRUE, recursive = TRUE)
+  
+  md <- tryCatch({
+    if(length(datafile) == 0) stop('data.csv not found')
+    data <- read.csv(path.expand(datafile[1]), stringsAsFactors = FALSE, ...)
+    if(length(locationsfile) == 0) {
+      locations <- NULL
+    } else {
+      locations <- read.csv(path.expand(locationsfile[1]), stringsAsFactors = FALSE, ...)
+    }
+    if(length(paramsfile) == 0) {
+      params <- NULL
+    } else {
+      params <- read.csv(path.expand(paramsfile[1]), stringsAsFactors = FALSE, ...)
+    }
+    if(length(datasetsfile) == 0) {
+      datasets <- NULL
+    } else {
+      datasets <- read.csv(path.expand(datasetsfile[1]), stringsAsFactors = FALSE, ...)
+    }
+    
+    mudata(data=data, locations=locations, params=params, datasets = datasets,
+           validate=validate)
+  }, error=function(err) {
+    if(deleteOnExit) {
+      unlink(tmpfold, recursive = TRUE)
+    }
     stop(err)
   })
-  unlink(tmpfold, recursive = TRUE)
+  if(deleteOnExit) {
+    unlink(tmpfold, recursive = TRUE)
+  }
   return(md)
 }
 

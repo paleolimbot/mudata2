@@ -431,32 +431,6 @@ aggregate.qtag.wide <- function(x, ...) {
   return(dfs)
 }
 
-#' Fortify a qualifier/tag structure for use in ggplot
-#'
-#' @param x A \link{qtag} object
-#' @param skip_aggregate Pass \code{TRUE} to skip aggregation
-#' @param ... Passed on to \code{aggregate} (or \link{long} if aggregate is \code{FALSE})
-#'
-#' @return A \code{qtag.long} object
-#' @importFrom ggplot2 fortify
-#' @export
-#'
-#' @examples
-#' data(pocmaj)
-#' library(ggplot2)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
-#' fortify(pocmaj)
-#' ggplot(pocmaj, aes(x=values, y=depth, col=core)) + geom_point() +
-#'  scale_y_reverse() + facet_wrap(~column)
-#'
-fortify.qtag <- function(x, skip_aggregate=FALSE, ...) {
-  if(skip_aggregate) {
-    return(long(x, ...))
-  } else {
-    return(aggregate(long(x), ...))
-  }
-}
-
 #' Combine qualifier/tag structures
 #'
 #' @param ... Objects to combine

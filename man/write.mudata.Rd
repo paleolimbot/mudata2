@@ -5,14 +5,14 @@
 \alias{write.mudata}
 \title{Read/Write a MuData zip file}
 \usage{
-write.mudata(md, zipfile, ...)
+write.mudata(md, zipfile, overwrite = FALSE, ...)
 
 read.mudata(zipfile, validate = TRUE, ...)
 }
 \arguments{
 \item{md}{a mudata object}
 
-\item{zipfile}{file to read/write}
+\item{zipfile}{file to read/write (can also be a directory)}
 
 \item{...}{passed to read/write.csv}
 

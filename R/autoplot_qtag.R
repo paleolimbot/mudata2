@@ -9,21 +9,20 @@
 #'
 #' @return A ggplot object
 #'
-#' @importFrom ggplot2 autoplot
 #' @export
 #'
 #' @examples
 #' library(ggplot2)
 #' data(pocmaj)
-#' plot.gg(pocmaj)
+#' plotgg(pocmaj)
 #'
 #' pocmajqt <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
-#' autoplot(pocmajqt)
-#' autoplot(pocmajqt, subset=core=="MAJ-1" & column %in% c("Ca", "Ti"))
-#' autoplot(pocmajqt, shape="core")
+#' plotgg(pocmajqt)
+#' plotgg(pocmajqt, subset=core=="MAJ-1" & column %in% c("Ca", "Ti"))
+#' plotgg(pocmajqt, shape="core")
 #'
 #'
-autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
+plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
   x <- aggregate(x, mean, err=sd(., na.rm = TRUE)/sum(!is.na(.)))
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
@@ -109,17 +108,15 @@ autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
 }
 
 #' @export
-#' @rdname autoplot.qtag.long
-autoplot.qtag.wide <- function(x, ...) {
+#' @rdname plotgg.qtag.long
+plotgg.qtag.wide <- function(x, ...) {
   autoplot(long(x), ...)
 }
 
 #' @export
-#' @rdname autoplot.qtag.long
+#' @rdname plotgg.qtag.long
 #' @importFrom ggplot2 autoplot
-plotgg <- function(x, ...) {
-  autoplot(as.qtag(x), ...)
-}
+plotgg <- function(x, ...) UseMethod("plotgg")
 
 guess.xy <- function(x, xvar, yvar) {
   qualifiers <- qualifiers(x)

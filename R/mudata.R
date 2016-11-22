@@ -190,8 +190,15 @@ autoplot.mudata <- function(x, ...) {
 #'
 #' @export
 #'
-write.mudata <- function(md, zipfile, ...) {
+write.mudata <- function(md, zipfile, overwrite=FALSE, ...) {
   if(missing(zipfile)) stop("Parameter zipfile is required")
+  if(file.exists(zipfile)) {
+    if(overwrite) {
+      unlink(zipfile)
+    } else {
+      stop("File ", zipfile, ' exists...pass overwrite=TRUE to continue')
+    }
+  }
   zipfolder <- tempfile()
   dir.create(zipfolder)
   write.csv(md$data, file.path(zipfolder, "data.csv"), row.names = FALSE, ...)

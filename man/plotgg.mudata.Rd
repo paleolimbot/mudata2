@@ -15,6 +15,10 @@
 A ggplot object
 }
 \description{
-Autoplot a mudata object
+If you get a \code{seq...finite values} error, you may have to check for params
+that have all non-detect values. This can be done with the dplyr summarise function
+(\code{group_by(dataset, param) / summarise(allnd=all(is.na(value))) / data.frame()}).
+The \code{subset} argument is quite powerful for filtering, but does not affect the order
+of appearance. For this, use \link{subset.mudata}.
 }
 

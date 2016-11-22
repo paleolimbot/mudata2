@@ -244,29 +244,10 @@ read.mudata <- function(zipfile, validate=TRUE, ...) {
   if('tags' %in% dfnames) {
     df$tags <- as.character(df$tags)
     df$tags[is.na(df$tags)] <- '{}'
+    return(df[c(exnames, 'tags')])
   } else {
     tagnames <- dfnames[!(dfnames %in% exnames)]
-    if(length(tagnames) > 0) {
-      df$tags <- sapply(1:nrow(df), function(i) {
-        vals <- sapply(tagnames, function(name) {
-          v <- df[[name]][i]
-          if("numeric" %in% class(v) || "integer" %in% class(v) || is.na(v)) {
-            return(v)
-          } else {
-            return(paste0('"', v, '"'))
-          }
-        })
-        vals <- vals[!is.na(vals) & (vals != '""')]
-        if(length(vals) > 0) {
-          return(paste0('{', paste0('"', names(vals), '": ', vals, collapse=", "), '}'))
-        } else {
-          return('{}')
-        }
-      })
-    } else {
-      df$tags <- '{}'
-    }
+    return(condense.tags(df, tagnames, 'tags'))
   }
-  return(df[c(exnames, 'tags')])
 }
 

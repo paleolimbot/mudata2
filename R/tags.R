@@ -50,10 +50,19 @@ condense.tags <- function(df, tagcolumns, tagcolumn='tags') {
   if(length(tagcolumns) > 0) {
     df[[tagcolumn]] <- sapply(1:nrow(df), function(i) {
       vals <- sapply(tagcolumns, function(name) {
-        df[[name]][i]
+        v <- df[[name]][i]
+        if("numeric" %in% class(v) || "integer" %in% class(v) || is.na(v)) {
+          return(v)
+        } else {
+          return(paste0('"', v, '"'))
+        }
       })
-      vals <- vals[!is.na(vals)]
-      paste0('{', paste0('"', names(vals), '": ', vals, collapse=", "), '}')
+      vals <- vals[!is.na(vals) & (vals != '""')]
+      if(length(vals) > 0) {
+        return(paste0('{', paste0('"', names(vals), '": ', vals, collapse=", "), '}'))
+      } else {
+        return('{}')
+      }
     })
   } else {
     df[[tagcolumn]] <- '{}'

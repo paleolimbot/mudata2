@@ -5,7 +5,7 @@
 \alias{write.mudata}
 \title{Read/Write a MuData zip file}
 \usage{
-write.mudata(md, zipfile, overwrite = FALSE, expand.tags = FALSE, ...)
+write.mudata(md, zipfile, overwrite = FALSE, expand.tags = TRUE, ...)
 
 read.mudata(zipfile, validate = TRUE, expand.tags = TRUE, ...)
 }

@@ -89,28 +89,28 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   datasets <- unique(as.character(md$data$dataset))
   # ensure locs/params/datasets are in the tables
   noinflocs <- locs[!(locs %in% md$locations$location)]
-  if(length(noinflocs) > 0) stop("Locations not included in location table: ", paste(noinflocs))
+  if(length(noinflocs) > 0) stop("Locations not included in location table: ", paste(noinflocs, collapse=' '))
   noinfparams <- params[!(params %in% md$params$param)]
-  if(length(noinfparams) > 0) stop("Params not included in param table: ", paste(noinfparams))
+  if(length(noinfparams) > 0) stop("Params not included in param table: ", paste(noinfparams, collapse=' '))
   noinfds <- datasets[!(datasets %in% md$datasets$dataset)]
-  if(length(noinfds) > 0) stop("Datasets not included in dataset table: ", paste(noinfds))
+  if(length(noinfds) > 0) stop("Datasets not included in dataset table: ", paste(noinfds, collapse=' '))
   
   # ensure there are no extraneous information in information tables
   noinflocs <- md$locations$location[!(md$locations$location %in% locs)]
-  if(length(noinflocs) > 0) stop("Locations ", paste(noinflocs), " not included in data")
+  if(length(noinflocs) > 0) stop("Locations ", paste(noinflocs, collapse=' '), " not included in data")
   noinfparams <- md$params$param[!(md$params$param %in% params)]
-  if(length(noinfparams) > 0) stop("Parameters ", paste(noinfparams), " not included in data")
+  if(length(noinfparams) > 0) stop("Parameters ", paste(noinfparams, collapse=' '), " not included in data")
   noinfds <- md$datasets$dataset[!(md$datasets$dataset %in% datasets)]
-  if(length(noinfds) > 0) stop("Datasets ", noinfds, " not included in data")
+  if(length(noinfds) > 0) stop("Datasets ", paste(noinfds, collapse=' '), " not included in data")
   
   # ensure no duplicates in locations, datasets, params
-  if(length(unique(md$datasets$dataset)) != 1) stop("Duplicate datasets in dataset table")
+  if(length(unique(md$datasets$dataset)) != length(md$datasets$dataset)) stop("Duplicate datasets in dataset table")
   dplyr::do(dplyr::group_by(md$locations, dataset, location), {
-    if(nrow(.) > 1) stop("Duplicate location in location table: ", unique(.$location))
+    if(nrow(.) > 1) stop("Duplicate location in location table: ", unique(.$dataset), '->', unique(.$location))
     .
   })
   dplyr::do(dplyr::group_by(md$params, dataset, param), {
-    if(nrow(.) > 1) stop("Duplicate parameter in parameters table: ", unique(.$param))
+    if(nrow(.) > 1) stop("Duplicate parameter in parameters table: ", unique(.$dataset), '->', unique(.$param))
     .
   })
 }
@@ -126,10 +126,10 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
 rbind.mudata <- function(..., validate=TRUE) {
   mudatas <- list(...)
   mudata(
-    data = do.call(rbind, lapply(mudatas, function(m) m$data)),
-    locations = do.call(rbind, lapply(mudatas, function(m) m$locations)),
-    params = do.call(rbind, lapply(mudatas, function(m) m$params)),
-    datasets = do.call(rbind, lapply(mudatas, function(m) m$datasets)),
+    data = do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$data)),
+    locations = unique(do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$locations))),
+    params = unique(do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$params))),
+    datasets = unique(do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$datasets))),
     validate = validate
   )
 }
@@ -198,7 +198,7 @@ plotgg.mudata <- function(x, ...) {
 #'
 #' @export
 #'
-write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=FALSE, ...) {
+write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=TRUE, ...) {
   if(missing(zipfile)) stop("Parameter zipfile is required")
   if(file.exists(zipfile)) {
     if(overwrite) {

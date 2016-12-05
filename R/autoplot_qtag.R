@@ -110,7 +110,7 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
 #' @export
 #' @rdname plotgg.qtag.long
 plotgg.qtag.wide <- function(x, ...) {
-  autoplot(long(x), ...)
+  plotgg(long(x), ...)
 }
 
 #' @export

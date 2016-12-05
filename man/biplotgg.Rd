@@ -3,19 +3,39 @@
 \name{biplotgg}
 \alias{biplotgg}
 \alias{biplotgg.qtag.long}
+\alias{biplotgg.qtag.wide}
 \title{Biplot an object using ggplot}
 \usage{
 biplotgg(x, ...)
 
-\method{biplotgg}{qtag.long}(x, column, namesx, namesy = NULL,
-  values = NULL, errors = NULL, labeller = ggplot2::label_value, ...)
+\method{biplotgg}{qtag.wide}(x, ...)
+
+\method{biplotgg}{qtag.long}(x, namecolumn = NULL, namesx = NULL,
+  namesy = NULL, values = NULL, errors = NULL,
+  labeller = ggplot2::label_value, ...)
 }
 \arguments{
 \item{x}{the object to biplot}
 
-\item{...}{passed to other methods}
+\item{...}{passed to \code{aes_string()}}
+
+\item{namecolumn}{The column where namesx and namesy are to be found}
+
+\item{values}{The column containing the values to plot}
+
+\item{errors}{The column containing the errors. Use \code{NULL} for default ("err" if column
+exists or none otherwise), or \code{NA} to suppress.}
+
+\item{labeller}{The labeller to use to label facets (may want to use \code{label_parsed}
+to use plotmath-style labels)}
 }
 \description{
 Biplot an object using ggplot
+}
+\examples{
+data(pocmaj)
+qt <- as.qtag(pocmaj)
+biplotgg(qt, color="core")
+
 }
 

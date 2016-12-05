@@ -25,7 +25,7 @@ knitr::kable(data.frame(Table=c("data", "locations", "params", "datasets"),
 
 Columns are limited to things that are queried. While the `tags` structure is flexible, standardization is essential to make the database useful. Therefore, essential components such as `lon`, `lat`, and `value` are placed in columns instead of in `tags`. The `data` table is constructed such that no other information is necessary to plot its contents. This means that human-readable IDs should be used for `location` and `param`, instead of traditional integer-based identifiers. This makes the format less efficient for storage but more usable.
 
-Non-detect values can be stored as `NULL` (or `NA`) in the table, whereas values that were not measured should not have a row in the `data` table.
+Non-detect values can be stored as `NA` in the table, whereas values that were not measured should not have a row in the `data` table.
 
 The combination of dataset/location/x/param must form a unique identifier for each value.
 

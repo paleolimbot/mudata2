@@ -215,6 +215,20 @@ plotgg.mudata <- function(x, ...) {
   plotgg.qtag.long(x$data, ...)
 }
 
+
+#' Biplot a mudata object
+#'
+#' @param x A mudata object
+#' @param ... passed to \link{biplotgg.qtag.long}
+#'
+#' @return a ggplot object
+#' @export
+#'
+biplotgg.mudata <- function(x, ...) {
+  biplotgg.qtag.long(x$data, ...)
+}
+
+
 #' Read/Write a MuData zip file
 #'
 #' @param md a mudata object

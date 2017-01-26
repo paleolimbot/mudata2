@@ -22,7 +22,7 @@
 #' plotgg(pocmajqt, shape="core")
 #'
 #'
-plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
+plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
   x <- aggregate(x, mean, err=sd(., na.rm = TRUE)/sum(!is.na(.)))
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
@@ -80,19 +80,19 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
   }
 
   errorbars <- NULL
-  if("err" %in% names(x)) {
+  if(errors %in% names(x)) {
     if(values == xvar) {
       nonvalrange <- range(x[yvar])
       errbarheight <- (nonvalrange[2]-nonvalrange[1]) / 50.0
-      errorbars <- ggplot2::geom_errorbarh(ggplot2::aes_string(xmin=sprintf("%s-%s", xvar, "err"),
-                                             xmax=sprintf("%s+%s", xvar, "err")),
+      errorbars <- ggplot2::geom_errorbarh(ggplot2::aes_string(xmin=sprintf("%s-%s", xvar, errors),
+                                             xmax=sprintf("%s+%s", xvar, errors)),
                                   height=errbarheight,
                                   linetype="solid")
     } else if(values == yvar) {
       nonvalrange <- range(x[xvar])
       errbarheight <- (nonvalrange[2]-nonvalrange[1]) / 50.0
-      errorbars <- ggplot2::geom_errorbar(ggplot2::aes_string(ymin=sprintf("%s-%s", yvar, "err"),
-                                            ymax=sprintf("%s+%s", yvar, "err")),
+      errorbars <- ggplot2::geom_errorbar(ggplot2::aes_string(ymin=sprintf("%s-%s", yvar, errors),
+                                            ymax=sprintf("%s+%s", yvar, errors)),
                                  width=errbarheight,
                                  linetype="solid")
     }

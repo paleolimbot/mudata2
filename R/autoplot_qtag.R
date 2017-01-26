@@ -52,10 +52,10 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
       ggfacet <- ggplot2::facet_wrap(as.formula(paste0("~", nonnumqualifiers[nonnumindex])), scales = facet_scales)
       nonnumindex <- nonnumindex - 1
     } else {
-      ggfacet <- facet_null()
+      ggfacet <- ggplot2::facet_null()
     }
   } else if(is.null(facets)) {
-    ggfacet <- facet_null()
+    ggfacet <- ggplot2::facet_null()
   } else if(attr(terms.formula(facets), "response") == 1) {
     # 2- sided formula
     ggfacet <- ggplot2::facet_grid(facets, scales = facet_scales)
@@ -65,7 +65,7 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, ...) {
   } else {
     # 1-sided formula
     chrfacets <- unlist(lapply(attr(terms.formula(facets), "variables")[-1], deparse))
-    ggfacet <- facet_wrap(facets, scales = facet_scales)
+    ggfacet <- ggplot2::facet_wrap(facets, scales = facet_scales)
     nonnumqualifiers <- nonnumqualifiers[!(nonnumqualifiers %in% chrfacets)]
     nonnumindex <- length(nonnumqualifiers)
   }

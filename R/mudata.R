@@ -174,13 +174,20 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
   if(is.null(params)) {
     params <- unique(x$params$param)
   }
-  ds <- x$datasets[x$datasets$dataset %in% datasets,]
-  pm <- x$params[(x$params$param %in% params) & (x$params$dataset %in% datasets),]
-  lc <- x$locations[(x$locations$location %in% locations) & (x$locations$dataset %in% datasets),]
-  cl <- x$columns[x$columns$dataset %in% datasets,]
   dta <- x$data[(x$data$dataset %in% datasets) & 
                   (x$data$location %in% locations) & 
                   (x$data$param %in% params),]
+  # redefine params, locations, datasets to reflect subsetted data
+  params <- unique(dta$param)
+  locations <- unique(dta$location)
+  datasets <- unique(dta$dataset)
+  
+  pm <- x$params[x$params$param %in% params,]
+  lc <- x$locations[x$locations$location %in% locations,]
+  cl <- x$columns[x$columns$dataset %in% datasets,]
+  ds <- x$datasets[x$datasets$dataset %in% datasets,]
+  
+
   dta$dataset <- factor(dta$dataset, levels=datasets)
   dta$param <- factor(dta$param, levels=params)
   dta$location <- factor(dta$location, levels=locations)

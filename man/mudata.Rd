@@ -5,8 +5,8 @@
 \title{Create a MuData object}
 \usage{
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
-  dataset.id = "default", location.id = "default", defactorize = TRUE,
-  validate = TRUE, expand.tags = TRUE)
+  columns = NULL, dataset.id = "default", location.id = "default",
+  defactorize = TRUE, validate = TRUE, expand.tags = TRUE)
 }
 \arguments{
 \item{data}{The data table}
@@ -16,6 +16,8 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
 \item{params}{The params table (can be omitted)}
 
 \item{datasets}{The datasets table (can be omitted)}
+
+\item{columns}{The columns table (can be omitted)}
 
 \item{dataset.id}{The dataset id (if datasets is unspecified)}
 

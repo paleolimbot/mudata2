@@ -376,6 +376,8 @@ group <- function(qtag, quiet=FALSE) {
 #' aggregate(pocmajqt)
 #' aggregate(pocmajqt, mean)
 #' aggregate(long(pocmajqt), mean, sd, length)
+#' 
+#' @importFrom stats aggregate
 #'
 aggregate.qtag.long <- function(x, ...) {
   if(is.summarised(x)) return(x)

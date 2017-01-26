@@ -115,7 +115,6 @@ plotgg.qtag.wide <- function(x, ...) {
 
 #' @export
 #' @rdname plotgg.qtag.long
-#' @importFrom ggplot2 autoplot
 plotgg <- function(x, ...) UseMethod("plotgg")
 
 guess.xy <- function(x, xvar, yvar) {

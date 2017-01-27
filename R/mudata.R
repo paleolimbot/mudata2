@@ -34,10 +34,13 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     data$param <- as.character(data$param)
   }
   
-  data <- .tagify(data, exnames = c('dataset', 'location', 'x', 'param', 'value'), expand=expand.tags)
-  tagnames <- names(data)[!(names(data) %in% c('dataset', 'location', 'x', 'param', 'value'))]
+  # maintain exisiting qualifiers if present
+  quals <- unique(c('dataset', 'location', attr(data, "qualifiers"), 'x', 'param'))
+  
+  data <- .tagify(data, exnames = c(quals, 'value'), expand=expand.tags)
+  tagnames <- names(data)[!(names(data) %in% c(quals, 'value'))]
   data <- as.qtag(data,
-                  .qualifiers = c('dataset', 'location', 'x', 'param'),
+                  .qualifiers = quals,
                   .values='value',
                   .tags=tagnames)
   if(is.null(datasets)) {

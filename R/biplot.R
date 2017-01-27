@@ -52,8 +52,10 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
   } else {
     if(!(namecolumn %in% names(x))) stop("Column ", namecolumn, "was not found in x")
   }
+  x[[namecolumn]] <- as.character(x[[namecolumn]])
+  
   if(is.null(namesx)) {
-    namesx <- unique(as.character(x[[namecolumn]]))
+    namesx <- unique(x[[namecolumn]])
   }
   if(any(!((c(namesx, namesy) %in% x[[namecolumn]])))) stop("Not all names were found in ", namecolumn)
   

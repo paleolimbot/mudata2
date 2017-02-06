@@ -78,8 +78,8 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   }
   
   if(is.null(columns)) {
-    cols <- c(names(md$data), names(md$params), 
-                 names(md$locations), names(md$datasets))
+    cols <- c(names(data), names(params), 
+                 names(locations), names(datasets))
     cols <- cols[!(cols %in% c('dataset', 'location', 'param', 'value'))]
     # should maybe check by dataset as different datasets may have
     # unique columns. leaving this out of the .validate for now.

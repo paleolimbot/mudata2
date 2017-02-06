@@ -27,7 +27,7 @@ biplotgg.qtag.wide <- function(x, ...) {
 #' @rdname biplotgg
 #' @export
 biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, values=NULL, 
-                               errors=NULL, labeller=ggplot2::label_value, ...) {
+                               errors=NULL, labeller=ggplot2::label_value, debug=FALSE, ...) {
   # essential to have things be aggregated
   x <- aggregate(x, mean, err=sd(., na.rm = TRUE)/sum(!is.na(.)))
   
@@ -77,7 +77,11 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
     } else {
       xs <- x[x[[namecolumn]]==.$varx, c(quals, values, errors)]
       ys <- x[x[[namecolumn]]==.$vary, c(quals, values, errors)]
-      dplyr::inner_join(xs, ys, by=joincols, suffix=c('.x', '.y'))
+      both <- dplyr::inner_join(xs, ys, by=joincols, suffix=c('.x', '.y'))
+      if(debug) {
+        browser()
+      }
+      both
     }
   })
   

@@ -71,7 +71,7 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
     els <- expand.grid(varx=namesx, vary=namesy, stringsAsFactors = FALSE)
   }
   joincols <- quals[quals != namecolumn]
-  tmp <- dplyr::do(dplyr::group_by(els, varx, vary), {
+  tmp <- dplyr::do(dplyr::group_by_(els, "varx", "vary"), {
     if(.$varx == .$vary) {
       data.frame()
     } else {
@@ -81,7 +81,7 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
       if(debug) {
         browser()
       }
-      both
+      data.frame(both)
     }
   })
   

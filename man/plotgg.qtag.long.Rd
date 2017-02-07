@@ -6,7 +6,7 @@
 \alias{plotgg.qtag.wide}
 \title{Autoplot a qualifier/tag structure}
 \usage{
-\method{plotgg}{qtag.long}(x, subset, xvar, yvar, facets, ...)
+\method{plotgg}{qtag.long}(x, subset, xvar, yvar, facets, errors = "err", ...)
 
 \method{plotgg}{qtag.wide}(x, ...)
 

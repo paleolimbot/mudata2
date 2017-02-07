@@ -98,10 +98,17 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
     }
   }
 
-  yrev <- ggplot2::scale_y_reverse()
-  if(.is_ad(x[yvar])) {
-    yrev <- NULL
+  yrev <- NULL
+  if(yvar == "x") {
+    if(!.is_ad(x[yvar])) {
+      yrev <- ggplot2::scale_y_reverse()
+    }
+  } else if(xvar == "x") {
+    if(!.is_ad(x[xvar])) {
+      yrev <- ggplot2::scale_x_reverse()
+    }
   }
+  
   mapping <- c(mapping, ggplot2::aes_(x=as.name(xvar), y=as.name(yvar)))
   class(mapping) <- "uneval"
   return(ggplot2::ggplot(x, mapping) + ggplot2::geom_path() + errorbars + ggplot2::geom_point() + ggfacet + yrev)
@@ -124,8 +131,8 @@ guess.xy <- function(x, xvar, yvar) {
   numqualifiers <- qualifiers[types %in% c("numeric", "integer")]
   if(numqualifiers > 0) {
     if(missing(xvar) && missing(yvar)) {
-      yvar <- numqualifiers[length(numqualifiers)]
-      xvar <- values
+      xvar <- numqualifiers[length(numqualifiers)]
+      yvar <- values
     } else if(missing(xvar)) {
       if(yvar == values) {
         xvar <- numqualifiers[length(numqualifiers)]

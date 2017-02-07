@@ -83,7 +83,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     cols <- cols[!(cols %in% c('dataset', 'location', 'param', 'value'))]
     # should maybe check by dataset as different datasets may have
     # unique columns. leaving this out of the .validate for now.
-    columns <- expand.grid(dataset=datasets$dataset, columns=cols,
+    columns <- expand.grid(dataset=datasets$dataset, column=cols,
                            stringsAsFactors = FALSE)
   } else {
     columns <- .tagify(columns, exnames = c('dataset', 'column'), expand=expand.tags)
@@ -133,7 +133,21 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     if(nrow(.) > 1) stop("Duplicate parameter in parameters table: ", unique(.$dataset), '->', unique(.$param))
     .
   })
+  NULL
 }
+
+#' Validate a MUData object
+#' 
+#' Validates a MUData object by calling \code{stop} when an error is found.
+#'
+#' @param md An object of class 'mudata'
+#'
+#' @export
+#' 
+validate.mudata <- function(md) {
+  invisible(.validate(md))
+}
+
 
 #' Combine mudata objects
 #'

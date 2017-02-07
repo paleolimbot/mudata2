@@ -12,7 +12,7 @@ biplotgg(x, ...)
 
 \method{biplotgg}{qtag.long}(x, namecolumn = NULL, namesx = NULL,
   namesy = NULL, values = NULL, errors = NULL,
-  labeller = ggplot2::label_value, ...)
+  labeller = ggplot2::label_value, debug = FALSE, ...)
 }
 \arguments{
 \item{x}{the object to biplot}

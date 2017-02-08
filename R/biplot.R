@@ -3,6 +3,9 @@
 #' 
 #' @param x the object to biplot
 #' @param namecolumn The column where namesx and namesy are to be found
+#' @param namesx The names to be included in the x axes, or all the names to be included
+#' @param namesy The names to be included on the y axes, or NULL for all possible combinations
+#'   of \code{namesx}.
 #' @param values The column containing the values to plot
 #' @param errors The column containing the errors. Use \code{NULL} for default ("err" if column
 #'   exists or none otherwise), or \code{NA} to suppress.
@@ -27,7 +30,7 @@ biplotgg.qtag.wide <- function(x, ...) {
 #' @rdname biplotgg
 #' @export
 biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, values=NULL, 
-                               errors=NULL, labeller=ggplot2::label_value, debug=FALSE, ...) {
+                               errors=NULL, labeller=ggplot2::label_value, ...) {
   # essential to have things be aggregated
   x <- aggregate(x, mean, err=sd(., na.rm = TRUE)/sum(!is.na(.)))
   
@@ -78,10 +81,7 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
       xs <- x[x[[namecolumn]]==.$varx, c(quals, values, errors)]
       ys <- x[x[[namecolumn]]==.$vary, c(quals, values, errors)]
       both <- dplyr::inner_join(xs, ys, by=joincols, suffix=c('.x', '.y'))
-      if(debug) {
-        browser()
-      }
-      data.frame(both)
+      data.frame(both, stringsAsFactors = FALSE)
     }
   })
   

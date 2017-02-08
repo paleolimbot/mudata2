@@ -5,7 +5,7 @@
 \title{Subset a MuData object}
 \usage{
 \method{subset}{mudata}(x, datasets = NULL, params = NULL,
-  locations = NULL, validate = TRUE, ...)
+  locations = NULL, validate = TRUE, defactorize = TRUE, ...)
 }
 \arguments{
 \item{x}{The object to subset}
@@ -17,6 +17,8 @@
 \item{locations}{Vector of locations to include}
 
 \item{validate}{Flag to validate output}
+
+\item{defactorize}{Pass \code{FALSE} to keep input columns as factors (may cause errors).}
 
 \item{...}{Aguments to/from methods}
 }

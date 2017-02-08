@@ -6,16 +6,20 @@
 \alias{condense.tags.mudata}
 \title{Condense multiple columns to a single JSON column}
 \usage{
-condense.tags(x, tagcolumns, tagcolumn)
+condense.tags(x, ...)
 
-\method{condense.tags}{data.frame}(df, tagcolumns, tagcolumn = "tags")
+\method{condense.tags}{data.frame}(x, tagcolumns, tagcolumn = "tags", ...)
 
 \method{condense.tags}{mudata}(x, ...)
 }
 \arguments{
+\item{x}{a data frame with tag columns}
+
+\item{...}{passed to/from methods}
+
 \item{tagcolumns}{column names to be condensed to JSON}
 
-\item{df}{a data frame with tag columns}
+\item{tagcolumn}{the column in which to store JSON}
 }
 \value{
 A modified data.frame

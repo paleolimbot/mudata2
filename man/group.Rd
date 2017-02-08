@@ -7,7 +7,9 @@
 group(qtag, quiet = FALSE)
 }
 \arguments{
-\item{qtag}{}
+\item{qtag}{A qualifier/tag structure}
+
+\item{quiet}{Pass \code{TRUE} to supress warnings on coersion to a qualifier tag structure.}
 }
 \value{
 A \code{dplyr} grouped data frame

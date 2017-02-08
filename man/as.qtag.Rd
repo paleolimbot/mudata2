@@ -2,9 +2,12 @@
 % Please edit documentation in R/qtag.R
 \name{as.qtag}
 \alias{as.qtag}
+\alias{qtag}
 \title{Convert an object to a qualifier/tag structure}
 \usage{
 as.qtag(df, .qualifiers, .values, .tags, quiet = FALSE)
+
+qtag(x, ...)
 }
 \arguments{
 \item{df}{A \code{data.frame} or similar object}

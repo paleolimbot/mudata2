@@ -57,20 +57,22 @@ expandtagsraw <- function(x, ...) {
 
 #' Condense multiple columns to a single JSON column
 #'
-#' @param df a data frame with tag columns
+#' @param x a data frame with tag columns
 #' @param tagcolumns column names to be condensed to JSON
+#' @param tagcolumn the column in which to store JSON
+#' @param ... passed to/from methods
 #'
 #' @return A modified data.frame
 #' @export
-condense.tags <- function(x, tagcolumns, tagcolumn) UseMethod("condense.tags")
+condense.tags <- function(x, ...) UseMethod("condense.tags")
 
 #' @rdname condense.tags
 #' @export
-condense.tags.data.frame <- function(df, tagcolumns, tagcolumn='tags') {
+condense.tags.data.frame <- function(x, tagcolumns, tagcolumn='tags', ...) {
   if(length(tagcolumns) > 0) {
-    df[[tagcolumn]] <- sapply(1:nrow(df), function(i) {
+    x[[tagcolumn]] <- sapply(1:nrow(x), function(i) {
       vals <- sapply(tagcolumns, function(name) {
-        v <- df[[name]][i]
+        v <- x[[name]][i]
         if("numeric" %in% class(v) || "integer" %in% class(v) || is.na(v)) {
           return(v)
         } else {

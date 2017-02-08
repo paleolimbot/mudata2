@@ -11,14 +11,21 @@ wide(x, ...)
 
 \method{wide}{default}(x, ...)
 
-\method{wide}{qtag.wide}(x)
+\method{wide}{qtag.wide}(x, ...)
 
-\method{wide}{qtag.long}(qtag, colvar, fun.aggregate, ..., quiet = FALSE)
+\method{wide}{qtag.long}(x, colvar, fun.aggregate, quiet = FALSE, ...)
 }
 \arguments{
-\item{x}{A \link{qtag} object}
+\item{x}{A \link{qtag} object or one that can be coerced to one.}
 
 \item{...}{Passed to other methods}
+
+\item{colvar}{The column that contains the names of the to-be columns}
+
+\item{fun.aggregate}{The aggregation function to be used if qualifiers other than colvar
+identify more than one row each.}
+
+\item{quiet}{Supress warning messages on coersion to a qualifier/tag structure.}
 }
 \value{
 A (possibly unchanged) \code{qtag.wide} data.frame

@@ -14,6 +14,8 @@ read.mudata(zipfile, validate = TRUE, expand.tags = TRUE, ...)
 
 \item{zipfile}{file to read/write (can also be a directory)}
 
+\item{overwrite}{Pass \code{TRUE} to overwrite if \code{zipfile} already exists.}
+
 \item{expand.tags}{flag to expand tags to columns}
 
 \item{...}{passed to read/write.csv}

@@ -8,6 +8,8 @@ is.summarised(x, quiet = FALSE)
 }
 \arguments{
 \item{x}{The object}
+
+\item{quiet}{Pass \code{TRUE} to supress warnings on coersion to a qualifier/tag structure.}
 }
 \value{
 \code{TRUE} if the argument is summarised, \code{FALSE} otherwise

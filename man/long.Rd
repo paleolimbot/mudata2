@@ -13,12 +13,16 @@ long(x, ...)
 
 \method{long}{qtag.long}(x, ...)
 
-\method{long}{qtag.wide}(qtag, varname = "column", quiet = FALSE)
+\method{long}{qtag.wide}(x, varname = "column", quiet = FALSE, ...)
 }
 \arguments{
 \item{x}{A \link{qtag} object}
 
 \item{...}{Passed to other methods}
+
+\item{varname}{The column name in which column names will be stored.}
+
+\item{quiet}{Supress warning messages on coersion to a qualifier/tag structure.}
 }
 \value{
 A (possibly unchanged) \code{qtag.long} data.frame

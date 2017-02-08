@@ -8,6 +8,8 @@ values(x, quiet = FALSE)
 }
 \arguments{
 \item{x}{A \link{qtag} object}
+
+\item{quiet}{Suppress error messages on coersion to a qualifier/tag structure}
 }
 \value{
 A vector of value column names

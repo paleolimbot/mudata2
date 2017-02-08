@@ -17,6 +17,10 @@ qualifiers(x, ...)
 }
 \arguments{
 \item{x}{A \link{qtag} object}
+
+\item{...}{Passed to/from methods}
+
+\item{quiet}{Supress error messages on coersion to a qualifier/tag structure}
 }
 \value{
 A vector of qualifier column names

@@ -13,6 +13,8 @@ replacecol(x, ...)
 \method{replacecol}{qtag}(x, ...)
 }
 \arguments{
+\item{x}{An object that has columns that can be renamed}
+
 \item{...}{Key/value pairs to replace in the form \code{oldval="newval"}}
 }
 \value{
@@ -24,9 +26,9 @@ except \link{qtag} objects have their qualifiers/tags/values attributes properly
 }
 \examples{
 data(pocmaj)
-renamecol(pocmaj, Ca="Calcium")
+replacecol(pocmaj, Ca="Calcium")
 pocmaj2 <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
-pocmaj2 <- renamecol(pocmaj2, Ca="Calcium")
+pocmaj2 <- replacecol(pocmaj2, Ca="Calcium")
 attr(pocmaj2, "values")
 
 }

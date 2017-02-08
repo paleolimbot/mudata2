@@ -5,6 +5,7 @@
 #' @param yvar Column to be used on the y-axis
 #' @param facets Column to be used as facetting variable
 #' @param subset Subset to plot
+#' @param errors The colum that contains uncertainty information
 #' @param ... Passed on to \code{aes_string()}
 #'
 #' @return A ggplot object

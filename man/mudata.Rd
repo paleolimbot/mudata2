@@ -23,6 +23,8 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
 
 \item{location.id}{The location id (if locations is unspecified)}
 
+\item{defactorize}{Pass \code{FALSE} to keep input columns as factors (may cause errors).}
+
 \item{validate}{Flag to validate input}
 
 \item{expand.tags}{Flag to expand JSON tags to columns}

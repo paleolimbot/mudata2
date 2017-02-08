@@ -69,9 +69,14 @@ as.qtag <- function(df, .qualifiers, .values, .tags, quiet=FALSE) {
   return(df)
 }
 
+#' @rdname as.qtag
+#' @export
+qtag <- function(x, ...) as.qtag(x, ...)
+
 #' Extract value column names from a qualifier/tag structure
 #'
 #' @param x A \link{qtag} object
+#' @param quiet Suppress error messages on coersion to a qualifier/tag structure
 #'
 #' @return A vector of value column names
 #' @export
@@ -101,6 +106,8 @@ values <- function(x, quiet=FALSE) {
 #' Extract value qualifier names from a qualifier/tag structure
 #'
 #' @param x A \link{qtag} object
+#' @param quiet Supress error messages on coersion to a qualifier/tag structure
+#' @param ... Passed to/from methods
 #'
 #' @return A vector of qualifier column names
 #' @export
@@ -163,6 +170,7 @@ tags <- function(x) {
 #' Returns \code{all(lengths==1)}.
 #'
 #' @param x The object
+#' @param quiet Pass \code{TRUE} to supress warnings on coersion to a qualifier/tag structure.
 #'
 #' @return \code{TRUE} if the argument is summarised, \code{FALSE} otherwise
 #' @export
@@ -229,6 +237,8 @@ tagdata <- function(x) {
 #' Convert data to long format
 #'
 #' @param x A \link{qtag} object
+#' @param varname The column name in which column names will be stored.
+#' @param quiet Supress warning messages on coersion to a qualifier/tag structure.
 #' @param ... Passed to other methods
 #'
 #' @return A (possibly unchanged) \code{qtag.long} data.frame
@@ -246,7 +256,11 @@ long <- function(x, ...) {
 
 #' Convert data to wide format
 #'
-#' @param x A \link{qtag} object
+#' @param x A \link{qtag} object or one that can be coerced to one.
+#' @param colvar The column that contains the names of the to-be columns
+#' @param fun.aggregate The aggregation function to be used if qualifiers other than colvar
+#'   identify more than one row each.
+#' @param quiet Supress warning messages on coersion to a qualifier/tag structure.
 #' @param ... Passed to other methods
 #'
 #' @return A (possibly unchanged) \code{qtag.wide} data.frame
@@ -278,18 +292,18 @@ long.qtag.long <- function(x, ...) {
 
 #' @rdname long
 #' @export
-long.qtag.wide <- function(qtag, varname="column", quiet=FALSE) {
-  valuecol <- values(qtag)
-  qualifiers <- qualifiers(qtag)
-  tags <- tags(qtag)
-  dfmelt <- reshape2::melt(qtag[c(qualifiers, valuecol)], id.vars=qualifiers, measure.vars=valuecol, value.name="values", variable.name=varname)
+long.qtag.wide <- function(x, varname="column", quiet=FALSE, ...) {
+  valuecol <- values(x)
+  qualifiers <- qualifiers(x)
+  tags <- tags(x)
+  dfmelt <- reshape2::melt(x[c(qualifiers, valuecol)], id.vars=qualifiers, measure.vars=valuecol, value.name="values", variable.name=varname)
   if(length(tags) > 0) {
-    dfmelt <- merge(dfmelt, qtag[c(qualifiers, tags)], by=qualifiers, all.x=TRUE)
+    dfmelt <- merge(dfmelt, x[c(qualifiers, tags)], by=qualifiers, all.x=TRUE)
   }
   attr(dfmelt, "values") <- "values"
   attr(dfmelt, "qualifiers") <- c(qualifiers, varname)
   attr(dfmelt, "tags") <- tags
-  attr(dfmelt, "summarised") <- is.summarised(qtag)
+  attr(dfmelt, "summarised") <- is.summarised(x)
   class(dfmelt) <- c("qtag.long", "qtag", class(dfmelt))
   if(!quiet) message("Assigning values column 'values' and qualifier '", varname, "'")
   return(dfmelt)
@@ -303,14 +317,14 @@ wide.default <- function(x, ...) {
 
 #' @rdname wide
 #' @export
-wide.qtag.wide <- function(x) {
+wide.qtag.wide <- function(x, ...) {
   return(x)
 }
 
 #' @rdname wide
 #' @export
-wide.qtag.long <- function(qtag, colvar, fun.aggregate, ..., quiet=FALSE) {
-  qualifiers <- qualifiers(qtag)
+wide.qtag.long <- function(x, colvar, fun.aggregate, quiet=FALSE, ...) {
+  qualifiers <- qualifiers(x)
   if(missing(colvar)) {
     # assume it is the last qualifier
     colvar <- qualifiers[length(qualifiers)]
@@ -319,12 +333,12 @@ wide.qtag.long <- function(qtag, colvar, fun.aggregate, ..., quiet=FALSE) {
   if(missing(fun.aggregate)) {
     # assume mean
     fun.aggregate <- mean
-    if(!is.summarised(qtag) && !quiet) message("Assuming aggregation function 'mean'")
+    if(!is.summarised(x) && !quiet) message("Assuming aggregation function 'mean'")
   }
   castvars <- qualifiers[qualifiers != colvar]
 
-  dfwide <- reshape2::dcast(qtag, formula=as.formula(paste0(paste0("`", castvars, "`", collapse="+"), "~`", colvar, "`")),
-                  fun.aggregate=fun.aggregate, value.var=values(qtag), ...)
+  dfwide <- reshape2::dcast(x, formula=as.formula(paste0(paste0("`", castvars, "`", collapse="+"), "~`", colvar, "`")),
+                  fun.aggregate=fun.aggregate, value.var=values(x), ...)
   dfnames <- names(dfwide)
   attr(dfwide, "qualifiers") <- castvars
   attr(dfwide, "values") <- dfnames[!(dfnames %in% castvars)]
@@ -338,7 +352,8 @@ wide.qtag.long <- function(qtag, colvar, fun.aggregate, ..., quiet=FALSE) {
 #'
 #' Essentially a shortcut for grouping a \link{qtag} object by its qualifiers
 #'
-#' @param qtag
+#' @param qtag A qualifier/tag structure
+#' @param quiet Pass \code{TRUE} to supress warnings on coersion to a qualifier tag structure.
 #'
 #' @return A \code{dplyr} grouped data frame
 #' @export
@@ -475,7 +490,8 @@ rbind.qtag <- function(...) {
 #'
 #' Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
 #' except \link{qtag} objects have their qualifiers/tags/values attributes properly modified
-#'
+#' 
+#' @param x An object that has columns that can be renamed
 #' @param ... Key/value pairs to replace in the form \code{oldval="newval"}
 #'
 #' @return A copy of the modified object
@@ -483,12 +499,12 @@ rbind.qtag <- function(...) {
 #'
 #' @examples
 #' data(pocmaj)
-#' renamecol(pocmaj, Ca="Calcium")
+#' replacecol(pocmaj, Ca="Calcium")
 #' pocmaj2 <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
-#' pocmaj2 <- renamecol(pocmaj2, Ca="Calcium")
+#' pocmaj2 <- replacecol(pocmaj2, Ca="Calcium")
 #' attr(pocmaj2, "values")
 #'
-replacecol <- function(x, ...) UseMethod("renamecol")
+replacecol <- function(x, ...) UseMethod("replacecol")
 
 #' @export
 #' @rdname replacecol

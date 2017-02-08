@@ -12,7 +12,7 @@ biplotgg(x, ...)
 
 \method{biplotgg}{qtag.long}(x, namecolumn = NULL, namesx = NULL,
   namesy = NULL, values = NULL, errors = NULL,
-  labeller = ggplot2::label_value, debug = FALSE, ...)
+  labeller = ggplot2::label_value, ...)
 }
 \arguments{
 \item{x}{the object to biplot}
@@ -20,6 +20,11 @@ biplotgg(x, ...)
 \item{...}{passed to \code{aes_string()}}
 
 \item{namecolumn}{The column where namesx and namesy are to be found}
+
+\item{namesx}{The names to be included in the x axes, or all the names to be included}
+
+\item{namesy}{The names to be included on the y axes, or NULL for all possible combinations
+of \code{namesx}.}
 
 \item{values}{The column containing the values to plot}
 

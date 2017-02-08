@@ -23,6 +23,8 @@ plotgg(x, ...)
 
 \item{facets}{Column to be used as facetting variable}
 
+\item{errors}{The colum that contains uncertainty information}
+
 \item{...}{Passed on to \code{aes_string()}}
 }
 \value{

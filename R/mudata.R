@@ -8,6 +8,7 @@
 #' @param columns The columns table (can be omitted)
 #' @param dataset.id The dataset id (if datasets is unspecified)
 #' @param location.id The location id (if locations is unspecified)
+#' @param defactorize Pass \code{FALSE} to keep input columns as factors (may cause errors).
 #' @param validate Flag to validate input
 #' @param expand.tags Flag to expand JSON tags to columns
 #'
@@ -176,12 +177,14 @@ rbind.mudata <- function(..., validate=TRUE) {
 #' @param params  Vector of parameters to include
 #' @param locations Vector of locations to include
 #' @param validate Flag to validate output
+#' @param defactorize Pass \code{FALSE} to keep input columns as factors (may cause errors).
 #' @param ... Aguments to/from methods
 #'
 #' @return A subsetted MuData object
 #' @export
 #'
-subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validate=TRUE, ...) {
+subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validate=TRUE, 
+                          defactorize=TRUE, ...) {
   if(is.null(datasets)) {
     datasets <- unique(x$datasets$dataset)
   }
@@ -209,7 +212,7 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
   ds <- x$datasets[x$datasets$dataset %in% datasets,]
   
   mudata(data=dta, locations=lc, params=pm, datasets=ds, 
-         columns=cl, validate=validate, defactorize = FALSE)
+         columns=cl, validate=validate, defactorize = defactorize)
 }
 
 #' Autoplot a mudata object
@@ -249,6 +252,7 @@ biplotgg.mudata <- function(x, ...) {
 #'
 #' @param md a mudata object
 #' @param zipfile file to read/write (can also be a directory)
+#' @param overwrite Pass \code{TRUE} to overwrite if \code{zipfile} already exists.
 #' @param validate flag to validate mudata object upon read
 #' @param expand.tags flag to expand tags to columns
 #' @param ... passed to read/write.csv

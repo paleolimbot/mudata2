@@ -50,6 +50,11 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
       datasets$tags <- '{}'
     }
   } else {
+    # sometimes datasets can just be a character vector because of weird R
+    # subsetting operaions. if this is true, create a data frame
+    if(!("data.frame" %in% class(datasets))) {
+      datasets <- data.frame(dataset=datasets, stringsAsFactors = FALSE)
+    }
     # check columns before tagify
     .checkcols(datasets, 'datasets', 'dataset')
     datasets <- .tagify(datasets, exnames = 'dataset', expand=expand.tags)
@@ -199,7 +204,7 @@ rbind.mudata <- function(..., validate=TRUE) {
 #' @export
 #'
 subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validate=TRUE, 
-                          defactorize=TRUE, ...) {
+                          defactorize=FALSE, ...) {
   if(is.null(datasets)) {
     datasets <- unique(x$datasets$dataset)
   }
@@ -270,9 +275,18 @@ biplotgg.mudata <- function(x, ...) {
 #' @param overwrite Pass \code{TRUE} to overwrite if \code{zipfile} already exists.
 #' @param validate flag to validate mudata object upon read
 #' @param expand.tags flag to expand tags to columns
+#' @param load a list of csv files (without the .csv extension) to load from the source.
 #' @param ... passed to read/write.csv
 #'
 #' @export
+#' 
+#' @examples 
+#' data(longlake2016)
+#' outfile <- tempfile()
+#' write.mudata(longlake2016, outfile)
+#' md <- read.mudata(outfile)
+#' plotgg(subset(md, params=c("Hg", "Pb")))
+#' unlink(outfile)
 #'
 write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=TRUE, ...) {
   if(missing(zipfile)) stop("Parameter zipfile is required")
@@ -290,15 +304,15 @@ write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=TRUE, ...) {
   } else {
     md <- condense.tags(md)
   }
-  utils::write.csv(md$data, file.path(zipfolder, "data.csv"), row.names = FALSE, ...)
-  utils::write.csv(md$locations, file.path(zipfolder, "locations.csv"), row.names = FALSE, ...)
-  utils::write.csv(md$params, file.path(zipfolder, "params.csv"), row.names = FALSE, ...)
-  utils::write.csv(md$datasets, file.path(zipfolder, "datasets.csv"), row.names = FALSE, ...)
-  utils::write.csv(md$columns, file.path(zipfolder, "columns.csv"), row.names = FALSE)
+  
+  mdnames <- names(md)
+  filesWritten <- sapply(mdnames, function(tname) {
+    .writetocsv(md[[tname]], file.path(zipfolder, paste0(tname, ".csv")), ...)
+  })
+  filenames <- paste0(mdnames[filesWritten], ".csv")
   cwd <- getwd()
   setwd(zipfolder)
-  tryCatch(utils::zip("zipfile.zip", c("data.csv", "locations.csv", "params.csv", 
-                                       "datasets.csv", "columns.csv")),
+  tryCatch(utils::zip("zipfile.zip", filenames),
            error=function(err) {
              setwd(cwd)
              unlink(zipfolder, recursive = TRUE)
@@ -313,7 +327,9 @@ write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=TRUE, ...) {
 
 #' @rdname write.mudata
 #' @export
-read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE, ...) {
+read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE,
+                        load=c("data", "locations", "params", "datasets", "columns"), ...) {
+  if(!("data" %in% load)) stop("'data' must be in argument load")
   tmpfold <- tempfile()
   deleteOnExit <- TRUE
   if(dir.exists(zipfile)) {
@@ -322,39 +338,23 @@ read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE, ...) {
   } else {
     utils::unzip(zipfile, exdir = tmpfold)
   }
-  datafile <- list.files(tmpfold, pattern='data.csv', full.names = TRUE, recursive = TRUE)
-  locationsfile <- list.files(tmpfold, pattern='locations.csv', full.names = TRUE, recursive = TRUE)
-  paramsfile <- list.files(tmpfold, pattern='params.csv', full.names = TRUE, recursive = TRUE)
-  datasetsfile <- list.files(tmpfold, pattern='datasets.csv', full.names = TRUE, recursive = TRUE)
-  columnsfile <- list.files(tmpfold, pattern='columns.csv', full.names = TRUE, recursive = TRUE)
   
   md <- tryCatch({
-    if(length(datafile) == 0) stop('data.csv not found')
-    data <- utils::read.csv(path.expand(datafile[1]), stringsAsFactors = FALSE, ...)
-    if(length(locationsfile) == 0) {
-      locations <- NULL
-    } else {
-      locations <- utils::read.csv(path.expand(locationsfile[1]), stringsAsFactors = FALSE, ...)
-    }
-    if(length(paramsfile) == 0) {
-      params <- NULL
-    } else {
-      params <- utils::read.csv(path.expand(paramsfile[1]), stringsAsFactors = FALSE, ...)
-    }
-    if(length(datasetsfile) == 0) {
-      datasets <- NULL
-    } else {
-      datasets <- utils::read.csv(path.expand(datasetsfile[1]), stringsAsFactors = FALSE, ...)
-    }
-    if(length(columnsfile) == 0) {
-      columns <- NULL
-    } else {
-      columns <- utils::read.csv(path.expand(columnsfile[1]), stringsAsFactors = FALSE, ...)
-    }
+    obj <- sapply(load, function(name) {
+      fname <- list.files(tmpfold, pattern=paste0(name, '.csv'), 
+                          full.names = TRUE, recursive = TRUE)
+      if(name == "data" && length(fname)==0) stop('data.csv not found')
+      .readfiletocsv(fname, validate, ...)
+    }, USE.NAMES = TRUE, simplify = FALSE)
     
-    mudata(data=data, locations=locations, params=params, datasets=datasets,
-           columns=columns,
+    mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
+           columns=obj$columns,
            expand.tags=expand.tags, validate=validate)
+    morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
+    for(name in morenames) {
+      mud[[name]] <- obj[[name]]
+    }
+    mud
   }, error=function(err) {
     if(deleteOnExit) {
       unlink(tmpfold, recursive = TRUE)
@@ -365,5 +365,27 @@ read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE, ...) {
     unlink(tmpfold, recursive = TRUE)
   }
   return(md)
+}
+
+.writetocsv <- function(df, fname, ...) {
+  if(!is.null(df)) {
+    utils::write.csv(df, fname, row.names = FALSE, ...)
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
+
+.readfiletocsv <- function(fname, validate, ...) {
+  if(length(fname) == 0) {
+    return(NULL)
+  } else {
+    df <- try(utils::read.csv(path.expand(fname[1]), stringsAsFactors = FALSE, ...), silent = TRUE)
+    if(validate && !('data.frame' %in% class(df))) {
+      return(NULL)
+    } else {
+      return(df)
+    }
+  }
 }
 

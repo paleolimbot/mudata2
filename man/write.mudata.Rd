@@ -7,7 +7,8 @@
 \usage{
 write.mudata(md, zipfile, overwrite = FALSE, expand.tags = TRUE, ...)
 
-read.mudata(zipfile, validate = TRUE, expand.tags = TRUE, ...)
+read.mudata(zipfile, validate = TRUE, expand.tags = TRUE, load = c("data",
+  "locations", "params", "datasets", "columns"), ...)
 }
 \arguments{
 \item{md}{a mudata object}
@@ -21,8 +22,19 @@ read.mudata(zipfile, validate = TRUE, expand.tags = TRUE, ...)
 \item{...}{passed to read/write.csv}
 
 \item{validate}{flag to validate mudata object upon read}
+
+\item{load}{a list of csv files (without the .csv extension) to load from the source.}
 }
 \description{
 Read/Write a MuData zip file
+}
+\examples{
+data(longlake2016)
+outfile <- tempfile()
+write.mudata(longlake2016, outfile)
+md <- read.mudata(outfile)
+plotgg(subset(md, params=c("Hg", "Pb")))
+unlink(outfile)
+
 }
 

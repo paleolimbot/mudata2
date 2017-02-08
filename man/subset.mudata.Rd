@@ -5,7 +5,7 @@
 \title{Subset a MuData object}
 \usage{
 \method{subset}{mudata}(x, datasets = NULL, params = NULL,
-  locations = NULL, validate = TRUE, defactorize = TRUE, ...)
+  locations = NULL, validate = TRUE, defactorize = FALSE, ...)
 }
 \arguments{
 \item{x}{The object to subset}

@@ -35,9 +35,8 @@ Autoplot a qualifier/tag structure
 }
 \examples{
 data(pocmaj)
-plotgg(pocmaj)
 
-pocmajqt <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 plotgg(pocmajqt)
 plotgg(pocmajqt, subset=core=="MAJ-1" & column \%in\% c("Ca", "Ti"))
 plotgg(pocmajqt, shape="core")

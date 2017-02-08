@@ -18,7 +18,7 @@
 #'
 #' @examples
 #' data(pocmajpb210)
-#' melt.parallel(pb210,
+#' melt.parallel(pocmajpb210,
 #'               id.vars=c("core", "depth"),
 #'               values=c("Pb210", "age", "sar"),
 #'               err=c("Pb210_sd", "age_sd", "sar_err"))

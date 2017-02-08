@@ -38,7 +38,6 @@ to use plotmath-style labels)}
 Biplot an object using ggplot
 }
 \examples{
-library(ggplot2)
 data(pocmaj)
 qt <- as.qtag(pocmaj)
 biplotgg(qt, color="core")

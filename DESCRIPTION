@@ -12,6 +12,5 @@ Imports: reshape2, ggplot2, plyr, dplyr, jsonlite
 Depends:
     R (>= 3.2.2)
 License: GPL-2
-Imports: 
 LazyData: true
 RoxygenNote: 5.0.1

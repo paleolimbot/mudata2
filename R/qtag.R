@@ -7,6 +7,7 @@
 #' @param .qualifiers Column names of qualifying values
 #' @param .tags Column names of tag values
 #' @param quiet Use \code{quiet=TRUE} to suppress error messages
+#' @param ... Passed to/from methods
 #'
 #' @return An object of type \code{qtag}, which is essentially the unchanged
 #'   input with qualifiers, values, and tags information attached.
@@ -15,7 +16,7 @@
 #'
 #' @examples
 #' data("pocmaj")
-#' pocmaj <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 #' long(pocmaj)
 #' aggregate(pocmaj)
 #' aggregate(long(pocmaj))
@@ -71,7 +72,7 @@ as.qtag <- function(df, .qualifiers, .values, .tags, quiet=FALSE) {
 
 #' @rdname as.qtag
 #' @export
-qtag <- function(x, ...) as.qtag(x, ...)
+qtag <- function(df, ...) as.qtag(df, ...)
 
 #' Extract value column names from a qualifier/tag structure
 #'
@@ -83,7 +84,7 @@ qtag <- function(x, ...) as.qtag(x, ...)
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' values(pocmaj)
 #'
 values <- function(x, quiet=FALSE) {
@@ -114,7 +115,7 @@ values <- function(x, quiet=FALSE) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' qualifiers(pocmaj)
 #'
 qualifiers <- function(x, ...) UseMethod("qualifiers")
@@ -156,7 +157,7 @@ qualifiers.data.frame <- function(x, ..., quiet=FALSE) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' tags(pocmaj)
 #'
 tags <- function(x) {
@@ -182,6 +183,7 @@ tags <- function(x) {
 #' is.summarised(aggregate(pocmaj))
 #'
 is.summarised <- function(x, quiet=FALSE) {
+  . <- NULL; rm(.) # CMD hack
   lengths <- dplyr::do(group(x, quiet=quiet), lengths=nrow(.))$lengths
   return(all(lengths==1))
 }
@@ -195,7 +197,7 @@ is.summarised <- function(x, quiet=FALSE) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' valuedata(pocmaj)
 #'
 valuedata <- function(x) {
@@ -211,7 +213,7 @@ valuedata <- function(x) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' qualifierdata(pocmaj)
 #'
 qualifierdata <- function(x) {
@@ -227,7 +229,7 @@ qualifierdata <- function(x) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' tagdata(pocmaj)
 #'
 tagdata <- function(x) {
@@ -246,7 +248,7 @@ tagdata <- function(x) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 #' long(pocmaj)
 #'
 long <- function(x, ...) {
@@ -268,7 +270,7 @@ long <- function(x, ...) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 #' pocmajlong <- long(pocmaj)
 #' wide(pocmajlong)
 #' wide(pocmaj)
@@ -337,7 +339,7 @@ wide.qtag.long <- function(x, colvar, fun.aggregate, quiet=FALSE, ...) {
   }
   castvars <- qualifiers[qualifiers != colvar]
 
-  dfwide <- reshape2::dcast(x, formula=as.formula(paste0(paste0("`", castvars, "`", collapse="+"), "~`", colvar, "`")),
+  dfwide <- reshape2::dcast(x, formula=stats::as.formula(paste0(paste0("`", castvars, "`", collapse="+"), "~`", colvar, "`")),
                   fun.aggregate=fun.aggregate, value.var=values(x), ...)
   dfnames <- names(dfwide)
   attr(dfwide, "qualifiers") <- castvars
@@ -361,7 +363,7 @@ wide.qtag.long <- function(x, colvar, fun.aggregate, quiet=FALSE, ...) {
 #' @examples
 #' data(pocmaj)
 #' library(dplyr)
-#' pocmajqt <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+#' pocmajqt <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 #' pocmajqt %>% group() %>% summarise(mean(Ca))
 #' # equivalent to
 #' pocmaj %>% group_by(core, depth) %>% summarise(mean(Ca))
@@ -387,7 +389,7 @@ group <- function(qtag, quiet=FALSE) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmajqt <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' aggregate(pocmajqt)
 #' aggregate(pocmajqt, mean)
 #' aggregate(long(pocmajqt), mean, sd, length)
@@ -429,9 +431,8 @@ aggregate.qtag.wide <- function(x, ...) {
   qualifiers <- qualifiers(x)
   funformats <- generate.call(...)
   if(length(funformats) > 1) {
-    # need to return as a brick
+    # would need to return as a brick
     stop("Not implemented")
-    argnames <- names(funformat)
   }
   values <- values(x)
 
@@ -457,7 +458,7 @@ aggregate.qtag.wide <- function(x, ...) {
 #'
 #' @examples
 #' data(pocmaj)
-#' pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' newrow <- data.frame(core="POC-2", depth=6, Ca=2100, Ti=4100, V=45)
 #' rbind(pocmaj, newrow)
 #'
@@ -500,7 +501,7 @@ rbind.qtag <- function(...) {
 #' @examples
 #' data(pocmaj)
 #' replacecol(pocmaj, Ca="Calcium")
-#' pocmaj2 <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+#' pocmaj2 <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' pocmaj2 <- replacecol(pocmaj2, Ca="Calcium")
 #' attr(pocmaj2, "values")
 #'

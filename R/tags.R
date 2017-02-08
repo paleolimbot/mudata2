@@ -3,6 +3,8 @@
 #'
 #' @param x a vector of JSON values or a data.frame with a 'tags' column
 #' @param tagcolumn the column comtaining json
+#' @param lazy Don't preform expantion if tagcolumn exists in \code{x}
+#' @param ... Passed to/from methods
 #'
 #' @return A data.frame with columns added
 #' @export
@@ -43,8 +45,10 @@ expand.tags.mudata <- function(x, ...) {
 }
 
 expandtagsraw <- function(x, ...) {
-  dplyr::do(dplyr::group_by(data.frame(.row=1:length(x), .tags=as.character(x), 
-                                       stringsAsFactors = FALSE), .row),
+  # CMD hack
+  . <- NULL; rm(.)
+  dplyr::do(dplyr::group_by_(data.frame(.row=1:length(x), .tags=as.character(x), 
+                                       stringsAsFactors = FALSE), ".row"),
             {
               df <- as.data.frame(jsonlite::fromJSON(.$.tags))
               if(nrow(df) > 0) {

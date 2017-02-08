@@ -35,7 +35,7 @@ Convert data to wide format
 }
 \examples{
 data(pocmaj)
-pocmaj <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 pocmajlong <- long(pocmaj)
 wide(pocmajlong)
 wide(pocmaj)

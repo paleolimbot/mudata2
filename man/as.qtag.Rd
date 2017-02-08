@@ -7,7 +7,7 @@
 \usage{
 as.qtag(df, .qualifiers, .values, .tags, quiet = FALSE)
 
-qtag(x, ...)
+qtag(df, ...)
 }
 \arguments{
 \item{df}{A \code{data.frame} or similar object}
@@ -19,6 +19,8 @@ qtag(x, ...)
 \item{.tags}{Column names of tag values}
 
 \item{quiet}{Use \code{quiet=TRUE} to suppress error messages}
+
+\item{...}{Passed to/from methods}
 }
 \value{
 An object of type \code{qtag}, which is essentially the unchanged
@@ -29,7 +31,7 @@ Convert an object to a qualifier/tag structure
 }
 \examples{
 data("pocmaj")
-pocmaj <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 long(pocmaj)
 aggregate(pocmaj)
 aggregate(long(pocmaj))

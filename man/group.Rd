@@ -20,7 +20,7 @@ Essentially a shortcut for grouping a \link{qtag} object by its qualifiers
 \examples{
 data(pocmaj)
 library(dplyr)
-pocmajqt <- as.qtag(pocmaj, qualifiers = c("core", "depth"))
+pocmajqt <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
 pocmajqt \%>\% group() \%>\% summarise(mean(Ca))
 # equivalent to
 pocmaj \%>\% group_by(core, depth) \%>\% summarise(mean(Ca))

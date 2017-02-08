@@ -15,6 +15,7 @@
 #' 
 #' @export
 #' @examples 
+#' library(ggplot2)
 #' data(pocmaj)
 #' qt <- as.qtag(pocmaj)
 #' biplotgg(qt, color="core")
@@ -31,8 +32,11 @@ biplotgg.qtag.wide <- function(x, ...) {
 #' @export
 biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, values=NULL, 
                                errors=NULL, labeller=ggplot2::label_value, ...) {
+  # CMD hack
+  . <- NULL; rm(.)
+  
   # essential to have things be aggregated
-  x <- aggregate(x, mean, err=sd(., na.rm = TRUE)/sum(!is.na(.)))
+  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)))
   
   els <- NULL
   quals <- qualifiers(x)
@@ -64,7 +68,7 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
   
   if(is.null(namesy)) {
     els <- dplyr::do(
-          dplyr::group_by(data.frame(i=1:(length(namesx)-1), stringsAsFactors = FALSE), i), {
+          dplyr::group_by_(data.frame(i=1:(length(namesx)-1), stringsAsFactors = FALSE), "i"), {
         data.frame(vary=namesx[.$i], varx=namesx[(.$i+1):length(namesx)], stringsAsFactors=F)
       })
     els$i <- NULL

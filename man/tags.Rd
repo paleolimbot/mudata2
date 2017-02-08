@@ -17,7 +17,7 @@ Extract tag column names from a qualifier/tag structure
 }
 \examples{
 data(pocmaj)
-pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 tags(pocmaj)
 
 }

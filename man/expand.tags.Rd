@@ -15,7 +15,11 @@ expand.tags(x, ...)
 \arguments{
 \item{x}{a vector of JSON values or a data.frame with a 'tags' column}
 
+\item{...}{Passed to/from methods}
+
 \item{tagcolumn}{the column comtaining json}
+
+\item{lazy}{Don't preform expantion if tagcolumn exists in \code{x}}
 }
 \value{
 A data.frame with columns added

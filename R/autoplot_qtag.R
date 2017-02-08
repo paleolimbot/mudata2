@@ -13,7 +13,6 @@
 #' @export
 #'
 #' @examples
-#' library(ggplot2)
 #' data(pocmaj)
 #' plotgg(pocmaj)
 #'
@@ -24,7 +23,8 @@
 #'
 #'
 plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
-  x <- aggregate(x, mean, err=sd(., na.rm = TRUE)/sum(!is.na(.)))
+  . <- NULL; rm(.) # CMD hack
+  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)))
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
   }
@@ -50,22 +50,22 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
   if(missing(facets)) {
     if(length(nonnumqualifiers) > 0) {
       # use last non-numeric qualifier
-      ggfacet <- ggplot2::facet_wrap(as.formula(paste0("~", nonnumqualifiers[nonnumindex])), scales = facet_scales)
+      ggfacet <- ggplot2::facet_wrap(stats::as.formula(paste0("~", nonnumqualifiers[nonnumindex])), scales = facet_scales)
       nonnumindex <- nonnumindex - 1
     } else {
       ggfacet <- ggplot2::facet_null()
     }
   } else if(is.null(facets)) {
     ggfacet <- ggplot2::facet_null()
-  } else if(attr(terms.formula(facets), "response") == 1) {
+  } else if(attr(stats::terms.formula(facets), "response") == 1) {
     # 2- sided formula
     ggfacet <- ggplot2::facet_grid(facets, scales = facet_scales)
-    chrfacets <- unlist(lapply(attr(terms.formula(facets), "variables")[-1], deparse))
+    chrfacets <- unlist(lapply(attr(stats::terms.formula(facets), "variables")[-1], deparse))
     nonnumqualifiers <- nonnumqualifiers[!(nonnumqualifiers %in% chrfacets)]
     nonnumindex <- length(nonnumqualifiers)
   } else {
     # 1-sided formula
-    chrfacets <- unlist(lapply(attr(terms.formula(facets), "variables")[-1], deparse))
+    chrfacets <- unlist(lapply(attr(stats::terms.formula(facets), "variables")[-1], deparse))
     ggfacet <- ggplot2::facet_wrap(facets, scales = facet_scales)
     nonnumqualifiers <- nonnumqualifiers[!(nonnumqualifiers %in% chrfacets)]
     nonnumindex <- length(nonnumqualifiers)

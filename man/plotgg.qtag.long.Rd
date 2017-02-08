@@ -34,7 +34,6 @@ A ggplot object
 Autoplot a qualifier/tag structure
 }
 \examples{
-library(ggplot2)
 data(pocmaj)
 plotgg(pocmaj)
 

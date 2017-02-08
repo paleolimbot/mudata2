@@ -50,29 +50,35 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
       datasets$tags <- '{}'
     }
   } else {
+    # check columns before tagify
+    .checkcols(datasets, 'datasets', 'dataset')
     datasets <- .tagify(datasets, exnames = 'dataset', expand=expand.tags)
     datasets$dataset <- as.character(datasets$dataset)
   }
   
   if(is.null(locations)) {
-    locations <- data.frame(dplyr::do(dplyr::group_by(data, dataset, location), .dummy=1))
+    locations <- data.frame(dplyr::do(dplyr::group_by_(data, "dataset", "location"), .dummy=1))
     locations$.dummy <- NULL
     if(!expand.tags) {
       locations$tags <- '{}'
     }
   } else {
+    # check columns before tagify
+    .checkcols(locations, 'locations', c('dataset', 'location'))
     locations <- .tagify(locations, exnames = c('dataset', 'location'), expand=expand.tags)
     locations$dataset <- as.character(locations$dataset)
     locations$location <- as.character(locations$location)
   }
   
   if(is.null(params)) {
-    params <- data.frame(dplyr::do(dplyr::group_by(data, dataset, param), .dummy=1))
+    params <- data.frame(dplyr::do(dplyr::group_by_(data, "dataset", "param"), .dummy=1))
     params$.dummy <- NULL
     if(!expand.tags) {
       params$tags <- '{}'
     }
   } else {
+    # check columns before tagify
+    .checkcols(params, 'params', c('dataset', 'param'))
     params <- .tagify(params, exnames = c('dataset', 'param'), expand=expand.tags)
     params$param <- as.character(params$param)
     params$dataset <- as.character(params$dataset)
@@ -87,6 +93,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     columns <- expand.grid(dataset=datasets$dataset, column=cols,
                            stringsAsFactors = FALSE)
   } else {
+    .checkcols(columns, 'columns', c('dataset', 'column'))
     columns <- .tagify(columns, exnames = c('dataset', 'column'), expand=expand.tags)
     columns$column <- as.character(columns$column)
     columns$dataset <- as.character(columns$dataset)
@@ -99,6 +106,13 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     .validate(md)
   }
   return(md)
+}
+
+.checkcols <- function(df, name, required_cols) {
+  missingcols <- required_cols[!(required_cols %in% names(df))]
+  if(length(missingcols)>0) stop(sprintf("Table '%s' is missing columns %s",
+                                         name,
+                                         paste0("'", missingcols, "'", collapse=", ")))
 }
 
 .validate <- function(md) {
@@ -125,12 +139,13 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   if(length(noinfds) > 0) stop("Datasets ", paste(noinfds, collapse=' '), " not included in data")
   
   # ensure no duplicates in locations, datasets, params
+  . <- NULL; rm(.) # CMD check hack
   if(length(unique(md$datasets$dataset)) != length(md$datasets$dataset)) stop("Duplicate datasets in dataset table")
-  dplyr::do(dplyr::group_by(md$locations, dataset, location), {
+  dplyr::do(dplyr::group_by_(md$locations, "dataset", "location"), {
     if(nrow(.) > 1) stop("Duplicate location in location table: ", unique(.$dataset), '->', unique(.$location))
     .
   })
-  dplyr::do(dplyr::group_by(md$params, dataset, param), {
+  dplyr::do(dplyr::group_by_(md$params, "dataset", "param"), {
     if(nrow(.) > 1) stop("Duplicate parameter in parameters table: ", unique(.$dataset), '->', unique(.$param))
     .
   })
@@ -275,14 +290,15 @@ write.mudata <- function(md, zipfile, overwrite=FALSE, expand.tags=TRUE, ...) {
   } else {
     md <- condense.tags(md)
   }
-  write.csv(md$data, file.path(zipfolder, "data.csv"), row.names = FALSE, ...)
-  write.csv(md$locations, file.path(zipfolder, "locations.csv"), row.names = FALSE, ...)
-  write.csv(md$params, file.path(zipfolder, "params.csv"), row.names = FALSE, ...)
-  write.csv(md$datasets, file.path(zipfolder, "datasets.csv"), row.names = FALSE, ...)
-  write.csv(md$columns, file.path(zipfolder, "columns.csv"), row.names = FALSE)
+  utils::write.csv(md$data, file.path(zipfolder, "data.csv"), row.names = FALSE, ...)
+  utils::write.csv(md$locations, file.path(zipfolder, "locations.csv"), row.names = FALSE, ...)
+  utils::write.csv(md$params, file.path(zipfolder, "params.csv"), row.names = FALSE, ...)
+  utils::write.csv(md$datasets, file.path(zipfolder, "datasets.csv"), row.names = FALSE, ...)
+  utils::write.csv(md$columns, file.path(zipfolder, "columns.csv"), row.names = FALSE)
   cwd <- getwd()
   setwd(zipfolder)
-  tryCatch(zip("zipfile.zip", c("data.csv", "locations.csv", "params.csv", "datasets.csv", "columns.csv")),
+  tryCatch(utils::zip("zipfile.zip", c("data.csv", "locations.csv", "params.csv", 
+                                       "datasets.csv", "columns.csv")),
            error=function(err) {
              setwd(cwd)
              unlink(zipfolder, recursive = TRUE)
@@ -304,7 +320,7 @@ read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE, ...) {
     tmpfold <- zipfile
     deleteOnExit <- FALSE
   } else {
-    unzip(zipfile, exdir = tmpfold)
+    utils::unzip(zipfile, exdir = tmpfold)
   }
   datafile <- list.files(tmpfold, pattern='data.csv', full.names = TRUE, recursive = TRUE)
   locationsfile <- list.files(tmpfold, pattern='locations.csv', full.names = TRUE, recursive = TRUE)
@@ -314,26 +330,26 @@ read.mudata <- function(zipfile, validate=TRUE, expand.tags=TRUE, ...) {
   
   md <- tryCatch({
     if(length(datafile) == 0) stop('data.csv not found')
-    data <- read.csv(path.expand(datafile[1]), stringsAsFactors = FALSE, ...)
+    data <- utils::read.csv(path.expand(datafile[1]), stringsAsFactors = FALSE, ...)
     if(length(locationsfile) == 0) {
       locations <- NULL
     } else {
-      locations <- read.csv(path.expand(locationsfile[1]), stringsAsFactors = FALSE, ...)
+      locations <- utils::read.csv(path.expand(locationsfile[1]), stringsAsFactors = FALSE, ...)
     }
     if(length(paramsfile) == 0) {
       params <- NULL
     } else {
-      params <- read.csv(path.expand(paramsfile[1]), stringsAsFactors = FALSE, ...)
+      params <- utils::read.csv(path.expand(paramsfile[1]), stringsAsFactors = FALSE, ...)
     }
     if(length(datasetsfile) == 0) {
       datasets <- NULL
     } else {
-      datasets <- read.csv(path.expand(datasetsfile[1]), stringsAsFactors = FALSE, ...)
+      datasets <- utils::read.csv(path.expand(datasetsfile[1]), stringsAsFactors = FALSE, ...)
     }
     if(length(columnsfile) == 0) {
       columns <- NULL
     } else {
-      columns <- read.csv(path.expand(columnsfile[1]), stringsAsFactors = FALSE, ...)
+      columns <- utils::read.csv(path.expand(columnsfile[1]), stringsAsFactors = FALSE, ...)
     }
     
     mudata(data=data, locations=locations, params=params, datasets=datasets,

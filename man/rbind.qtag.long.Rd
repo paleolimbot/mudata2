@@ -20,7 +20,7 @@ Combine qualifier/tag structures
 }
 \examples{
 data(pocmaj)
-pocmaj <- as.qtag(pocmaj, qualifiers=c("core", "depth"))
+pocmaj <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 newrow <- data.frame(core="POC-2", depth=6, Ca=2100, Ti=4100, V=45)
 rbind(pocmaj, newrow)
 

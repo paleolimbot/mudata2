@@ -5,15 +5,17 @@
 \alias{aggregate.qtag.wide}
 \title{Aggregate/Summarise a qualifier/tag structure}
 \usage{
-\method{aggregate}{qtag.long}(x, ...)
+\method{aggregate}{qtag.long}(x, ..., force = TRUE)
 
-\method{aggregate}{qtag.wide}(x, ...)
+\method{aggregate}{qtag.wide}(x, ..., force = TRUE)
 }
 \arguments{
 \item{x}{A \link{qtag} object}
 
 \item{...}{A parameter including at least one unnamed parameter for summarising values.
 Additional parameters may be used for aggregating a long format.}
+
+\item{force}{Use \code{force=FALSE} to only aggregate if the object is not already summarised.}
 }
 \value{
 A (possibly unchanged) \code{qtag} object

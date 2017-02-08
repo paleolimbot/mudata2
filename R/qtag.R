@@ -381,6 +381,7 @@ group <- function(qtag, quiet=FALSE) {
 #' qualifier combination. This is useful for summarising replicates.
 #'
 #' @param x A \link{qtag} object
+#' @param force Use \code{force=FALSE} to only aggregate if the object is not already summarised.
 #' @param ... A parameter including at least one unnamed parameter for summarising values.
 #'  Additional parameters may be used for aggregating a long format.
 #'
@@ -396,8 +397,8 @@ group <- function(qtag, quiet=FALSE) {
 #' 
 #' @importFrom stats aggregate
 #'
-aggregate.qtag.long <- function(x, ...) {
-  if(is.summarised(x)) return(x)
+aggregate.qtag.long <- function(x, ..., force=TRUE) {
+  if(!force && is.summarised(x)) return(x)
 
   qualifiers <- qualifiers(x)
   funformats <- generate.call(...)
@@ -425,8 +426,8 @@ aggregate.qtag.long <- function(x, ...) {
 
 #' @rdname aggregate.qtag.long
 #' @export
-aggregate.qtag.wide <- function(x, ...) {
-  if(is.summarised(x)) return(x)
+aggregate.qtag.wide <- function(x, ..., force=TRUE) {
+  if(!force && is.summarised(x)) return(x)
 
   qualifiers <- qualifiers(x)
   funformats <- generate.call(...)

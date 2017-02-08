@@ -23,7 +23,7 @@
 #'
 plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
   . <- NULL; rm(.) # CMD hack
-  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)))
+  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
   }

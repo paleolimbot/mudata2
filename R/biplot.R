@@ -35,7 +35,7 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
   . <- NULL; rm(.)
   
   # essential to have things be aggregated
-  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)))
+  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
   
   els <- NULL
   quals <- qualifiers(x)

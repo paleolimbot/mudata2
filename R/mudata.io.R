@@ -7,6 +7,8 @@
 #' @param overwrite Pass \code{TRUE} to overwrite if \code{zipfile} already exists.
 #' @param validate flag to validate mudata object upon read
 #' @param expand.tags flag to expand tags to columns
+#' @param retype Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
+#'   table.
 #' @param load a list of csv files (without the .csv extension) to load from the source.
 #' @param ... passed to read/write.csv
 #'
@@ -17,6 +19,7 @@
 #' # read/write to zip
 #' outfile <- tempfile(fileext=".zip")
 #' write.mudata(kentvillegreenwood, outfile)
+#' md <- read.mudata(outfile, retype=FALSE)
 #' md <- read.mudata(outfile)
 #' plot(subset(md, params=c("meantemp", "maxtemp")))
 #' unlink(outfile)
@@ -24,6 +27,7 @@
 #' # read/write to JSON
 #' outfile <- tempfile(fileext=".json")
 #' write.mudata(kentvillegreenwood, outfile)
+#' md <- read.mudata(outfile, retype=FALSE)
 #' md <- read.mudata(outfile)
 #' plot(subset(md, params=c("meantemp", "maxtemp")))
 #' unlink(outfile)
@@ -91,7 +95,7 @@ write.mudata.zip <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, ..
 
 #' @rdname write.mudata
 #' @export
-read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE,
+read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TRUE,
                         load=c("data", "locations", "params", "datasets", "columns"), ...) {
   if(!("data" %in% load)) stop("'data' must be in argument load")
   tmpfold <- tempfile()
@@ -112,7 +116,7 @@ read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE,
     }, USE.NAMES = TRUE, simplify = FALSE)
     
     mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
-                  columns=obj$columns,
+                  columns=obj$columns, retype=retype,
                   expand.tags=expand.tags, validate=validate)
     morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
     for(name in morenames) {
@@ -163,7 +167,7 @@ write.mudata.json <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, .
 
 #' @rdname write.mudata
 #' @export
-read.mudata.json <- function(filename, validate=TRUE, expand.tags=TRUE,
+read.mudata.json <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TRUE,
                              load=c("data", "locations", "params", "datasets", "columns"), ...) {
   obj <- sapply(jsonlite::read_json(filename, simplifyVector = TRUE, ...), 
                 function(obj) {
@@ -175,7 +179,7 @@ read.mudata.json <- function(filename, validate=TRUE, expand.tags=TRUE,
                   }
                 }, USE.NAMES = TRUE, simplify = FALSE)
   mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
-                columns=obj$columns,
+                columns=obj$columns, retype=retype,
                 expand.tags=expand.tags, validate=validate)
   morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
   for(name in morenames) {

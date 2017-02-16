@@ -133,7 +133,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
         df <- mdlist[[table]]
         for(col in names(df)) {
           types <- typesdf$type[typesdf$column == col]
-          if((length(types) == 1) && existsFunction(paste0("as.", types))) {
+          if((length(types) == 1) && !(types %in% class(df[[col]])) && 
+             existsFunction(paste0("as.", types))) {
+            message("Retyping column '", col, "' from '", class(df[[col]])[1], "' to '", types, "'")
             df[[col]] <- get(paste0("as.", types))(df[[col]])
           }
         }

@@ -16,12 +16,14 @@ read.mudata(filename, ...)
 write.mudata.zip(md, filename, overwrite = FALSE, expand.tags = TRUE, ...)
 
 read.mudata.zip(filename, validate = TRUE, expand.tags = TRUE,
-  load = c("data", "locations", "params", "datasets", "columns"), ...)
+  retype = TRUE, load = c("data", "locations", "params", "datasets",
+  "columns"), ...)
 
 write.mudata.json(md, filename, overwrite = FALSE, expand.tags = TRUE, ...)
 
 read.mudata.json(filename, validate = TRUE, expand.tags = TRUE,
-  load = c("data", "locations", "params", "datasets", "columns"), ...)
+  retype = TRUE, load = c("data", "locations", "params", "datasets",
+  "columns"), ...)
 }
 \arguments{
 \item{md}{a mudata object}
@@ -36,6 +38,9 @@ read.mudata.json(filename, validate = TRUE, expand.tags = TRUE,
 
 \item{validate}{flag to validate mudata object upon read}
 
+\item{retype}{Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
+table.}
+
 \item{load}{a list of csv files (without the .csv extension) to load from the source.}
 }
 \description{
@@ -46,6 +51,7 @@ data(kentvillegreenwood)
 # read/write to zip
 outfile <- tempfile(fileext=".zip")
 write.mudata(kentvillegreenwood, outfile)
+md <- read.mudata(outfile, retype=FALSE)
 md <- read.mudata(outfile)
 plot(subset(md, params=c("meantemp", "maxtemp")))
 unlink(outfile)
@@ -53,6 +59,7 @@ unlink(outfile)
 # read/write to JSON
 outfile <- tempfile(fileext=".json")
 write.mudata(kentvillegreenwood, outfile)
+md <- read.mudata(outfile, retype=FALSE)
 md <- read.mudata(outfile)
 plot(subset(md, params=c("meantemp", "maxtemp")))
 unlink(outfile)

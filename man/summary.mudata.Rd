@@ -4,7 +4,7 @@
 \alias{summary.mudata}
 \title{Object summary for a mudata object}
 \usage{
-\method{summary}{mudata}(object, ..., digits = 2)
+\method{summary}{mudata}(object, ..., digits = NA)
 }
 \arguments{
 \item{object}{A \link{mudata} object}

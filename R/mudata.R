@@ -253,7 +253,7 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
 #' summary(longlake2016, digits=NA)
 #' summary(longlake2016)
 #' 
-summary.mudata <- function(object, ..., digits=2) {
+summary.mudata <- function(object, ..., digits=NA) {
   df <- data.frame(dplyr::summarise_(dplyr::group_by_(object$data, "dataset", "location", "param"),
                     Min="min(value, na.rm=TRUE)", 
                     Median="stats::median(value, na.rm=TRUE)",

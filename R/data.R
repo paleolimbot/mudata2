@@ -1,20 +1,22 @@
-#' Multi-qualifier paleolimnological concentration data
+#' Pockwock Lake/Lake Major Elemental Sample Data
 #'
-#' Base qtag example dataset
+#' A small example data.frame used to test qualifer/tag structure methods.
 #'
 #' @format A \code{data.frame} containing multi-qualifier concentration data
 "pocmaj"
 
-#' Sample paleolimnological Pb-210 data
+#'  Pockwock Lake/Lake Major Lead-210 Sample Data
 #'
-#' Example of pre-summarised data
+#' A small example data.frame of pre-summarised data.
 #'
-#' @format A \code{data.frame} containing multi-qualifier concentration data
+#' @format A \code{data.frame} containing multi-qualifier data
 "pocmajpb210"
 
-#' Sample mudata object
+#' Kentville/Greenwood Climate Data
 #'
-#' Example of a sample mudata object
+#' Climate data for Kentville and Greenwood (Nova Scotia) for July and August of 1999.
 #'
-#' @format A \code{mudata} object containing multi-parameter spatiotemporal data
-"longlake2016"
+#' @format A \link{mudata} object (list with elements data, locations, params, datasets, columns)
+#' 
+#' @source Environment Canada via the 'rclimateca' package. 
+"kentvillegreenwood"

@@ -58,9 +58,9 @@ as.qtag <- function(df, .qualifiers, .values, .tags, quiet=FALSE) {
   attr(df, "values") <- values
   attr(df, "tags") <- tags
   if(length(values) > 1) {
-    class(df) <- c("qtag.wide", "qtag", class(df))
+    class(df) <- unique(c("qtag.wide", "qtag", class(df)))
   } else {
-    class(df) <- c("qtag.long", "qtag", class(df))
+    class(df) <- unique(c("qtag.long", "qtag", class(df)))
   }
   if(missing(summarised)) {
     attr(df, "summarised") <- is.summarised(df, quiet=TRUE)
@@ -294,20 +294,20 @@ long.qtag.long <- function(x, ...) {
 
 #' @rdname long
 #' @export
-long.qtag.wide <- function(x, varname="column", quiet=FALSE, ...) {
+long.qtag.wide <- function(x, varname="param", quiet=FALSE, ...) {
   valuecol <- values(x)
   qualifiers <- qualifiers(x)
   tags <- tags(x)
-  dfmelt <- reshape2::melt(x[c(qualifiers, valuecol)], id.vars=qualifiers, measure.vars=valuecol, value.name="values", variable.name=varname)
+  dfmelt <- reshape2::melt(x[c(qualifiers, valuecol)], id.vars=qualifiers, measure.vars=valuecol, value.name="value", variable.name=varname)
   if(length(tags) > 0) {
     dfmelt <- merge(dfmelt, x[c(qualifiers, tags)], by=qualifiers, all.x=TRUE)
   }
-  attr(dfmelt, "values") <- "values"
+  attr(dfmelt, "values") <- "value"
   attr(dfmelt, "qualifiers") <- c(qualifiers, varname)
   attr(dfmelt, "tags") <- tags
   attr(dfmelt, "summarised") <- is.summarised(x)
   class(dfmelt) <- c("qtag.long", "qtag", class(dfmelt))
-  if(!quiet) message("Assigning values column 'values' and qualifier '", varname, "'")
+  if(!quiet) message("Assigning values column 'value' and qualifier '", varname, "'")
   return(dfmelt)
 }
 

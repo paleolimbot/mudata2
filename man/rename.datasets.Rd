@@ -41,14 +41,14 @@ Provides a convenient way to rename datasets, params, locations, and columns
 such that their usage remains consistent.
 }
 \examples{
-data(longlake2016)
-md2 <- rename.datasets(longlake2016, Dunnington_longlake="dll")
+data(kentvillegreenwood)
+md2 <- rename.datasets(kentvillegreenwood, ecclimate="avalley")
 validate.mudata(md2)
-md2 <- rename.locations(longlake2016, "LL GC10"="LLGC10")
+md2 <- rename.locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
 validate.mudata(md2)
-md2 <- rename.params(longlake2016, LOI="Loss On Ignition")
+md2 <- rename.params(kentvillegreenwood, maxtemp="Maximum Temperature")
 validate.mudata(md2)
-md2 <- rename.cols(longlake2016, err="stderr")
+md2 <- rename.cols(kentvillegreenwood, latitude="lat", longitude="lon")
 validate.mudata(md2)
 
 }

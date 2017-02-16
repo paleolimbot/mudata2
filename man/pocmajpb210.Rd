@@ -3,13 +3,13 @@
 \docType{data}
 \name{pocmajpb210}
 \alias{pocmajpb210}
-\title{Sample paleolimnological Pb-210 data}
-\format{A \code{data.frame} containing multi-qualifier concentration data}
+\title{Pockwock Lake/Lake Major Lead-210 Sample Data}
+\format{A \code{data.frame} containing multi-qualifier data}
 \usage{
 pocmajpb210
 }
 \description{
-Example of pre-summarised data
+A small example data.frame of pre-summarised data.
 }
 \keyword{datasets}
 

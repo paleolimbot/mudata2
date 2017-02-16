@@ -31,12 +31,16 @@ rename.cols.default <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE)
 #' @rdname rename.cols
 rename.cols.qtag <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
   replace <- list(...)
-  out <- plyr::rename(x, replace)
-  attr(out, "qualifiers") <- rename.values(qualifiers(x), replace)
-  attr(out, "values") <- rename.values(values(x), replace)
-  attr(out, "tags") <- rename.values(tags(x), replace)
-  attr(out, "summarised") <- is.summarised(x)
+  quals <- qualifiers(x)
+  vals <- values(x)
+  tags <- tags(x)
+  
+  out <- plyr::rename(x, replace, warn_missing=warn_missing, warn_duplicated = warn_duplicated)
+  attr(out, "qualifiers") <- rename.values(quals, replace, warn_missing = FALSE)
+  attr(out, "values") <- rename.values(vals, replace, warn_missing = FALSE)
+  attr(out, "tags") <- rename.values(tags, replace, warn_missing = FALSE)
   class(out) <- class(x)
+  attr(out, "summarised") <- is.summarised(x)
   return(out)
 }
 
@@ -60,9 +64,16 @@ rename.cols.qtag <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
 #'
 rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
   replacer <- list(...)
+  if(length(replacer) == 0) return(x)
+  
   replacernames <- names(replacer)
+  if(is.null(replacernames) && (length(replacer) == 1)) {
+    replacer <- replacer[[1]]
+    replacernames <- names(replacer)
+  }
   notinvector <- replacernames[!(replacernames %in% x)]
-  if(length(notinvector) > 0) message("Not all values were found: ", paste(notinvector, collapse=", "))
+  if(warn_missing && (length(notinvector) > 0)) 
+    message("Not all values were found: ", paste(notinvector, collapse=", "))
   if(length(defaultValue) != length(x)) {
     defaultValue <- rep(defaultValue, length.out=length(x))
   }
@@ -89,14 +100,14 @@ rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
 #' @export
 #'
 #' @examples
-#' data(longlake2016)
-#' md2 <- rename.datasets(longlake2016, Dunnington_longlake="dll")
+#' data(kentvillegreenwood)
+#' md2 <- rename.datasets(kentvillegreenwood, ecclimate="avalley")
 #' validate.mudata(md2)
-#' md2 <- rename.locations(longlake2016, "LL GC10"="LLGC10")
+#' md2 <- rename.locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
 #' validate.mudata(md2)
-#' md2 <- rename.params(longlake2016, LOI="Loss On Ignition")
+#' md2 <- rename.params(kentvillegreenwood, maxtemp="Maximum Temperature")
 #' validate.mudata(md2)
-#' md2 <- rename.cols(longlake2016, err="stderr")
+#' md2 <- rename.cols(kentvillegreenwood, latitude="lat", longitude="lon")
 #' validate.mudata(md2)
 #' 
 rename.datasets <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),
@@ -133,6 +144,6 @@ rename.cols.mudata <- function(x, ..., apply_to=c("datasets", "locations", "para
     x[[dfname]] <- rename.cols(x[[dfname]], ..., warn_missing=warn_missing, 
                                warn_duplicated=TRUE)
   }
-  x$columns$column <- rename.values(x$columns$column, ...)
+  x$columns$column <- rename.values(x$columns$column, ..., warn_missing=warn_missing)
   return(x)
 }

@@ -13,7 +13,7 @@ long(x, ...)
 
 \method{long}{qtag.long}(x, ...)
 
-\method{long}{qtag.wide}(x, varname = "column", quiet = FALSE, ...)
+\method{long}{qtag.wide}(x, varname = "param", quiet = FALSE, ...)
 }
 \arguments{
 \item{x}{A \link{qtag} object}

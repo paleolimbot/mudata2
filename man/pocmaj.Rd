@@ -3,13 +3,13 @@
 \docType{data}
 \name{pocmaj}
 \alias{pocmaj}
-\title{Multi-qualifier paleolimnological concentration data}
+\title{Pockwock Lake/Lake Major Elemental Sample Data}
 \format{A \code{data.frame} containing multi-qualifier concentration data}
 \usage{
 pocmaj
 }
 \description{
-Base qtag example dataset
+A small example data.frame used to test qualifer/tag structure methods.
 }
 \keyword{datasets}
 

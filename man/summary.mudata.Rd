@@ -26,10 +26,10 @@ Returns a data.frame containing summary (by dataset, location, and param)
 statistics.
 }
 \examples{
-data(longlake2016)
-summary(longlake2016, digits=2)
-summary(longlake2016)
-print(longlake2016, digits=2)
+data(kentvillegreenwood)
+summary(kentvillegreenwood, digits=2)
+summary(kentvillegreenwood)
+print(kentvillegreenwood, digits=2)
 
 }
 

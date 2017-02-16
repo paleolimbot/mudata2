@@ -24,4 +24,11 @@ that have all non-detect values. This can be done with the dplyr summarise funct
 The \code{subset} argument is quite powerful for filtering, but does not affect the order
 of appearance. For this, use \link{subset.mudata}.
 }
+\examples{
+data(kentvillegreenwood)
+plot(kentvillegreenwood)
+library(ggplot2)
+autoplot(kentvillegreenwood)
+
+}
 

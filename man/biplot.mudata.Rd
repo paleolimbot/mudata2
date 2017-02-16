@@ -20,8 +20,8 @@ a ggplot object
 Biplot a mudata object
 }
 \examples{
-data(longlake2016)
-biplot(longlake2016, namesx=c("LOI", "Ti", "K"))
+data(kentvillegreenwood)
+biplot(kentvillegreenwood, c("meantemp", "maxtemp", "mintemp"), col="location")
 
 }
 

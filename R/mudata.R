@@ -11,13 +11,27 @@
 #' @param defactorize Pass \code{FALSE} to keep input columns as factors (may cause errors).
 #' @param validate Flag to validate input
 #' @param expand.tags Flag to expand JSON tags to columns
+#' @param retype Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
+#'   table.
 #'
 #' @return A \code{mudata} object
 #' @export
 #' 
+#' @examples
+#' data(pocmaj)
+#' # melt and aggregate data
+#' pocmaj <- as.qtag(pocmaj)
+#' pocmaj <- long(pocmaj)
+#' pocmaj <- aggregate(pocmaj)
+#' # rename columns so there is a location, param, x, and value
+#' datatable <- rename.cols(pocmaj, core="location", depth="x")
+#' md <- mudata(datatable)
+#' summary(md)
+#' plot(md, yvar="x", geom=c("path", "point"))
+#' 
 mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, 
                    columns=NULL, dataset.id='default', location.id='default', 
-                   defactorize=TRUE, validate=TRUE, expand.tags=TRUE) {
+                   defactorize=TRUE, validate=TRUE, expand.tags=TRUE, retype=TRUE) {
   if(!('dataset' %in% names(data))) {
     data$dataset <- dataset.id
   } else if(defactorize) {
@@ -89,23 +103,47 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     params$dataset <- as.character(params$dataset)
   }
   
+  mdlist <- list(data=data, locations=locations, params=params, 
+                 datasets=datasets)
   if(is.null(columns)) {
-    cols <- c(names(data), names(params), 
-                 names(locations), names(datasets))
-    cols <- cols[!(cols %in% c('dataset', 'location', 'param', 'value'))]
-    # should maybe check by dataset as different datasets may have
-    # unique columns. leaving this out of the .validate for now.
-    columns <- expand.grid(dataset=datasets$dataset, column=cols,
+    allcols <- expand.grid(dataset=datasets$dataset, 
+                           table=c("data", "locations", "params", "datasets"),
                            stringsAsFactors = FALSE)
+    allcols <- plyr::adply(allcols, .margins=1, .fun=function(row) {
+      df <- mdlist[[row$table]]
+      df <- df[df$dataset==row$dataset,]
+      cols <- names(df)
+      cols <- cols[sapply(cols, function(col) !all(is.na(df[[col]])))]
+      types <- sapply(cols, function(col) class(df[[col]])[1])
+      return(data.frame(column=cols, type=types, stringsAsFactors = FALSE))
+    })
+    columns <- data.frame(allcols, stringsAsFactors = FALSE)
+    columns <- columns[!(columns$column %in% c('dataset', 'param', 'location')),]
+    mdlist$columns <- columns
   } else {
-    .checkcols(columns, 'columns', c('dataset', 'column'))
-    columns <- .tagify(columns, exnames = c('dataset', 'column'), expand=expand.tags)
+    .checkcols(columns, 'columns', c('dataset', 'table', 'column'))
+    columns <- .tagify(columns, exnames = c('dataset', 'table', 'column'), expand=expand.tags)
     columns$column <- as.character(columns$column)
     columns$dataset <- as.character(columns$dataset)
+    
+    # try to retype data based on column types
+    if(retype && ("type" %in% names(columns))) {
+      mdlist <- sapply(names(mdlist), function(table) {
+        typesdf <- unique(columns[columns$table == table, c("table", "column", "type")])
+        df <- mdlist[[table]]
+        for(col in names(df)) {
+          types <- typesdf$type[typesdf$column == col]
+          if((length(types) == 1) && existsFunction(paste0("as.", types))) {
+            df[[col]] <- get(paste0("as.", types))(df[[col]])
+          }
+        }
+        return(df)
+      }, USE.NAMES = TRUE, simplify=FALSE)
+    }
+    mdlist$columns <- columns
   }
   
-  md <- structure(.Data = list(data=data, locations=locations, params=params, 
-                               datasets=datasets, columns=columns),
+  md <- structure(.Data = mdlist,
                     class=c('mudata', 'list'))
   if(validate) {
     .validate(md)
@@ -250,10 +288,10 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
 #' @export
 #'
 #' @examples
-#' data(longlake2016)
-#' summary(longlake2016, digits=2)
-#' summary(longlake2016)
-#' print(longlake2016, digits=2)
+#' data(kentvillegreenwood)
+#' summary(kentvillegreenwood, digits=2)
+#' summary(kentvillegreenwood)
+#' print(kentvillegreenwood, digits=2)
 #' 
 summary.mudata <- function(object, ..., digits=NA) {
   df <- data.frame(dplyr::summarise_(dplyr::group_by_(object$data, "dataset", "location", "param"),

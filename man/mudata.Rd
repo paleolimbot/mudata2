@@ -6,7 +6,8 @@
 \usage{
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
   columns = NULL, dataset.id = "default", location.id = "default",
-  defactorize = TRUE, validate = TRUE, expand.tags = TRUE)
+  defactorize = TRUE, validate = TRUE, expand.tags = TRUE,
+  retype = TRUE)
 }
 \arguments{
 \item{data}{The data table}
@@ -28,11 +29,27 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
 \item{validate}{Flag to validate input}
 
 \item{expand.tags}{Flag to expand JSON tags to columns}
+
+\item{retype}{Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
+table.}
 }
 \value{
 A \code{mudata} object
 }
 \description{
 Create a MuData object
+}
+\examples{
+data(pocmaj)
+# melt and aggregate data
+pocmaj <- as.qtag(pocmaj)
+pocmaj <- long(pocmaj)
+pocmaj <- aggregate(pocmaj)
+# rename columns so there is a location, param, x, and value
+datatable <- rename.cols(pocmaj, core="location", depth="x")
+md <- mudata(datatable)
+summary(md)
+plot(md, yvar="x", geom=c("path", "point"))
+
 }
 

@@ -18,7 +18,7 @@
 #'
 #' pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' plot(pocmajqt, geom=c("path", "point"))
-#' plot(pocmajqt, subset=core=="MAJ-1" & column %in% c("Ca", "Ti"))
+#' plot(pocmajqt, subset=core=="MAJ-1" & param %in% c("Ca", "Ti"))
 #' plot(pocmajqt, shape="core")
 #' plot(long(pocmajqt))
 #'
@@ -117,11 +117,11 @@ autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, geom="path",
 
   yrev <- NULL
   if(yvar == "x") {
-    if(!.is_ad(x[yvar])) {
+    if(!.is_ad(x[[yvar]])) {
       yrev <- ggplot2::scale_y_reverse()
     }
   } else if(xvar == "x") {
-    if(!.is_ad(x[xvar])) {
+    if(!.is_ad(x[[xvar]])) {
       yrev <- ggplot2::scale_x_reverse()
     }
   }
@@ -165,6 +165,12 @@ plot.qtag.wide <- function(x, ...) {
 #' @return A ggplot object
 #'
 #' @export
+#' 
+#' @examples 
+#' data(kentvillegreenwood)
+#' plot(kentvillegreenwood)
+#' library(ggplot2)
+#' autoplot(kentvillegreenwood)
 #'
 autoplot.mudata <- function(x, ...) {
   autoplot.qtag.long(x$data, ...)
@@ -181,7 +187,7 @@ guess.xy <- function(x, xvar, yvar) {
   values <- values(x)
   types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
   numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
-  if(numqualifiers > 0) {
+  if(length(numqualifiers) > 0) {
     if(missing(xvar) && missing(yvar)) {
       xvar <- numqualifiers[length(numqualifiers)]
       yvar <- values

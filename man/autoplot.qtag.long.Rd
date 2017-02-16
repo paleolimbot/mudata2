@@ -44,7 +44,7 @@ data(pocmaj)
 
 pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 plot(pocmajqt, geom=c("path", "point"))
-plot(pocmajqt, subset=core=="MAJ-1" & column \%in\% c("Ca", "Ti"))
+plot(pocmajqt, subset=core=="MAJ-1" & param \%in\% c("Ca", "Ti"))
 plot(pocmajqt, shape="core")
 plot(long(pocmajqt))
 

@@ -42,19 +42,19 @@ read.mudata.json(filename, validate = TRUE, expand.tags = TRUE,
 Read/Write a MuData files
 }
 \examples{
-data(longlake2016)
+data(kentvillegreenwood)
 # read/write to zip
 outfile <- tempfile(fileext=".zip")
-write.mudata(longlake2016, outfile)
+write.mudata(kentvillegreenwood, outfile)
 md <- read.mudata(outfile)
-plot(subset(md, params=c("Hg", "Pb")))
+plot(subset(md, params=c("meantemp", "maxtemp")))
 unlink(outfile)
 
 # read/write to JSON
 outfile <- tempfile(fileext=".json")
-write.mudata(longlake2016, outfile)
+write.mudata(kentvillegreenwood, outfile)
 md <- read.mudata(outfile)
-plot(subset(md, params=c("Hg", "Pb")))
+plot(subset(md, params=c("meantemp", "maxtemp")))
 unlink(outfile)
 
 }

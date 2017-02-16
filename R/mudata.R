@@ -242,6 +242,7 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
 #' statistics.
 #'
 #' @param object A \link{mudata} object
+#' @param x A \link{mudata} object
 #' @param ... Unused
 #' @param digits The number of digits to be used for rounding, or NA to suppress rounding.
 #'
@@ -250,8 +251,9 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
 #'
 #' @examples
 #' data(longlake2016)
-#' summary(longlake2016, digits=NA)
+#' summary(longlake2016, digits=2)
 #' summary(longlake2016)
+#' print(longlake2016, digits=2)
 #' 
 summary.mudata <- function(object, ..., digits=NA) {
   df <- data.frame(dplyr::summarise_(dplyr::group_by_(object$data, "dataset", "location", "param"),
@@ -268,4 +270,25 @@ summary.mudata <- function(object, ..., digits=NA) {
   } else {
     return(df)
   }
+}
+
+#' @rdname summary.mudata
+#' @export
+print.mudata <- function(x, ..., digits=4) {
+  sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), min="min(value, na.rm=TRUE)",
+                              max="max(value, na.rm=TRUE)")
+  datasets <- x$datasets$dataset
+  locations <- x$locations$location
+  params <- unique(x$params$param)
+  xrange <- range(x$data$x)
+  lines <- c(sprintf("A mudata object with %d dataset(s), %d location(s), %d param(s), and %d data points",
+                     length(datasets), length(locations), length(params), nrow(x$data)),
+             sprintf("... datasets: %s", paste(datasets, collapse=", ")),
+             sprintf("... locations: %s", paste(locations, collapse=", ")),
+             sprintf("... x: from %s to %s", xrange[1], xrange[2]),
+             "... params:", 
+             paste("... ... ", sumobj$param, " from ", 
+                   format(sumobj$min, digits=digits), " to ", format(sumobj$max, digits=digits)))
+  cat(paste(lines, collapse="\n"))
+  invisible(x)
 }

@@ -80,8 +80,10 @@ rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
 #' @param md A \link{mudata} object
 #' @param x A \link{mudata} object
 #' @param ... Key/value pairs in the form \code{"oldvalue"="newvalue"}
-#' @param warn_missing Print a message if any old names are not actually present
 #' @param apply_to The sub-elements which the rename operation should consider
+#' @param warn_missing Print a message if any old names are not actually present
+#' @param warn_duplicated Print a message if any name appears more than once in x 
+#'   after the operation.
 #'
 #' @return A modified \link{mudata} object.
 #' @export
@@ -125,8 +127,8 @@ rename.locations <- function(md, ..., apply_to=c("data", "locations"), warn_miss
 
 #' @rdname rename.datasets
 #' @export
-rename.cols.mudata <- function(x, ..., warn_missing=FALSE,
-                               apply_to=c("datasets", "locations", "params", "data", "columns")) {
+rename.cols.mudata <- function(x, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
+                               warn_missing=FALSE, warn_duplicated=TRUE) {
   for(dfname in apply_to) {
     x[[dfname]] <- rename.cols(x[[dfname]], ..., warn_missing=warn_missing, 
                                warn_duplicated=TRUE)

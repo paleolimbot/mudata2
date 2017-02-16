@@ -15,8 +15,9 @@ rename.params(md, ..., apply_to = c("data", "params"), warn_missing = TRUE)
 rename.locations(md, ..., apply_to = c("data", "locations"),
   warn_missing = TRUE)
 
-\method{rename.cols}{mudata}(x, ..., warn_missing = FALSE,
-  apply_to = c("datasets", "locations", "params", "data", "columns"))
+\method{rename.cols}{mudata}(x, ..., apply_to = c("datasets", "locations",
+  "params", "data", "columns"), warn_missing = FALSE,
+  warn_duplicated = TRUE)
 }
 \arguments{
 \item{md}{A \link{mudata} object}
@@ -28,6 +29,9 @@ rename.locations(md, ..., apply_to = c("data", "locations"),
 \item{warn_missing}{Print a message if any old names are not actually present}
 
 \item{x}{A \link{mudata} object}
+
+\item{warn_duplicated}{Print a message if any name appears more than once in x 
+after the operation.}
 }
 \value{
 A modified \link{mudata} object.

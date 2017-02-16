@@ -17,20 +17,10 @@
 #' @examples 
 #' data(pocmaj)
 #' qt <- as.qtag(pocmaj)
-#' biplotgg(qt, color="core")
+#' biplot(qt, color="core")
 #' 
-biplotgg <- function(x, ...) UseMethod("biplotgg")
-
-#' @rdname biplotgg
-#' @export
-biplotgg.qtag.wide <- function(x, ...) {
-  biplotgg(long(x), ...)
-}
-
-#' @rdname biplotgg
-#' @export
-biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, values=NULL, 
-                               errors=NULL, labeller=ggplot2::label_value, ...) {
+biplot.qtag.long <- function(x, namesx=NULL, namesy=NULL, values=NULL, namecolumn=NULL,
+                             errors=NULL, labeller=ggplot2::label_value, ...) {
   # CMD hack
   . <- NULL; rm(.)
   
@@ -67,7 +57,7 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
   
   if(is.null(namesy)) {
     els <- dplyr::do(
-          dplyr::group_by_(data.frame(i=1:(length(namesx)-1), stringsAsFactors = FALSE), "i"), {
+      dplyr::group_by_(data.frame(i=1:(length(namesx)-1), stringsAsFactors = FALSE), "i"), {
         data.frame(vary=namesx[.$i], varx=namesx[(.$i+1):length(namesx)], stringsAsFactors=F)
       })
     els$i <- NULL
@@ -98,9 +88,9 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
     erry <- paste0(errors, '.y')
     ggerror <- list(
       ggplot2::geom_errorbar(
-          ggplot2::aes_string(ymax=paste(valy, erry, sep='+'), ymin=paste(valy, erry, sep='-'))),
+        ggplot2::aes_string(ymax=paste(valy, erry, sep='+'), ymin=paste(valy, erry, sep='-'))),
       ggplot2::geom_errorbarh(
-          ggplot2::aes_string(xmax=paste(valx, errx, sep='+'), xmin=paste(valx, errx, sep='-')))
+        ggplot2::aes_string(xmax=paste(valx, errx, sep='+'), xmin=paste(valx, errx, sep='-')))
     )
   }
   ggplot2::ggplot(tmp, ggplot2::aes_string(x=valx, y=valy, ...)) + 
@@ -108,4 +98,27 @@ biplotgg.qtag.long <- function(x, namecolumn=NULL, namesx=NULL, namesy=NULL, val
     ggerror +
     ggplot2::facet_grid(vary~varx, scales="free", labeller = labeller) +
     ggplot2::labs(x=NULL, y=NULL)
+}
+
+#' @rdname biplot.qtag.long
+#' @export
+biplot.qtag.wide <- function(x, ...) {
+  biplot(long(x), ...)
+}
+
+#' Biplot a mudata object
+#'
+#' @param x A mudata object
+#' @param namecolumn The column that contains the names for biplotting
+#' @param ... passed to \link{biplot.qtag.long}
+#'
+#' @return a ggplot object
+#' @export
+#' 
+#' @examples 
+#' data(longlake2016)
+#' biplot(longlake2016, namesx=c("LOI", "Ti", "K"))
+#'
+biplot.mudata <- function(x, ..., namecolumn = "param") {
+  biplot.qtag.long(x$data, ..., namecolumn = namecolumn)
 }

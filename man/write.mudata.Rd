@@ -47,14 +47,14 @@ data(longlake2016)
 outfile <- tempfile(fileext=".zip")
 write.mudata(longlake2016, outfile)
 md <- read.mudata(outfile)
-plotgg(subset(md, params=c("Hg", "Pb")))
+plot(subset(md, params=c("Hg", "Pb")))
 unlink(outfile)
 
 # read/write to JSON
 outfile <- tempfile(fileext=".json")
 write.mudata(longlake2016, outfile)
 md <- read.mudata(outfile)
-plotgg(subset(md, params=c("Hg", "Pb")))
+plot(subset(md, params=c("Hg", "Pb")))
 unlink(outfile)
 
 }

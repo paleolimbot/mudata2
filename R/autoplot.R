@@ -14,14 +14,19 @@
 #'
 #' @examples
 #' data(pocmaj)
-#'
+#' 
 #' pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
-#' plotgg(pocmajqt)
-#' plotgg(pocmajqt, subset=core=="MAJ-1" & column %in% c("Ca", "Ti"))
-#' plotgg(pocmajqt, shape="core")
+#' plot(pocmajqt)
+#' plot(pocmajqt, subset=core=="MAJ-1" & column %in% c("Ca", "Ti"))
+#' plot(pocmajqt, shape="core")
+#' plot(long(pocmajqt))
+#' 
+#' library(ggplot2)
+#' autoplot(pocmajqt, shape="core")
+#' 
+#' @importFrom ggplot2 autoplot
 #'
-#'
-plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
+autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
   . <- NULL; rm(.) # CMD hack
   x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
   if(!missing(subset)) {
@@ -115,14 +120,47 @@ plotgg.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
 }
 
 #' @export
-#' @rdname plotgg.qtag.long
-plotgg.qtag.wide <- function(x, ...) {
-  plotgg(long(x), ...)
+#' @rdname autoplot.qtag.long
+autoplot.qtag.wide <- function(x, ...) {
+  autoplot(long(x), ...)
 }
 
 #' @export
-#' @rdname plotgg.qtag.long
-plotgg <- function(x, ...) UseMethod("plotgg")
+#' @rdname autoplot.qtag.long
+plot.qtag.long <- function(x, ...) {
+  autoplot.qtag.long(x, ...)
+}
+
+#' @export
+#' @rdname autoplot.qtag.long
+plot.qtag.wide <- function(x, ...) {
+  plot(long(x), ...)
+}
+
+#' Autoplot a mudata object
+#'
+#' If you get a \code{seq...finite values} error, you may have to check for params
+#' that have all non-detect values. This can be done with the dplyr summarise function
+#' (\code{group_by(dataset, param) / summarise(allnd=all(is.na(value))) / data.frame()}).
+#' The \code{subset} argument is quite powerful for filtering, but does not affect the order
+#' of appearance. For this, use \link{subset.mudata}.
+#'
+#' @param x A \link{mudata} object
+#' @param ... Passed on to \link{autoplot.qtag.long}
+#'
+#' @return A ggplot object
+#'
+#' @export
+#'
+autoplot.mudata <- function(x, ...) {
+  autoplot.qtag.long(x$data, ...)
+}
+
+#' @rdname autoplot.mudata
+#' @export
+plot.mudata <- function(x, ...) {
+  autoplot.qtag.long(x$data, ...)
+}
 
 guess.xy <- function(x, xvar, yvar) {
   qualifiers <- qualifiers(x)

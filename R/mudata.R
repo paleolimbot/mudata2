@@ -234,35 +234,3 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
   mudata(data=dta, locations=lc, params=pm, datasets=ds, 
          columns=cl, validate=validate, defactorize = defactorize)
 }
-
-#' Autoplot a mudata object
-#'
-#' If you get a \code{seq...finite values} error, you may have to check for params
-#' that have all non-detect values. This can be done with the dplyr summarise function
-#' (\code{group_by(dataset, param) / summarise(allnd=all(is.na(value))) / data.frame()}).
-#' The \code{subset} argument is quite powerful for filtering, but does not affect the order
-#' of appearance. For this, use \link{subset.mudata}.
-#'
-#' @param x A \link{mudata} object
-#' @param ... Passed on to \code{plotgg.qtag.long}
-#'
-#' @return A ggplot object
-#'
-#' @export
-#'
-plotgg.mudata <- function(x, ...) {
-  plotgg.qtag.long(x$data, ...)
-}
-
-
-#' Biplot a mudata object
-#'
-#' @param x A mudata object
-#' @param ... passed to \link{biplotgg.qtag.long}
-#'
-#' @return a ggplot object
-#' @export
-#'
-biplotgg.mudata <- function(x, ...) {
-  biplotgg.qtag.long(x$data, ...)
-}

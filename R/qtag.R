@@ -498,7 +498,7 @@ generate.call <- function(..., .quiet=FALSE) {
     if(argnames[1] != "") stop("Need 1 unnamed argument to apply to values")
     argsformatted <- sapply(sumargs, function(aggfun) {
       if(grepl(x=aggfun, pattern="(", fixed=TRUE)) {
-        gsub(x=aggfun, pattern="(.", replacement="(%s", fixed=TRUE)
+        gsub(x=aggfun, pattern="([(,])\\s*\\.\\s*([),])", replacement="\\1%s\\2")
       } else {
         paste0(aggfun, "(%s)")
       }

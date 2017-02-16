@@ -4,6 +4,7 @@
 #' @param xvar Column to be used on the x-axis
 #' @param yvar Column to be used on the y-axis
 #' @param facets Column to be used as facetting variable
+#' @param geom GGPlot geometries to be used. Can be any combination of point, path, or line.
 #' @param subset Subset to plot
 #' @param errors The colum that contains uncertainty information
 #' @param ... Passed on to \code{aes_string()}
@@ -14,29 +15,40 @@
 #'
 #' @examples
 #' data(pocmaj)
-#' 
+#'
 #' pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
-#' plot(pocmajqt)
+#' plot(pocmajqt, geom=c("path", "point"))
 #' plot(pocmajqt, subset=core=="MAJ-1" & column %in% c("Ca", "Ti"))
 #' plot(pocmajqt, shape="core")
 #' plot(long(pocmajqt))
-#' 
+#'
 #' library(ggplot2)
 #' autoplot(pocmajqt, shape="core")
-#' 
+#'
 #' @importFrom ggplot2 autoplot
 #'
-autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...) {
+autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, geom="path",
+                               errors="err", ...) {
   . <- NULL; rm(.) # CMD hack
   x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
   }
+  
+  # deal with geometries
+  geoms <- list(path=ggplot2::geom_path(), line=ggplot2::geom_line(), 
+                point=ggplot2::geom_point())
+  unrecognizedgeoms <- geom[!(geom %in% names(geoms))]
+  if(length(unrecognizedgeoms) > 0) stop("Unrecognized geometries: ", 
+                                         paste(unrecognizedgeoms, collapse=" ,"))
+  plotgeoms <- geoms[geom]
+  
+  # do mucho guessing of things
   qualifiers <- qualifiers(x)
   values <- values(x)
   mapping <- ggplot2::aes_string(...)
   types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
-  numqualifiers <- qualifiers[types %in% c("numeric", "integer")]
+  numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
   nonnumqualifiers <- qualifiers[!(qualifiers %in% numqualifiers) & !(qualifiers %in% mapping)]
   guessed <- guess.xy(x, xvar, yvar)
   xvar <- guessed$xvar
@@ -113,10 +125,12 @@ autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, errors="err", ...)
       yrev <- ggplot2::scale_x_reverse()
     }
   }
-  
+
   mapping <- c(mapping, ggplot2::aes_(x=as.name(xvar), y=as.name(yvar)))
   class(mapping) <- "uneval"
-  return(ggplot2::ggplot(x, mapping) + ggplot2::geom_path() + errorbars + ggplot2::geom_point() + ggfacet + yrev)
+  
+  
+  return(ggplot2::ggplot(x, mapping) + errorbars + plotgeoms + ggfacet + yrev)
 }
 
 #' @export
@@ -166,7 +180,7 @@ guess.xy <- function(x, xvar, yvar) {
   qualifiers <- qualifiers(x)
   values <- values(x)
   types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
-  numqualifiers <- qualifiers[types %in% c("numeric", "integer")]
+  numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
   if(numqualifiers > 0) {
     if(missing(xvar) && missing(yvar)) {
       xvar <- numqualifiers[length(numqualifiers)]
@@ -191,7 +205,11 @@ guess.xy <- function(x, xvar, yvar) {
 }
 
 .is_ad <- function(x) {
-  r <- range(x)
-  return((r[2] <= 2200) && (r[1] >= 1000))
+  if(any(class(x) %in% c("numeric", "integer"))) {
+    r <- range(x)
+    return((r[2] <= 2200) && (r[1] >= 1000))
+  } else {
+    return(TRUE)
+  }
 }
 

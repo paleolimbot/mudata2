@@ -234,3 +234,38 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
   mudata(data=dta, locations=lc, params=pm, datasets=ds, 
          columns=cl, validate=validate, defactorize = defactorize)
 }
+
+
+#' Object summary for a mudata object
+#' 
+#' Returns a data.frame containing summary (by dataset, location, and param)
+#' statistics.
+#'
+#' @param object A \link{mudata} object
+#' @param ... Unused
+#' @param digits The number of digits to be used for rounding, or NA to suppress rounding.
+#'
+#' @return A data.frame containing the summary
+#' @export
+#'
+#' @examples
+#' data(longlake2016)
+#' summary(longlake2016, digits=NA)
+#' summary(longlake2016)
+#' 
+summary.mudata <- function(object, ..., digits=2) {
+  df <- data.frame(dplyr::summarise_(dplyr::group_by_(object$data, "dataset", "location", "param"),
+                    Min="min(value, na.rm=TRUE)", 
+                    Median="stats::median(value, na.rm=TRUE)",
+                    Mean="mean(value, na.rm=TRUE)",
+                    Max="max(value, na.rm=TRUE)",
+                    n="length(value)",
+                    NAs="sum(is.na(value))"),
+             check.names = FALSE)
+  if(!is.na(digits)) {
+    numbers <- data.frame(lapply(df[4:9], round, digits))
+    return(cbind(df[1:3], numbers))
+  } else {
+    return(df)
+  }
+}

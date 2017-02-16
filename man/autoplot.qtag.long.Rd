@@ -7,8 +7,8 @@
 \alias{plot.qtag.wide}
 \title{Autoplot a qualifier/tag structure}
 \usage{
-\method{autoplot}{qtag.long}(x, subset, xvar, yvar, facets, errors = "err",
-  ...)
+\method{autoplot}{qtag.long}(x, subset, xvar, yvar, facets, geom = "path",
+  errors = "err", ...)
 
 \method{autoplot}{qtag.wide}(x, ...)
 
@@ -27,6 +27,8 @@
 
 \item{facets}{Column to be used as facetting variable}
 
+\item{geom}{GGPlot geometries to be used. Can be any combination of point, path, or line.}
+
 \item{errors}{The colum that contains uncertainty information}
 
 \item{...}{Passed on to \code{aes_string()}}
@@ -41,7 +43,7 @@ Autoplot a qualifier/tag structure
 data(pocmaj)
 
 pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
-plot(pocmajqt)
+plot(pocmajqt, geom=c("path", "point"))
 plot(pocmajqt, subset=core=="MAJ-1" & column \%in\% c("Ca", "Ti"))
 plot(pocmajqt, shape="core")
 plot(long(pocmajqt))

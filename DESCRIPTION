@@ -1,16 +1,18 @@
 Package: mudata
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
+Title: Interchange Tools for Multi-Parameter Spatiotemporal Data
+Version: 0.1
 Author: Authors@R: person("Dewey", "Dunnington", role = c("aut", "cre"),
 				email = "dewey@fishandwhistle.net")
 Maintainer: Dewey Dunnington <dewey@fishandwhistle.net>
-Description: Formatting and structuring core and time-series data with a spatial context
+Description: Formatting and structuring multi-parameter spatiotemporal data
   is often a time-consuming task. This package offers functions and data structures 
-  designed to easily visualize core and time-series data for applications in geology, 
+  designed to easily visualize these data for applications in geology, 
   paleolimnology, dendrochronology, and paleoclimate.
 Imports: reshape2, ggplot2, plyr, dplyr, jsonlite (>= 1.2)
 Depends:
     R (>= 3.2.2)
 License: GPL-2
+URL: https://github.com/paleolimbot/mudata
+BugReports: https://github.com/paleolimbot/mudata/issues
 LazyData: true
 RoxygenNote: 5.0.1

@@ -275,20 +275,34 @@ summary.mudata <- function(object, ..., digits=NA) {
 #' @rdname summary.mudata
 #' @export
 print.mudata <- function(x, ..., digits=4) {
-  sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), min="min(value, na.rm=TRUE)",
-                              max="max(value, na.rm=TRUE)")
+  if(any(class(x$data$value) %in% c("numeric", "integer"))) {
+    sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), min="min(value, na.rm=TRUE)",
+                                max="max(value, na.rm=TRUE)")
+    paramsummary <- paste("... ... ", sumobj$param, " from ", 
+                          format(sumobj$min, digits=digits), " to ", 
+                          format(sumobj$max, digits=digits))
+  } else {
+    sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), 
+                                vals="paste(utils::head(value), collapse=', ')")
+    paramsummary <- paste("... ... ", sumobj$param, ": ", sumobj$vals, "...")
+  }
   datasets <- x$datasets$dataset
   locations <- x$locations$location
   params <- unique(x$params$param)
-  xrange <- range(x$data$x)
+  if(any(class(x$data$x) %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt"))) {
+    xrange <- range(x$data$x)
+    xrangesum <- sprintf("from %s to %s", xrange[1], xrange[2])
+  } else {
+    xrangesum <- paste(paste(utils::head(x$data$x), collapse = ", "), "...")
+  }
+  
   lines <- c(sprintf("A mudata object with %d dataset(s), %d location(s), %d param(s), and %d data points",
                      length(datasets), length(locations), length(params), nrow(x$data)),
              sprintf("... datasets: %s", paste(datasets, collapse=", ")),
              sprintf("... locations: %s", paste(locations, collapse=", ")),
-             sprintf("... x: from %s to %s", xrange[1], xrange[2]),
+             sprintf("... x: %s", xrangesum),
              "... params:", 
-             paste("... ... ", sumobj$param, " from ", 
-                   format(sumobj$min, digits=digits), " to ", format(sumobj$max, digits=digits)))
+             paramsummary)
   cat(paste(lines, collapse="\n"))
   invisible(x)
 }

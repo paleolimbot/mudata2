@@ -4,7 +4,7 @@
 \alias{rename.values}
 \title{Replace/rename values in a vector}
 \usage{
-rename.values(x, ..., defaultValue = x)
+rename.values(x, ..., defaultValue = x, warn_missing = TRUE)
 }
 \arguments{
 \item{x}{Vector of values to replace}
@@ -13,6 +13,8 @@ rename.values(x, ..., defaultValue = x)
 
 \item{defaultValue}{A vector of values to use as the default should the value not
 be found in \code{...}}
+
+\item{warn_missing}{Print a message if any old names are not actually present in x}
 }
 \value{
 A vector with values replaced

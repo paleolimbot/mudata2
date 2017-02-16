@@ -6,16 +6,23 @@
 \alias{rename.cols.qtag}
 \title{Replace/rename a column in an object}
 \usage{
-rename.cols(x, ...)
+rename.cols(x, ..., warn_missing = TRUE, warn_duplicated = TRUE)
 
-\method{rename.cols}{default}(x, ...)
+\method{rename.cols}{default}(x, ..., warn_missing = TRUE,
+  warn_duplicated = TRUE)
 
-\method{rename.cols}{qtag}(x, ...)
+\method{rename.cols}{qtag}(x, ..., warn_missing = TRUE,
+  warn_duplicated = TRUE)
 }
 \arguments{
 \item{x}{An object that has columns that can be renamed}
 
 \item{...}{Key/value pairs to replace in the form \code{oldval="newval"}}
+
+\item{warn_missing}{Print a message if any old names are not actually present in x}
+
+\item{warn_duplicated}{Print a message if any name appears more than once in x 
+after the operation.}
 }
 \value{
 A copy of the modified object

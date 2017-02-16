@@ -8,7 +8,7 @@ Description: Formatting and structuring core and time-series data with a spatial
   is often a time-consuming task. This package offers functions and data structures 
   designed to easily visualize core and time-series data for applications in geology, 
   paleolimnology, dendrochronology, and paleoclimate.
-Imports: reshape2, ggplot2, plyr, dplyr, jsonlite
+Imports: reshape2, ggplot2, plyr, dplyr, jsonlite (>= 1.2)
 Depends:
     R (>= 3.2.2)
 License: GPL-2

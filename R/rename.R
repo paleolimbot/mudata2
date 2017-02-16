@@ -11,24 +11,24 @@
 #'
 #' @examples
 #' data(pocmaj)
-#' replacecol(pocmaj, Ca="Calcium")
+#' rename.cols(pocmaj, Ca="Calcium")
 #' pocmaj2 <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
-#' pocmaj2 <- replacecol(pocmaj2, Ca="Calcium")
+#' pocmaj2 <- rename.cols(pocmaj2, Ca="Calcium")
 #' attr(pocmaj2, "values")
 #'
-replacecol <- function(x, ...) UseMethod("replacecol")
+rename.cols <- function(x, ...) UseMethod("rename.cols")
 
 #' @export
-#' @rdname replacecol
-replacecol.default <- function(x, ...) plyr::rename(x, list(...))
+#' @rdname rename.cols
+rename.cols.default <- function(x, ...) plyr::rename(x, list(...))
 #' @export
-#' @rdname replacecol
-replacecol.qtag <- function(x, ...) {
+#' @rdname rename.cols
+rename.cols.qtag <- function(x, ...) {
   replace <- list(...)
   out <- plyr::rename(x, replace)
-  attr(out, "qualifiers") <- replaceval(qualifiers(x), replace)
-  attr(out, "values") <- replaceval(values(x), replace)
-  attr(out, "tags") <- replaceval(tags(x), replace)
+  attr(out, "qualifiers") <- rename.values(qualifiers(x), replace)
+  attr(out, "values") <- rename.values(values(x), replace)
+  attr(out, "tags") <- rename.values(tags(x), replace)
   attr(out, "summarised") <- is.summarised(x)
   class(out) <- class(x)
   return(out)
@@ -47,11 +47,11 @@ replacecol.qtag <- function(x, ...) {
 #'
 #' @examples
 #' x <- c("fish", "fish", "fish", "whistle")
-#' replaceval(x, fish="newfish")
-#' replaceval(x, whistle="newwhistle")
-#' replaceval(x, fish="newfish", defaultValue="not a fish")
+#' rename.values(x, fish="newfish")
+#' rename.values(x, whistle="newwhistle")
+#' rename.values(x, fish="newfish", defaultValue="not a fish")
 #'
-replaceval <- function(x, ..., defaultValue=x) {
+rename.values <- function(x, ..., defaultValue=x) {
   replacer <- list(...)
   replacernames <- names(replacer)
   if(length(defaultValue) != length(x)) {
@@ -62,3 +62,5 @@ replaceval <- function(x, ..., defaultValue=x) {
     ifelse(v %in% replacernames, replacer[[v]], defaultValue[i])
   })
 }
+
+

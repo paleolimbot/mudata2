@@ -140,12 +140,14 @@ autoplot.qtag.wide <- function(x, ...) {
 }
 
 #' @export
+#' @importFrom graphics plot
 #' @rdname autoplot.qtag.long
 plot.qtag.long <- function(x, ...) {
   autoplot.qtag.long(x, ...)
 }
 
 #' @export
+#' @importFrom graphics plot
 #' @rdname autoplot.qtag.long
 plot.qtag.wide <- function(x, ...) {
   plot(long(x), ...)
@@ -177,6 +179,7 @@ autoplot.mudata <- function(x, ...) {
 }
 
 #' @rdname autoplot.mudata
+#' @importFrom graphics plot
 #' @export
 plot.mudata <- function(x, ...) {
   autoplot.qtag.long(x$data, ...)

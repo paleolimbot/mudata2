@@ -13,6 +13,7 @@
 #'   to use plotmath-style labels)
 #' @param ... passed to \code{aes_string()}
 #' 
+#' @importFrom stats biplot
 #' @export
 #' @examples 
 #' data(pocmaj)

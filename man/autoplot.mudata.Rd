@@ -12,7 +12,7 @@
 \arguments{
 \item{x}{A \link{mudata} object}
 
-\item{...}{Passed on to \link{autoplot.qtag.long}}
+\item{...}{Passed on to \link{qualifierplot}}
 }
 \value{
 A ggplot object

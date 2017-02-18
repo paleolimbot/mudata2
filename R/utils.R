@@ -39,3 +39,8 @@ melt.parallel <- function(x, id.vars, variable.name="column", ..., factorsAsStri
   .reclass(df, qualifiers=c(id.vars, variable.name), values=combonames[1],
            tags=combonames[combonames != combonames[1]], summarised=FALSE)
 }
+
+# internal function to define 'numeric' (ish) classes
+is.numericish <- function(x) {
+  return(any(class(x) %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")))
+}

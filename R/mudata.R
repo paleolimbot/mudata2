@@ -59,12 +59,11 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   quals <- unique(c('dataset', 'location', attr(data, "qualifiers"), 'x', 'param'))
   quals <- quals[quals %in% names(data)]
   
-  data <- .tagify(data, exnames = c(quals, 'value'), expand=expand.tags)
-  tagnames <- names(data)[!(names(data) %in% c(quals, 'value'))]
-  data <- as.qtag(data,
-                  .qualifiers = quals,
-                  .values='value',
-                  .tags=tagnames)
+  data <- .tagify(data, exnames = c('dataset', 'location', 'param', 'x', 'value'), expand=expand.tags)
+  tagnames <- names(data)[!(names(data) %in% c('dataset', 'location', 'param', 'x', 'value'))]
+  # reorder columns
+  data <- data[c('dataset', 'location', 'param', 'x', 'value', tagnames)]
+  
   if(is.null(datasets)) {
     datasets <- data.frame(dataset=unique(as.character(data$dataset)), stringsAsFactors = FALSE)
     if(!expand.tags) {

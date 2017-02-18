@@ -1,6 +1,8 @@
 #' Autoplot a qualifier/tag structure
 #'
-#' @param x A \link{qtag} object
+#' @param x A \code{data.frame}
+#' @param id.vars Columns that identify unique values
+#' @param values Column that contains values to be plotted
 #' @param xvar Column to be used on the x-axis
 #' @param yvar Column to be used on the y-axis
 #' @param facets Column to be used as facetting variable
@@ -15,25 +17,26 @@
 #'
 #' @examples
 #' data(pocmaj)
+#' qualifierplot(pocmaj, c("core", "depth"), "Ca")
 #'
 #' pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
 #' plot(pocmajqt, geom=c("path", "point"))
 #' plot(pocmajqt, subset=core=="MAJ-1" & param %in% c("Ca", "Ti"))
-#' plot(pocmajqt, shape="core")
+#' plot(pocmajqt, shape="core", geom=c("path", "point"))
 #' plot(long(pocmajqt))
 #'
 #' library(ggplot2)
-#' autoplot(pocmajqt, shape="core")
+#' autoplot(pocmajqt, col="core")
 #'
-#' @importFrom ggplot2 autoplot
-#'
-autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, geom="path",
+qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="path",
                                errors="err", ...) {
-  . <- NULL; rm(.) # CMD hack
-  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
+  if(!inherits(x, "data.frame")) stop("x must be a data.frame")
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
   }
+  # ensure id.vars and values are in names(x)
+  if(!all(c(id.vars, values) %in% names(x))) stop("Some of id.vars/values are not in names(x)")
+  if(length(values) != 1) stop("Only one column can be used for values in qualfierplot")
   
   # deal with geometries
   geoms <- list(path=ggplot2::geom_path(), line=ggplot2::geom_line(), 
@@ -44,13 +47,12 @@ autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, geom="path",
   plotgeoms <- geoms[geom]
   
   # do mucho guessing of things
-  qualifiers <- qualifiers(x)
-  values <- values(x)
+  qualifiers <- id.vars
   mapping <- ggplot2::aes_string(...)
   types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
   numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
   nonnumqualifiers <- qualifiers[!(qualifiers %in% numqualifiers) & !(qualifiers %in% mapping)]
-  guessed <- guess.xy(x, xvar, yvar)
+  guessed <- guess.xy(x, xvar, yvar, qualifiers, values)
   xvar <- guessed$xvar
   yvar <- guessed$yvar
 
@@ -134,23 +136,33 @@ autoplot.qtag.long <- function(x, subset, xvar, yvar, facets, geom="path",
 }
 
 #' @export
-#' @rdname autoplot.qtag.long
+#' @rdname qualifierplot
+#' @importFrom ggplot2 autoplot
+autoplot.qtag.long <- function(x, ...) {
+  . <- NULL; rm(.) # CMD hack
+  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
+  qualifierplot(long(x), id.vars=qualifiers(x), values=values(x), ...)
+}
+
+#' @export
+#' @rdname qualifierplot
+#' @importFrom ggplot2 autoplot
 autoplot.qtag.wide <- function(x, ...) {
-  autoplot(long(x), ...)
+  autoplot.qtag.long(long(x), ...)
 }
 
 #' @export
 #' @importFrom graphics plot
-#' @rdname autoplot.qtag.long
+#' @rdname qualifierplot
 plot.qtag.long <- function(x, ...) {
   autoplot.qtag.long(x, ...)
 }
 
 #' @export
 #' @importFrom graphics plot
-#' @rdname autoplot.qtag.long
+#' @rdname qualifierplot
 plot.qtag.wide <- function(x, ...) {
-  plot(long(x), ...)
+  autoplot.qtag.long(long(x), ...)
 }
 
 #' Autoplot a mudata object
@@ -162,7 +174,7 @@ plot.qtag.wide <- function(x, ...) {
 #' of appearance. For this, use \link{subset.mudata}.
 #'
 #' @param x A \link{mudata} object
-#' @param ... Passed on to \link{autoplot.qtag.long}
+#' @param ... Passed on to \link{qualifierplot}
 #'
 #' @return A ggplot object
 #'
@@ -173,21 +185,21 @@ plot.qtag.wide <- function(x, ...) {
 #' plot(kentvillegreenwood)
 #' library(ggplot2)
 #' autoplot(kentvillegreenwood)
+#' 
+#' @importFrom ggplot2 autoplot
 #'
 autoplot.mudata <- function(x, ...) {
-  autoplot.qtag.long(x$data, ...)
+  qualifierplot(x$data, id.vars=c("dataset", "location", "param", "x"), values="value", ...)
 }
 
 #' @rdname autoplot.mudata
 #' @importFrom graphics plot
 #' @export
 plot.mudata <- function(x, ...) {
-  autoplot.qtag.long(x$data, ...)
+  autoplot.mudata(x, ...)
 }
 
-guess.xy <- function(x, xvar, yvar) {
-  qualifiers <- qualifiers(x)
-  values <- values(x)
+guess.xy <- function(x, xvar, yvar, qualifiers, values) {
   types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
   numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
   if(length(numqualifiers) > 0) {

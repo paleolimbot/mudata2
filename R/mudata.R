@@ -169,8 +169,25 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
 }
 
 .validate <- function(md) {
+  # check that it is a mudata object
+  if(!inherits(md, "mudata")) stop("Object is not a 'mudata' object")
+  # check columns/classes
+  .checkcols(md$locations, 'locations', c('dataset', 'location'))
+  .checkcols(md$data, 'data', c('dataset', 'location', 'param', 'x', 'value'))
+  .checkcols(md$datasets, 'datasets', 'dataset')
+  .checkcols(md$columns, 'columns', c('dataset', 'table', 'column'))
+  .checkcols(md$params, 'params', c('dataset', 'param'))
+  
   # ensure data is summarised
-  if(!is.summarised(md$data)) stop('Duplicate data detected')
+  lengths <- dplyr::summarise_(dplyr::group_by_(md$data, "dataset", "location", "param", "x"),
+                               lengths="length(value)")
+  lengths <- lengths[lengths$lengths > 1,]
+  if(nrow(lengths) > 0) {
+    lengths <- lengths[1:min(nrow(lengths), 10),]
+    stop("dataset, location, param, and x do not identify unique rows for:\n",
+         paste(lengths$dataset, lengths$location, lengths$param, lengths$x, sep="->", collapse="\n"))
+  } 
+
   locs <- unique(as.character(md$data$location))
   params <- unique(as.character(md$data$param))
   datasets <- unique(as.character(md$data$dataset))

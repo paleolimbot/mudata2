@@ -56,4 +56,50 @@ test_that("passing invalid inputs throws an error", {
               throws_error("Table 'columns' is missing columns 'dataset', 'table', 'column'"))
 })
 
+test_that("duplicate data is detected", {
+  pocmajq <- as.qtag(pocmaj)
+  pocmajq <- long(pocmajq)
+  # skip aggregation
+  md <- mudata(rename.cols(pocmajq, core="location", depth="x"), validate = FALSE)
+  expect_that(validate.mudata(md), 
+              throws_error("dataset, location, param, and x do not identify unique rows for:.*"))
+})
+
+test_that("recombined subsetted objects are the same as the original", {
+  pocmajq <- as.qtag(pocmaj)
+  pocmajq <- long(pocmajq)
+  pocmajq <- aggregate(pocmajq)
+  pocmajq <- rename.cols(pocmajq, core="location", depth="x")
+  
+  md <- mudata(pocmajq)
+  mdlocsub <- subset(md, locations="MAJ-1")
+  mdlocsub2 <- subset(md, locations="POC-2")
+  mdparamsub <- subset(md, params="Ca")
+  mdparamsub2 <- subset(md, params=c("V", "Ti"))
+  
+  expect_that(nrow(rbind(mdlocsub, mdlocsub2)$data), equals(nrow(md$data)))
+  expect_that(nrow(rbind(mdparamsub, mdparamsub2)$data), equals(nrow(md$data)))
+})
+
+test_that("summary object is a data frame", {
+  pocmajq <- as.qtag(pocmaj)
+  pocmajq <- long(pocmajq)
+  pocmajq <- aggregate(pocmajq)
+  pocmajq <- rename.cols(pocmajq, core="location", depth="x")
+  
+  md <- mudata(pocmajq)
+  expect_that(summary(md), is_a("data.frame"))
+})
+
+test_that("printing of a mudata actually prints things", {
+  pocmajq <- as.qtag(pocmaj)
+  pocmajq <- long(pocmajq)
+  pocmajq <- aggregate(pocmajq)
+  pocmajq <- rename.cols(pocmajq, core="location", depth="x")
+  
+  md <- mudata(pocmajq)
+  expect_that(print(md), is_a("mudata"))
+  expect_output(print(md), "A mudata object with.*")
+})
+
 

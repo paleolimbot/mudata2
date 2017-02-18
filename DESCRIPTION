@@ -11,6 +11,7 @@ Description: Formatting and structuring multi-parameter spatiotemporal data
 Imports: reshape2, ggplot2, plyr, dplyr, jsonlite (>= 1.2), methods
 Depends:
     R (>= 3.2.2)
+Suggests: testthat
 License: GPL-2
 URL: https://github.com/paleolimbot/mudata
 BugReports: https://github.com/paleolimbot/mudata/issues

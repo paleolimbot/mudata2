@@ -32,11 +32,14 @@
 mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, 
                    columns=NULL, dataset.id='default', location.id='default', 
                    defactorize=TRUE, validate=TRUE, expand.tags=TRUE, retype=TRUE) {
+  # ok to be missing cols at first
+  .checkcols(data, 'data', NULL)
   if(!('dataset' %in% names(data))) {
     data$dataset <- dataset.id
   } else if(defactorize) {
     data$dataset <- as.character(data$dataset)
   }
+  
   if(!('location' %in% names(data))) {
     data$location <- location.id
   } else if(defactorize) {
@@ -49,8 +52,12 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     data$param <- as.character(data$param)
   }
   
+  # now it is not ok to be missing any cols
+  .checkcols(data, 'data', c('dataset', 'location', 'param', 'x', 'value'))
+  
   # maintain exisiting qualifiers if present
   quals <- unique(c('dataset', 'location', attr(data, "qualifiers"), 'x', 'param'))
+  quals <- quals[quals %in% names(data)]
   
   data <- .tagify(data, exnames = c(quals, 'value'), expand=expand.tags)
   tagnames <- names(data)[!(names(data) %in% c(quals, 'value'))]
@@ -154,6 +161,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
 }
 
 .checkcols <- function(df, name, required_cols) {
+  if(!inherits(df, "data.frame")) stop(sprintf("Table '%s' is not a data.frame", name))
   missingcols <- required_cols[!(required_cols %in% names(df))]
   if(length(missingcols)>0) stop(sprintf("Table '%s' is missing columns %s",
                                          name,

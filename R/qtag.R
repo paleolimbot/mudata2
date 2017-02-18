@@ -90,7 +90,7 @@ qtag <- function(df, ...) as.qtag(df, ...)
 values <- function(x, quiet=FALSE) {
   vals <- attr(x, "values")
   if(!is.null(vals)) {
-    return(vals)
+    return(vals[vals %in% names(x)])
   } else {
     # assume values are all non qualifiers/non tags
     nms <- names(x)
@@ -123,7 +123,8 @@ qualifiers <- function(x, ...) UseMethod("qualifiers")
 #' @export
 #' @rdname qualifiers
 qualifiers.qtag <- function(x, ...) {
-  return(attr(x, "qualifiers"))
+  q <- attr(x, "qualifiers")
+  return(q[q %in% names(x)])
 }
 
 #' @export
@@ -161,7 +162,8 @@ qualifiers.data.frame <- function(x, ..., quiet=FALSE) {
 #' tags(pocmaj)
 #'
 tags <- function(x) {
-  return(attr(x, "tags")) # NULL is ok, since there are often no tags
+  tg <- attr(x, "tags")
+  return(tg[tg %in% names(x)]) # NULL is ok, since there are often no tags
 }
 
 

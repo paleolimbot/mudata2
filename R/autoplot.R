@@ -49,8 +49,7 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
   # do mucho guessing of things
   qualifiers <- id.vars
   mapping <- ggplot2::aes_string(...)
-  types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
-  numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
+  numqualifiers <- intersect(qualifiers, names(x)[sapply(x, is.numericish)])
   nonnumqualifiers <- qualifiers[!(qualifiers %in% numqualifiers) & !(qualifiers %in% mapping)]
   guessed <- guess.xy(x, xvar, yvar, qualifiers, values)
   xvar <- guessed$xvar
@@ -200,8 +199,7 @@ plot.mudata <- function(x, ...) {
 }
 
 guess.xy <- function(x, xvar, yvar, qualifiers, values) {
-  types <- sapply(qualifiers, function(qual) class(x[[qual]])[1])
-  numqualifiers <- qualifiers[types %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")]
+  numqualifiers <- intersect(qualifiers, names(x)[sapply(x, is.numericish)])
   if(length(numqualifiers) > 0) {
     if(missing(xvar) && missing(yvar)) {
       xvar <- numqualifiers[length(numqualifiers)]

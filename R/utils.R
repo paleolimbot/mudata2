@@ -41,6 +41,9 @@ melt.parallel <- function(x, id.vars, variable.name="column", ..., factorsAsStri
 }
 
 # internal function to define 'numeric' (ish) classes
+# these functions can have numeric functions applied to them, specifically,
+# such as min(), max(), and mean(). Is essentially the opposite of ggplot2's
+# is.discrete(), which may be an alternative.
 is.numericish <- function(x) {
   return(any(class(x) %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")))
 }

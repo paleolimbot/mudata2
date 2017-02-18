@@ -339,7 +339,7 @@ summary.mudata <- function(object, ..., digits=NA) {
 #' @rdname summary.mudata
 #' @export
 print.mudata <- function(x, ..., digits=4) {
-  if(any(class(x$data$value) %in% c("numeric", "integer"))) {
+  if(is.numericish(x$data$value)) {
     sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), min="min(value, na.rm=TRUE)",
                                 max="max(value, na.rm=TRUE)")
     paramsummary <- paste("... ... ", sumobj$param, " from ", 
@@ -353,7 +353,7 @@ print.mudata <- function(x, ..., digits=4) {
   datasets <- x$datasets$dataset
   locations <- x$locations$location
   params <- unique(x$params$param)
-  if(any(class(x$data$x) %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt"))) {
+  if(is.numericish(x$data$x)) {
     xrange <- range(x$data$x)
     xrangesum <- sprintf("from %s to %s", xrange[1], xrange[2])
   } else {

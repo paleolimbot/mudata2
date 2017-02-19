@@ -4,7 +4,7 @@
 \alias{melt.parallel}
 \title{Melt multiple sets of columns in parallel}
 \usage{
-melt.parallel(x, id.vars, variable.name = "column", ...,
+melt.parallel(x, id.vars, variable.name = "param", ...,
   factorsAsStrings = TRUE)
 }
 \arguments{

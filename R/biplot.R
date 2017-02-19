@@ -12,6 +12,7 @@
 #'   exists or none otherwise), or \code{NA} to suppress.
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
 #'   to use plotmath-style labels)
+#' @param validate Ensure id.vars identify unique values
 #' @param ... passed to \code{aes_string()}
 #' 
 #' @importFrom stats biplot
@@ -22,7 +23,7 @@
 #' biplot(qt, color="core")
 #' 
 longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=NULL,
-                             errors=NULL, labeller=ggplot2::label_value, ...) {
+                             errors=NULL, labeller=ggplot2::label_value, validate=TRUE, ...) {
   if(!inherits(x, "data.frame")) stop("x must be a data.frame")
   if(!all(c(id.vars, values) %in% names(x))) stop("Some of id.vars/values are not in names(x)")
   if(length(values) != 1) stop("Only one column can be used for values in longbiplot")
@@ -30,13 +31,15 @@ longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=
   # CMD hack
   . <- NULL; rm(.)
   # check that data are summarised
-  dplyr::do(do.call(dplyr::group_by_, c(list(x), id.vars)), {
-    if(nrow(.) > 1) {
-      pasteargs <- c(as.list(.[1, id.vars]), list(sep="->"))
-      stop("Data are not summarised for id.vars: ", do.call(paste, pasteargs))
-    }
-    data.frame()
-  })
+  if(validate) {
+    dplyr::do(do.call(dplyr::group_by_, c(list(x), id.vars)), {
+      if(nrow(.) > 1) {
+        pasteargs <- c(as.list(.[1, id.vars]), list(sep="->"))
+        stop("Data are not summarised for id.vars: ", do.call(paste, pasteargs))
+      }
+      data.frame()
+    })
+  }
   
   els <- NULL
   quals <- id.vars
@@ -115,7 +118,7 @@ biplot.qtag.long <- function(x, ...) {
   . <- NULL; rm(.)
   # essential to have things be aggregated
   x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
-  longbiplot(x, id.vars=id.vars(x), values=values(x))
+  longbiplot(x, id.vars=id.vars(x), values=values(x), ..., validate=FALSE)
 }
 
 #' @rdname longbiplot
@@ -139,5 +142,5 @@ biplot.qtag.wide <- function(x, ...) {
 #'
 biplot.mudata <- function(x, ..., namecolumn = "param") {
   longbiplot(x$data, id.vars=c("dataset", "location", "param", "x"),
-             values="value", ..., namecolumn = namecolumn)
+             values="value", ..., namecolumn = namecolumn, validate=FALSE)
 }

@@ -7,7 +7,8 @@
 \title{Biplot an object using ggplot}
 \usage{
 longbiplot(x, id.vars, values, namesx = NULL, namesy = NULL,
-  namecolumn = NULL, errors = NULL, labeller = ggplot2::label_value, ...)
+  namecolumn = NULL, errors = NULL, labeller = ggplot2::label_value,
+  validate = TRUE, ...)
 
 \method{biplot}{qtag.long}(x, ...)
 
@@ -32,6 +33,8 @@ exists or none otherwise), or \code{NA} to suppress.}
 
 \item{labeller}{The labeller to use to label facets (may want to use \code{label_parsed}
 to use plotmath-style labels)}
+
+\item{validate}{Ensure id.vars identify unique values}
 
 \item{...}{passed to \code{aes_string()}}
 }

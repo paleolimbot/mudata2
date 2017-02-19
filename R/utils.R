@@ -36,7 +36,7 @@ melt.parallel <- function(x, id.vars, variable.name="column", ..., factorsAsStri
   iddata <- melted[[1]][c(id.vars, variable.name)]
   melted <- lapply(melted, function(df) df[names(df) %in% names(combos)])
   df <- do.call(cbind, c(list(iddata), melted))
-  .reclass(df, qualifiers=c(id.vars, variable.name), values=combonames[1],
+  .reclass(df, id.vars=c(id.vars, variable.name), values=combonames[1],
            tags=combonames[combonames != combonames[1]], summarised=FALSE)
 }
 

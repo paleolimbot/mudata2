@@ -50,7 +50,7 @@ Autoplot a qualifier/tag structure
 data(pocmaj)
 qualifierplot(pocmaj, c("core", "depth"), "Ca")
 
-pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
+pocmajqt <- as.qtag(pocmaj, id.vars=c("core", "depth"))
 plot(pocmajqt, geom=c("path", "point"))
 plot(pocmajqt, subset=core=="MAJ-1" & param \%in\% c("Ca", "Ti"))
 plot(pocmajqt, shape="core", geom=c("path", "point"))

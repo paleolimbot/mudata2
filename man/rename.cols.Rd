@@ -29,12 +29,12 @@ A copy of the modified object
 }
 \description{
 Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-except \link{qtag} objects have their qualifiers/tags/values attributes properly modified
+except \link{qtag} objects have their id.vars/tags/values attributes properly modified
 }
 \examples{
 data(pocmaj)
 rename.cols(pocmaj, Ca="Calcium")
-pocmaj2 <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
+pocmaj2 <- as.qtag(pocmaj, id.vars=c("core", "depth"))
 pocmaj2 <- rename.cols(pocmaj2, Ca="Calcium")
 attr(pocmaj2, "values")
 

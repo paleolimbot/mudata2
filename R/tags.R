@@ -20,14 +20,14 @@ expand.tags.data.frame <- function(x, tagcolumn='tags', lazy=FALSE, ...) {
   tags <- expandtagsraw(x[[tagcolumn]])
   if(ncol(tags) == 0) {
     if('qtag' %in% class(x)) {
-      return(.reclass(x[names(x)!=tagcolumn], qualifiers(x), values(x), c(), is.summarised(x)))
+      return(.reclass(x[names(x)!=tagcolumn], id.vars(x), values(x), c(), is.summarised(x)))
     } else {
       return(x[names(x)!=tagcolumn])
     }
   } else {
     out <- cbind(x, tags)[c(names(x)[names(x) != tagcolumn], names(tags))]
     if('qtag' %in% class(x)) {
-      return(.reclass(out, qualifiers(x), values(x), names(tags), is.summarised(x)))
+      return(.reclass(out, id.vars(x), values(x), names(tags), is.summarised(x)))
     } else {
       return(out)
     }

@@ -22,7 +22,7 @@ wide(x, ...)
 
 \item{colvar}{The column that contains the names of the to-be columns}
 
-\item{fun.aggregate}{The aggregation function to be used if qualifiers other than colvar
+\item{fun.aggregate}{The aggregation function to be used if id.vars other than colvar
 identify more than one row each.}
 
 \item{quiet}{Supress warning messages on coersion to a qualifier/tag structure.}
@@ -35,7 +35,7 @@ Convert data to wide format
 }
 \examples{
 data(pocmaj)
-pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
+pocmaj <- as.qtag(pocmaj, id.vars = c("core", "depth"))
 pocmajlong <- long(pocmaj)
 wide(pocmajlong)
 wide(pocmaj)

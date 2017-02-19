@@ -54,14 +54,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   
   # now it is not ok to be missing any cols
   .checkcols(data, 'data', c('dataset', 'location', 'param', 'x', 'value'))
-  
-  # maintain exisiting qualifiers if present
-  quals <- unique(c('dataset', 'location', attr(data, "qualifiers"), 'x', 'param'))
-  quals <- quals[quals %in% names(data)]
-  
   data <- .tagify(data, exnames = c('dataset', 'location', 'param', 'x', 'value'), expand=expand.tags)
   tagnames <- names(data)[!(names(data) %in% c('dataset', 'location', 'param', 'x', 'value'))]
-  # reorder columns
+  # reorder columns in data
   data <- data[c('dataset', 'location', 'param', 'x', 'value', tagnames)]
   
   if(is.null(datasets)) {

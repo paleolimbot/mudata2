@@ -2,6 +2,7 @@
 #' Biplot an object using ggplot
 #' 
 #' @param x the object to biplot
+#' @param id.vars the columns that identify a single value
 #' @param namecolumn The column where namesx and namesy are to be found
 #' @param namesx The names to be included in the x axes, or all the names to be included
 #' @param namesy The names to be included on the y axes, or NULL for all possible combinations
@@ -20,21 +21,27 @@
 #' qt <- as.qtag(pocmaj)
 #' biplot(qt, color="core")
 #' 
-biplot.qtag.long <- function(x, namesx=NULL, namesy=NULL, values=NULL, namecolumn=NULL,
+longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=NULL,
                              errors=NULL, labeller=ggplot2::label_value, ...) {
+  if(!inherits(x, "data.frame")) stop("x must be a data.frame")
+  if(!all(c(id.vars, values) %in% names(x))) stop("Some of id.vars/values are not in names(x)")
+  if(length(values) != 1) stop("Only one column can be used for values in longbiplot")
+  
   # CMD hack
   . <- NULL; rm(.)
-  
-  # essential to have things be aggregated
-  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
+  # check that data are summarised
+  dplyr::do(do.call(dplyr::group_by_, c(list(x), id.vars)), {
+    if(nrow(.) > 1) {
+      pasteargs <- c(as.list(.[1, id.vars]), list(sep="->"))
+      stop("Data are not summarised for id.vars: ", do.call(paste, pasteargs))
+    }
+    data.frame()
+  })
   
   els <- NULL
-  quals <- qualifiers(x)
-  if(is.null(values)) {
-    values <- values(x)
-  } else {
-    if(!(values %in% names(x))) stop("Column ", values, "was not found in x")
-  }
+  quals <- id.vars
+  if(!(values %in% names(x))) stop("Column ", values, " was not found in x")
+  
   if(is.null(errors)) {
     if("err" %in% names(x)) {
       errors <- "err"
@@ -42,12 +49,12 @@ biplot.qtag.long <- function(x, namesx=NULL, namesy=NULL, values=NULL, namecolum
   } else if(is.na(errors)) {
     errors <- NULL
   } else {
-    if(!(errors %in% names(x))) stop("Column ", errors, "was not found in x")
+    if(!(errors %in% names(x))) stop("Column ", errors, " was not found in x")
   }
   if(is.null(namecolumn)) {
     namecolumn <- quals[length(quals)]
   } else {
-    if(!(namecolumn %in% names(x))) stop("Column ", namecolumn, "was not found in x")
+    if(!(namecolumn %in% names(x))) stop("Column ", namecolumn, " was not found in x")
   }
   x[[namecolumn]] <- as.character(x[[namecolumn]])
   
@@ -101,7 +108,17 @@ biplot.qtag.long <- function(x, namesx=NULL, namesy=NULL, values=NULL, namecolum
     ggplot2::labs(x=NULL, y=NULL)
 }
 
-#' @rdname biplot.qtag.long
+#' @rdname longbiplot
+#' @export
+biplot.qtag.long <- function(x, ...) {
+  # CMD hack
+  . <- NULL; rm(.)
+  # essential to have things be aggregated
+  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
+  longbiplot(x, id.vars=id.vars(x), values=values(x))
+}
+
+#' @rdname longbiplot
 #' @export
 biplot.qtag.wide <- function(x, ...) {
   biplot(long(x), ...)
@@ -111,7 +128,7 @@ biplot.qtag.wide <- function(x, ...) {
 #'
 #' @param x A mudata object
 #' @param namecolumn The column that contains the names for biplotting
-#' @param ... passed to \link{biplot.qtag.long}
+#' @param ... passed to \link{longbiplot}
 #'
 #' @return a ggplot object
 #' @export
@@ -121,5 +138,6 @@ biplot.qtag.wide <- function(x, ...) {
 #' biplot(kentvillegreenwood, c("meantemp", "maxtemp", "mintemp"), col="location")
 #'
 biplot.mudata <- function(x, ..., namecolumn = "param") {
-  biplot.qtag.long(x$data, ..., namecolumn = namecolumn)
+  longbiplot(x$data, id.vars=c("dataset", "location", "param", "x"),
+             values="value", ..., namecolumn = namecolumn)
 }

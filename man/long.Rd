@@ -32,7 +32,7 @@ Convert data to long format
 }
 \examples{
 data(pocmaj)
-pocmaj <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
+pocmaj <- as.qtag(pocmaj, id.vars = c("core", "depth"))
 long(pocmaj)
 
 }

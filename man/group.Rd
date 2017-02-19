@@ -15,12 +15,12 @@ group(qtag, quiet = FALSE)
 A \code{dplyr} grouped data frame
 }
 \description{
-Essentially a shortcut for grouping a \link{qtag} object by its qualifiers
+Essentially a shortcut for grouping a \link{qtag} object by its id.vars
 }
 \examples{
 data(pocmaj)
 library(dplyr)
-pocmajqt <- as.qtag(pocmaj, .qualifiers = c("core", "depth"))
+pocmajqt <- as.qtag(pocmaj, id.vars = c("core", "depth"))
 pocmajqt \%>\% group() \%>\% summarise(mean(Ca))
 # equivalent to
 pocmaj \%>\% group_by(core, depth) \%>\% summarise(mean(Ca))

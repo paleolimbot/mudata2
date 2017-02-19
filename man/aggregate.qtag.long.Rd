@@ -26,7 +26,7 @@ qualifier combination. This is useful for summarising replicates.
 }
 \examples{
 data(pocmaj)
-pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
+pocmajqt <- as.qtag(pocmaj, id.vars=c("core", "depth"))
 aggregate(pocmajqt)
 aggregate(pocmajqt, mean)
 aggregate(long(pocmajqt), mean, sd, length)

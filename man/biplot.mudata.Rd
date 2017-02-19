@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A mudata object}
 
-\item{...}{passed to \link{biplot.qtag.long}}
+\item{...}{passed to \link{longbiplot}}
 
 \item{namecolumn}{The column that contains the names for biplotting}
 }

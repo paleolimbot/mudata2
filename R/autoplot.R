@@ -19,7 +19,7 @@
 #' data(pocmaj)
 #' qualifierplot(pocmaj, c("core", "depth"), "Ca")
 #'
-#' pocmajqt <- as.qtag(pocmaj, .qualifiers=c("core", "depth"))
+#' pocmajqt <- as.qtag(pocmaj, id.vars=c("core", "depth"))
 #' plot(pocmajqt, geom=c("path", "point"))
 #' plot(pocmajqt, subset=core=="MAJ-1" & param %in% c("Ca", "Ti"))
 #' plot(pocmajqt, shape="core", geom=c("path", "point"))
@@ -47,11 +47,11 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
   plotgeoms <- geoms[geom]
   
   # do mucho guessing of things
-  qualifiers <- id.vars
+  id.vars <- id.vars
   mapping <- ggplot2::aes_string(...)
-  numqualifiers <- intersect(qualifiers, names(x)[sapply(x, is.numericish)])
-  nonnumqualifiers <- qualifiers[!(qualifiers %in% numqualifiers) & !(qualifiers %in% mapping)]
-  guessed <- guess.xy(x, xvar, yvar, qualifiers, values)
+  numid.vars <- intersect(id.vars, names(x)[sapply(x, is.numericish)])
+  nonnumid.vars <- id.vars[!(id.vars %in% numid.vars) & !(id.vars %in% mapping)]
+  guessed <- guess.xy(x, xvar, yvar, id.vars, values)
   xvar <- guessed$xvar
   yvar <- guessed$yvar
 
@@ -63,11 +63,11 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
   }
 
   ggfacet <- ggplot2::facet_null()
-  nonnumindex <- length(nonnumqualifiers)
+  nonnumindex <- length(nonnumid.vars)
   if(missing(facets)) {
-    if(length(nonnumqualifiers) > 0) {
+    if(length(nonnumid.vars) > 0) {
       # use last non-numeric qualifier
-      ggfacet <- ggplot2::facet_wrap(stats::as.formula(paste0("~", nonnumqualifiers[nonnumindex])), scales = facet_scales)
+      ggfacet <- ggplot2::facet_wrap(stats::as.formula(paste0("~", nonnumid.vars[nonnumindex])), scales = facet_scales)
       nonnumindex <- nonnumindex - 1
     } else {
       ggfacet <- ggplot2::facet_null()
@@ -78,22 +78,22 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
     # 2- sided formula
     ggfacet <- ggplot2::facet_grid(facets, scales = facet_scales)
     chrfacets <- unlist(lapply(attr(stats::terms.formula(facets), "variables")[-1], deparse))
-    nonnumqualifiers <- nonnumqualifiers[!(nonnumqualifiers %in% chrfacets)]
-    nonnumindex <- length(nonnumqualifiers)
+    nonnumid.vars <- nonnumid.vars[!(nonnumid.vars %in% chrfacets)]
+    nonnumindex <- length(nonnumid.vars)
   } else {
     # 1-sided formula
     chrfacets <- unlist(lapply(attr(stats::terms.formula(facets), "variables")[-1], deparse))
     ggfacet <- ggplot2::facet_wrap(facets, scales = facet_scales)
-    nonnumqualifiers <- nonnumqualifiers[!(nonnumqualifiers %in% chrfacets)]
-    nonnumindex <- length(nonnumqualifiers)
+    nonnumid.vars <- nonnumid.vars[!(nonnumid.vars %in% chrfacets)]
+    nonnumindex <- length(nonnumid.vars)
   }
 
   if((nonnumindex > 0) && !("colour" %in% names(mapping))) {
-    mapping <- c(mapping, ggplot2::aes_(colour=as.name(nonnumqualifiers[nonnumindex])))
+    mapping <- c(mapping, ggplot2::aes_(colour=as.name(nonnumid.vars[nonnumindex])))
     nonnumindex <- nonnumindex - 1
   }
   if((nonnumindex > 0) && !("linetype" %in% names(mapping))) {
-    mapping <- c(mapping, ggplot2::aes_(shape=as.name(nonnumqualifiers[nonnumindex])))
+    mapping <- c(mapping, ggplot2::aes_(shape=as.name(nonnumid.vars[nonnumindex])))
     nonnumindex <- nonnumindex - 1
   }
 
@@ -140,7 +140,7 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
 autoplot.qtag.long <- function(x, ...) {
   . <- NULL; rm(.) # CMD hack
   x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
-  qualifierplot(long(x), id.vars=qualifiers(x), values=values(x), ...)
+  qualifierplot(long(x), id.vars=id.vars(x), values=values(x), ...)
 }
 
 #' @export
@@ -198,21 +198,21 @@ plot.mudata <- function(x, ...) {
   autoplot.mudata(x, ...)
 }
 
-guess.xy <- function(x, xvar, yvar, qualifiers, values) {
-  numqualifiers <- intersect(qualifiers, names(x)[sapply(x, is.numericish)])
-  if(length(numqualifiers) > 0) {
+guess.xy <- function(x, xvar, yvar, id.vars, values) {
+  numid.vars <- intersect(id.vars, names(x)[sapply(x, is.numericish)])
+  if(length(numid.vars) > 0) {
     if(missing(xvar) && missing(yvar)) {
-      xvar <- numqualifiers[length(numqualifiers)]
+      xvar <- numid.vars[length(numid.vars)]
       yvar <- values
     } else if(missing(xvar)) {
       if(yvar == values) {
-        xvar <- numqualifiers[length(numqualifiers)]
+        xvar <- numid.vars[length(numid.vars)]
       } else {
         xvar <- values
       }
     } else if(missing(yvar)) {
       if(xvar == values) {
-        yvar <- numqualifiers[length(numqualifiers)]
+        yvar <- numid.vars[length(numid.vars)]
       } else {
         yvar <- values
       }

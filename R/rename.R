@@ -1,7 +1,7 @@
 #' Replace/rename a column in an object
 #'
 #' Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-#' except \link{qtag} objects have their id.vars/tags/values attributes properly modified
+#' except \link{qtag} objects have their id.vars/tags/measure.vars attributes properly modified
 #' 
 #' @param x An object that has columns that can be renamed
 #' @param ... Key/value pairs to replace in the form \code{oldval="newval"}
@@ -17,7 +17,7 @@
 #' rename.cols(pocmaj, Ca="Calcium")
 #' pocmaj2 <- as.qtag(pocmaj, id.vars=c("core", "depth"))
 #' pocmaj2 <- rename.cols(pocmaj2, Ca="Calcium")
-#' attr(pocmaj2, "values")
+#' attr(pocmaj2, "measure.vars")
 #'
 rename.cols <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename.cols")
 
@@ -32,12 +32,12 @@ rename.cols.default <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE)
 rename.cols.qtag <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
   replace <- list(...)
   quals <- id.vars(x)
-  vals <- values(x)
+  vals <- measure.vars(x)
   tags <- tags(x)
   
   out <- plyr::rename(x, replace, warn_missing=warn_missing, warn_duplicated = warn_duplicated)
   attr(out, "id.vars") <- rename.values(quals, replace, warn_missing = FALSE)
-  attr(out, "values") <- rename.values(vals, replace, warn_missing = FALSE)
+  attr(out, "measure.vars") <- rename.values(vals, replace, warn_missing = FALSE)
   attr(out, "tags") <- rename.values(tags, replace, warn_missing = FALSE)
   class(out) <- class(x)
   attr(out, "summarised") <- is.summarised(x)

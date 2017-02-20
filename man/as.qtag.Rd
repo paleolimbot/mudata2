@@ -5,16 +5,16 @@
 \alias{qtag}
 \title{Convert an object to a qualifier/tag structure}
 \usage{
-as.qtag(df, id.vars = NA, values = NA, tags = NA, quiet = FALSE)
+as.qtag(df, id.vars = NA, measure.vars = NA, tags = NA, quiet = FALSE)
 
 qtag(df, ...)
 }
 \arguments{
 \item{df}{A \code{data.frame} or similar object}
 
-\item{id.vars}{Column names of qualifying values (NA to guess)}
+\item{id.vars}{Column names of qualifying measure.vars (NA to guess)}
 
-\item{values}{Column names containing the values of interest (NA to guess)}
+\item{measure.vars}{Column names containing the values of interest (NA to guess)}
 
 \item{tags}{Column names of tag values}
 
@@ -24,7 +24,7 @@ qtag(df, ...)
 }
 \value{
 An object of type \code{qtag}, which is essentially the unchanged
-  input with id.vars, values, and tags information attached.
+  input with id.vars, measure.vars, and tags information attached.
 }
 \description{
 Convert an object to a qualifier/tag structure

@@ -6,7 +6,7 @@
 \alias{longbiplot}
 \title{Biplot an object using ggplot}
 \usage{
-longbiplot(x, id.vars, values, namesx = NULL, namesy = NULL,
+longbiplot(x, id.vars, measure.var, namesx = NULL, namesy = NULL,
   namecolumn = NULL, errors = NULL, labeller = ggplot2::label_value,
   validate = TRUE, ...)
 
@@ -19,7 +19,7 @@ longbiplot(x, id.vars, values, namesx = NULL, namesy = NULL,
 
 \item{id.vars}{the columns that identify a single value}
 
-\item{values}{The column containing the values to plot}
+\item{measure.var}{The column containing the values to plot}
 
 \item{namesx}{The names to be included in the x axes, or all the names to be included}
 

@@ -2,7 +2,7 @@
 #'
 #' @param x A \code{data.frame}
 #' @param id.vars Columns that identify unique values
-#' @param values Column that contains values to be plotted
+#' @param measure.var Column that contains values to be plotted
 #' @param xvar Column to be used on the x-axis
 #' @param yvar Column to be used on the y-axis
 #' @param facets Column to be used as facetting variable
@@ -28,15 +28,15 @@
 #' library(ggplot2)
 #' autoplot(pocmajqt, col="core")
 #'
-qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="path",
+qualifierplot <- function(x, id.vars, measure.var, subset, xvar, yvar, facets, geom="path",
                                errors="err", ...) {
   if(!inherits(x, "data.frame")) stop("x must be a data.frame")
   if(!missing(subset)) {
     x <- x[eval(substitute(subset), envir=x), ]
   }
-  # ensure id.vars and values are in names(x)
-  if(!all(c(id.vars, values) %in% names(x))) stop("Some of id.vars/values are not in names(x)")
-  if(length(values) != 1) stop("Only one column can be used for values in qualfierplot")
+  # ensure id.vars and measure.var are in names(x)
+  if(!all(c(id.vars, measure.var) %in% names(x))) stop("Some of id.vars/measure.var are not in names(x)")
+  if(length(measure.var) != 1) stop("Only one column can be used for measure.var in qualfierplot")
   
   # deal with geometries
   geoms <- list(path=ggplot2::geom_path(), line=ggplot2::geom_line(), 
@@ -51,14 +51,14 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
   mapping <- ggplot2::aes_string(...)
   numid.vars <- intersect(id.vars, names(x)[sapply(x, is.numericish)])
   nonnumid.vars <- id.vars[!(id.vars %in% numid.vars) & !(id.vars %in% mapping)]
-  guessed <- guess.xy(x, xvar, yvar, id.vars, values)
+  guessed <- guess.xy(x, xvar, yvar, id.vars, measure.var)
   xvar <- guessed$xvar
   yvar <- guessed$yvar
 
   facet_scales <- "fixed"
-  if(yvar == values) {
+  if(yvar == measure.var) {
     facet_scales <- "free_y"
-  } else if(xvar == values) {
+  } else if(xvar == measure.var) {
     facet_scales <- "free_x"
   }
 
@@ -99,14 +99,14 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
 
   errorbars <- NULL
   if(errors %in% names(x)) {
-    if(values == xvar) {
+    if(measure.var == xvar) {
       nonvalrange <- range(x[yvar])
       errbarheight <- (nonvalrange[2]-nonvalrange[1]) / 50.0
       errorbars <- ggplot2::geom_errorbarh(ggplot2::aes_string(xmin=sprintf("%s-%s", xvar, errors),
                                              xmax=sprintf("%s+%s", xvar, errors)),
                                   height=errbarheight,
                                   linetype="solid")
-    } else if(values == yvar) {
+    } else if(measure.var == yvar) {
       nonvalrange <- range(x[xvar])
       errbarheight <- (nonvalrange[2]-nonvalrange[1]) / 50.0
       errorbars <- ggplot2::geom_errorbar(ggplot2::aes_string(ymin=sprintf("%s-%s", yvar, errors),
@@ -140,7 +140,7 @@ qualifierplot <- function(x, id.vars, values, subset, xvar, yvar, facets, geom="
 autoplot.qtag.long <- function(x, ...) {
   . <- NULL; rm(.) # CMD hack
   x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
-  qualifierplot(long(x), id.vars=id.vars(x), values=values(x), ...)
+  qualifierplot(long(x), id.vars=id.vars(x), measure.var=measure.vars(x), ...)
 }
 
 #' @export
@@ -188,7 +188,7 @@ plot.qtag.wide <- function(x, ...) {
 #' @importFrom ggplot2 autoplot
 #'
 autoplot.mudata <- function(x, ...) {
-  qualifierplot(x$data, id.vars=c("dataset", "location", "param", "x"), values="value", ...)
+  qualifierplot(x$data, id.vars=c("dataset", "location", "param", "x"), measure.var="value", ...)
 }
 
 #' @rdname autoplot.mudata
@@ -198,23 +198,23 @@ plot.mudata <- function(x, ...) {
   autoplot.mudata(x, ...)
 }
 
-guess.xy <- function(x, xvar, yvar, id.vars, values) {
+guess.xy <- function(x, xvar, yvar, id.vars, measure.var) {
   numid.vars <- intersect(id.vars, names(x)[sapply(x, is.numericish)])
   if(length(numid.vars) > 0) {
     if(missing(xvar) && missing(yvar)) {
       xvar <- numid.vars[length(numid.vars)]
-      yvar <- values
+      yvar <- measure.var
     } else if(missing(xvar)) {
-      if(yvar == values) {
+      if(yvar == measure.var) {
         xvar <- numid.vars[length(numid.vars)]
       } else {
-        xvar <- values
+        xvar <- measure.var
       }
     } else if(missing(yvar)) {
-      if(xvar == values) {
+      if(xvar == measure.var) {
         yvar <- numid.vars[length(numid.vars)]
       } else {
-        yvar <- values
+        yvar <- measure.var
       }
     }
     return(list(xvar=xvar, yvar=yvar))

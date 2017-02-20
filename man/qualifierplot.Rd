@@ -8,8 +8,8 @@
 \alias{qualifierplot}
 \title{Autoplot a qualifier/tag structure}
 \usage{
-qualifierplot(x, id.vars, values, subset, xvar, yvar, facets, geom = "path",
-  errors = "err", ...)
+qualifierplot(x, id.vars, measure.var, subset, xvar, yvar, facets,
+  geom = "path", errors = "err", ...)
 
 \method{autoplot}{qtag.long}(x, ...)
 
@@ -24,7 +24,7 @@ qualifierplot(x, id.vars, values, subset, xvar, yvar, facets, geom = "path",
 
 \item{id.vars}{Columns that identify unique values}
 
-\item{values}{Column that contains values to be plotted}
+\item{measure.var}{Column that contains values to be plotted}
 
 \item{subset}{Subset to plot}
 

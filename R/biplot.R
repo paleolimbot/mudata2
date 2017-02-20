@@ -7,7 +7,7 @@
 #' @param namesx The names to be included in the x axes, or all the names to be included
 #' @param namesy The names to be included on the y axes, or NULL for all possible combinations
 #'   of \code{namesx}.
-#' @param values The column containing the values to plot
+#' @param measure.var The column containing the values to plot
 #' @param errors The column containing the errors. Use \code{NULL} for default ("err" if column
 #'   exists or none otherwise), or \code{NA} to suppress.
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
@@ -22,11 +22,11 @@
 #' qt <- as.qtag(pocmaj)
 #' biplot(qt, color="core")
 #' 
-longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=NULL,
+longbiplot <- function(x, id.vars, measure.var, namesx=NULL, namesy=NULL, namecolumn=NULL,
                              errors=NULL, labeller=ggplot2::label_value, validate=TRUE, ...) {
   if(!inherits(x, "data.frame")) stop("x must be a data.frame")
-  if(!all(c(id.vars, values) %in% names(x))) stop("Some of id.vars/values are not in names(x)")
-  if(length(values) != 1) stop("Only one column can be used for values in longbiplot")
+  if(!all(c(id.vars, measure.var) %in% names(x))) stop("Some of id.vars/measure.var are not in names(x)")
+  if(length(measure.var) != 1) stop("Only one column can be used for measure.var in longbiplot")
   
   # CMD hack
   . <- NULL; rm(.)
@@ -43,7 +43,7 @@ longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=
   
   els <- NULL
   quals <- id.vars
-  if(!(values %in% names(x))) stop("Column ", values, " was not found in x")
+  if(!(measure.var %in% names(x))) stop("Column ", measure.var, " was not found in x")
   
   if(is.null(errors)) {
     if("err" %in% names(x)) {
@@ -82,8 +82,8 @@ longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=
     if(.$varx == .$vary) {
       data.frame()
     } else {
-      xs <- x[x[[namecolumn]]==.$varx, c(quals, values, errors)]
-      ys <- x[x[[namecolumn]]==.$vary, c(quals, values, errors)]
+      xs <- x[x[[namecolumn]]==.$varx, c(quals, measure.var, errors)]
+      ys <- x[x[[namecolumn]]==.$vary, c(quals, measure.var, errors)]
       both <- dplyr::inner_join(xs, ys, by=joincols, suffix=c('.x', '.y'))
       data.frame(both, stringsAsFactors = FALSE)
     }
@@ -92,8 +92,8 @@ longbiplot <- function(x, id.vars, values, namesx=NULL, namesy=NULL, namecolumn=
   tmp$varx <- factor(tmp$varx, levels=namesx)
   tmp$vary <- factor(tmp$vary, levels=namesy)
   ggerror <- NULL
-  valx <- paste0(values, '.x')
-  valy <- paste0(values, '.y')
+  valx <- paste0(measure.var, '.x')
+  valy <- paste0(measure.var, '.y')
   if(!is.null(errors)) {
     errx <- paste0(errors, '.x')
     erry <- paste0(errors, '.y')
@@ -118,7 +118,7 @@ biplot.qtag.long <- function(x, ...) {
   . <- NULL; rm(.)
   # essential to have things be aggregated
   x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
-  longbiplot(x, id.vars=id.vars(x), values=values(x), ..., validate=FALSE)
+  longbiplot(x, id.vars=id.vars(x), measure.var=measure.vars(x), ..., validate=FALSE)
 }
 
 #' @rdname longbiplot
@@ -142,5 +142,5 @@ biplot.qtag.wide <- function(x, ...) {
 #'
 biplot.mudata <- function(x, ..., namecolumn = "param") {
   longbiplot(x$data, id.vars=c("dataset", "location", "param", "x"),
-             values="value", ..., namecolumn = namecolumn, validate=FALSE)
+             measure.var="value", ..., namecolumn = namecolumn, validate=FALSE)
 }

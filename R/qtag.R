@@ -3,14 +3,14 @@
 #' Convert an object to a qualifier/tag structure
 #'
 #' @param df A \code{data.frame} or similar object
-#' @param values Column names containing the values of interest (NA to guess)
-#' @param id.vars Column names of qualifying values (NA to guess)
+#' @param measure.vars Column names containing the values of interest (NA to guess)
+#' @param id.vars Column names of qualifying measure.vars (NA to guess)
 #' @param tags Column names of tag values
 #' @param quiet Use \code{quiet=TRUE} to suppress error messages
 #' @param ... Passed to/from methods
 #'
 #' @return An object of type \code{qtag}, which is essentially the unchanged
-#'   input with id.vars, values, and tags information attached.
+#'   input with id.vars, measure.vars, and tags information attached.
 #'
 #' @export
 #'
@@ -21,7 +21,7 @@
 #' aggregate(pocmaj)
 #' aggregate(long(pocmaj))
 #'
-as.qtag <- function(df, id.vars=NA, values=NA, tags=NA, quiet=FALSE) {
+as.qtag <- function(df, id.vars=NA, measure.vars=NA, tags=NA, quiet=FALSE) {
   dfnames <- names(df)
   if(identical(id.vars, NA)) {
     id.vars <- id.vars(df)
@@ -37,11 +37,11 @@ as.qtag <- function(df, id.vars=NA, values=NA, tags=NA, quiet=FALSE) {
   } else {
     tags <- as.character(tags)
   }
-  if(identical(values, NA)) {
+  if(identical(measure.vars, NA)) {
     valuecol <- dfnames[!(dfnames %in% id.vars) & !(dfnames %in% tags)]
-    if(!quiet) message("Assuming value colums ", paste0("'", valuecol, "'", collapse = ", "))
+    if(!quiet) message("Assuming measure.vars ", paste0("'", valuecol, "'", collapse = ", "))
   } else {
-    valuecol <- as.character(values)
+    valuecol <- as.character(measure.vars)
     if(any(!(valuecol %in% dfnames))) stop("Could not find at least one column in value columns")
   }
 
@@ -52,12 +52,12 @@ as.qtag <- function(df, id.vars=NA, values=NA, tags=NA, quiet=FALSE) {
   return(.reclass(df, id.vars, valuecol, tags))
 }
 
-.reclass <- function(df, id.vars, values, tags, summarised) {
-  df <- df[c(id.vars, values, tags)]
+.reclass <- function(df, id.vars, measure.vars, tags, summarised) {
+  df <- df[c(id.vars, measure.vars, tags)]
   attr(df, "id.vars") <- id.vars
-  attr(df, "values") <- values
+  attr(df, "measure.vars") <- measure.vars
   attr(df, "tags") <- tags
-  if(length(values) > 1) {
+  if(length(measure.vars) > 1) {
     class(df) <- unique(c("qtag.wide", "qtag", class(df)))
   } else {
     class(df) <- unique(c("qtag.long", "qtag", class(df)))
@@ -85,14 +85,14 @@ qtag <- function(df, ...) as.qtag(df, ...)
 #' @examples
 #' data(pocmaj)
 #' pocmaj <- as.qtag(pocmaj, id.vars=c("core", "depth"))
-#' values(pocmaj)
+#' measure.vars(pocmaj)
 #'
-values <- function(x, quiet=FALSE) {
-  vals <- attr(x, "values")
+measure.vars <- function(x, quiet=FALSE) {
+  vals <- attr(x, "measure.vars")
   if(!is.null(vals)) {
     return(vals[vals %in% names(x)])
   } else {
-    # assume values are all non id.vars/non tags
+    # assume measure.vars are all non id.vars/non tags
     nms <- names(x)
     qlfrs <- id.vars(x)
     tgs <- tags(x)
@@ -203,7 +203,7 @@ is.summarised <- function(x, quiet=FALSE) {
 #' valuedata(pocmaj)
 #'
 valuedata <- function(x) {
-  return(x[values(x)])
+  return(x[measure.vars(x)])
 }
 
 #' Extract qualifier column data from a qualifier/tag structure
@@ -297,19 +297,19 @@ long.qtag.long <- function(x, ...) {
 #' @rdname long
 #' @export
 long.qtag.wide <- function(x, varname="param", quiet=FALSE, ...) {
-  valuecol <- values(x)
+  valuecol <- measure.vars(x)
   id.vars <- id.vars(x)
   tags <- tags(x)
   dfmelt <- reshape2::melt(x[c(id.vars, valuecol)], id.vars=id.vars, measure.vars=valuecol, value.name="value", variable.name=varname)
   if(length(tags) > 0) {
     dfmelt <- merge(dfmelt, x[c(id.vars, tags)], by=id.vars, all.x=TRUE)
   }
-  attr(dfmelt, "values") <- "value"
+  attr(dfmelt, "measure.vars") <- "value"
   attr(dfmelt, "id.vars") <- c(id.vars, varname)
   attr(dfmelt, "tags") <- tags
   attr(dfmelt, "summarised") <- is.summarised(x)
   class(dfmelt) <- c("qtag.long", "qtag", class(dfmelt))
-  if(!quiet) message("Assigning values column 'value' and qualifier '", varname, "'")
+  if(!quiet) message("Assigning measure.vars column 'value' and qualifier '", varname, "'")
   return(dfmelt)
 }
 
@@ -342,10 +342,10 @@ wide.qtag.long <- function(x, colvar, fun.aggregate, quiet=FALSE, ...) {
   castvars <- id.vars[id.vars != colvar]
 
   dfwide <- reshape2::dcast(x, formula=stats::as.formula(paste0(paste0("`", castvars, "`", collapse="+"), "~`", colvar, "`")),
-                  fun.aggregate=fun.aggregate, value.var=values(x), ...)
+                  fun.aggregate=fun.aggregate, value.var=measure.vars(x), ...)
   dfnames <- names(dfwide)
   attr(dfwide, "id.vars") <- castvars
-  attr(dfwide, "values") <- dfnames[!(dfnames %in% castvars)]
+  attr(dfwide, "measure.vars") <- dfnames[!(dfnames %in% castvars)]
   attr(dfwide, "summarised") <- TRUE
   class(dfwide) <- c(class(dfwide), "qtag", "qtag.wide")
   return(dfwide)
@@ -405,19 +405,19 @@ aggregate.qtag.long <- function(x, ..., force=TRUE) {
   id.vars <- id.vars(x)
   funformats <- generate.call(...)
   argnames <- names(funformats)
-  values <- values(x)
+  measure.vars <- measure.vars(x)
   sumargs <- list()
-  sumargs[[".vals"]] <- gsub(x=funformats[1], pattern="%s", replacement=values, fixed=TRUE)
+  sumargs[[".vals"]] <- gsub(x=funformats[1], pattern="%s", replacement=measure.vars, fixed=TRUE)
   tags <- c()
   if(length(funformats) > 1) {
     for(i in 2:length(funformats)) {
-      sumargs[[argnames[i]]] <- gsub(x=funformats[i], pattern="%s", replacement=values, fixed=TRUE)
+      sumargs[[argnames[i]]] <- gsub(x=funformats[i], pattern="%s", replacement=measure.vars, fixed=TRUE)
     }
     tags <- argnames[2:length(argnames)]
   }
   dfs <- data.frame(do.call(dplyr::summarise_, c(list(group(x)), as.list(sumargs))))
-  dfs <- plyr::rename(dfs, c(".vals"=values))
-  attr(dfs, "values") <- values
+  dfs <- plyr::rename(dfs, c(".vals"=measure.vars))
+  attr(dfs, "measure.vars") <- measure.vars
   attr(dfs, "id.vars") <- id.vars
   attr(dfs, "format") <- attr(x, "format")
   attr(dfs, "summarised") <- TRUE
@@ -437,14 +437,14 @@ aggregate.qtag.wide <- function(x, ..., force=TRUE) {
     # would need to return as a brick
     stop("Not implemented")
   }
-  values <- values(x)
+  measure.vars <- measure.vars(x)
 
   sumargs <- list()
-  for(col in values) {
+  for(col in measure.vars) {
     sumargs[[col]] <- gsub(x=funformats, pattern="%s", replacement=col, fixed=TRUE)
   }
   dfs <- data.frame(do.call(dplyr::summarise_, c(list(group(x)), as.list(sumargs))))
-  attr(dfs, "values") <- values
+  attr(dfs, "measure.vars") <- measure.vars
   attr(dfs, "id.vars") <- id.vars
   attr(dfs, "format") <- attr(x, "format")
   attr(dfs, "summarised") <- TRUE
@@ -469,15 +469,15 @@ rbind.qtag.long <- function(...) {
   objs <- list(...)
   id.vars <- unique(unlist(lapply(objs, id.vars)))
   tags <- unique(unlist(lapply(objs, tags)))
-  values <- unique(unlist(lapply(objs, values)))
+  measure.vars <- unique(unlist(lapply(objs, measure.vars)))
   summarised <- sapply(objs, is.summarised)
-  if(length(values) != 1) {
-    stop("Arguments have multiple values columns: ", paste0("'", values, "'", collapse=", "))
+  if(length(measure.vars) != 1) {
+    stop("Arguments have multiple measure.vars columns: ", paste0("'", measure.vars, "'", collapse=", "))
   }
   out <- do.call(plyr::rbind.fill, objs)
   class(out) <- c("qtag.long", class(out))
   attr(out, "id.vars") <- id.vars
-  attr(out, "values") <- values
+  attr(out, "measure.vars") <- measure.vars
   attr(out, "tags") <- tags
   attr(out, "summarised") <- all(summarised)
   return(out)
@@ -497,7 +497,7 @@ generate.call <- function(..., .quiet=FALSE) {
     if(is.null(argnames)) {
       argnames <- rep("", length(sumargs))
     }
-    if(argnames[1] != "") stop("Need 1 unnamed argument to apply to values")
+    if(argnames[1] != "") stop("Need 1 unnamed argument to apply to measure.vars")
     argsformatted <- sapply(sumargs, function(aggfun) {
       if(grepl(x=aggfun, pattern="(", fixed=TRUE)) {
         gsub(x=aggfun, pattern="([(,])\\s*\\.\\s*([),])", replacement="\\1%s\\2")

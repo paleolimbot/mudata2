@@ -1,7 +1,7 @@
 #' Replace/rename a column in an object
 #'
 #' Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-#' except \link{qtag} objects have their id.vars/tags/measure.vars attributes properly modified
+#' except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified
 #' 
 #' @param x An object that has columns that can be renamed
 #' @param ... Key/value pairs to replace in the form \code{oldval="newval"}
@@ -33,12 +33,12 @@ rename.cols.qtag <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
   replace <- list(...)
   quals <- id.vars(x)
   vals <- measure.vars(x)
-  tags <- tags(x)
+  tag.vars <- tag.vars(x)
   
   out <- plyr::rename(x, replace, warn_missing=warn_missing, warn_duplicated = warn_duplicated)
   attr(out, "id.vars") <- rename.values(quals, replace, warn_missing = FALSE)
   attr(out, "measure.vars") <- rename.values(vals, replace, warn_missing = FALSE)
-  attr(out, "tags") <- rename.values(tags, replace, warn_missing = FALSE)
+  attr(out, "tag.vars") <- rename.values(tag.vars, replace, warn_missing = FALSE)
   class(out) <- class(x)
   attr(out, "summarised") <- is.summarised(x)
   return(out)

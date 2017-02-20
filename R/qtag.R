@@ -5,12 +5,12 @@
 #' @param df A \code{data.frame} or similar object
 #' @param measure.vars Column names containing the values of interest (NA to guess)
 #' @param id.vars Column names of qualifying measure.vars (NA to guess)
-#' @param tags Column names of tag values
+#' @param tag.vars Column names of tag values
 #' @param quiet Use \code{quiet=TRUE} to suppress error messages
 #' @param ... Passed to/from methods
 #'
 #' @return An object of type \code{qtag}, which is essentially the unchanged
-#'   input with id.vars, measure.vars, and tags information attached.
+#'   input with id.vars, measure.vars, and tag.vars information attached.
 #'
 #' @export
 #'
@@ -21,7 +21,7 @@
 #' aggregate(pocmaj)
 #' aggregate(long(pocmaj))
 #'
-as.qtag <- function(df, id.vars=NA, measure.vars=NA, tags=NA, quiet=FALSE) {
+as.qtag <- function(df, id.vars=NA, measure.vars=NA, tag.vars=NA, quiet=FALSE) {
   dfnames <- names(df)
   if(identical(id.vars, NA)) {
     id.vars <- id.vars(df)
@@ -32,13 +32,13 @@ as.qtag <- function(df, id.vars=NA, measure.vars=NA, tags=NA, quiet=FALSE) {
   } else {
     id.vars <- as.character(id.vars)
   }
-  if(identical(tags, NA)) {
-    tags <- NULL
+  if(identical(tag.vars, NA)) {
+    tag.vars <- NULL
   } else {
-    tags <- as.character(tags)
+    tag.vars <- as.character(tag.vars)
   }
   if(identical(measure.vars, NA)) {
-    valuecol <- dfnames[!(dfnames %in% id.vars) & !(dfnames %in% tags)]
+    valuecol <- dfnames[!(dfnames %in% id.vars) & !(dfnames %in% tag.vars)]
     if(!quiet) message("Assuming measure.vars ", paste0("'", valuecol, "'", collapse = ", "))
   } else {
     valuecol <- as.character(measure.vars)
@@ -46,17 +46,17 @@ as.qtag <- function(df, id.vars=NA, measure.vars=NA, tags=NA, quiet=FALSE) {
   }
 
   if(!quiet) {
-    ignored <- dfnames[!(dfnames %in% id.vars) & !(dfnames %in% tags) & !(dfnames %in% valuecol)]
+    ignored <- dfnames[!(dfnames %in% id.vars) & !(dfnames %in% tag.vars) & !(dfnames %in% valuecol)]
     if(length(ignored) > 0) message("Ignoring columns ", paste0("'", ignored, "'", collapse=", "))
   }
-  return(.reclass(df, id.vars, valuecol, tags))
+  return(.reclass(df, id.vars, valuecol, tag.vars))
 }
 
-.reclass <- function(df, id.vars, measure.vars, tags, summarised) {
-  df <- df[c(id.vars, measure.vars, tags)]
+.reclass <- function(df, id.vars, measure.vars, tag.vars, summarised) {
+  df <- df[c(id.vars, measure.vars, tag.vars)]
   attr(df, "id.vars") <- id.vars
   attr(df, "measure.vars") <- measure.vars
-  attr(df, "tags") <- tags
+  attr(df, "tag.vars") <- tag.vars
   if(length(measure.vars) > 1) {
     class(df) <- unique(c("qtag.wide", "qtag", class(df)))
   } else {
@@ -92,11 +92,11 @@ measure.vars <- function(x, quiet=FALSE) {
   if(!is.null(vals)) {
     return(vals[vals %in% names(x)])
   } else {
-    # assume measure.vars are all non id.vars/non tags
+    # assume measure.vars are all non id.vars/non tag.vars
     nms <- names(x)
     qlfrs <- id.vars(x)
-    tgs <- tags(x)
-    vals <- nms[!(nms %in% c(qlfrs, tags))]
+    tgs <- tag.vars(x)
+    vals <- nms[!(nms %in% c(qlfrs, tag.vars))]
     if(length(vals) == 0) stop("Zero value columns found")
     if(!quiet) message("Assuming value columns ", paste0("'", vals, "'", collapse=", "))
     return(vals)
@@ -159,11 +159,11 @@ id.vars.data.frame <- function(x, ..., quiet=FALSE) {
 #' @examples
 #' data(pocmaj)
 #' pocmaj <- as.qtag(pocmaj, id.vars=c("core", "depth"))
-#' tags(pocmaj)
+#' tag.vars(pocmaj)
 #'
-tags <- function(x) {
-  tg <- attr(x, "tags")
-  return(tg[tg %in% names(x)]) # NULL is ok, since there are often no tags
+tag.vars <- function(x) {
+  tg <- attr(x, "tag.vars")
+  return(tg[tg %in% names(x)]) # NULL is ok, since there are often no tag.vars
 }
 
 
@@ -235,7 +235,7 @@ qualifierdata <- function(x) {
 #' tagdata(pocmaj)
 #'
 tagdata <- function(x) {
-  return(x[tags(x)])
+  return(x[tag.vars(x)])
 }
 
 #' Convert data to long format
@@ -299,14 +299,14 @@ long.qtag.long <- function(x, ...) {
 long.qtag.wide <- function(x, varname="param", quiet=FALSE, ...) {
   valuecol <- measure.vars(x)
   id.vars <- id.vars(x)
-  tags <- tags(x)
+  tag.vars <- tag.vars(x)
   dfmelt <- reshape2::melt(x[c(id.vars, valuecol)], id.vars=id.vars, measure.vars=valuecol, value.name="value", variable.name=varname)
-  if(length(tags) > 0) {
-    dfmelt <- merge(dfmelt, x[c(id.vars, tags)], by=id.vars, all.x=TRUE)
+  if(length(tag.vars) > 0) {
+    dfmelt <- merge(dfmelt, x[c(id.vars, tag.vars)], by=id.vars, all.x=TRUE)
   }
   attr(dfmelt, "measure.vars") <- "value"
   attr(dfmelt, "id.vars") <- c(id.vars, varname)
-  attr(dfmelt, "tags") <- tags
+  attr(dfmelt, "tag.vars") <- tag.vars
   attr(dfmelt, "summarised") <- is.summarised(x)
   class(dfmelt) <- c("qtag.long", "qtag", class(dfmelt))
   if(!quiet) message("Assigning measure.vars column 'value' and qualifier '", varname, "'")
@@ -408,12 +408,12 @@ aggregate.qtag.long <- function(x, ..., force=TRUE) {
   measure.vars <- measure.vars(x)
   sumargs <- list()
   sumargs[[".vals"]] <- gsub(x=funformats[1], pattern="%s", replacement=measure.vars, fixed=TRUE)
-  tags <- c()
+  tag.vars <- c()
   if(length(funformats) > 1) {
     for(i in 2:length(funformats)) {
       sumargs[[argnames[i]]] <- gsub(x=funformats[i], pattern="%s", replacement=measure.vars, fixed=TRUE)
     }
-    tags <- argnames[2:length(argnames)]
+    tag.vars <- argnames[2:length(argnames)]
   }
   dfs <- data.frame(do.call(dplyr::summarise_, c(list(group(x)), as.list(sumargs))))
   dfs <- plyr::rename(dfs, c(".vals"=measure.vars))
@@ -421,7 +421,7 @@ aggregate.qtag.long <- function(x, ..., force=TRUE) {
   attr(dfs, "id.vars") <- id.vars
   attr(dfs, "format") <- attr(x, "format")
   attr(dfs, "summarised") <- TRUE
-  attr(dfs, "tags") <- tags
+  attr(dfs, "tag.vars") <- tag.vars
   class(dfs) <- c("qtag.long", "qtag", class(dfs))
   return(dfs)
 }
@@ -468,7 +468,7 @@ aggregate.qtag.wide <- function(x, ..., force=TRUE) {
 rbind.qtag.long <- function(...) {
   objs <- list(...)
   id.vars <- unique(unlist(lapply(objs, id.vars)))
-  tags <- unique(unlist(lapply(objs, tags)))
+  tag.vars <- unique(unlist(lapply(objs, tag.vars)))
   measure.vars <- unique(unlist(lapply(objs, measure.vars)))
   summarised <- sapply(objs, is.summarised)
   if(length(measure.vars) != 1) {
@@ -478,7 +478,7 @@ rbind.qtag.long <- function(...) {
   class(out) <- c("qtag.long", class(out))
   attr(out, "id.vars") <- id.vars
   attr(out, "measure.vars") <- measure.vars
-  attr(out, "tags") <- tags
+  attr(out, "tag.vars") <- tag.vars
   attr(out, "summarised") <- all(summarised)
   return(out)
 }

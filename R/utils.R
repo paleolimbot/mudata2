@@ -37,7 +37,7 @@ melt.parallel <- function(x, id.vars, variable.name="param", ..., factorsAsStrin
   melted <- lapply(melted, function(df) df[names(df) %in% names(combos)])
   df <- do.call(cbind, c(list(iddata), melted))
   .reclass(df, id.vars=c(id.vars, variable.name), measure.vars=combonames[1],
-           tags=combonames[combonames != combonames[1]], summarised=FALSE)
+           tag.vars=combonames[combonames != combonames[1]], summarised=FALSE)
 }
 
 # internal function to define 'numeric' (ish) classes

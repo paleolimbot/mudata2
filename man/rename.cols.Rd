@@ -29,7 +29,7 @@ A copy of the modified object
 }
 \description{
 Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-except \link{qtag} objects have their id.vars/tags/measure.vars attributes properly modified
+except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified
 }
 \examples{
 data(pocmaj)

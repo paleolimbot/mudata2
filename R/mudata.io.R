@@ -5,7 +5,7 @@
 #' @param md a mudata object
 #' @param filename file to read/write (can also be a directory)
 #' @param overwrite Pass \code{TRUE} to overwrite if \code{zipfile} already exists.
-#' @param validate flag to validate mudata object upon read
+#' @param validate flag to validate mudata object upon read or before write
 #' @param expand.tags flag to expand tags to columns
 #' @param retype Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
 #'   table.
@@ -56,8 +56,11 @@ read.mudata <- function(filename, ...) {
 
 #' @rdname write.mudata
 #' @export
-write.mudata.zip <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, ...) {
+write.mudata.zip <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, validate=TRUE, ...) {
+  if(missing(md)) stop("Parameter md is required")
   if(missing(filename)) stop("Parameter filename is required")
+  if(validate) validate.mudata(md) # will stop() on invalid mudata
+  
   if(file.exists(filename)) {
     if(overwrite) {
       unlink(filename)
@@ -159,7 +162,11 @@ read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TR
 
 #' @rdname write.mudata
 #' @export
-write.mudata.json <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, ...) {
+write.mudata.json <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, validate=TRUE, ...) {
+  if(missing(md)) stop("Parameter md is required")
+  if(missing(filename)) stop("Parameter filename is required")
+  if(validate) validate.mudata(md) # will stop() on error
+  
   # writing is simple, it is just a JSON object of the mudata list.
   jsonlite::write_json(md, filename, dataframe = "columns", na="null",
                        digits=NA, ...)

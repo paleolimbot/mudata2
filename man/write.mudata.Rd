@@ -13,13 +13,15 @@ write.mudata(md, filename, ...)
 
 read.mudata(filename, ...)
 
-write.mudata.zip(md, filename, overwrite = FALSE, expand.tags = TRUE, ...)
+write.mudata.zip(md, filename, overwrite = FALSE, expand.tags = TRUE,
+  validate = TRUE, ...)
 
 read.mudata.zip(filename, validate = TRUE, expand.tags = TRUE,
   retype = TRUE, load = c("data", "locations", "params", "datasets",
   "columns"), ...)
 
-write.mudata.json(md, filename, overwrite = FALSE, expand.tags = TRUE, ...)
+write.mudata.json(md, filename, overwrite = FALSE, expand.tags = TRUE,
+  validate = TRUE, ...)
 
 read.mudata.json(filename, validate = TRUE, expand.tags = TRUE,
   retype = TRUE, load = c("data", "locations", "params", "datasets",
@@ -36,7 +38,7 @@ read.mudata.json(filename, validate = TRUE, expand.tags = TRUE,
 
 \item{expand.tags}{flag to expand tags to columns}
 
-\item{validate}{flag to validate mudata object upon read}
+\item{validate}{flag to validate mudata object upon read or before write}
 
 \item{retype}{Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
 table.}

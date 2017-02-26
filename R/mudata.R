@@ -269,7 +269,7 @@ rbind.mudata <- function(..., validate=TRUE) {
     params = unique(do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$params))),
     datasets = unique(do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$datasets))),
     columns = unique(do.call(plyr::rbind.fill, lapply(mudatas, function(m) m$columns))),
-    validate = validate
+    validate = validate, retype=FALSE
   )
 }
 
@@ -315,7 +315,7 @@ subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validat
   ds <- x$datasets[x$datasets$dataset %in% datasets,]
   
   mudata(data=dta, locations=lc, params=pm, datasets=ds, 
-         columns=cl, validate=validate, defactorize = defactorize)
+         columns=cl, validate=validate, defactorize = defactorize, retype=FALSE)
 }
 
 

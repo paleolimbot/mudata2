@@ -1,0 +1,160 @@
+---
+title: "R package 'mudata'"
+author: "Dewey Dunnington"
+date: "February 26, 2017"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(mudata)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The 'mudata' package for R is a set of tools to create, manipulate, and visualize multi-parameter, spatiotemporal data. Data of this type includes all data where multiple parameters (e.g. wind speed, precipitation, temperature) are measured along a common axis (e.g. time, depth) at discrete locations (e.g. climate stations). These data include long-term climate data collected from climate stations, paleolimnological data, ice core data, and ocean core data among many others. Data of this type is often voluminous and difficult to organize given its multi-dimensional nature. The (mostly) universal data (mudata) format is an attempt to organize these data in a common way to facilitate their documentation and comparison.
+
+## Installation
+
+The mudata package can be installed using `devtools` and [github](http://github.com/paleolimbot/mudata):
+
+```{r, eval=FALSE}
+# install.packages("devtools") # if devtools is not installed
+devtools::install_github("paleolimbot/mudata")
+```
+
+## The MUData format
+
+The (mostly) universal data format is a collection of five (or more) tables, one of which contains the data in a molten form (see [reshape2](https://cran.r-project.org/package=reshape2)). The easiest way to visualize a mudata object is to inspect the `kentvillegreenwood` dataset within the package. This object is a collection of daily observations from Kentville, Nova Scotia, and Greenwood, Nova Scotia from July and August, 1999.
+
+```{r, warning=FALSE}
+library(mudata)
+data("kentvillegreenwood")
+plot(kentvillegreenwood)
+```
+
+The default `plot()` function for a `mudata` object uses [ggplot2](https://cran.r-project.org/package=ggplot2) to produce a faceted plot comparing locations and datasets by parameter. However, if we take a look at the structure of the object, we can see that it is just a `list` of 5 `data.frame` objects.
+
+```{r}
+str(kentvillegreenwood)
+```
+
+The most important of these is the `$data` table, which contains the actual parameter measurements. All of the other tables are ways to document the information contained in the data table, such as the coordinates of each location (in this case there is also quite a bit more information about each location, such as the various identifiers used by climate organizations), or the units in which each parameter is measured. The first few rows of this table are as follows:
+
+```{r, echo=FALSE}
+knitr::kable(head(kentvillegreenwood$data[15:25,]), row.names = F)
+```
+
+The package contains functions to `plot()` the data (using the [ggplot2](https://cran.r-project.org/package=ggplot2) framework), produce a `summary()` of the data, `print()` a short description of the object, and `subset()` the object. Combining objects can be accomplished by `rbind()`-ing two `mudata` objects.
+
+```{r}
+print(kentvillegreenwood)
+```
+
+```{r}
+head(summary(kentvillegreenwood, digits=2))
+```
+
+```{r}
+kvtemp <- subset(kentvillegreenwood, params=c("mintemp", "maxtemp", "meantemp"))
+kvtemp
+```
+
+```{r}
+kvprecip <- subset(kentvillegreenwood, params="totalprecip")
+rbind(kvtemp, kvprecip)
+```
+
+```{r}
+plot(kvtemp)
+```
+
+```{r}
+biplot(kvtemp, col="location")
+```
+
+## Creating a MUData object
+
+Creating a `mudata` object from your own data is slightly more difficult, but the package contains a few functions to (hopefully) make things a bit easier. The key is creating the `$data` table in the correct format; the rest can be handled automatically by the `mudata()` constructor.
+
+### Case 1: Wide, summarised data
+
+Probably the most common case, wide, summarised data is the norm in most disciplines. If you've gotten this far, there is a good chance that you have data like this hanging around somewhere:
+
+```{r}
+data("pocmajsum")
+pocmajwide <- pocmajsum[c("core", "depth", "Ca", "V", "Ti")]
+```
+
+```{r, echo=FALSE}
+knitr::kable(pocmajwide, row.names = FALSE, digits = 0)
+```
+
+This is a small subset of paleolimnological data for two sediment cores near Halifax, Nova Scotia. The data is a multi-parameter spatiotemporal dataset because it contains multiple parameters (calcium, titanium, and vanadium concentrations) measured along a common axis (depth in the sediment core) at discrete locations (cores named MAJ-1 and POC-2). Currently, our columns are not named properly: for the `mudata` format the terminology is 'location' and 'x', not 'core' and 'depth'. The `rename.cols()` function is intended to make this job simple (this is just a simple wrapper around the `rename()` function in the [plyr](https://cran.r-project.org/package=plyr) package, which does all of the work).
+
+```{r}
+pocmajwide <- rename.cols(pocmajwide, "core"="location", "depth"="x")
+```
+
+Finally, we need to get the data into a "long" format, with a column named "param" and our actual values in a single column (called "value", predictably). This can be done using the `melt()` function in the [reshape2](https://cran.r-project.org/package=reshape2) package.
+
+```{r, warning=FALSE}
+library(reshape2)
+pocmajlong <- melt(pocmajwide, id.vars=c("location", "x"), variable.name = "param",
+                   value.name="value")
+```
+
+The (first six rows of the) data now look like this:
+
+```{r, echo=FALSE}
+knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
+```
+
+Now the data is ready to be put into the `mudata()` constructor. If it isn't, the constructor will throw an error (hopefully) telling you how to fix the data.
+
+```{r}
+md <- mudata(pocmajlong)
+plot(md, yvar="x")
+```
+
+### Case 2: Wide, summarised data with uncertainty
+
+Data is often output in a format similar to the format above, but with uncertainty information in paired columns. Data from an ICP-MS, for example is often in this format, with the concentration and a +/- column next to it. One of the advantages of a long format is the ability to include this information in a way that makes plotting with error bars easy. The `pocmajsum` dataset is a version of the dataset described above, but with standard deviation values in paired columns with the value itself.
+
+```{r}
+data("pocmajsum")
+```
+
+```{r, echo=FALSE}
+knitr::kable(pocmajwide, row.names = FALSE, digits = 0)
+```
+
+As above, we need to rename the "core" and "depth" columns to "location" and "x" using the `rename.cols()` function.
+
+```{r}
+pocmajwide <- rename.cols(pocmajsum, "core"="location", "depth"="x")
+```
+
+Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel.melt()`.
+
+```{r}
+pocmajlong <- parallel.melt(pocmajwide, id.vars=c("location", "x"), 
+                            value=c("Ca", "Ti", "V"), 
+                            sd=c("Ca_sd", "Ti_sd", "V_sd"),
+                            variable.name = "param")
+```
+
+```{r, echo=FALSE}
+knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
+```
+
+The data is now ready to be fed to the `mudata()` constructor, after which we can use the `plot()` function to add error bars based on the `sd` column.
+
+```{r, warning=FALSE}
+md <- mudata(pocmajlong)
+plot(md, yvar="x", errors="sd")
+```
+
+## And more!
+
+There is much more to the `mudata()` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users.

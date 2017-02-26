@@ -4,7 +4,7 @@
 \alias{parallel.melt}
 \title{Melt multiple sets of columns in parallel}
 \usage{
-parallel.melt(x, id.vars, variable.name = "param", ...,
+parallel.melt(x, id.vars, ..., variable.name = "param",
   factorsAsStrings = TRUE)
 }
 \arguments{
@@ -12,10 +12,10 @@ parallel.melt(x, id.vars, variable.name = "param", ...,
 
 \item{id.vars}{vector of ID variable names}
 
-\item{variable.name}{Column name to use to store variables}
-
 \item{...}{Named arguments specifying the \code{measure.vars} to be stored to the
 column name specified.}
+
+\item{variable.name}{Column name to use to store variables}
 
 \item{factorsAsStrings}{Control whether factors are converted to character when melted as
 measure variables.}

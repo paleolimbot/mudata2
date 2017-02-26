@@ -13,6 +13,12 @@
 #'
 #' @return A data.frame with columns added
 #' @export
+#' 
+#' @examples 
+#' data(pocmaj)
+#' condensed <- condense.tags(pocmaj, tagcolumns = c("Ca", "Ti", "V"))
+#' expand.tags(condensed)
+#' 
 expand.tags <- function(x, ...) UseMethod('expand.tags')
 
 #' @rdname expand.tags
@@ -46,6 +52,7 @@ expand.tags.mudata <- function(x, ...) {
   x$locations <- expand.tags(x$locations, lazy=TRUE, ...)
   x$params <- expand.tags(x$params, lazy=TRUE, ...)
   x$datasets <- expand.tags(x$datasets, lazy=TRUE, ...)
+  x$columns <- expand.tags(x$columns, lazy=TRUE, ...)
   return(x)
 }
 
@@ -78,6 +85,11 @@ expandtagsraw <- function(x, ...) {
 #'
 #' @return A modified data.frame
 #' @export
+#' 
+#' @examples 
+#' data(pocmaj)
+#' condense.tags(pocmaj, tagcolumns = c("Ca", "Ti", "V"))
+#' 
 condense.tags <- function(x, ...) UseMethod("condense.tags")
 
 #' @rdname condense.tags
@@ -101,9 +113,9 @@ condense.tags.data.frame <- function(x, tagcolumns, tagcolumn='tags', ...) {
       }
     })
   } else {
-    df[[tagcolumn]] <- '{}'
+    x[[tagcolumn]] <- '{}'
   }
-  return(df[c(names(df)[!(names(df) %in% c(tagcolumns, tagcolumn))], tagcolumn)])
+  return(x[c(names(x)[!(names(x) %in% c(tagcolumns, tagcolumn))], tagcolumn)])
 }
 
 #' @rdname condense.tags
@@ -113,6 +125,7 @@ condense.tags.mudata <- function(x, ...) {
   x$locations <- .tagify(x$locations, exnames=c('dataset', 'location'), expand=FALSE)
   x$params <- .tagify(x$params, exnames=c('dataset', 'param'), expand=FALSE)
   x$datasets <- .tagify(x$datasets, exnames=c('dataset'), expand=FALSE)
+  x$columns <- .tagify(x$columns, exnames=c('dataset', 'table', 'column'), expand=FALSE)
   return(x)
 }
 

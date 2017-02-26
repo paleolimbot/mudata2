@@ -30,4 +30,10 @@ Expands a character vector of JSON values or a data.frame with a column
 vector of JSON objects. If x is a mudata object, the operation will
 be performed on the entire object.
 }
+\examples{
+data(pocmaj)
+condensed <- condense.tags(pocmaj, tagcolumns = c("Ca", "Ti", "V"))
+expand.tags(condensed)
+
+}
 

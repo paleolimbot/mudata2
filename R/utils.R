@@ -24,7 +24,7 @@
 #'               values=c("Ca", "Ti", "V"),
 #'               err=c("Ca_sd", "Ti_sd", "V_sd"))
 #'
-parallel.melt <- function(x, id.vars, variable.name="param", ..., factorsAsStrings=TRUE) {
+parallel.melt <- function(x, id.vars, ..., variable.name="param", factorsAsStrings=TRUE) {
   combos <- list(...)
   combonames <- names(combos)
   if(length(combonames) != length(combos)) stop("All arguments must be named")

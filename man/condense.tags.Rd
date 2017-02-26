@@ -30,4 +30,9 @@ Performs the opposite of \link{expand.tags}: collapses the data in
 a JSON representation of the data that was previously in the tag columns
 at that row.
 }
+\examples{
+data(pocmaj)
+condense.tags(pocmaj, tagcolumns = c("Ca", "Ti", "V"))
+
+}
 

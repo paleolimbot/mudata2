@@ -65,6 +65,35 @@ test_that("duplicate data is detected", {
               throws_error("dataset, location, param, and x do not identify unique rows for:.*"))
 })
 
+test_that("duplicate location metadata are detected", {
+  data("kentvillegreenwood")
+  expect_true(validate.mudata(kentvillegreenwood))
+  kentvillegreenwood$locations <- rbind(kentvillegreenwood$locations, kentvillegreenwood$locations[1,])
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate location in locations table:.*?")
+})
+
+test_that("duplicate param metadata are detected", {
+  data("kentvillegreenwood")
+  expect_true(validate.mudata(kentvillegreenwood))
+  kentvillegreenwood$params <- rbind(kentvillegreenwood$params, kentvillegreenwood$params[1,])
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate parameter in parameters table:.*?")
+})
+
+test_that("duplicate dataset metadata are detected", {
+  data("kentvillegreenwood")
+  expect_true(validate.mudata(kentvillegreenwood))
+  kentvillegreenwood$datasets <- rbind(kentvillegreenwood$datasets, kentvillegreenwood$datasets[1,])
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate dataset in datasets table")
+})
+
+
+test_that("duplicate column metadata are detected", {
+  data("kentvillegreenwood")
+  expect_true(validate.mudata(kentvillegreenwood))
+  kentvillegreenwood$columns <- rbind(kentvillegreenwood$columns, kentvillegreenwood$columns[1,])
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate column in columns table:.*?")
+})
+
 test_that("recombined subsetted objects are the same as the original", {
   pocmajq <- as.qtag(pocmaj)
   pocmajq <- long(pocmajq)

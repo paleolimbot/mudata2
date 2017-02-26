@@ -9,7 +9,15 @@ validate.mudata(md)
 \arguments{
 \item{md}{An object of class 'mudata'}
 }
+\value{
+TRUE, invisibly
+}
 \description{
 Validates a MUData object by calling \code{stop} when an error is found.
+}
+\examples{
+data(kentvillegreenwood)
+validate.mudata(kentvillegreenwood)
+
 }
 

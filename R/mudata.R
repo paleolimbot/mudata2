@@ -226,18 +226,23 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   noinfds <- md$datasets$dataset[!(md$datasets$dataset %in% datasets)]
   if(length(noinfds) > 0) stop("Datasets ", paste(noinfds, collapse=' '), " not included in data")
   
-  # ensure no duplicates in locations, datasets, params
+  # ensure no duplicates in locations, datasets, params, columns
   . <- NULL; rm(.) # CMD check hack
-  if(length(unique(md$datasets$dataset)) != length(md$datasets$dataset)) stop("Duplicate datasets in dataset table")
+  if(length(unique(md$datasets$dataset)) != length(md$datasets$dataset)) stop("Duplicate dataset in datasets table")
   dplyr::do(dplyr::group_by_(md$locations, "dataset", "location"), {
-    if(nrow(.) > 1) stop("Duplicate location in location table: ", unique(.$dataset), '->', unique(.$location))
+    if(nrow(.) > 1) stop("Duplicate location in locations table: ", unique(.$dataset), '->', unique(.$location))
     .
   })
   dplyr::do(dplyr::group_by_(md$params, "dataset", "param"), {
     if(nrow(.) > 1) stop("Duplicate parameter in parameters table: ", unique(.$dataset), '->', unique(.$param))
     .
   })
-  NULL
+  dplyr::do(dplyr::group_by_(md$columns, "dataset", "table", "column"), {
+    if(nrow(.) > 1) stop("Duplicate column in columns table: ", unique(.$dataset), '->', unique(.$table),  
+                         '->', unique(.$column))
+    .
+  })
+  TRUE
 }
 
 #' Validate a MUData object
@@ -245,8 +250,14 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
 #' Validates a MUData object by calling \code{stop} when an error is found.
 #'
 #' @param md An object of class 'mudata'
+#' 
+#' @return TRUE, invisibly
 #'
 #' @export
+#' 
+#' @examples 
+#' data(kentvillegreenwood)
+#' validate.mudata(kentvillegreenwood)
 #' 
 validate.mudata <- function(md) {
   invisible(.validate(md))

@@ -28,7 +28,9 @@ An object of type \code{qtag}, which is essentially the unchanged
   input with id.vars, measure.vars, and tag.vars information attached.
 }
 \description{
-Convert an object to a qualifier/tag structure
+A qualifer/tag structure is an experimental version of a data frame
+that stores id.vars and measure.vars with the data structure, so it
+can be handled in a more automatic way. This functionality is experimental.
 }
 \examples{
 data("pocmaj")

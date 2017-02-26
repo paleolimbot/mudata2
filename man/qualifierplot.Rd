@@ -6,7 +6,7 @@
 \alias{plot.qtag.long}
 \alias{plot.qtag.wide}
 \alias{qualifierplot}
-\title{Autoplot a qualifier/tag structure}
+\title{Smart plotting of tidy data frames}
 \usage{
 qualifierplot(x, id.vars, measure.var, subset, xvar, yvar, facets,
   geom = "path", errors = "err", ...)
@@ -44,7 +44,14 @@ qualifierplot(x, id.vars, measure.var, subset, xvar, yvar, facets,
 A ggplot object
 }
 \description{
-Autoplot a qualifier/tag structure
+This function uses ggplot to plot a 'long' data frame with a few \code{id.vars}, 
+or variables that identify the values in the \code{value} column. The function
+is optimised to plot multi-parameter spatiotemporal data either horizontally
+(time on the x axis) or vertically (time on the y axis). Facets are intended
+to be by parameter, which is guessed based on the right-most variable named
+in \code{id.vars}. In the case of a \code{qtag} object, many of these values
+are guessed. This is intended to produce a quick visual of an object to
+examine its contents.
 }
 \examples{
 data(pocmaj)

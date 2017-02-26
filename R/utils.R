@@ -3,7 +3,8 @@
 #' Melt multiple sets of columns in parallel
 #'
 #' Essentially this is a wrapper around \code{reshape2::melt.data.frame} that
-#' is able to \code{cbind} several melt operations.
+#' is able to \code{cbind} several melt operations. This is useful when a wide
+#' data frame contains uncertainty or flag information in paired columns.
 #'
 #' @param x A data.frame
 #' @param id.vars vector of ID variable names
@@ -18,12 +19,12 @@
 #'
 #' @examples
 #' data(pocmajpb210)
-#' melt.parallel(pocmajpb210,
+#' parallel.melt(pocmajpb210,
 #'               id.vars=c("core", "depth"),
 #'               values=c("Pb210", "age", "sar"),
 #'               err=c("Pb210_sd", "age_sd", "sar_err"))
 #'
-melt.parallel <- function(x, id.vars, variable.name="param", ..., factorsAsStrings=TRUE) {
+parallel.melt <- function(x, id.vars, variable.name="param", ..., factorsAsStrings=TRUE) {
   combos <- list(...)
   combonames <- names(combos)
   if(length(combonames) != length(combos)) stop("All arguments must be named")

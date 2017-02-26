@@ -7,7 +7,7 @@
 \alias{write.mudata}
 \alias{write.mudata.json}
 \alias{write.mudata.zip}
-\title{Read/Write a MuData files}
+\title{Read/Write mudata objects}
 \usage{
 write.mudata(md, filename, ...)
 
@@ -46,7 +46,7 @@ table.}
 \item{load}{a list of csv files (without the .csv extension) to load from the source.}
 }
 \description{
-Read/Write a MuData files
+Read/Write mudata objects
 }
 \examples{
 data(kentvillegreenwood)

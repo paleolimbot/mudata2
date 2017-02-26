@@ -25,6 +25,9 @@ condense.tags(x, ...)
 A modified data.frame
 }
 \description{
-Condense multiple columns to a single JSON column
+Performs the opposite of \link{expand.tags}: collapses the data in
+\code{tagcolumns} to a single column (called \code{tagcolumn}) that contains
+a JSON representation of the data that was previously in the tag columns
+at that row.
 }
 

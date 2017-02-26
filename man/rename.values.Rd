@@ -20,7 +20,8 @@ be found in \code{...}}
 A vector with values replaced
 }
 \description{
-Replace/rename values in a vector
+This function replaces character values with new character values, which
+is useful when performing rename operations when values are held in character vectors.
 }
 \examples{
 x <- c("fish", "fish", "fish", "whistle")

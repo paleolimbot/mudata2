@@ -3,7 +3,7 @@
 \docType{data}
 \name{pocmajpb210}
 \alias{pocmajpb210}
-\title{Pockwock Lake/Lake Major Lead-210 Sample Data}
+\title{Pre-summarised Sample Data}
 \format{A \code{data.frame} containing multi-qualifier data}
 \usage{
 pocmajpb210

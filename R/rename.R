@@ -1,9 +1,9 @@
 #' Replace/rename a column in an object
 #'
 #' Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-#' except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified
+#' except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified.
 #' 
-#' @param x An object that has columns that can be renamed
+#' @param .data An object that has columns that can be renamed
 #' @param ... Key/value pairs to replace in the form \code{oldval="newval"}
 #' @param warn_missing Print a message if any old names are not actually present in x
 #' @param warn_duplicated Print a message if any name appears more than once in x 
@@ -19,33 +19,36 @@
 #' pocmaj2 <- rename.cols(pocmaj2, Ca="Calcium")
 #' attr(pocmaj2, "measure.vars")
 #'
-rename.cols <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename.cols")
+rename.cols <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename.cols")
 
 #' @export
 #' @rdname rename.cols
-rename.cols.default <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
-  plyr::rename(x, list(...), warn_missing = warn_missing, warn_duplicated = warn_duplicated)
+rename.cols.default <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
+  plyr::rename(.data, list(...), warn_missing = warn_missing, warn_duplicated = warn_duplicated)
 }
 
 #' @export
 #' @rdname rename.cols
-rename.cols.qtag <- function(x, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
+rename.cols.qtag <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
   replace <- list(...)
-  quals <- id.vars(x)
-  vals <- measure.vars(x)
-  tag.vars <- tag.vars(x)
+  quals <- id.vars(.data)
+  vals <- measure.vars(.data)
+  tag.vars <- tag.vars(.data)
   
-  out <- plyr::rename(x, replace, warn_missing=warn_missing, warn_duplicated = warn_duplicated)
+  out <- plyr::rename(.data, replace, warn_missing=warn_missing, warn_duplicated = warn_duplicated)
   attr(out, "id.vars") <- rename.values(quals, replace, warn_missing = FALSE)
   attr(out, "measure.vars") <- rename.values(vals, replace, warn_missing = FALSE)
   attr(out, "tag.vars") <- rename.values(tag.vars, replace, warn_missing = FALSE)
-  class(out) <- class(x)
-  attr(out, "summarised") <- is.summarised(x)
+  class(out) <- class(.data)
+  attr(out, "summarised") <- is.summarised(.data)
   return(out)
 }
 
 
 #' Replace/rename values in a vector
+#' 
+#' This function replaces character values with new character values, which
+#' is useful when performing rename operations when values are held in character vectors.
 #'
 #' @param x Vector of values to replace
 #' @param ... Key/value pairs in the form \code{oldvalue="newvalue"}
@@ -86,12 +89,12 @@ rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
 #' Rename datasets, params, locations, and columns
 #' 
 #' Provides a convenient way to rename datasets, params, locations, and columns
-#' such that their usage remains consistent.
+#' such that their usage with a mudata object remains consistent.
 #'
 #' @param md A \link{mudata} object
-#' @param x A \link{mudata} object
+#' @param .data A \link{mudata} object
 #' @param ... Key/value pairs in the form \code{"oldvalue"="newvalue"}
-#' @param apply_to The sub-elements which the rename operation should consider
+#' @param apply_to The tables which the rename operation should consider
 #' @param warn_missing Print a message if any old names are not actually present
 #' @param warn_duplicated Print a message if any name appears more than once in x 
 #'   after the operation.
@@ -138,12 +141,12 @@ rename.locations <- function(md, ..., apply_to=c("data", "locations"), warn_miss
 
 #' @rdname rename.datasets
 #' @export
-rename.cols.mudata <- function(x, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
+rename.cols.mudata <- function(.data, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
                                warn_missing=FALSE, warn_duplicated=TRUE) {
   for(dfname in apply_to) {
-    x[[dfname]] <- rename.cols(x[[dfname]], ..., warn_missing=warn_missing, 
+    .data[[dfname]] <- rename.cols(.data[[dfname]], ..., warn_missing=warn_missing, 
                                warn_duplicated=TRUE)
   }
-  x$columns$column <- rename.values(x$columns$column, ..., warn_missing=warn_missing)
-  return(x)
+  .data$columns$column <- rename.values(.data$columns$column, ..., warn_missing=warn_missing)
+  return(.data)
 }

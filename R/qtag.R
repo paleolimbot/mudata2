@@ -1,6 +1,10 @@
 
 
 #' Convert an object to a qualifier/tag structure
+#' 
+#' A qualifer/tag structure is an experimental version of a data frame
+#' that stores id.vars and measure.vars with the data structure, so it
+#' can be handled in a more automatic way. This functionality is experimental.
 #'
 #' @param df A \code{data.frame} or similar object
 #' @param measure.vars Column names containing the values of interest (NA to guess)

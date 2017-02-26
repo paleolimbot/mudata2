@@ -1,4 +1,14 @@
-#' Autoplot a qualifier/tag structure
+#' Smart plotting of tidy data frames
+#' 
+#' This function uses ggplot to plot a 'long' data frame with a few \code{id.vars}, 
+#' or variables that identify the values in the \code{value} column. The function
+#' is optimised to plot multi-parameter spatiotemporal data either horizontally
+#' (time on the x axis) or vertically (time on the y axis). Facets are intended
+#' to be by parameter, which is guessed based on the right-most variable named
+#' in \code{id.vars}. In the case of a \code{qtag} object, many of these values
+#' are guessed. This is intended to produce a quick visual of an object to
+#' examine its contents.
+#' 
 #'
 #' @param x A \code{data.frame}
 #' @param id.vars Columns that identify unique values
@@ -165,12 +175,11 @@ plot.qtag.wide <- function(x, ...) {
 }
 
 #' Autoplot a mudata object
-#'
-#' If you get a \code{seq...finite values} error, you may have to check for params
-#' that have all non-detect values. This can be done with the dplyr summarise function
-#' (\code{group_by(dataset, param) / summarise(allnd=all(is.na(value))) / data.frame()}).
+#' 
+#' Produces a quick graphical summary of a mudata object using the ggplot framework.
 #' The \code{subset} argument is quite powerful for filtering, but does not affect the order
-#' of appearance. For this, use \link{subset.mudata}.
+#' of appearance. For this, use \link{subset.mudata}, which by default orders the datasets,
+#' locations, and parameters passed into the function.
 #'
 #' @param x A \link{mudata} object
 #' @param ... Passed on to \link{qualifierplot}

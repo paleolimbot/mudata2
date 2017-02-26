@@ -1,11 +1,11 @@
 #' Pockwock Lake/Lake Major Elemental Sample Data
 #'
-#' A small example data.frame used to test qualifer/tag structure methods.
+#' A small example data.frame used to test structure methods.
 #'
 #' @format A \code{data.frame} containing multi-qualifier concentration data
 "pocmaj"
 
-#'  Pockwock Lake/Lake Major Lead-210 Sample Data
+#'  Pre-summarised Sample Data
 #'
 #' A small example data.frame of pre-summarised data.
 #'
@@ -18,5 +18,5 @@
 #'
 #' @format A \link{mudata} object (list with elements data, locations, params, datasets, columns)
 #' 
-#' @source Environment Canada via the 'rclimateca' package. 
+#' @source Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
 "kentvillegreenwood"

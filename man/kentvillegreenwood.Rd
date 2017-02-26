@@ -6,7 +6,7 @@
 \title{Kentville/Greenwood Climate Data}
 \format{A \link{mudata} object (list with elements data, locations, params, datasets, columns)}
 \source{
-Environment Canada via the 'rclimateca' package.
+Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
 }
 \usage{
 kentvillegreenwood

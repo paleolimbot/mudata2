@@ -1,5 +1,8 @@
 
-#' Biplot an object using ggplot
+#' Biplot a molten data frame using facets
+#' 
+#' Uses the ggplot framework and \code{facet_grid} to produce biplots of a molten
+#' data frame.
 #' 
 #' @param x the object to biplot
 #' @param id.vars the columns that identify a single value
@@ -128,6 +131,8 @@ biplot.qtag.wide <- function(x, ...) {
 }
 
 #' Biplot a mudata object
+#' 
+#' Uses the ggplot framework and \code{facet_grid} to produce a biplot of a mudata object.
 #'
 #' @param x A mudata object
 #' @param namecolumn The column that contains the names for biplotting

@@ -4,7 +4,7 @@
 \alias{biplot.qtag.long}
 \alias{biplot.qtag.wide}
 \alias{longbiplot}
-\title{Biplot an object using ggplot}
+\title{Biplot a molten data frame using facets}
 \usage{
 longbiplot(x, id.vars, measure.var, namesx = NULL, namesy = NULL,
   namecolumn = NULL, errors = NULL, labeller = ggplot2::label_value,
@@ -39,7 +39,8 @@ to use plotmath-style labels)}
 \item{...}{passed to \code{aes_string()}}
 }
 \description{
-Biplot an object using ggplot
+Uses the ggplot framework and \code{facet_grid} to produce biplots of a molten
+data frame.
 }
 \examples{
 data(pocmaj)

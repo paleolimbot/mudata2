@@ -1,8 +1,13 @@
 
 #' Expand JSON to multiple columns
+#' 
+#' Expands a character vector of JSON values or a data.frame with a column
+#' \code{tagcolumn} to a data.frame with columns for each key in the
+#' vector of JSON objects. If x is a mudata object, the operation will
+#' be performed on the entire object.
 #'
 #' @param x a vector of JSON values or a data.frame with a 'tags' column
-#' @param tagcolumn the column comtaining json
+#' @param tagcolumn the column containing json
 #' @param lazy Don't preform expantion if tagcolumn exists in \code{x}
 #' @param ... Passed to/from methods
 #'
@@ -60,6 +65,11 @@ expandtagsraw <- function(x, ...) {
 }
 
 #' Condense multiple columns to a single JSON column
+#' 
+#' Performs the opposite of \link{expand.tags}: collapses the data in
+#' \code{tagcolumns} to a single column (called \code{tagcolumn}) that contains
+#' a JSON representation of the data that was previously in the tag columns
+#' at that row.
 #'
 #' @param x a data frame with tag columns
 #' @param tagcolumns column names to be condensed to JSON

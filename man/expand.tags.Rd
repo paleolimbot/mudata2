@@ -17,7 +17,7 @@ expand.tags(x, ...)
 
 \item{...}{Passed to/from methods}
 
-\item{tagcolumn}{the column comtaining json}
+\item{tagcolumn}{the column containing json}
 
 \item{lazy}{Don't preform expantion if tagcolumn exists in \code{x}}
 }
@@ -25,6 +25,9 @@ expand.tags(x, ...)
 A data.frame with columns added
 }
 \description{
-Expand JSON to multiple columns
+Expands a character vector of JSON values or a data.frame with a column
+\code{tagcolumn} to a data.frame with columns for each key in the
+vector of JSON objects. If x is a mudata object, the operation will
+be performed on the entire object.
 }
 

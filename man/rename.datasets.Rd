@@ -15,7 +15,7 @@ rename.params(md, ..., apply_to = c("data", "params"), warn_missing = TRUE)
 rename.locations(md, ..., apply_to = c("data", "locations"),
   warn_missing = TRUE)
 
-\method{rename.cols}{mudata}(x, ..., apply_to = c("datasets", "locations",
+\method{rename.cols}{mudata}(.data, ..., apply_to = c("datasets", "locations",
   "params", "data", "columns"), warn_missing = FALSE,
   warn_duplicated = TRUE)
 }
@@ -24,11 +24,11 @@ rename.locations(md, ..., apply_to = c("data", "locations"),
 
 \item{...}{Key/value pairs in the form \code{"oldvalue"="newvalue"}}
 
-\item{apply_to}{The sub-elements which the rename operation should consider}
+\item{apply_to}{The tables which the rename operation should consider}
 
 \item{warn_missing}{Print a message if any old names are not actually present}
 
-\item{x}{A \link{mudata} object}
+\item{.data}{A \link{mudata} object}
 
 \item{warn_duplicated}{Print a message if any name appears more than once in x 
 after the operation.}
@@ -38,7 +38,7 @@ A modified \link{mudata} object.
 }
 \description{
 Provides a convenient way to rename datasets, params, locations, and columns
-such that their usage remains consistent.
+such that their usage with a mudata object remains consistent.
 }
 \examples{
 data(kentvillegreenwood)

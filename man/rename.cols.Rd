@@ -6,16 +6,16 @@
 \alias{rename.cols.qtag}
 \title{Replace/rename a column in an object}
 \usage{
-rename.cols(x, ..., warn_missing = TRUE, warn_duplicated = TRUE)
+rename.cols(.data, ..., warn_missing = TRUE, warn_duplicated = TRUE)
 
-\method{rename.cols}{default}(x, ..., warn_missing = TRUE,
+\method{rename.cols}{default}(.data, ..., warn_missing = TRUE,
   warn_duplicated = TRUE)
 
-\method{rename.cols}{qtag}(x, ..., warn_missing = TRUE,
+\method{rename.cols}{qtag}(.data, ..., warn_missing = TRUE,
   warn_duplicated = TRUE)
 }
 \arguments{
-\item{x}{An object that has columns that can be renamed}
+\item{.data}{An object that has columns that can be renamed}
 
 \item{...}{Key/value pairs to replace in the form \code{oldval="newval"}}
 
@@ -29,7 +29,7 @@ A copy of the modified object
 }
 \description{
 Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified
+except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified.
 }
 \examples{
 data(pocmaj)

@@ -9,7 +9,7 @@
 pocmaj
 }
 \description{
-A small example data.frame used to test qualifer/tag structure methods.
+A small example data.frame used to test structure methods.
 }
 \keyword{datasets}
 

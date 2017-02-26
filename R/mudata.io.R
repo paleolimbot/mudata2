@@ -1,6 +1,6 @@
 
 
-#' Read/Write a MuData files
+#' Read/Write mudata objects
 #'
 #' @param md a mudata object
 #' @param filename file to read/write (can also be a directory)

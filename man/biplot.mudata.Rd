@@ -17,7 +17,7 @@
 a ggplot object
 }
 \description{
-Biplot a mudata object
+Uses the ggplot framework and \code{facet_grid} to produce a biplot of a mudata object.
 }
 \examples{
 data(kentvillegreenwood)

@@ -18,11 +18,11 @@
 #' @export
 #'
 #' @examples
-#' data(pocmajpb210)
-#' parallel.melt(pocmajpb210,
+#' data(pocmajsum)
+#' parallel.melt(pocmajsum,
 #'               id.vars=c("core", "depth"),
-#'               values=c("Pb210", "age", "sar"),
-#'               err=c("Pb210_sd", "age_sd", "sar_err"))
+#'               values=c("Ca", "Ti", "V"),
+#'               err=c("Ca_sd", "Ti_sd", "V_sd"))
 #'
 parallel.melt <- function(x, id.vars, variable.name="param", ..., factorsAsStrings=TRUE) {
   combos <- list(...)

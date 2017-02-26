@@ -7,10 +7,11 @@
 
 #'  Pre-summarised Sample Data
 #'
-#' A small example data.frame of pre-summarised data.
+#' A small example data.frame of pre-summarised data; a summarised
+#' version of the \link{pocmaj} dataset.
 #'
 #' @format A \code{data.frame} containing multi-qualifier data
-"pocmajpb210"
+"pocmajsum"
 
 #' Kentville/Greenwood Climate Data
 #'

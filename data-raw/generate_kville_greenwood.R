@@ -10,3 +10,4 @@ kentvillegreenwood$params$label <- gsub("°", "", kentvillegreenwood$params$labe
 #biplot(kentvillegreenwood, c("maxtemp", "meantemp", "mintemp"), col="location")
 
 devtools::use_data(kentvillegreenwood, overwrite = TRUE)
+unlink("ec.cache/", recursive = TRUE)

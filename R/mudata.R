@@ -55,7 +55,7 @@
 #' 
 mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, 
                    columns=NULL, dataset.id='default', location.id='default', 
-                   defactorize=TRUE, validate=TRUE, expand.tags=TRUE, retype=TRUE) {
+                   defactorize=TRUE, validate=TRUE, expand.tags=TRUE, retype=FALSE) {
   # ok to be missing cols at first
   .checkcols(data, 'data', NULL)
   if(!('dataset' %in% names(data))) {

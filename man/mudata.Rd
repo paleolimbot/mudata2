@@ -7,7 +7,7 @@
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
   columns = NULL, dataset.id = "default", location.id = "default",
   defactorize = TRUE, validate = TRUE, expand.tags = TRUE,
-  retype = TRUE)
+  retype = FALSE)
 }
 \arguments{
 \item{data}{The data table, which is a molten data frame containing the columns (at least)

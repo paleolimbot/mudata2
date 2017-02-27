@@ -3,16 +3,17 @@ R package 'mudata'
 Dewey Dunnington
 February 26, 2017
 
+[![](http://cranlogs.r-pkg.org/badges/mudata)](https://cran.r-project.org/package=mudata)
+
 The 'mudata' package for R is a set of tools to create, manipulate, and visualize multi-parameter, spatiotemporal data. Data of this type includes all data where multiple parameters (e.g. wind speed, precipitation, temperature) are measured along a common axis (e.g. time, depth) at discrete locations (e.g. climate stations). These data include long-term climate data collected from climate stations, paleolimnological data, ice core data, and ocean core data among many others. Data of this type is often voluminous and difficult to organize given its multi-dimensional nature. The (mostly) universal data (mudata) format is an attempt to organize these data in a common way to facilitate their documentation and comparison.
 
 Installation
 ------------
 
-The mudata package can be installed using `devtools` and [github](http://github.com/paleolimbot/mudata):
+The mudata package is [available from the CRAN repository](https://cran.r-project.org/package=mudata) and can be installed using `install.packages("mudata")`:
 
 ``` r
-# install.packages("devtools") # if devtools is not installed
-devtools::install_github("paleolimbot/mudata")
+install.packages("mudata")
 ```
 
 The MUData format
@@ -43,7 +44,7 @@ str(kentvillegreenwood)
     ##   ..$ value      : num [1:1364] 28.5 30.7 26.4 28.6 26 25.3 28.6 23.9 22.8 20.9 ...
     ##   ..$ dataquality: logi [1:1364] NA NA NA NA NA NA ...
     ##   ..$ flags      : chr [1:1364] "" "" "" "" ...
-    ##  $ locations:'data.frame':   2 obs. of  21 variables:
+    ##  $ locations:'data.frame':   2 obs. of  19 variables:
     ##   ..$ dataset     : chr [1:2] "ecclimate" "ecclimate"
     ##   ..$ location    : chr [1:2] "KENTVILLE CDA CS" "GREENWOOD A"
     ##   ..$ name        : chr [1:2] "KENTVILLE CDA CS" "GREENWOOD A"
@@ -54,15 +55,13 @@ str(kentvillegreenwood)
     ##   ..$ tcid        : chr [1:2] "XKT" "YZX"
     ##   ..$ latitude    : num [1:2] 45.1 45
     ##   ..$ longitude   : num [1:2] -64.5 -64.9
-    ##   ..$ latitude.1  : num [1:2] 45.1 45
-    ##   ..$ longitude.1 : num [1:2] -64.5 -64.9
     ##   ..$ elevation   : num [1:2] 48.7 28
     ##   ..$ firstyear   : int [1:2] 1996 1942
-    ##   ..$ lastyear    : int [1:2] 2016 2016
+    ##   ..$ lastyear    : int [1:2] 2017 2017
     ##   ..$ hlyfirstyear: int [1:2] 1999 1953
-    ##   ..$ hlylastyear : int [1:2] 2016 2016
+    ##   ..$ hlylastyear : int [1:2] 2017 2017
     ##   ..$ dlyfirstyear: int [1:2] 1996 1942
-    ##   ..$ dlylastyear : int [1:2] 2016 2016
+    ##   ..$ dlylastyear : int [1:2] 2017 2017
     ##   ..$ mlyfirstyear: int [1:2] 1996 1942
     ##   ..$ mlylastyear : int [1:2] 2007 2013
     ##  $ params   :'data.frame':   11 obs. of  3 variables:
@@ -71,11 +70,11 @@ str(kentvillegreenwood)
     ##   ..$ label  : chr [1:11] "Max Temp (C)" "Min Temp (C)" "Mean Temp (C)" "Heat Deg Days (C)" ...
     ##  $ datasets :'data.frame':   1 obs. of  1 variable:
     ##   ..$ dataset: chr "ecclimate"
-    ##  $ columns  :'data.frame':   23 obs. of  4 variables:
-    ##   ..$ dataset: chr [1:23] "ecclimate" "ecclimate" "ecclimate" "ecclimate" ...
-    ##   ..$ table  : chr [1:23] "data" "data" "data" "locations" ...
-    ##   ..$ column : chr [1:23] "x" "value" "flags" "name" ...
-    ##   ..$ type   : chr [1:23] "POSIXct" "numeric" "character" "character" ...
+    ##  $ columns  :'data.frame':   21 obs. of  4 variables:
+    ##   ..$ dataset: chr [1:21] "ecclimate" "ecclimate" "ecclimate" "ecclimate" ...
+    ##   ..$ table  : chr [1:21] "data" "data" "data" "locations" ...
+    ##   ..$ column : chr [1:21] "x" "value" "flags" "name" ...
+    ##   ..$ type   : chr [1:21] "POSIXct" "numeric" "character" "character" ...
     ##  - attr(*, "class")= chr [1:2] "mudata" "list"
 
 The most important of these is the `$data` table, which contains the actual parameter measurements. All of the other tables are ways to document the information contained in the data table, such as the coordinates of each location (in this case there is also quite a bit more information about each location, such as the various identifiers used by climate organizations), or the units in which each parameter is measured. The first few rows of this table are as follows:
@@ -287,4 +286,4 @@ plot(md, yvar="x", errors="sd")
 And more!
 ---------
 
-There is much more to the `mudata()` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users.
+There is much more to the `mudata()` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users. For more information, see [the documentation](https://cran.r-project.org/package=mudata).

@@ -1,8 +1,7 @@
 Package: mudata
 Title: Interchange Tools for Multi-Parameter Spatiotemporal Data
-Version: 0.1
-Author: Authors@R: person("Dewey", "Dunnington", role = c("aut", "cre"),
-				email = "dewey@fishandwhistle.net")
+Version: 0.2.9000
+Author: Dewey Dunnington [aut, cre]
 Maintainer: Dewey Dunnington <dewey@fishandwhistle.net>
 Description: Formatting and structuring multi-parameter spatiotemporal data
   is often a time-consuming task. This package offers functions and data structures 

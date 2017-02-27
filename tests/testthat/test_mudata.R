@@ -56,6 +56,30 @@ test_that("passing invalid inputs throws an error", {
               throws_error("Table 'columns' is missing columns 'dataset', 'table', 'column'"))
 })
 
+test_that("expand.tags behaviour in constructor is consistent", {
+  pocmajq <- as.qtag(pocmaj)
+  pocmajq <- long(pocmajq)
+  pocmajq <- aggregate(pocmajq)
+  pocmajq <- rename.cols(pocmajq, core="location", depth="x")
+  
+  # base case, where data is not tagged
+  md <- mudata(pocmajq)
+  expect_true(all(!mapply(`%in%`, "tags", lapply(md, names), USE.NAMES = FALSE)))
+  md <- mudata(pocmajq, expand.tags = FALSE)
+  expect_true(all(c('dataset', 'location', 'param', 'x', 
+                    'value', 'tags', 'table', 'column') %in% unique(unlist(lapply(md, names)))))
+  expect_that(length(unique(unlist(lapply(md, names)))), equals(8))
+  
+  # base case, where data is tagged
+  pocmajq$tags <- '{"thing": "val"}'
+  md <- mudata(pocmajq)
+  expect_true(all(!mapply(`%in%`, "tags", lapply(md, names), USE.NAMES = FALSE)))
+  md <- mudata(pocmajq, expand.tags = FALSE)
+  expect_true(all(c('dataset', 'location', 'param', 'x', 
+                    'value', 'tags', 'table', 'column') %in% unique(unlist(lapply(md, names)))))
+  expect_that(length(unique(unlist(lapply(md, names)))), equals(8))
+})
+
 test_that("duplicate data is detected", {
   pocmajq <- as.qtag(pocmaj)
   pocmajq <- long(pocmajq)

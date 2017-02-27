@@ -144,6 +144,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
     })
     columns <- data.frame(allcols, stringsAsFactors = FALSE)
     columns <- columns[!(columns$column %in% c('dataset', 'param', 'location')),]
+    columns <- .tagify(columns, exnames=c('dataset', 'table', 'column'), expand=expand.tags)
     mdlist$columns <- columns
   } else {
     .checkcols(columns, 'columns', c('dataset', 'table', 'column'))

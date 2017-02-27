@@ -30,18 +30,10 @@ expand.tags.data.frame <- function(x, tagcolumn='tags', lazy=FALSE, ...) {
   }
   tags <- expandtagsraw(x[[tagcolumn]])
   if(ncol(tags) == 0) {
-    if('qtag' %in% class(x)) {
-      return(.reclass(x[names(x)!=tagcolumn], id.vars(x), measure.vars(x), c(), is.summarised(x)))
-    } else {
-      return(x[names(x)!=tagcolumn])
-    }
+    return(x[names(x)!=tagcolumn])
   } else {
     out <- cbind(x, tags)[c(names(x)[names(x) != tagcolumn], names(tags))]
-    if('qtag' %in% class(x)) {
-      return(.reclass(out, id.vars(x), measure.vars(x), names(tags), is.summarised(x)))
-    } else {
-      return(out)
-    }
+    return(out)
   }
 }
 
@@ -132,7 +124,9 @@ condense.tags.mudata <- function(x, ...) {
 .tagify <- function(df, exnames, expand) {
   dfnames <- names(df)
   if(expand) {
-    return(expand.tags(df, tagcolumn='tags', lazy=TRUE)[c(exnames, dfnames[!(dfnames %in% exnames)])])
+    expanded <- expand.tags(df, tagcolumn='tags', lazy=TRUE)
+    dfnames <- names(expanded)
+    return(expanded[c(exnames, dfnames[!(dfnames %in% exnames)])])
   } else {
     if('tags' %in% dfnames) {
       df$tags <- as.character(df$tags)

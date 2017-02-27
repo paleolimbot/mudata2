@@ -6,7 +6,7 @@ Author: Authors@R: person("Dewey", "Dunnington", role = c("aut", "cre"),
 Maintainer: Dewey Dunnington <dewey@fishandwhistle.net>
 Description: Formatting and structuring multi-parameter spatiotemporal data
   is often a time-consuming task. This package offers functions and data structures 
-  designed to easily visualize these data for applications in geology, 
+  designed to easily organize and visualize these data for applications in geology, 
   paleolimnology, dendrochronology, and paleoclimate.
 Imports: reshape2, ggplot2, plyr, dplyr, jsonlite (>= 1.2), methods
 Depends:

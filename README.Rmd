@@ -127,7 +127,7 @@ data("pocmajsum")
 ```
 
 ```{r, echo=FALSE}
-knitr::kable(pocmajwide, row.names = FALSE, digits = 0)
+knitr::kable(pocmajsum, row.names = FALSE, digits = 0)
 ```
 
 As above, we need to rename the "core" and "depth" columns to "location" and "x" using the `rename.cols()` function.

@@ -235,20 +235,20 @@ Data is often output in a format similar to the format above, but with uncertain
 data("pocmajsum")
 ```
 
-| location |    x|    Ca|    V|    Ti|
-|:---------|----:|-----:|----:|-----:|
-| MAJ-1    |    0|  1885|   78|  2370|
-| MAJ-1    |    1|  1418|   70|  2409|
-| MAJ-1    |    2|  1550|   70|  2376|
-| MAJ-1    |    3|  1448|   64|  2485|
-| MAJ-1    |    4|  1247|   57|  2414|
-| MAJ-1    |    5|  1412|   81|  1897|
-| POC-2    |    0|  1622|   33|  2038|
-| POC-2    |    1|  1488|   36|  2016|
-| POC-2    |    2|  2416|   79|  3270|
-| POC-2    |    3|  2253|   79|  3197|
-| POC-2    |    4|  2372|   87|  3536|
-| POC-2    |    5|  2635|   87|  3890|
+| core  |  depth|    Ca|  Ca\_sd|    Ti|  Ti\_sd|    V|  V\_sd|
+|:------|------:|-----:|-------:|-----:|-------:|----:|------:|
+| MAJ-1 |      0|  1885|     452|  2370|     401|   78|      9|
+| MAJ-1 |      1|  1418|      NA|  2409|      NA|   70|     NA|
+| MAJ-1 |      2|  1550|      NA|  2376|      NA|   70|     NA|
+| MAJ-1 |      3|  1448|      NA|  2485|      NA|   64|     NA|
+| MAJ-1 |      4|  1247|      NA|  2414|      NA|   57|     NA|
+| MAJ-1 |      5|  1412|     126|  1897|      81|   81|     12|
+| POC-2 |      0|  1622|     509|  2038|     608|   33|      5|
+| POC-2 |      1|  1488|      NA|  2016|      NA|   36|     NA|
+| POC-2 |      2|  2416|      NA|  3270|      NA|   79|     NA|
+| POC-2 |      3|  2253|      NA|  3197|      NA|   79|     NA|
+| POC-2 |      4|  2372|      NA|  3536|      NA|   87|     NA|
+| POC-2 |      5|  2635|     143|  3890|      45|   87|      8|
 
 As above, we need to rename the "core" and "depth" columns to "location" and "x" using the `rename.cols()` function.
 

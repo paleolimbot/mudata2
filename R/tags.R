@@ -49,18 +49,14 @@ expand.tags.mudata <- function(x, ...) {
 }
 
 expandtagsraw <- function(x, ...) {
-  # CMD hack
-  . <- NULL; rm(.)
-  dplyr::do(dplyr::group_by_(data.frame(.row=1:length(x), .tags=as.character(x), 
-                                       stringsAsFactors = FALSE), ".row"),
-            {
-              df <- as.data.frame(jsonlite::fromJSON(.$.tags))
-              if(nrow(df) > 0) {
-                cbind(data.frame(TRUE), df)
-              } else {
-                cbind(data.frame(TRUE))
-              }
-            })[c(-1, -2)]
+  plyr::ldply(as.character(x), function(tags) {
+    df <- as.data.frame(jsonlite::fromJSON(tags))
+    if(nrow(df) > 0) {
+      cbind(data.frame(.dummy. = TRUE), df)
+    } else {
+      cbind(data.frame(.dummy. = TRUE))
+    }
+  })[-1]
 }
 
 #' Condense multiple columns to a single JSON column
@@ -88,22 +84,22 @@ condense.tags <- function(x, ...) UseMethod("condense.tags")
 #' @export
 condense.tags.data.frame <- function(x, tagcolumns, tagcolumn='tags', ...) {
   if(length(tagcolumns) > 0) {
-    x[[tagcolumn]] <- sapply(1:nrow(x), function(i) {
-      vals <- sapply(tagcolumns, function(name) {
-        v <- x[[name]][i]
-        if("numeric" %in% class(v) || "integer" %in% class(v) || is.na(v)) {
-          return(v)
+    x[[tagcolumn]] <- vapply(1:nrow(x), function(i) {
+      row <- x[i, tagcolumns, drop = FALSE]
+      vals <- vapply(row, function(v) {
+        if(is.numeric(v) || is.na(v)) {
+          return(as.character(v))
         } else {
-          return(paste0('"', v, '"'))
+          return(paste0('"', gsub('"', '\\"', v, fixed = TRUE), '"'))
         }
-      })
+      }, character(1))
       vals <- vals[!is.na(vals) & (vals != '""')]
       if(length(vals) > 0) {
         return(paste0('{', paste0('"', names(vals), '": ', vals, collapse=", "), '}'))
       } else {
         return('{}')
       }
-    })
+    }, character(1))
   } else {
     x[[tagcolumn]] <- '{}'
   }

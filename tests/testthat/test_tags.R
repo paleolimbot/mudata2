@@ -43,3 +43,10 @@ test_that("expand/condense tags work properly for mudata objects", {
     }
   }, kentvillegreenwood$data$flags, reexpanded$data$flags, USE.NAMES = FALSE)))
 })
+
+test_that("strings with quotes are properly converted to JSON", {
+  bad_df <- data.frame(x=1:5, str = '"this has quotes"')
+  condensed <- condense.tags(bad_df, tagcolumns = "str")
+  reexpanded <- expand.tags(condensed)
+  expect_identical(reexpanded, bad_df)
+})

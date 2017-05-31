@@ -21,9 +21,12 @@
 #' @importFrom stats biplot
 #' @export
 #' @examples 
-#' data(pocmaj)
-#' qt <- as.qtag(pocmaj)
-#' biplot(qt, color="core")
+#' library(reshape2)
+#' data(pocmajsum)
+#' pocmaj_long <- melt(pocmajsum, id.vars = c("core", "depth"),
+#'                     measure.vars = c("Ca", "Ti", "V"))
+#' longbiplot(pocmaj_long, id.vars=c("core", "depth", "variable"), 
+#'            measure.var = "value", color="core")
 #' 
 longbiplot <- function(x, id.vars, measure.var, namesx=NULL, namesy=NULL, namecolumn=NULL,
                              errors=NULL, labeller=ggplot2::label_value, validate=TRUE, ...) {
@@ -112,22 +115,6 @@ longbiplot <- function(x, id.vars, measure.var, namesx=NULL, namesy=NULL, nameco
     ggerror +
     ggplot2::facet_grid(vary~varx, scales="free", labeller = labeller) +
     ggplot2::labs(x=NULL, y=NULL)
-}
-
-#' @rdname longbiplot
-#' @export
-biplot.qtag.long <- function(x, ...) {
-  # CMD hack
-  . <- NULL; rm(.)
-  # essential to have things be aggregated
-  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
-  longbiplot(x, id.vars=id.vars(x), measure.var=measure.vars(x), ..., validate=FALSE)
-}
-
-#' @rdname longbiplot
-#' @export
-biplot.qtag.wide <- function(x, ...) {
-  biplot(long(x), ...)
 }
 
 #' Biplot a mudata object

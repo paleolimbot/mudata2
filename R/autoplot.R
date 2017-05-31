@@ -5,8 +5,7 @@
 #' is optimised to plot multi-parameter spatiotemporal data either horizontally
 #' (time on the x axis) or vertically (time on the y axis). Facets are intended
 #' to be by parameter, which is guessed based on the right-most variable named
-#' in \code{id.vars}. In the case of a \code{qtag} object, many of these values
-#' are guessed. This is intended to produce a quick visual of an object to
+#' in \code{id.vars}. This is intended to produce a quick visual of an object to
 #' examine its contents.
 #' 
 #'
@@ -26,17 +25,14 @@
 #' @export
 #'
 #' @examples
-#' data(pocmaj)
-#' qualifierplot(pocmaj, c("core", "depth"), "Ca")
+#' data(pocmajsum)
+#' qualifierplot(pocmajsum, c("core", "depth"), "Ca")
 #'
-#' pocmajqt <- as.qtag(pocmaj, id.vars=c("core", "depth"))
-#' plot(pocmajqt, geom=c("path", "point"))
-#' plot(pocmajqt, subset=core=="MAJ-1" & param %in% c("Ca", "Ti"))
-#' plot(pocmajqt, shape="core", geom=c("path", "point"))
-#' plot(long(pocmajqt))
-#'
-#' library(ggplot2)
-#' autoplot(pocmajqt, col="core")
+#' library(reshape2)
+#' pocmaj_long <- melt(pocmajsum, id.vars = c("core", "depth"),
+#'                     measure.vars = c("Ca", "Ti", "V"))
+#' qualifierplot(pocmaj_long, c("core", "depth", "variable"), "value", col="core")
+#' 
 #'
 qualifierplot <- function(x, id.vars, measure.var, subset, xvar, yvar, facets, geom="path",
                                errors="err", ...) {
@@ -142,36 +138,6 @@ qualifierplot <- function(x, id.vars, measure.var, subset, xvar, yvar, facets, g
   
   
   return(ggplot2::ggplot(x, mapping) + errorbars + plotgeoms + ggfacet + yrev)
-}
-
-#' @export
-#' @rdname qualifierplot
-#' @importFrom ggplot2 autoplot
-autoplot.qtag.long <- function(x, ...) {
-  . <- NULL; rm(.) # CMD hack
-  x <- aggregate(x, mean, err=stats::sd(., na.rm = TRUE)/sum(!is.na(.)), force=FALSE)
-  qualifierplot(long(x), id.vars=id.vars(x), measure.var=measure.vars(x), ...)
-}
-
-#' @export
-#' @rdname qualifierplot
-#' @importFrom ggplot2 autoplot
-autoplot.qtag.wide <- function(x, ...) {
-  autoplot.qtag.long(long(x), ...)
-}
-
-#' @export
-#' @importFrom graphics plot
-#' @rdname qualifierplot
-plot.qtag.long <- function(x, ...) {
-  autoplot.qtag.long(x, ...)
-}
-
-#' @export
-#' @importFrom graphics plot
-#' @rdname qualifierplot
-plot.qtag.wide <- function(x, ...) {
-  autoplot.qtag.long(long(x), ...)
 }
 
 #' Autoplot a mudata object

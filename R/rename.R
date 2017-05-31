@@ -1,7 +1,6 @@
-#' Replace/rename a column in an object
+#' Rename a column in an object
 #'
-#' Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))},
-#' except \link{qtag} objects have their id.vars/tag.vars/measure.vars attributes properly modified.
+#' Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))}.
 #' 
 #' @param .data An object that has columns that can be renamed
 #' @param ... Key/value pairs to replace in the form \code{oldval="newval"}
@@ -15,9 +14,6 @@
 #' @examples
 #' data(pocmaj)
 #' rename.cols(pocmaj, Ca="Calcium")
-#' pocmaj2 <- as.qtag(pocmaj, id.vars=c("core", "depth"))
-#' pocmaj2 <- rename.cols(pocmaj2, Ca="Calcium")
-#' attr(pocmaj2, "measure.vars")
 #'
 rename.cols <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename.cols")
 
@@ -25,23 +21,6 @@ rename.cols <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) Use
 #' @rdname rename.cols
 rename.cols.default <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
   plyr::rename(.data, list(...), warn_missing = warn_missing, warn_duplicated = warn_duplicated)
-}
-
-#' @export
-#' @rdname rename.cols
-rename.cols.qtag <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
-  replace <- list(...)
-  quals <- id.vars(.data)
-  vals <- measure.vars(.data)
-  tag.vars <- tag.vars(.data)
-  
-  out <- plyr::rename(.data, replace, warn_missing=warn_missing, warn_duplicated = warn_duplicated)
-  attr(out, "id.vars") <- rename.values(quals, replace, warn_missing = FALSE)
-  attr(out, "measure.vars") <- rename.values(vals, replace, warn_missing = FALSE)
-  attr(out, "tag.vars") <- rename.values(tag.vars, replace, warn_missing = FALSE)
-  class(out) <- class(.data)
-  attr(out, "summarised") <- is.summarised(.data)
-  return(out)
 }
 
 

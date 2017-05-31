@@ -36,4 +36,3 @@ condensed <- condense.tags(pocmaj, tagcolumns = c("Ca", "Ti", "V"))
 expand.tags(condensed)
 
 }
-

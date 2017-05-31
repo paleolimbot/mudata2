@@ -42,4 +42,7 @@ plot(md, yvar="x")
 \seealso{
 \link{mudata}
 }
+\author{
+\strong{Maintainer}: Dewey Dunnington \email{dewey@fishandwhistle.net}
 
+}

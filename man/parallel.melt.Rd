@@ -21,7 +21,7 @@ column name specified.}
 measure variables.}
 }
 \value{
-A \code{qtag.long} object
+A molten data.frame
 }
 \description{
 Essentially this is a wrapper around \code{reshape2::melt.data.frame} that
@@ -36,4 +36,3 @@ parallel.melt(pocmajsum,
               err=c("Ca_sd", "Ti_sd", "V_sd"))
 
 }
-

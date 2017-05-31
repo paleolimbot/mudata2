@@ -7,16 +7,6 @@ test_that("rename.cols function works", {
               equals(c("letter_a", "letter_b", "c", "d")))
 })
 
-test_that("rename.cols.qtag function renames id.vars/tags/values attributes", {
-  data("pocmaj")
-  pocmaj$tag <- "a tag!"
-  qt <- as.qtag(pocmaj, id.vars=c("core", "depth"), tag.vars="tag")
-  rn <- rename.cols(qt, core="thecore", Ca="Calcium", tag="newtag")
-  expect_that(id.vars(rn), equals(c("thecore", "depth")))
-  expect_that(measure.vars(rn), equals(c("Calcium", "Ti", "V")))
-  expect_that(tag.vars(rn), equals("newtag"))
-})
-
 test_that("rename.cols outputs a message when no names are found", {
   df <- data.frame(a=1, b=2, c=3, d=4)
   expect_message(rename.cols(df, notacolumn="willnotbeacolumn"), 

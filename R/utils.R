@@ -14,7 +14,7 @@
 #' @param factorsAsStrings Control whether factors are converted to character when melted as
 #'   measure variables.
 #'
-#' @return A \code{qtag.long} object
+#' @return A molten data.frame
 #' @export
 #'
 #' @examples
@@ -36,9 +36,8 @@ parallel.melt <- function(x, id.vars, ..., variable.name="param", factorsAsStrin
   })
   iddata <- melted[[1]][c(id.vars, variable.name)]
   melted <- lapply(melted, function(df) df[names(df) %in% names(combos)])
-  df <- do.call(cbind, c(list(iddata), melted))
-  .reclass(df, id.vars=c(id.vars, variable.name), measure.vars=combonames[1],
-           tag.vars=combonames[combonames != combonames[1]], summarised=FALSE)
+  
+  do.call(cbind, c(list(iddata), melted))
 }
 
 # internal function to define 'numeric' (ish) classes

@@ -35,4 +35,3 @@ data(pocmaj)
 condense.tags(pocmaj, tagcolumns = c("Ca", "Ti", "V"))
 
 }
-

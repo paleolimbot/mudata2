@@ -28,4 +28,3 @@ A subsetted MuData object
 \description{
 Subset a MuData object
 }
-

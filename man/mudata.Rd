@@ -74,4 +74,3 @@ summary(md)
 plot(md, yvar="x", geom=c("path", "point"))
 
 }
-

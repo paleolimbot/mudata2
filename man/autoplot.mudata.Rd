@@ -30,4 +30,3 @@ library(ggplot2)
 autoplot(kentvillegreenwood)
 
 }
-

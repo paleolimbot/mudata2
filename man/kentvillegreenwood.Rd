@@ -15,4 +15,3 @@ kentvillegreenwood
 Climate data for Kentville and Greenwood (Nova Scotia) for July and August of 1999.
 }
 \keyword{datasets}
-

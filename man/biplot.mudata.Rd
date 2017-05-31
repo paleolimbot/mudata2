@@ -24,4 +24,3 @@ data(kentvillegreenwood)
 biplot(kentvillegreenwood, c("meantemp", "maxtemp", "mintemp"), col="location")
 
 }
-

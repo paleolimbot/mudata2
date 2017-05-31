@@ -30,4 +30,3 @@ rename.values(x, whistle="newwhistle")
 rename.values(x, fish="newfish", defaultValue="not a fish")
 
 }
-

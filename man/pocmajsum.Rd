@@ -13,4 +13,3 @@ A small example data.frame of pre-summarised data; a summarised
 version of the \link{pocmaj} dataset.
 }
 \keyword{datasets}
-

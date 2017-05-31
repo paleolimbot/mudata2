@@ -12,4 +12,3 @@ pocmaj
 A small example data.frame used to test structure methods.
 }
 \keyword{datasets}
-

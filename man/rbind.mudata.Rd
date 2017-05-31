@@ -4,7 +4,7 @@
 \alias{rbind.mudata}
 \title{Combine mudata objects}
 \usage{
-rbind.mudata(..., validate = TRUE)
+\method{rbind}{mudata}(..., validate = TRUE)
 }
 \arguments{
 \item{...}{Mudata objects to combine}
@@ -17,4 +17,3 @@ A Mudata object
 \description{
 Combine mudata objects
 }
-

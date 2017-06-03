@@ -285,49 +285,55 @@ rbind.mudata <- function(..., validate=TRUE) {
   )
 }
 
-#' Subset a MuData object
+#' Subset (filter) a MuData object
 #'
 #' @param x The object to subset
 #' @param datasets Vector of datasets to include
 #' @param params  Vector of parameters to include
 #' @param locations Vector of locations to include
-#' @param validate Flag to validate output
-#' @param defactorize Pass \code{FALSE} to keep input columns as factors (may cause errors).
 #' @param ... Aguments to/from methods
 #'
-#' @return A subsetted MuData object
+#' @return A filtered MuData object
 #' @export
+#' 
+#' @importFrom dplyr filter
 #'
-subset.mudata <- function(x, datasets=NULL, params=NULL, locations=NULL, validate=TRUE, 
-                          defactorize=FALSE, ...) {
-  if(is.null(datasets)) {
-    datasets <- unique(x$datasets$dataset)
+filter.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
+  
+  # cmd hack
+  dataset <- NULL; rm(dataset); location <- NULL; rm(location); param <- NULL; rm(param)
+  
+  # lazily filter data
+  dta <- dplyr::filter(x$data, ...)
+  if(!is.null(datasets)) {
+    dta <- dplyr::filter(x$data, dataset %in% datasets)
   }
-  if(is.null(locations)) {
-    locations <- unique(x$locations$location)
+  if(!is.null(locations)) {
+    dta <- dplyr::filter(x$data, location %in% locations)
   }
-  if(is.null(params)) {
-    params <- unique(x$params$param)
+  if(!is.null(params)) {
+    dta <- dplyr::filter(x$data, param %in% params)
   }
-  dta <- x$data[(x$data$dataset %in% datasets) & 
-                  (x$data$location %in% locations) & 
-                  (x$data$param %in% params),]
-  dta$dataset <- factor(dta$dataset, levels=datasets)
-  dta$param <- factor(dta$param, levels=params)
-  dta$location <- factor(dta$location, levels=locations)
   
   # redefine params, locations, datasets to reflect subsetted data
-  params <- unique(dta$param)
-  locations <- unique(dta$location)
-  datasets <- unique(dta$dataset)
+  params <- dplyr::distinct(dplyr::select(dta, param))$param
+  locations <- dplyr::distinct(dplyr::select(dta, location))$location
+  datasets <- dplyr::distinct(dplyr::select(dta, dataset))$dataset
   
-  pm <- x$params[x$params$param %in% params,]
-  lc <- x$locations[x$locations$location %in% locations,]
-  cl <- x$columns[x$columns$dataset %in% datasets,]
-  ds <- x$datasets[x$datasets$dataset %in% datasets,]
+  pm <- dplyr::filter(x$params, param %in% params)
+  lc <- dplyr::filter(x$locations, location %in% locations)
+  cl <- dplyr::filter(x$columns, dataset %in% datasets)
+  ds <- dplyr::filter(x$datasets, dataset %in% datasets)
   
-  mudata(data=dta, locations=lc, params=pm, datasets=ds, 
-         columns=cl, validate=validate, defactorize = defactorize, retype=FALSE)
+  # keep class of original
+  structure(list(data=dta, locations=lc, params=pm, datasets=ds, 
+                 columns=cl), class = class(x))
+}
+
+#' @rdname filter.mudata
+#' @export
+subset.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
+  filter.mudata(x, ..., datasets=datasets, params=params, locations=locations)
 }
 
 
@@ -370,6 +376,11 @@ summary.mudata <- function(object, ..., digits=NA) {
 #' @rdname summary.mudata
 #' @export
 print.mudata <- function(x, ..., digits=4) {
+  if(nrow(utils::head(x$data)) == 0) {
+    cat("An empty mudata object")
+    return(invisible(x))
+  }
+  
   if(is.numericish(x$data$value)) {
     sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), min="min(value, na.rm=TRUE)",
                                 max="max(value, na.rm=TRUE)")

@@ -77,28 +77,28 @@ test_that("duplicate data is detected", {
   # skip aggregation
   md <- mudata(pocmaj_not_summarised, validate = FALSE)
   expect_that(validate.mudata(md), 
-              throws_error("dataset, location, param, and x do not identify unique rows for:.*"))
+              throws_error("Duplicate data in data table"))
 })
 
 test_that("duplicate location metadata are detected", {
   data("kentvillegreenwood")
   expect_true(validate.mudata(kentvillegreenwood))
   kentvillegreenwood$locations <- rbind(kentvillegreenwood$locations, kentvillegreenwood$locations[1,])
-  expect_error(validate.mudata(kentvillegreenwood), "Duplicate location in locations table:.*?")
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate locations in locations table")
 })
 
 test_that("duplicate param metadata are detected", {
   data("kentvillegreenwood")
   expect_true(validate.mudata(kentvillegreenwood))
   kentvillegreenwood$params <- rbind(kentvillegreenwood$params, kentvillegreenwood$params[1,])
-  expect_error(validate.mudata(kentvillegreenwood), "Duplicate parameter in parameters table:.*?")
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate params in params table")
 })
 
 test_that("duplicate dataset metadata are detected", {
   data("kentvillegreenwood")
   expect_true(validate.mudata(kentvillegreenwood))
   kentvillegreenwood$datasets <- rbind(kentvillegreenwood$datasets, kentvillegreenwood$datasets[1,])
-  expect_error(validate.mudata(kentvillegreenwood), "Duplicate dataset in datasets table")
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate datasets in datasets table")
 })
 
 
@@ -106,7 +106,7 @@ test_that("duplicate column metadata are detected", {
   data("kentvillegreenwood")
   expect_true(validate.mudata(kentvillegreenwood))
   kentvillegreenwood$columns <- rbind(kentvillegreenwood$columns, kentvillegreenwood$columns[1,])
-  expect_error(validate.mudata(kentvillegreenwood), "Duplicate column in columns table:.*?")
+  expect_error(validate.mudata(kentvillegreenwood), "Duplicate columns in columns table")
 })
 
 test_that("recombined subsetted objects are the same as the original", {

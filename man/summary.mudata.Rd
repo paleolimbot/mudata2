@@ -2,12 +2,18 @@
 % Please edit documentation in R/mudata.R
 \name{summary.mudata}
 \alias{summary.mudata}
+\alias{summary.mudata_remote}
 \alias{print.mudata}
+\alias{collect.mudata_remote}
 \title{Object summary for a mudata object}
 \usage{
 \method{summary}{mudata}(object, ..., digits = NA)
 
+\method{summary}{mudata_remote}(object, ...)
+
 \method{print}{mudata}(x, ..., digits = 4)
+
+collect.mudata_remote(x, ...)
 }
 \arguments{
 \item{object}{A \link{mudata} object}
@@ -27,7 +33,6 @@ statistics.
 }
 \examples{
 data(kentvillegreenwood)
-summary(kentvillegreenwood, digits=2)
 summary(kentvillegreenwood)
 print(kentvillegreenwood, digits=2)
 

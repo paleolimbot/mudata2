@@ -174,76 +174,93 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
   md <- structure(.Data = mdlist,
                     class=c('mudata', 'list'))
   if(validate) {
-    .validate(md)
+    validate.mudata(md)
   }
   return(md)
 }
 
-.checkcols <- function(df, name, required_cols) {
-  if(!inherits(df, "data.frame")) stop(sprintf("Table '%s' is not a data.frame", name))
-  missingcols <- required_cols[!(required_cols %in% names(df))]
-  if(length(missingcols)>0) stop(sprintf("Table '%s' is missing columns %s",
-                                         name,
-                                         paste0("'", missingcols, "'", collapse=", ")))
+#' @rdname mudata
+#' @export
+mudata_remote <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NULL,
+                          dataset.id='default') {
+  # check data object
+  .checkcols(data, 'data', c('location', 'param', 'x', 'value'))
+  # if there is no dataset column, use mutate to create one
+  if(!('dataset' %in% colnames(data))) {
+    data <- dplyr::mutate(data, dataset = dataset.id)
+  }
+  # move dataset, location, param, x to the front
+  data <- dplyr::select_(data, "dataset", "location", "param", "x", "value", dplyr::everything())
+  tagnames <- colnames(data)[!(colnames(data) %in% c('dataset', 'location', 'param', 'x', 'value'))]
+  
+  # check datasets object
+  if(is.null(datasets)) {
+    # create a derived table for datasets
+    datasets <- dplyr::distinct(dplyr::select_(data, "dataset"))
+  } else {
+    .checkcols(datasets, 'datasets', 'dataset')
+    datasets <- dplyr::select_(datasets, "dataset", dplyr::everything())
+  }
+  
+  # check locations object
+  if(is.null(locations)) {
+    locations <- dplyr::distinct(dplyr::select_(data, "dataset", "location"))
+  } else {
+    .checkcols(locations, 'locations', c('dataset', 'location'))
+    locations <- dplyr::select_(locations, "dataset", "location", dplyr::everything())
+  }
+  
+  # check params object
+  if(is.null(params)) {
+    params <- dplyr::distinct(dplyr::select_(data, "dataset", "param"))
+  } else {
+    .checkcols(params, 'params', c('dataset', 'param'))
+  }
+  
+  # check columns object
+  if(is.null(columns)) {
+    # generate a table of all columns
+    dataset_ids <- dplyr::collect(dplyr::distinct(dplyr::select_(datasets, "dataset")))$dataset
+    allcols <- expand.grid(dataset=dataset_ids, 
+                           table=c("data", "locations", "params", "datasets"),
+                           stringsAsFactors = FALSE)
+    columns <- plyr::adply(allcols, 1, function(row) {
+      table <- dplyr::collect(utils::head(get(row$table)))
+      tibble::tibble(column = colnames(table), 
+                     type = vapply(table, function(x) class(x)[1], character(1)))
+    })
+  } else {
+    .checkcols(columns, 'columns', c('dataset', 'table', 'column'))
+  }
+  
+  # return list of tables
+  structure(list(data = data, locations = locations, params = params,
+                 datasets = datasets, columns = columns),
+            class = c("mudata_remote", "mudata", "list"))
 }
 
-.validate <- function(md) {
-  # check that it is a mudata object
-  if(!inherits(md, "mudata")) stop("Object is not a 'mudata' object")
-  # check columns/classes
-  .checkcols(md$locations, 'locations', c('dataset', 'location'))
-  .checkcols(md$data, 'data', c('dataset', 'location', 'param', 'x', 'value'))
-  .checkcols(md$datasets, 'datasets', 'dataset')
-  .checkcols(md$columns, 'columns', c('dataset', 'table', 'column'))
-  .checkcols(md$params, 'params', c('dataset', 'param'))
-  
-  # ensure data is summarised
-  lengths <- dplyr::summarise_(dplyr::group_by_(md$data, "dataset", "location", "param", "x"),
-                               lengths="length(value)")
-  lengths <- lengths[lengths$lengths > 1,]
-  if(nrow(lengths) > 0) {
-    lengths <- lengths[1:min(nrow(lengths), 10),]
-    stop("dataset, location, param, and x do not identify unique rows for:\n",
-         paste(lengths$dataset, lengths$location, lengths$param, lengths$x, sep="->", collapse="\n"))
-  } 
-
-  locs <- unique(as.character(md$data$location))
-  params <- unique(as.character(md$data$param))
-  datasets <- unique(as.character(md$data$dataset))
-  
-  # ensure locs/params/datasets are in the tables
-  noinflocs <- locs[!(locs %in% md$locations$location)]
-  if(length(noinflocs) > 0) stop("Locations not included in location table: ", paste(noinflocs, collapse=' '))
-  noinfparams <- params[!(params %in% md$params$param)]
-  if(length(noinfparams) > 0) stop("Params not included in param table: ", paste(noinfparams, collapse=' '))
-  noinfds <- datasets[!(datasets %in% md$datasets$dataset)]
-  if(length(noinfds) > 0) stop("Datasets not included in dataset table: ", paste(noinfds, collapse=' '))
-  
-  # ensure there are no extraneous information in information tables
-  noinflocs <- md$locations$location[!(md$locations$location %in% locs)]
-  if(length(noinflocs) > 0) stop("Locations ", paste(noinflocs, collapse=' '), " not included in data")
-  noinfparams <- md$params$param[!(md$params$param %in% params)]
-  if(length(noinfparams) > 0) stop("Parameters ", paste(noinfparams, collapse=' '), " not included in data")
-  noinfds <- md$datasets$dataset[!(md$datasets$dataset %in% datasets)]
-  if(length(noinfds) > 0) stop("Datasets ", paste(noinfds, collapse=' '), " not included in data")
-  
-  # ensure no duplicates in locations, datasets, params, columns
-  . <- NULL; rm(.) # CMD check hack
-  if(length(unique(md$datasets$dataset)) != length(md$datasets$dataset)) stop("Duplicate dataset in datasets table")
-  dplyr::do(dplyr::group_by_(md$locations, "dataset", "location"), {
-    if(nrow(.) > 1) stop("Duplicate location in locations table: ", unique(.$dataset), '->', unique(.$location))
-    .
-  })
-  dplyr::do(dplyr::group_by_(md$params, "dataset", "param"), {
-    if(nrow(.) > 1) stop("Duplicate parameter in parameters table: ", unique(.$dataset), '->', unique(.$param))
-    .
-  })
-  dplyr::do(dplyr::group_by_(md$columns, "dataset", "table", "column"), {
-    if(nrow(.) > 1) stop("Duplicate column in columns table: ", unique(.$dataset), '->', unique(.$table),  
-                         '->', unique(.$column))
-    .
-  })
-  TRUE
+#' Create a mudata object using a database source
+#'
+#' @param db An src_sql as generated by dplyr
+#' @param data The name of the data table
+#' @param locations The name of the locations table
+#' @param params The name of the params table
+#' @param datasets The name of the datasets table
+#' @param columns The name of the columns table
+#'
+#' @return A mudata object
+#' @export
+#'
+mudata_db <- function(db, data = "data", locations = "locations", params = "params", 
+                      datasets = "datasets", columns = "columns") {
+  if(!inherits(db, "src_sql")) stop("'db' must be an 'src_sql'")
+  mudata_remote(
+    data = dplyr::tbl(db, data),
+    locations = if(is.null(locations)) NULL else dplyr::tbl(db, locations),
+    params = if(is.null(params)) NULL else dplyr::tbl(db, params),
+    datasets = if(is.null(datasets)) NULL else dplyr::tbl(db, datasets),
+    columns = if(is.null(columns)) NULL else dplyr::tbl(db, columns)
+  )
 }
 
 #' Validate a MUData object
@@ -261,9 +278,72 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL,
 #' validate.mudata(kentvillegreenwood)
 #' 
 validate.mudata <- function(md) {
-  invisible(.validate(md))
+  # check that it is a mudata object
+  if(!inherits(md, "mudata")) stop("Object is not a 'mudata' object")
+  # check columns/classes
+  .checkcols(md$locations, 'locations', c('dataset', 'location'))
+  .checkcols(md$data, 'data', c('dataset', 'location', 'param', 'x', 'value'))
+  .checkcols(md$datasets, 'datasets', 'dataset')
+  .checkcols(md$columns, 'columns', c('dataset', 'table', 'column'))
+  .checkcols(md$params, 'params', c('dataset', 'param'))
+  
+  # ensure data is summarised
+  .checkunique(md$data, "data", "dataset", "location", "param", "x")
+  
+  # get unique params, locations, and datasets from the data table
+  params <- dplyr::collect(dplyr::distinct(dplyr::select_(md$data, "param")))$param
+  locations <- dplyr::collect(dplyr::distinct(dplyr::select_(md$data, "location")))$location
+  datasets <- dplyr::collect(dplyr::distinct(dplyr::select_(md$data, "dataset")))$dataset
+  
+  # get unique params, locations, and datasets from the meta tables
+  table_locs <- dplyr::collect(dplyr::distinct(dplyr::select_(md$locations, "location")))$location
+  table_params <- dplyr::collect(dplyr::distinct(dplyr::select_(md$params, "param")))$param
+  table_datasets <- dplyr::collect(dplyr::distinct(dplyr::select_(md$datasets, "dataset")))$dataset
+  
+  # ensure locations in data are in the locations table
+  noinflocs <- locations[!(locations %in% table_locs)]
+  if(length(noinflocs) > 0) stop("Locations not included in location table: ", paste(noinflocs, collapse=' '))
+  noinfparams <- params[!(params %in% table_params)]
+  if(length(noinfparams) > 0) stop("Params not included in param table: ", paste(noinfparams, collapse=' '))
+  noinfds <- datasets[!(datasets %in% table_datasets)]
+  if(length(noinfds) > 0) stop("Datasets not included in dataset table: ", paste(noinfds, collapse=' '))
+  
+  # ensure there are no extraneous information in information tables
+  noinflocs <- table_locs[!(table_locs %in% locations)]
+  if(length(noinflocs) > 0) stop("Locations ", paste(noinflocs, collapse=' '), " not included in data")
+  noinfparams <- table_params[!(table_params %in% params)]
+  if(length(noinfparams) > 0) stop("Parameters ", paste(noinfparams, collapse=' '), " not included in data")
+  noinfds <- table_datasets[!(table_datasets %in% datasets)]
+  if(length(noinfds) > 0) stop("Datasets ", paste(noinfds, collapse=' '), " not included in data")
+  
+  # ensure no duplicates in locations, datasets, params, columns
+  .checkunique(md$locations, "locations", "dataset", "location")
+  .checkunique(md$params, "params", "dataset", "param")
+  .checkunique(md$datasets, "datasets", "dataset")
+  .checkunique(md$columns, "columns", "dataset", "table", "column")
+  
+  # return TRUE
+  invisible(TRUE)
 }
 
+.checkunique <- function(tbl, context, ...) {
+  lengths <- dplyr::collect(dplyr::distinct(
+    dplyr::select_(dplyr::ungroup(dplyr::count_(tbl, c(...))), "n")))$n
+  
+  if((length(lengths) != 1) || (lengths[1] != 1)) {
+    stop(sprintf("Duplicate %s in %s table", context, context))
+  }
+}
+
+.checkcols <- function(df, name, required_cols) {
+  if(!inherits(df, "data.frame") && !inherits(df, "tbl")) {
+    stop(sprintf("Table '%s' is not a data.frame", name))
+  }
+  missingcols <- required_cols[!(required_cols %in% colnames(df))]
+  if(length(missingcols)>0) stop(sprintf("Table '%s' is missing columns %s",
+                                         name,
+                                         paste0("'", missingcols, "'", collapse=", ")))
+}
 
 #' Combine mudata objects
 #'
@@ -352,21 +432,19 @@ subset.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
 #'
 #' @examples
 #' data(kentvillegreenwood)
-#' summary(kentvillegreenwood, digits=2)
 #' summary(kentvillegreenwood)
 #' print(kentvillegreenwood, digits=2)
 #' 
 summary.mudata <- function(object, ..., digits=NA) {
-  df <- data.frame(dplyr::summarise_(dplyr::group_by_(object$data, "dataset", "location", "param"),
-                    Min="min(value, na.rm=TRUE)", 
-                    Median="stats::median(value, na.rm=TRUE)",
-                    Mean="mean(value, na.rm=TRUE)",
-                    Max="max(value, na.rm=TRUE)",
-                    n="length(value)",
-                    NAs="sum(is.na(value))"),
-             check.names = FALSE)
+  # cmd hack
+  value <- NULL; rm(value); n <- NULL; rm(n)
+  df <- data.frame(dplyr::summarise(dplyr::group_by_(object$data, "dataset", "location", "param"),
+                         Min=min(value, na.rm=TRUE), 
+                         Mean=mean(value, na.rm=TRUE),
+                         Max=max(value, na.rm=TRUE),
+                         n=n(), ...), check.names = FALSE)
   if(!is.na(digits)) {
-    numbers <- data.frame(lapply(df[4:9], round, digits))
+    numbers <- data.frame(lapply(df[4:ncol(df)], round, digits))
     return(cbind(df[1:3], numbers))
   } else {
     return(df)
@@ -375,15 +453,29 @@ summary.mudata <- function(object, ..., digits=NA) {
 
 #' @rdname summary.mudata
 #' @export
+summary.mudata_remote <- function(object, ...) {
+  # cmd hack
+  value <- NULL; rm(value); n <- NULL; rm(n)
+  dplyr::summarise(dplyr::group_by_(object$data, "dataset", "location", "param"),
+                   Min=min(value), 
+                   Mean=mean(value),
+                   Max=max(value),
+                   n=n(), ...)
+}
+
+#' @rdname summary.mudata
+#' @export
 print.mudata <- function(x, ..., digits=4) {
-  if(nrow(utils::head(x$data)) == 0) {
+  if(nrow(dplyr::collect(utils::head(x$data))) == 0) {
     cat("An empty mudata object")
     return(invisible(x))
   }
   
-  if(is.numericish(x$data$value)) {
-    sumobj <- dplyr::summarise_(dplyr::group_by_(x$data, "param"), min="min(value, na.rm=TRUE)",
-                                max="max(value, na.rm=TRUE)")
+  if(is.numericish(dplyr::collect(utils::head(dplyr::select_(x$data, "value")))$value)) {
+    min_func <- if(inherits(x, "mudata_remote")) "min(value)" else "min(value, na.rm=TRUE)"
+    max_func <- if(inherits(x, "mudata_remote")) "max(value)" else "max(value, na.rm=TRUE)"
+    sumobj <- dplyr::collect(dplyr::summarise_(dplyr::group_by_(x$data, "param"), 
+                                min=min_func, max=max_func))
     paramsummary <- paste("... ... ", sumobj$param, " from ", 
                           format(sumobj$min, digits=digits), " to ", 
                           format(sumobj$max, digits=digits))
@@ -392,18 +484,23 @@ print.mudata <- function(x, ..., digits=4) {
                                 vals="paste(utils::head(value), collapse=', ')")
     paramsummary <- paste("... ... ", sumobj$param, ": ", sumobj$vals, "...")
   }
-  datasets <- x$datasets$dataset
-  locations <- x$locations$location
-  params <- unique(x$params$param)
-  if(is.numericish(x$data$x)) {
-    xrange <- range(x$data$x)
+  
+  # get unique params, locations, and datasets from the meta tables
+  locations <- dplyr::collect(dplyr::distinct(dplyr::select_(x$locations, "location")))$location
+  params <- dplyr::collect(dplyr::distinct(dplyr::select_(x$params, "param")))$param
+  datasets <- dplyr::collect(dplyr::distinct(dplyr::select_(x$datasets, "dataset")))$dataset
+  
+  x_vals <- dplyr::collect(dplyr::distinct(dplyr::select_(x$data, "x")))$x
+  
+  if(is.numericish(x_vals)) {
+    xrange <- range(x_vals)
     xrangesum <- sprintf("from %s to %s", xrange[1], xrange[2])
   } else {
     xrangesum <- paste(paste(utils::head(x$data$x), collapse = ", "), "...")
   }
   
-  lines <- c(sprintf("A mudata object with %d dataset(s), %d location(s), %d param(s), and %d data points",
-                     length(datasets), length(locations), length(params), nrow(x$data)),
+  lines <- c(sprintf("A %s object with %d dataset(s), %d location(s), %d param(s), and %d data points",
+                     class(x)[1], length(datasets), length(locations), length(params), nrow(x$data)),
              sprintf("... datasets: %s", paste(datasets, collapse=", ")),
              sprintf("... locations: %s", paste(locations, collapse=", ")),
              sprintf("... x: %s", xrangesum),
@@ -411,4 +508,10 @@ print.mudata <- function(x, ..., digits=4) {
              paramsummary)
   cat(paste(lines, collapse="\n"))
   invisible(x)
+}
+
+#' @rdname summary.mudata
+#' @export
+collect.mudata_remote <- function(x, ...) {
+  structure(lapply(x, dplyr::collect), class = c("mudata", "list"))
 }

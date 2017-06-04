@@ -2,12 +2,16 @@
 % Please edit documentation in R/mudata.R
 \name{mudata}
 \alias{mudata}
+\alias{mudata_remote}
 \title{Create a MuData object}
 \usage{
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
   columns = NULL, dataset.id = "default", location.id = "default",
   defactorize = TRUE, validate = TRUE, expand.tags = TRUE,
   retype = FALSE)
+
+mudata_remote(data, locations = NULL, params = NULL, datasets = NULL,
+  columns = NULL, dataset.id = "default")
 }
 \arguments{
 \item{data}{The data table, which is a molten data frame containing the columns (at least)

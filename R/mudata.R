@@ -393,13 +393,13 @@ filter.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
   # lazily filter data
   dta <- dplyr::filter(x$data, ...)
   if(!is.null(datasets)) {
-    dta <- dplyr::filter(x$data, dataset %in% datasets)
+    dta <- dplyr::filter(dta, dataset %in% datasets)
   }
   if(!is.null(locations)) {
-    dta <- dplyr::filter(x$data, location %in% locations)
+    dta <- dplyr::filter(dta, location %in% locations)
   }
   if(!is.null(params)) {
-    dta <- dplyr::filter(x$data, param %in% params)
+    dta <- dplyr::filter(dta, param %in% params)
   }
   
   # redefine params, locations, datasets to reflect subsetted data

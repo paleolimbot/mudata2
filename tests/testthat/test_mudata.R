@@ -110,20 +110,30 @@ test_that("duplicate column metadata are detected", {
 })
 
 test_that("mudata objects subset properly", {
+  # location subsets
   md <- mudata(pocmaj_data)
   mdlocsub <- subset(md, locations="MAJ-1")
   expect_identical(unique(mdlocsub$data$location), "MAJ-1")
   expect_identical(unique(mdlocsub$locations$location), "MAJ-1")
   mdlocsub2 <- subset(md, locations="POC-2")
   expect_identical(unique(mdlocsub2$data$location), "POC-2")
+  
+  # param subsets
   mdparamsub <- subset(md, params="Ca")
   expect_identical(unique(mdparamsub$data$param), "Ca")
   mdparamsub2 <- subset(md, params=c("V", "Ti"))
   expect_identical(sort(unique(mdparamsub2$data$param)), c("Ti", "V"))
+  expect_identical(sort(unique(mdparamsub2$params$param)), c("Ti", "V"))
+  
+  # both subsets
+  mdbothsub <- subset(md, locations = "MAJ-1", params = c("Ti", "V"))
+  expect_identical(unique(mdbothsub$data$location), "MAJ-1")
+  expect_identical(unique(mdbothsub$locations$location), "MAJ-1")
+  expect_identical(sort(unique(mdbothsub$data$param)), c("Ti", "V"))
+  expect_identical(sort(unique(mdbothsub$params$param)), c("Ti", "V"))
 })
 
 test_that("recombined subsetted objects are the same as the original", {
-  
   md <- mudata(pocmaj_data)
   mdlocsub <- subset(md, locations="MAJ-1")
   mdlocsub2 <- subset(md, locations="POC-2")
@@ -146,7 +156,25 @@ test_that("printing of a mudata actually prints things", {
 })
 
 test_that("grouped data frames don't cause problems in the mudata constructor", {
-  expect_silent(mudata(dplyr::group_by(pocmaj_data, location, param)))
+  md <- mudata(pocmaj_data)
+  expect_silent(mudata(dplyr::group_by(pocmaj_data, location, param), validate = FALSE))
+  md2 <- mudata(dplyr::group_by(pocmaj_data, location, param), validate = FALSE)
+  
+  
+  md2 <- lapply(md2, dplyr::ungroup)
+  class(md2) <- c("mudata", "list")
+  expect_silent(validate.mudata(md2))
+  expect_true(validate.mudata(md2))
+  expect_silent(summary(md2))
+  
+  expect_true(all(mapply(function(x, y) identical(as.data.frame(x), as.data.frame(y)), md, md2)))
+})
+
+test_that("grouped data frames don't cause problems in the validate method", {
+  md <- mudata(pocmaj_data)
+  md$data <- dplyr::group_by(md$data, location, param)
+  expect_silent(validate.mudata(md))
+  expect_true(validate.mudata(md))
 })
 
 test_that("grouped data frames don't cause problems in summary and print methods", {

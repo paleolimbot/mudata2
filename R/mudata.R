@@ -329,6 +329,7 @@ validate.mudata <- function(md) {
 .checkunique <- function(tbl, context, ...) {
   . <- NULL; rm(.) # cmd hack
   lengths <- tbl %>% 
+    dplyr::ungroup() %>%
     dplyr::count_(c(...)) %>%
     dplyr::ungroup() %>%
     dplyr::select(dplyr::matches("(^n$)|(^nn$)")) %>%
@@ -496,7 +497,7 @@ print.mudata <- function(x, ..., digits=4) {
   params <- dplyr::collect(dplyr::distinct(dplyr::select_(x$params, "param")))$param
   datasets <- dplyr::collect(dplyr::distinct(dplyr::select_(x$datasets, "dataset")))$dataset
   
-  x_vals <- dplyr::collect(dplyr::distinct(dplyr::select_(x$data, "x")))$x
+  x_vals <- dplyr::collect(dplyr::distinct(dplyr::select_(dplyr::ungroup(x$data), "x")))$x
   
   if(is.numericish(x_vals)) {
     xrange <- range(x_vals)

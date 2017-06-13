@@ -132,4 +132,13 @@ test_that("printing of a mudata actually prints things", {
   expect_output(print(md), "A mudata object with.*")
 })
 
+test_that("grouped data frames don't cause problems in the mudata constructor", {
+  expect_silent(mudata(dplyr::group_by(pocmaj_data, location, param)))
+})
 
+test_that("grouped data frames don't cause problems in summary and print methods", {
+  md <- mudata(pocmaj_data)
+  md$data <- dplyr::group_by(md$data, location, param)
+  expect_silent(summary(md))
+  expect_silent(print(md))
+})

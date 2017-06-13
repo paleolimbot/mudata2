@@ -327,8 +327,14 @@ validate.mudata <- function(md) {
 }
 
 .checkunique <- function(tbl, context, ...) {
-  lengths <- dplyr::collect(dplyr::distinct(
-    dplyr::select_(dplyr::ungroup(dplyr::count_(tbl, c(...))), "n")))$n
+  . <- NULL; rm(.) # cmd hack
+  lengths <- tbl %>% 
+    dplyr::count_(c(...)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(dplyr::matches("(^n$)|(^nn$)")) %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    .[[1]]
   
   if((length(lengths) != 1) || (lengths[1] != 1)) {
     stop(sprintf("Duplicate %s in %s table", context, context))
@@ -511,6 +517,7 @@ print.mudata <- function(x, ..., digits=4) {
 }
 
 #' @rdname summary.mudata
+#' @importFrom dplyr collect
 #' @export
 collect.mudata_remote <- function(x, ...) {
   structure(lapply(x, dplyr::collect), class = c("mudata", "list"))

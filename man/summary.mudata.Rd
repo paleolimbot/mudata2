@@ -13,7 +13,7 @@
 
 \method{print}{mudata}(x, ..., digits = 4)
 
-collect.mudata_remote(x, ...)
+\method{collect}{mudata_remote}(x, ...)
 }
 \arguments{
 \item{object}{A \link{mudata} object}

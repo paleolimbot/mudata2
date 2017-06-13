@@ -8,7 +8,7 @@ Description: Formatting and structuring multi-parameter spatiotemporal data
   is often a time-consuming task. This package offers functions and data structures 
   designed to easily organize and visualize these data for applications in geology, 
   paleolimnology, dendrochronology, and paleoclimate.
-Imports: reshape2, ggplot2, plyr, dplyr, jsonlite (>= 1.2), methods, tibble
+Imports: reshape2, ggplot2, plyr, dplyr, jsonlite (>= 1.2), methods, tibble, magrittr
 Depends:
     R (>= 3.2.2)
 Suggests: testthat, RSQLite

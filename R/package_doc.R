@@ -37,7 +37,7 @@
 #' plot(md, yvar="x")
 #' 
 #' @seealso \link{mudata}
-#' 
+#' @importFrom magrittr %>%
 #' @docType package
 #' @aliases NULL
 "_PACKAGE"

@@ -109,6 +109,19 @@ test_that("duplicate column metadata are detected", {
   expect_error(validate.mudata(kentvillegreenwood), "Duplicate columns in columns table")
 })
 
+test_that("mudata objects subset properly", {
+  md <- mudata(pocmaj_data)
+  mdlocsub <- subset(md, locations="MAJ-1")
+  expect_identical(unique(mdlocsub$data$location), "MAJ-1")
+  expect_identical(unique(mdlocsub$locations$location), "MAJ-1")
+  mdlocsub2 <- subset(md, locations="POC-2")
+  expect_identical(unique(mdlocsub2$data$location), "POC-2")
+  mdparamsub <- subset(md, params="Ca")
+  expect_identical(unique(mdparamsub$data$param), "Ca")
+  mdparamsub2 <- subset(md, params=c("V", "Ti"))
+  expect_identical(sort(unique(mdparamsub2$data$param)), c("Ti", "V"))
+})
+
 test_that("recombined subsetted objects are the same as the original", {
   
   md <- mudata(pocmaj_data)

@@ -3,12 +3,16 @@
 \name{filter.mudata}
 \alias{filter.mudata}
 \alias{subset.mudata}
+\alias{collect.mudata}
 \title{Subset (filter) a MuData object}
 \usage{
-filter.mudata(x, ..., datasets = NULL, params = NULL, locations = NULL)
+\method{filter}{mudata}(x, ..., datasets = NULL, params = NULL,
+  locations = NULL)
 
 \method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
   locations = NULL)
+
+\method{collect}{mudata}(x, ...)
 }
 \arguments{
 \item{x}{The object to subset}

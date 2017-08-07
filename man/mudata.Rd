@@ -2,16 +2,11 @@
 % Please edit documentation in R/mudata.R
 \name{mudata}
 \alias{mudata}
-\alias{mudata_remote}
 \title{Create a MuData object}
 \usage{
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
-  columns = NULL, dataset.id = "default", location.id = "default",
-  defactorize = TRUE, validate = TRUE, expand.tags = TRUE,
-  retype = FALSE)
-
-mudata_remote(data, locations = NULL, params = NULL, datasets = NULL,
-  columns = NULL, dataset.id = "default")
+  columns = NULL, x_columns = NULL, dataset_id = "default",
+  location_id = "default", validate = TRUE)
 }
 \arguments{
 \item{data}{The data table, which is a molten data frame containing the columns (at least)
@@ -22,11 +17,11 @@ there is only data for one dataset and one location (its name can be specified b
 passing the parameter \code{location.id}).}
 
 \item{locations}{The locations table, which is a data frame containing the columns (at least)
-'datset', and 'location'. If omitted, it will be created automatically using all unique
+'dataset', and 'location'. If omitted, it will be created automatically using all unique
 dataset/location combinations.}
 
 \item{params}{The params table, which is a data frame containing the columns (at least)
-'datset', and 'param'. If omitted, it will be created automatically using all unique
+'dataset', and 'param'. If omitted, it will be created automatically using all unique
 dataset/param combinations.}
 
 \item{datasets}{The datasets table, which is a data frame containing the column (at least)
@@ -36,21 +31,14 @@ dataset/param combinations.}
 'dataset', 'table', and 'column'. If omitted, it will be created automatically using 
 all dataset/table/column combinations.}
 
-\item{dataset.id}{The dataset id to use if the datasets table is omitted.}
+\item{x_columns}{A vector of column names from the data table that in combination with
+'dataset', 'location', and 'param' identify unique rows.}
 
-\item{location.id}{The location id if the locations table is omitted.}
+\item{dataset_id}{The dataset id to use if a datasets column is omitted.}
 
-\item{defactorize}{Pass \code{FALSE} to suppress coersion of 'dataset', 'location', and 'param'
-columns to type 'character'.}
+\item{location_id}{The location id if a location column is omitted.}
 
 \item{validate}{Pass \code{FALSE} to skip validation of input tables.}
-
-\item{expand.tags}{Pass \code{FALSE} to collapse non-required columns to a single column
-(called 'tags'), with key/value pairs in JSON format. See \link{expand.tags}.}
-
-\item{retype}{Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
-table. This is useful when reading data from disk, where date/time columns may be stored
-as text.}
 }
 \value{
 A \code{mudata} object
@@ -61,20 +49,18 @@ data format. This format is a collection of tables as described below. For an ex
 of data already in this format, see the \link{kentvillegreenwood} dataset.
 }
 \examples{
-library(reshape2)
+library(tidyr)
 library(dplyr)
 data(pocmaj)
 
-# melt data and summarise replicates
+# gather columns and summarise replicates
 datatable <- pocmaj \%>\%
-  melt(id.vars=c("core", "depth"), variable.name="param") \%>\%
+  gather(Ca, Ti, V, key = "param", value = "param_value") \%>\%
   group_by(core, param, depth) \%>\%
-  summarise(sd=mean(value), value=mean(value)) \%>\%
-  rename.cols("depth"="x", "core"="location")
+  summarise(value=mean(param_value), sd=mean(param_value)) \%>\%
+  rename(location = core)
 
 # create mudata object
-md <- mudata(datatable)
-summary(md)
-plot(md, yvar="x", geom=c("path", "point"))
+mudata(datatable)
 
 }

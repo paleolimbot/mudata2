@@ -24,21 +24,27 @@
 #' @examples
 #' # inspect the example dataset
 #' data(kentvillegreenwood)
+#' print(kentvillegreenwood)
 #' plot(kentvillegreenwood)
 #' 
 #' # create a mudata object from a wide data.frame
-#' library(reshape2)
-#' data("pocmajsum")
-#' pocmajwide <- pocmajsum[c("core", "depth", "Ca", "V", "Ti")]
-#' pocmajwide <- rename.cols(pocmajwide, "core"="location", "depth"="x")
-#' pocmajlong <- melt(pocmajwide, id.vars=c("location", "x"), variable.name = "param",
-#'                    value.name="value")
-#' md <- mudata(pocmajlong)
-#' plot(md, yvar="x")
+#' library(tidyr)
+#' library(dplyr)
+#' # gather columns and summarise replicates
+#' datatable <- pocmaj %>%
+#'   gather(Ca, Ti, V, key = "param", value = "param_value") %>%
+#'   group_by(core, param, depth) %>%
+#'   summarise(value=mean(param_value), sd=mean(param_value)) %>%
+#'   rename(location = core)
+#'
+#' # create mudata object
+#' md <- mudata(datatable)
+#' 
+#' # plot mudata contents
+#' plot(md, yvar="depth")
 #' 
 #' @seealso \link{mudata}
 #' @importFrom magrittr %>%
-#' @importFrom dplyr everything
 #' @docType package
 #' @aliases NULL
 "_PACKAGE"

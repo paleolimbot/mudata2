@@ -109,7 +109,8 @@ condense.tags.data.frame <- function(x, tagcolumns, tagcolumn='tags', ...) {
 #' @rdname condense.tags
 #' @export
 condense.tags.mudata <- function(x, ...) {
-  x$data <- .tagify(x$data, exnames=c('dataset', 'location', 'param', 'x', 'value'), expand=FALSE)
+  x$data <- .tagify(x$data, exnames=c('dataset', 'location', 'param', attr(x, "x_columns"), 
+                                      'value'), expand=FALSE)
   x$locations <- .tagify(x$locations, exnames=c('dataset', 'location'), expand=FALSE)
   x$params <- .tagify(x$params, exnames=c('dataset', 'param'), expand=FALSE)
   x$datasets <- .tagify(x$datasets, exnames=c('dataset'), expand=FALSE)

@@ -17,11 +17,11 @@ there is only data for one dataset and one location (its name can be specified b
 passing the parameter \code{location.id}).}
 
 \item{locations}{The locations table, which is a data frame containing the columns (at least)
-'datset', and 'location'. If omitted, it will be created automatically using all unique
+'dataset', and 'location'. If omitted, it will be created automatically using all unique
 dataset/location combinations.}
 
 \item{params}{The params table, which is a data frame containing the columns (at least)
-'datset', and 'param'. If omitted, it will be created automatically using all unique
+'dataset', and 'param'. If omitted, it will be created automatically using all unique
 dataset/param combinations.}
 
 \item{datasets}{The datasets table, which is a data frame containing the column (at least)
@@ -34,9 +34,9 @@ all dataset/table/column combinations.}
 \item{x_columns}{A vector of column names from the data table that in combination with
 'dataset', 'location', and 'param' identify unique rows.}
 
-\item{dataset_id}{The dataset id to use if the datasets table is omitted.}
+\item{dataset_id}{The dataset id to use if a datasets column is omitted.}
 
-\item{location_id}{The location id if the locations table is omitted.}
+\item{location_id}{The location id if a location column is omitted.}
 
 \item{validate}{Pass \code{FALSE} to skip validation of input tables.}
 }
@@ -49,20 +49,18 @@ data format. This format is a collection of tables as described below. For an ex
 of data already in this format, see the \link{kentvillegreenwood} dataset.
 }
 \examples{
-library(reshape2)
+library(tidyr)
 library(dplyr)
 data(pocmaj)
 
-# melt data and summarise replicates
+# gather columns and summarise replicates
 datatable <- pocmaj \%>\%
-  melt(id.vars=c("core", "depth"), variable.name="param") \%>\%
+  gather(Ca, Ti, V, key = "param", value = "param_value") \%>\%
   group_by(core, param, depth) \%>\%
-  summarise(sd=mean(value), value=mean(value)) \%>\%
-  rename.cols("depth"="x", "core"="location")
+  summarise(value=mean(param_value), sd=mean(param_value)) \%>\%
+  rename(location = core)
 
 # create mudata object
-md <- mudata(datatable)
-summary(md)
-plot(md, yvar="x", geom=c("path", "point"))
+mudata(datatable)
 
 }

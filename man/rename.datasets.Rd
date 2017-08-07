@@ -43,12 +43,12 @@ such that their usage with a mudata object remains consistent.
 \examples{
 data(kentvillegreenwood)
 md2 <- rename.datasets(kentvillegreenwood, ecclimate="avalley")
-validate.mudata(md2)
+validate_mudata(md2)
 md2 <- rename.locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
-validate.mudata(md2)
+validate_mudata(md2)
 md2 <- rename.params(kentvillegreenwood, maxtemp="Maximum Temperature")
-validate.mudata(md2)
+validate_mudata(md2)
 md2 <- rename.cols(kentvillegreenwood, latitude="lat", longitude="lon")
-validate.mudata(md2)
+validate_mudata(md2)
 
 }

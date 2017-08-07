@@ -133,6 +133,6 @@ longbiplot <- function(x, id.vars, measure.var, namesx=NULL, namesy=NULL, nameco
 #' biplot(kentvillegreenwood, c("meantemp", "maxtemp", "mintemp"), col="location")
 #'
 biplot.mudata <- function(x, ..., namecolumn = "param") {
-  longbiplot(x$data, id.vars=c("dataset", "location", "param", "x"),
+  longbiplot(x$data, id.vars=c("dataset", "location", "param", attr(x, "x_columns")),
              measure.var="value", ..., namecolumn = namecolumn, validate=FALSE)
 }

@@ -84,13 +84,13 @@ rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
 #' @examples
 #' data(kentvillegreenwood)
 #' md2 <- rename.datasets(kentvillegreenwood, ecclimate="avalley")
-#' validate.mudata(md2)
+#' validate_mudata(md2)
 #' md2 <- rename.locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
-#' validate.mudata(md2)
+#' validate_mudata(md2)
 #' md2 <- rename.params(kentvillegreenwood, maxtemp="Maximum Temperature")
-#' validate.mudata(md2)
+#' validate_mudata(md2)
 #' md2 <- rename.cols(kentvillegreenwood, latitude="lat", longitude="lon")
-#' validate.mudata(md2)
+#' validate_mudata(md2)
 #' 
 rename.datasets <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),
                             warn_missing=TRUE) {

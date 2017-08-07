@@ -12,10 +12,10 @@
 #'   there is only data for one dataset and one location (its name can be specified by
 #'   passing the parameter \code{location.id}).
 #' @param locations The locations table, which is a data frame containing the columns (at least)
-#'   'datset', and 'location'. If omitted, it will be created automatically using all unique
+#'   'dataset', and 'location'. If omitted, it will be created automatically using all unique
 #'   dataset/location combinations.
 #' @param params The params table, which is a data frame containing the columns (at least)
-#'   'datset', and 'param'. If omitted, it will be created automatically using all unique
+#'   'dataset', and 'param'. If omitted, it will be created automatically using all unique
 #'   dataset/param combinations.
 #' @param datasets The datasets table, which is a data frame containing the column (at least)
 #'   'dataset'. If omitted, it will be generated automatically using all unique datasets.
@@ -24,29 +24,27 @@
 #'   all dataset/table/column combinations.
 #' @param x_columns A vector of column names from the data table that in combination with
 #'   'dataset', 'location', and 'param' identify unique rows.
-#' @param dataset_id The dataset id to use if the datasets table is omitted.
-#' @param location_id The location id if the locations table is omitted.
+#' @param dataset_id The dataset id to use if a datasets column is omitted.
+#' @param location_id The location id if a location column is omitted.
 #' @param validate Pass \code{FALSE} to skip validation of input tables.
 #'
 #' @return A \code{mudata} object
 #' @export
 #' 
 #' @examples
-#' library(reshape2)
+#' library(tidyr)
 #' library(dplyr)
 #' data(pocmaj)
 #' 
-#' # melt data and summarise replicates
+#' # gather columns and summarise replicates
 #' datatable <- pocmaj %>%
-#'   melt(id.vars=c("core", "depth"), variable.name="param") %>%
+#'   gather(Ca, Ti, V, key = "param", value = "param_value") %>%
 #'   group_by(core, param, depth) %>%
-#'   summarise(sd=mean(value), value=mean(value)) %>%
-#'   rename.cols("depth"="x", "core"="location")
+#'   summarise(value=mean(param_value), sd=mean(param_value)) %>%
+#'   rename(location = core)
 #'
 #' # create mudata object
-#' md <- mudata(datatable)
-#' summary(md)
-#' plot(md, yvar="x", geom=c("path", "point"))
+#' mudata(datatable)
 #' 
 mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NULL,
                    x_columns = NULL,
@@ -104,7 +102,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   } else {
     # if there is no dataset column, use mutate to create one
     .checkcols(params, 'params', 'param')
-    params <- .adddataset(params, dataset_id = datset_id)
+    params <- .adddataset(params, dataset_id = dataset_id)
     # check columns, move dataset and param to the front
     .checkcols(params, 'params', c('dataset', 'param'))
     params <- .movetofront(params, c("dataset", "param"))
@@ -151,13 +149,16 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
 #' @param md An object of class 'mudata'
 #' @param check_unique Check if columns identify unique values in the appropriate tables
 #' @param check_references Check the referential integrity of the mudata object
+#' @param x_columns A vector of column names from the data table that in combination with
+#'   'dataset', 'location', and 'param' identify unique rows.
+#' @param action the function to be called when errors are detected in validate_mudata
 #'
 #' @export
 #' 
 #' @examples 
 #' data(kentvillegreenwood)
 #' validate_mudata(kentvillegreenwood)
-#' new_mudata(kentvillegreenwoods)
+#' new_mudata(kentvillegreenwood, x_columns = "date")
 #' 
 new_mudata <- function(md, x_columns) {
   # check base type of md
@@ -297,7 +298,7 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   # if there is no dataset column, use mutate to create one
   if(!('dataset' %in% colnames(tbl))) {
     # can't add a dataset to a table with zero rows (ambiguous)
-    if(nrow(tbl) == 0) stop("Can't add a dataset to a table with zero rows!")
+    if(.isempty(tbl)) stop("Can't add a dataset to a table with zero rows!")
     tbl <- dplyr::mutate(tbl, dataset = dataset_id)
   }
   tbl
@@ -308,7 +309,7 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   # if there is no location column, use mutate to create one
   if(!('location' %in% colnames(tbl))) {
     # can't add a location to a table with zero rows (ambiguous)
-    if(nrow(tbl) == 0) stop("Can't add a location to a table with zero rows!")
+    if(.isempty(tbl)) stop("Can't add a location to a table with zero rows!")
     tbl <- dplyr::mutate(tbl, location = location_id)
   }
   tbl
@@ -333,7 +334,7 @@ guess_x_columns <- function(df, quiet = FALSE) {
 
 generate_columns_table <- function(data, locations, params, datasets) {
   # generate a table of all columns
-  if(nrow(data) == 0) {
+  if(.isempty(data)) {
     # no data, empty auto-generated columns table
     columns <- tibble::tibble(dataset = character(0), table = character(0),
                               column = character(0))
@@ -369,7 +370,7 @@ generate_columns_table <- function(data, locations, params, datasets) {
 mudata_db <- function(db, data = "data", locations = "locations", params = "params", 
                       datasets = "datasets", columns = "columns") {
   if(!inherits(db, "src_sql")) stop("'db' must be an 'src_sql'")
-  mudata_remote(
+  mudata(
     data = dplyr::tbl(db, data),
     locations = if(is.null(locations)) NULL else dplyr::tbl(db, locations),
     params = if(is.null(params)) NULL else dplyr::tbl(db, params),

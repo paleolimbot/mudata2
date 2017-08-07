@@ -59,7 +59,7 @@ read.mudata <- function(filename, ...) {
 write.mudata.zip <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, validate=TRUE, ...) {
   if(missing(md)) stop("Parameter md is required")
   if(missing(filename)) stop("Parameter filename is required")
-  if(validate) validate.mudata(md) # will stop() on invalid mudata
+  if(validate) validate_mudata(md) # will stop() on invalid mudata
   
   if(file.exists(filename)) {
     if(overwrite) {
@@ -119,8 +119,7 @@ read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TR
     }, USE.NAMES = TRUE, simplify = FALSE)
     
     mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
-                  columns=obj$columns, retype=retype,
-                  expand.tags=expand.tags, validate=validate)
+                  columns=obj$columns, validate=validate)
     morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
     for(name in morenames) {
       mud[[name]] <- obj[[name]]
@@ -165,7 +164,7 @@ read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TR
 write.mudata.json <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, validate=TRUE, ...) {
   if(missing(md)) stop("Parameter md is required")
   if(missing(filename)) stop("Parameter filename is required")
-  if(validate) validate.mudata(md) # will stop() on error
+  if(validate) validate_mudata(md) # will stop() on error
   
   # writing is simple, it is just a JSON object of the mudata list.
   jsonlite::write_json(md, filename, dataframe = "columns", na="null",
@@ -186,8 +185,7 @@ read.mudata.json <- function(filename, validate=TRUE, expand.tags=TRUE, retype=T
                   }
                 }, USE.NAMES = TRUE, simplify = FALSE)
   mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
-                columns=obj$columns, retype=retype,
-                expand.tags=expand.tags, validate=validate)
+                columns=obj$columns, validate=validate)
   morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
   for(name in morenames) {
     mud[[name]] <- obj[[name]]

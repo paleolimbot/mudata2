@@ -13,7 +13,7 @@ test_that("expand/condense functions work properly for data frames", {
 test_that("expand/condense tags work properly for mudata objects", {
   data("kentvillegreenwood")
   md2 <- condense.tags(kentvillegreenwood)
-  expect_that(names(md2$data), equals(c("dataset", "location", "param", "x", "value", "tags")))
+  expect_that(names(md2$data), equals(c("dataset", "location", "param", "date", "value", "tags")))
   expect_that(names(md2$locations), equals(c("dataset", "location", "tags")))
   expect_that(names(md2$params), equals(c("dataset", "param", "tags")))
   expect_that(names(md2$datasets), equals(c("dataset", "tags")))

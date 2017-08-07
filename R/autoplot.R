@@ -163,7 +163,8 @@ qualifierplot <- function(x, id.vars, measure.var, subset, xvar, yvar, facets, g
 #' @importFrom ggplot2 autoplot
 #'
 autoplot.mudata <- function(x, ...) {
-  qualifierplot(x$data, id.vars=c("dataset", "location", "param", "x"), measure.var="value", ...)
+  qualifierplot(x$data, id.vars=c("dataset", "location", "param", attr(x, "x_columns")[1]), 
+                measure.var="value", ...)
 }
 
 #' @rdname autoplot.mudata

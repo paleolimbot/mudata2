@@ -13,9 +13,14 @@ validate_mudata(md, check_unique = TRUE, check_references = TRUE,
 \arguments{
 \item{md}{An object of class 'mudata'}
 
+\item{x_columns}{A vector of column names from the data table that in combination with
+'dataset', 'location', and 'param' identify unique rows.}
+
 \item{check_unique}{Check if columns identify unique values in the appropriate tables}
 
 \item{check_references}{Check the referential integrity of the mudata object}
+
+\item{action}{the function to be called when errors are detected in validate_mudata}
 }
 \description{
 Validates a MUData object by calling \code{stop} when an error is found.
@@ -23,6 +28,6 @@ Validates a MUData object by calling \code{stop} when an error is found.
 \examples{
 data(kentvillegreenwood)
 validate_mudata(kentvillegreenwood)
-new_mudata(kentvillegreenwoods)
+new_mudata(kentvillegreenwood, x_columns = "date")
 
 }

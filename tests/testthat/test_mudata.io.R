@@ -40,7 +40,7 @@ test_that("autodetection of read function filename extension works", {
 test_that("invalid objects are not written", {
   data("kentvillegreenwood")
   kentvillegreenwood$data <- rbind(kentvillegreenwood$data, kentvillegreenwood$data)
-  expect_error(validate.mudata(kentvillegreenwood))
+  expect_error(validate_mudata(kentvillegreenwood))
   expect_error(write.mudata.json(kentvillegreenwood, tempfile()))
   expect_error(write.mudata.zip(kentvillegreenwood, tempfile()))
 })
@@ -48,7 +48,7 @@ test_that("invalid objects are not written", {
 test_that("invalid objects are not read", {
   data("kentvillegreenwood")
   kentvillegreenwood$data <- rbind(kentvillegreenwood$data, kentvillegreenwood$data)
-  expect_error(validate.mudata(kentvillegreenwood))
+  expect_error(validate_mudata(kentvillegreenwood))
   outfile_json <- tempfile(fileext = ".json")
   outfile_zip <- tempfile(fileext = ".zip")
   

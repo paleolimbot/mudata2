@@ -317,10 +317,9 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
 
 # guesses the "x" column, or the column along which the data are aligned
 guess_x_columns <- function(df, quiet = FALSE) {
-  # looking for the column name(s) between 'param' and 'value'
-  param <- which(colnames(df) == "param")[1]
+  # looking for the column name(s) before 'value'
   value <- which(colnames(df) == "value")[1]
-  cols <- setdiff(colnames(df)[param:value], c("param", "value"))
+  cols <- setdiff(colnames(df)[1:value], c("dataset", "location", "param", "value"))
   
   if(length(cols) == 0) stop("Could not guess x columns from names: ",
                              paste(colnames(df), collapse = ", "))
@@ -441,8 +440,8 @@ filter.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
   ds <- dplyr::filter(x$datasets, dataset %in% datasets)
   
   # keep class of original
-  structure(list(data=dta, locations=lc, params=pm, datasets=ds, 
-                 columns=cl), class = class(x))
+  new_mudata(list(data=dta, locations=lc, params=pm, datasets=ds, 
+                 columns=cl), x_columns = attr(x, "x_columns"))
 }
 
 #' @rdname filter.mudata

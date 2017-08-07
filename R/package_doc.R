@@ -38,6 +38,7 @@
 #' 
 #' @seealso \link{mudata}
 #' @importFrom magrittr %>%
+#' @importFrom dplyr everything
 #' @docType package
 #' @aliases NULL
 "_PACKAGE"

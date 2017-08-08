@@ -2,16 +2,17 @@
 % Please edit documentation in R/biplot.R
 \name{biplot.mudata}
 \alias{biplot.mudata}
+\alias{autobiplot.mudata}
 \title{Biplot a mudata object}
 \usage{
-\method{biplot}{mudata}(x, ..., namecolumn = "param")
+\method{biplot}{mudata}(x, ...)
+
+\method{autobiplot}{mudata}(x, ...)
 }
 \arguments{
 \item{x}{A mudata object}
 
-\item{...}{passed to \link{longbiplot}}
-
-\item{namecolumn}{The column that contains the names for biplotting}
+\item{...}{passed to plotting methods}
 }
 \value{
 a ggplot object
@@ -21,6 +22,12 @@ Uses the ggplot framework and \code{facet_grid} to produce a biplot of a mudata 
 }
 \examples{
 data(kentvillegreenwood)
-biplot(kentvillegreenwood, c("meantemp", "maxtemp", "mintemp"), col="location")
+kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
+
+# use base plotting for regular biplot function
+biplot(kvtemp)
+
+# use ggplot and facet_grid to biplot
+autobiplot(kvtemp, col = "location")
 
 }

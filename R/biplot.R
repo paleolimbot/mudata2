@@ -1,119 +1,220 @@
 
-#' Biplot a molten data frame using facets
+#' Biplot a molten data frame using facet_grid
 #' 
 #' Uses the ggplot framework and \code{facet_grid} to produce biplots of a molten
 #' data frame.
 #' 
 #' @param x the object to biplot
-#' @param id.vars the columns that identify a single value
-#' @param namecolumn The column where namesx and namesy are to be found
-#' @param namesx The names to be included in the x axes, or all the names to be included
-#' @param namesy The names to be included on the y axes, or NULL for all possible combinations
+#' @param id_vars the columns that identify a single value
+#' @param name_var The column where namesx and namesy are to be found
+#' @param names_x The names to be included in the x axes, or all the names to be included
+#' @param names_y The names to be included on the y axes, or NULL for all possible combinations
 #'   of \code{namesx}.
-#' @param measure.var The column containing the values to plot
-#' @param errors The column containing the errors. Use \code{NULL} for default ("err" if column
+#' @param measure_var The column containing the values to plot
+#' @param error_var The column containing the errors. Use \code{NULL} for default ("err" if column
 #'   exists or none otherwise), or \code{NA} to suppress.
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
 #'   to use plotmath-style labels)
-#' @param validate Ensure id.vars identify unique values
+#' @param validate Ensure id_vars identify unique values
 #' @param ... passed to \code{aes_string()}
 #' 
 #' @importFrom stats biplot
 #' @export
 #' @examples 
-#' library(reshape2)
+#' library(tidyr)
+#' library(dplyr)
 #' data(pocmajsum)
-#' pocmaj_long <- melt(pocmajsum, id.vars = c("core", "depth"),
-#'                     measure.vars = c("Ca", "Ti", "V"))
-#' longbiplot(pocmaj_long, id.vars=c("core", "depth", "variable"), 
-#'            measure.var = "value", color="core")
 #' 
-longbiplot <- function(x, id.vars, measure.var, namesx=NULL, namesy=NULL, namecolumn=NULL,
-                             errors=NULL, labeller=ggplot2::label_value, validate=TRUE, ...) {
-  if(!inherits(x, "data.frame")) stop("x must be a data.frame")
-  if(!all(c(id.vars, measure.var) %in% names(x))) stop("Some of id.vars/measure.var are not in names(x)")
-  if(length(measure.var) != 1) stop("Only one column can be used for measure.var in longbiplot")
+#' # create a long, summarised representation of pocmaj data
+#' pocmaj_long <- pocmajsum %>%
+#'   select(core, depth, Ca, Ti, V) %>%
+#'   gather(Ca, Ti, V, key = "param", value = "value")
+#' 
+#' # biplot using base plotting
+#' long_biplot(pocmaj_long, id_vars = c("core", "depth"), name_var = "param")
+#' 
+#' # biplot using ggplot
+#' autobiplot(pocmaj_long, id_vars = c("core", "depth"), name_var = "param")
+#' 
+#' # get the raw data used
+#' long_pairs(pocmaj_long, id_vars = c("core", "depth"), name_var = "param")
+#'
+long_pairs <- function(x, id_vars, name_var, names_x = NULL, 
+                       names_y = NULL, validate = TRUE) {
+  # check variables
+  if(!inherits(x, "data.frame") && !dplyr::is.tbl(x)) stop("x must be a tbl or data.frame")
+  missing_vars <- setdiff(c(id_vars, name_var), colnames(x))
+  if(length(missing_vars) > 0) {
+    stop("Some of id_vars/measure_var/name_var are not in colnames(x): ",
+         paste(missing_vars, collapse = ", "))
+  }
   
-  # CMD hack
-  . <- NULL; rm(.)
-  # check that data are summarised
+  # id_vars shouldn't contain name_var
+  id_vars <- setdiff(id_vars, name_var)
+  
+  # check that c(id_vars, name_var) identify unique values
   if(validate) {
-    dplyr::do(do.call(dplyr::group_by_, c(list(x), id.vars)), {
-      if(nrow(.) > 1) {
-        pasteargs <- c(as.list(.[1, id.vars]), list(sep="->"))
-        stop("Data are not summarised for id.vars: ", do.call(paste, pasteargs))
-      }
-      data.frame()
-    })
+    .checkunique(x, "x", id_vars, name_var)
   }
   
-  els <- NULL
-  quals <- id.vars
-  if(!(measure.var %in% names(x))) stop("Column ", measure.var, " was not found in x")
+  # make data with known name column
+  data <- x %>% 
+    dplyr::rename_(.name = name_var)
+
   
-  if(is.null(errors)) {
-    if("err" %in% names(x)) {
-      errors <- "err"
-    }
-  } else if(is.na(errors)) {
-    errors <- NULL
+  # make a list of parameter names
+  all_params <- dplyr::distinct(data, .name) %>% dplyr::collect() %>% .$.name %>%
+    as.character()
+  
+  # make name combinations
+  if(is.null(names_x) && is.null(names_y)) {
+    # all combinations of all_params
+    name_x <- rev(all_params[1:length(all_params)-1])
+    name_y <- rev(all_params[2:length(all_params)])
+    
+    message("Using names_x = c(", 
+            paste0('"', name_x, '"', collapse = ", "), 
+            "), names_y = c(", 
+            paste0('"', name_y, '"', collapse = ", "), 
+            ")")
+  } else if(is.null(names_y)) {
+    # check for missing names
+    missing_names <- setdiff(names_x, all_params)
+    if(length(missing_names) > 0) stop("The following names were missing from ", name_var, ":",
+                                       paste(missing_names, collapse = ", "))
+    # all combinations of names_x
+    name_x <- rev(names_x[1:length(names_x)-1])
+    name_y <- rev(names_x[2:length(names_x)])
+    
+    message("Using names_x = c(", 
+            paste0('"', name_x, '"', collapse = ", "), 
+            "), names_y = c(", 
+            paste0('"', name_y, '"', collapse = ", "), 
+            ")")
   } else {
-    if(!(errors %in% names(x))) stop("Column ", errors, " was not found in x")
+    # check for missing names
+    missing_names <- setdiff(c(names_x, names_y), all_params)
+    if(length(missing_names) > 0) stop("The following names were missing from ", name_var, ":",
+                                       paste(missing_names, collapse = ", "))
+    
+    # combinations are already specified
+    name_x <- names_x
+    name_y <- names_y
   }
-  if(is.null(namecolumn)) {
-    namecolumn <- quals[length(quals)]
-  } else {
-    if(!(namecolumn %in% names(x))) stop("Column ", namecolumn, " was not found in x")
-  }
-  x[[namecolumn]] <- as.character(x[[namecolumn]])
   
-  if(is.null(namesx)) {
-    namesx <- unique(x[[namecolumn]])
-  }
-  if(any(!((c(namesx, namesy) %in% x[[namecolumn]])))) stop("Not all names were found in ", namecolumn)
+  # create name combinations
+  name_combinations <- expand.grid(.name_x = name_x, .name_y = name_y, 
+                                   stringsAsFactors = FALSE) %>%
+    # don't include combinations with the same parameter
+    dplyr::filter(.name_x != .name_y)
   
-  if(is.null(namesy)) {
-    els <- dplyr::do(
-      dplyr::group_by_(data.frame(i=1:(length(namesx)-1), stringsAsFactors = FALSE), "i"), {
-        data.frame(vary=namesx[.$i], varx=namesx[(.$i+1):length(namesx)], stringsAsFactors=F)
-      })
-    els$i <- NULL
-    namesy <- namesx[1:(length(namesx)-1)]
-    namesx <- namesx[2:length(namesx)]
-  } else {
-    els <- expand.grid(varx=namesx, vary=namesy, stringsAsFactors = FALSE)
-  }
-  joincols <- quals[quals != namecolumn]
-  tmp <- dplyr::do(dplyr::group_by_(els, "varx", "vary"), {
-    if(.$varx == .$vary) {
-      data.frame()
-    } else {
-      xs <- x[x[[namecolumn]]==.$varx, c(quals, measure.var, errors)]
-      ys <- x[x[[namecolumn]]==.$vary, c(quals, measure.var, errors)]
-      both <- dplyr::inner_join(xs, ys, by=joincols, suffix=c('.x', '.y'))
-      data.frame(both, stringsAsFactors = FALSE)
-    }
+  # use name combinations to filter and join data, rbinding into a single long
+  # data frame at the end
+  join_vars <- setdiff(id_vars, name_var)
+  
+  data_pairs <- plyr::adply(name_combinations, .margins = 1, function(combination) {
+    # filter data to get data_x and data_y
+    data_x <- data %>% filter(.name == combination$.name_x) %>% dplyr::collect()
+    data_y <- data %>% filter(.name == combination$.name_y) %>% dplyr::collect()
+    # join using join_vars
+    data_both <- dplyr::inner_join(data_x, data_y,
+                                   by = join_vars, suffix = c("_x", "_y"))
+    
+    # return data_both
+    data_both
   })
   
-  tmp$varx <- factor(tmp$varx, levels=namesx)
-  tmp$vary <- factor(tmp$vary, levels=namesy)
+  # make name_x and name_y factors with the levels specified
+  data_pairs$.name_x <- factor(data_pairs$.name_x, levels = name_x)
+  data_pairs$.name_y <- factor(data_pairs$.name_y, levels = name_y)
+  
+  # return data_both as a tibble
+  tibble::as_tibble(data_pairs)
+}
+
+#' @rdname long_pairs
+#' @export
+long_biplot <- function(x, id_vars, name_var, measure_var = "value", 
+                        names_x = NULL, na.rm = FALSE, ...) {
+  
+  # id_vars shouldn't contain name_var
+  id_vars <- setdiff(id_vars, name_var)
+  
+  # rename value and name column
+  x <- x %>%
+    dplyr::rename_(.name = name_var, .value = measure_var)
+  
+  # filter to name %in% names_x
+  if(!is.null(names_x)) {
+    x <- x %>%
+      dplyr::filter(.name %in% names_x)
+  }
+  
+  # remove nas if specified
+  if(na.rm) {
+    x <- x %>%
+      dplyr::filter(!is.na(.value))
+  }
+  
+  # collect data
+  x <- dplyr::collect(x)
+  
+  # use spread to use automatic biplotting functionality in base plot
+  x %>%
+    dplyr::select(dplyr::one_of(c(id_vars, ".name", ".value"))) %>%
+    tidyr::spread(.name, .value) %>%
+    dplyr::select(-dplyr::one_of(id_vars)) %>%
+    graphics::plot(...)
+}
+
+#' @rdname long_pairs
+#' @export
+autobiplot <- function(x, ...) UseMethod("autobiplot")
+
+#' @rdname long_pairs
+#' @export
+autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", names_x = NULL, 
+                                  names_y = NULL, error_var = NULL, na.rm = TRUE, validate = TRUE,
+                                  labeller = ggplot2::label_value, ...) {
+  
+  # id_vars shouldn't contain name_var
+  id_vars <- setdiff(id_vars, name_var)
+  
+  # rename value name and error column
+  if(is.null(error_var)) {
+    x <- x %>%
+      dplyr::rename_(.name = name_var, .value = measure_var)
+  } else {
+    x <- x %>%
+      dplyr::rename_(.name = name_var, .value = measure_var, .error = error_var)
+  }
+  
+  # remove nas if specified
+  if(na.rm) {
+    x <- x %>%
+      dplyr::filter(!is.na(.value))
+  }
+  
+  # create data pairs
+  data_pairs <- long_pairs(x, id_vars = id_vars, name_var = ".name",
+                           names_x = names_x, names_y = names_y, validate = validate)
+  
+  # assign error geometry, if error column is specified
   ggerror <- NULL
-  valx <- paste0(measure.var, '.x')
-  valy <- paste0(measure.var, '.y')
-  if(!is.null(errors)) {
-    errx <- paste0(errors, '.x')
-    erry <- paste0(errors, '.y')
+  if(!is.null(error_var)) {
     ggerror <- list(
       ggplot2::geom_errorbar(
-        ggplot2::aes_string(ymax=paste(valy, erry, sep='+'), ymin=paste(valy, erry, sep='-'))),
+        ggplot2::aes_string(ymax=".value_y+.error_y"), ymin=".value_y-.error_y"),
       ggplot2::geom_errorbarh(
-        ggplot2::aes_string(xmax=paste(valx, errx, sep='+'), xmin=paste(valx, errx, sep='-')))
+        ggplot2::aes_string(xmax=".value_x+.error_x", xmin=".value_x-.error_x"))
     )
   }
-  ggplot2::ggplot(tmp, ggplot2::aes_string(x=valx, y=valy, ...)) + 
+  
+  # construct ggplot
+  ggplot2::ggplot(data_pairs, ggplot2::aes_string(x=".value_x", y=".value_y", ...)) + 
     ggplot2::geom_point() + 
     ggerror +
-    ggplot2::facet_grid(vary~varx, scales="free", labeller = labeller) +
+    ggplot2::facet_grid(.name_y~.name_x, scales="free", labeller = labeller) +
     ggplot2::labs(x=NULL, y=NULL)
 }
 
@@ -122,17 +223,34 @@ longbiplot <- function(x, id.vars, measure.var, namesx=NULL, namesy=NULL, nameco
 #' Uses the ggplot framework and \code{facet_grid} to produce a biplot of a mudata object.
 #'
 #' @param x A mudata object
-#' @param namecolumn The column that contains the names for biplotting
-#' @param ... passed to \link{longbiplot}
+#' @param ... passed to plotting methods
 #'
 #' @return a ggplot object
 #' @export
 #' 
 #' @examples 
 #' data(kentvillegreenwood)
-#' biplot(kentvillegreenwood, c("meantemp", "maxtemp", "mintemp"), col="location")
+#' kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
+#' 
+#' # use base plotting for regular biplot function
+#' biplot(kvtemp)
+#' 
+#' # use ggplot and facet_grid to biplot
+#' autobiplot(kvtemp, col = "location")
 #'
-biplot.mudata <- function(x, ..., namecolumn = "param") {
-  longbiplot(x$data, id.vars=c("dataset", "location", "param", attr(x, "x_columns")),
-             measure.var="value", ..., namecolumn = namecolumn, validate=FALSE)
+biplot.mudata <- function(x, ...) {
+  # id variables are used twice
+  id_vars <- c("dataset", "location", "param", attr(x, "x_columns"))
+  # use long_biplot() to do biplotting
+  long_biplot(x$data, id_vars = id_vars, name_var = "param", measure_var = "value",
+              ...)
 }
+
+#' @rdname biplot.mudata
+#' @export
+autobiplot.mudata <- function(x, ...) {
+  autobiplot(x$data, id_vars=c("dataset", "location", attr(x, "x_columns")),
+             name_var = "param", measure_var="value", ...)
+}
+
+

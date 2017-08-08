@@ -55,7 +55,6 @@ outfile <- tempfile(fileext=".zip")
 write.mudata(kentvillegreenwood, outfile)
 md <- read.mudata(outfile)
 md <- read.mudata(outfile, retype=TRUE)
-plot(subset(md, params=c("meantemp", "maxtemp")))
 unlink(outfile)
 
 # read/write to JSON
@@ -63,7 +62,6 @@ outfile <- tempfile(fileext=".json")
 write.mudata(kentvillegreenwood, outfile)
 md <- read.mudata(outfile)
 md <- read.mudata(outfile, retype=TRUE)
-plot(subset(md, params=c("meantemp", "maxtemp")))
 unlink(outfile)
 
 }

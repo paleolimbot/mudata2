@@ -21,7 +21,6 @@
 #' write.mudata(kentvillegreenwood, outfile)
 #' md <- read.mudata(outfile)
 #' md <- read.mudata(outfile, retype=TRUE)
-#' plot(subset(md, params=c("meantemp", "maxtemp")))
 #' unlink(outfile)
 #' 
 #' # read/write to JSON
@@ -29,7 +28,6 @@
 #' write.mudata(kentvillegreenwood, outfile)
 #' md <- read.mudata(outfile)
 #' md <- read.mudata(outfile, retype=TRUE)
-#' plot(subset(md, params=c("meantemp", "maxtemp")))
 #' unlink(outfile)
 #'
 write.mudata <- function(md, filename, ...) {

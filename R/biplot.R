@@ -15,6 +15,7 @@
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
 #'   to use plotmath-style labels)
 #' @param validate Ensure id_vars identify unique rows
+#' @param na.rm Should NA values in measure_var be removed?
 #' @param ... passed to \code{aes_string()}
 #' 
 #' @importFrom stats biplot
@@ -40,6 +41,11 @@
 #'
 long_pairs <- function(x, id_vars, name_var, names_x = NULL, 
                        names_y = NULL, validate = TRUE) {
+  
+  # CMD hack for dplyr names
+  .name <- NULL; rm(.name); . <- NULL; rm(.); .name_x <- NULL; rm(.name_x)
+  .name_y <- NULL; rm(.name_y)
+  
   # id_vars shouldn't contain name_var
   id_vars <- setdiff(id_vars, name_var)
   
@@ -107,8 +113,8 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   # data frame at the end
   data_pairs <- plyr::adply(name_combinations, .margins = 1, function(combination) {
     # filter data to get data_x and data_y
-    data_x <- data %>% filter(.name == combination$.name_x) %>% dplyr::collect()
-    data_y <- data %>% filter(.name == combination$.name_y) %>% dplyr::collect()
+    data_x <- data %>% dplyr::filter(.name == combination$.name_x) %>% dplyr::collect()
+    data_y <- data %>% dplyr::filter(.name == combination$.name_y) %>% dplyr::collect()
     # join using join_vars
     data_both <- dplyr::inner_join(data_x, data_y,
                                    by = id_vars, suffix = c("_x", "_y"))
@@ -129,6 +135,9 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
 #' @export
 long_biplot <- function(x, id_vars, name_var, measure_var = "value", 
                         names_x = NULL, na.rm = FALSE, ...) {
+  
+  # CMD hack for dplyr names
+  .name <- NULL; rm(.name); .value <- NULL; rm(.value)
   
   # id_vars shouldn't contain name_var
   id_vars <- setdiff(id_vars, name_var)
@@ -179,6 +188,9 @@ autobiplot <- function(x, ...) UseMethod("autobiplot")
 autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", names_x = NULL, 
                                   names_y = NULL, error_var = NULL, na.rm = TRUE, validate = TRUE,
                                   labeller = ggplot2::label_value, ...) {
+  
+  # CMD hack for dplyr names
+  .value <- NULL; rm(.value)
   
   # id_vars shouldn't contain name_var
   id_vars <- setdiff(id_vars, name_var)

@@ -35,6 +35,8 @@ of \code{namesx}.}
 
 \item{measure_var}{The column containing the values to plot}
 
+\item{na.rm}{Should NA values in measure_var be removed?}
+
 \item{...}{passed to \code{aes_string()}}
 
 \item{error_var}{The column containing values for error bars.}

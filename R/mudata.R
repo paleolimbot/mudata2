@@ -407,12 +407,10 @@ rbind.mudata <- function(..., validate=TRUE) {
 #' @param locations Vector of locations to include
 #' @param ... Aguments to/from methods
 #'
-#' @return A filtered MuData object
+#' @return A subsetted mudata object
 #' @export
-#' 
-#' @importFrom dplyr filter
 #'
-filter.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
+subset.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
   
   # cmd hack
   dataset <- NULL; rm(dataset); location <- NULL; rm(location); param <- NULL; rm(param)
@@ -444,13 +442,7 @@ filter.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
                  columns=cl), x_columns = attr(x, "x_columns"))
 }
 
-#' @rdname filter.mudata
-#' @export
-subset.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
-  filter.mudata(x, ..., datasets=datasets, params=params, locations=locations)
-}
-
-#' @rdname filter.mudata
+#' @rdname subset.mudata
 #' @importFrom dplyr collect
 #' @export
 collect.mudata <- function(x, ...) {

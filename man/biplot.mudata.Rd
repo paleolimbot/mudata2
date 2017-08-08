@@ -15,10 +15,11 @@
 \item{...}{passed to plotting methods}
 }
 \value{
-a ggplot object
+a ggplot object or the result of `plot()`
 }
 \description{
-Uses the ggplot framework and \code{facet_grid} to produce a biplot of a mudata object.
+Uses \link{autobiplot} and \link{long_biplot} to biplot values in a 
+\link{mudata} object.
 }
 \examples{
 data(kentvillegreenwood)

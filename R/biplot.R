@@ -1,21 +1,20 @@
 
-#' Biplot a molten data frame using facet_grid
+#' Biplot a parameter-long data frame
 #' 
-#' Uses the ggplot framework and \code{facet_grid} to produce biplots of a molten
-#' data frame.
+#' Use either the ggplot framework (autobiplot) or base plotting to biplot a 
+#' parameter-long data frame, like that of the data table in a \link{mudata} object.
 #' 
 #' @param x the object to biplot
-#' @param id_vars the columns that identify a single value
-#' @param name_var The column where namesx and namesy are to be found
+#' @param id_vars the columns that identify a single row in x
+#' @param name_var The column where names_x and names_y are to be found
 #' @param names_x The names to be included in the x axes, or all the names to be included
 #' @param names_y The names to be included on the y axes, or NULL for all possible combinations
 #'   of \code{namesx}.
 #' @param measure_var The column containing the values to plot
-#' @param error_var The column containing the errors. Use \code{NULL} for default ("err" if column
-#'   exists or none otherwise), or \code{NA} to suppress.
+#' @param error_var The column containing values for error bars.
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
 #'   to use plotmath-style labels)
-#' @param validate Ensure id_vars identify unique values
+#' @param validate Ensure id_vars identify unique rows
 #' @param ... passed to \code{aes_string()}
 #' 
 #' @importFrom stats biplot
@@ -41,16 +40,11 @@
 #'
 long_pairs <- function(x, id_vars, name_var, names_x = NULL, 
                        names_y = NULL, validate = TRUE) {
-  # check variables
-  if(!inherits(x, "data.frame") && !dplyr::is.tbl(x)) stop("x must be a tbl or data.frame")
-  missing_vars <- setdiff(c(id_vars, name_var), colnames(x))
-  if(length(missing_vars) > 0) {
-    stop("Some of id_vars/measure_var/name_var are not in colnames(x): ",
-         paste(missing_vars, collapse = ", "))
-  }
-  
   # id_vars shouldn't contain name_var
   id_vars <- setdiff(id_vars, name_var)
+  
+  # check columns
+  .checkcols(x, "x", c(id_vars, name_var))
   
   # check that c(id_vars, name_var) identify unique values
   if(validate) {
@@ -60,10 +54,11 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   # make data with known name column
   data <- x %>% 
     dplyr::rename_(.name = name_var)
-
   
   # make a list of parameter names
-  all_params <- dplyr::distinct(data, .name) %>% dplyr::collect() %>% .$.name %>%
+  all_params <- dplyr::ungroup(data) %>%
+    dplyr::distinct(data, .name) %>% 
+    dplyr::collect() %>% .$.name %>%
     as.character()
   
   # make name combinations
@@ -80,7 +75,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   } else if(is.null(names_y)) {
     # check for missing names
     missing_names <- setdiff(names_x, all_params)
-    if(length(missing_names) > 0) stop("The following names were missing from ", name_var, ":",
+    if(length(missing_names) > 0) stop("The following names were missing from ", name_var, ": ",
                                        paste(missing_names, collapse = ", "))
     # all combinations of names_x
     name_x <- rev(names_x[1:length(names_x)-1])
@@ -94,7 +89,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   } else {
     # check for missing names
     missing_names <- setdiff(c(names_x, names_y), all_params)
-    if(length(missing_names) > 0) stop("The following names were missing from ", name_var, ":",
+    if(length(missing_names) > 0) stop("The following names were missing from ", name_var, ": ",
                                        paste(missing_names, collapse = ", "))
     
     # combinations are already specified
@@ -110,15 +105,13 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   
   # use name combinations to filter and join data, rbinding into a single long
   # data frame at the end
-  join_vars <- setdiff(id_vars, name_var)
-  
   data_pairs <- plyr::adply(name_combinations, .margins = 1, function(combination) {
     # filter data to get data_x and data_y
     data_x <- data %>% filter(.name == combination$.name_x) %>% dplyr::collect()
     data_y <- data %>% filter(.name == combination$.name_y) %>% dplyr::collect()
     # join using join_vars
     data_both <- dplyr::inner_join(data_x, data_y,
-                                   by = join_vars, suffix = c("_x", "_y"))
+                                   by = id_vars, suffix = c("_x", "_y"))
     
     # return data_both
     data_both
@@ -140,6 +133,9 @@ long_biplot <- function(x, id_vars, name_var, measure_var = "value",
   # id_vars shouldn't contain name_var
   id_vars <- setdiff(id_vars, name_var)
   
+  # check columns
+  .checkcols(x, "x", c(id_vars, name_var, measure_var))
+  
   # rename value and name column
   x <- x %>%
     dplyr::rename_(.name = name_var, .value = measure_var)
@@ -158,6 +154,13 @@ long_biplot <- function(x, id_vars, name_var, measure_var = "value",
   
   # collect data
   x <- dplyr::collect(x)
+  
+  # check for no data
+  if(.isempty(x)) {
+    stop("Zero rows were found for names_x = c(", 
+         paste0('"', names_x, '"', collapse = ", "),
+         ")")
+  }
   
   # use spread to use automatic biplotting functionality in base plot
   x %>%
@@ -179,6 +182,9 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
   
   # id_vars shouldn't contain name_var
   id_vars <- setdiff(id_vars, name_var)
+  
+  # check columns
+  .checkcols(x, "x", c(id_vars, name_var, measure_var))
   
   # rename value name and error column
   if(is.null(error_var)) {
@@ -220,12 +226,13 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
 
 #' Biplot a mudata object
 #' 
-#' Uses the ggplot framework and \code{facet_grid} to produce a biplot of a mudata object.
+#' Uses \link{autobiplot} and \link{long_biplot} to biplot values in a 
+#' \link{mudata} object.
 #'
 #' @param x A mudata object
 #' @param ... passed to plotting methods
 #'
-#' @return a ggplot object
+#' @return a ggplot object or the result of `plot()`
 #' @export
 #' 
 #' @examples 
@@ -239,7 +246,7 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
 #' autobiplot(kvtemp, col = "location")
 #'
 biplot.mudata <- function(x, ...) {
-  # id variables are used twice
+  # id variables
   id_vars <- c("dataset", "location", "param", attr(x, "x_columns"))
   # use long_biplot() to do biplotting
   long_biplot(x$data, id_vars = id_vars, name_var = "param", measure_var = "value",

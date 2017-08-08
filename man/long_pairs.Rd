@@ -5,7 +5,7 @@
 \alias{long_biplot}
 \alias{autobiplot}
 \alias{autobiplot.data.frame}
-\title{Biplot a molten data frame using facet_grid}
+\title{Biplot a parameter-long data frame}
 \usage{
 long_pairs(x, id_vars, name_var, names_x = NULL, names_y = NULL,
   validate = TRUE)
@@ -17,35 +17,34 @@ autobiplot(x, ...)
 
 \method{autobiplot}{data.frame}(x, id_vars, name_var, measure_var = "value",
   names_x = NULL, names_y = NULL, error_var = NULL, na.rm = TRUE,
-  validate = TRUE, ...)
+  validate = TRUE, labeller = ggplot2::label_value, ...)
 }
 \arguments{
 \item{x}{the object to biplot}
 
-\item{id_vars}{the columns that identify a single value}
+\item{id_vars}{the columns that identify a single row in x}
 
-\item{name_var}{The column where namesx and namesy are to be found}
+\item{name_var}{The column where names_x and names_y are to be found}
 
 \item{names_x}{The names to be included in the x axes, or all the names to be included}
 
 \item{names_y}{The names to be included on the y axes, or NULL for all possible combinations
 of \code{namesx}.}
 
-\item{validate}{Ensure id_vars identify unique values}
+\item{validate}{Ensure id_vars identify unique rows}
 
 \item{measure_var}{The column containing the values to plot}
 
 \item{...}{passed to \code{aes_string()}}
 
-\item{error_var}{The column containing the errors. Use \code{NULL} for default ("err" if column
-exists or none otherwise), or \code{NA} to suppress.}
+\item{error_var}{The column containing values for error bars.}
 
 \item{labeller}{The labeller to use to label facets (may want to use \code{label_parsed}
 to use plotmath-style labels)}
 }
 \description{
-Uses the ggplot framework and \code{facet_grid} to produce biplots of a molten
-data frame.
+Use either the ggplot framework (autobiplot) or base plotting to biplot a 
+parameter-long data frame, like that of the data table in a \link{mudata} object.
 }
 \examples{
 library(tidyr)
@@ -65,6 +64,5 @@ autobiplot(pocmaj_long, id_vars = c("core", "depth"), name_var = "param")
 
 # get the raw data used
 long_pairs(pocmaj_long, id_vars = c("core", "depth"), name_var = "param")
-
 
 }

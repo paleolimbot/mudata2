@@ -15,6 +15,8 @@
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
 #'   to use plotmath-style labels)
 #' @param validate Ensure id_vars identify unique rows
+#' @param max_names When guessing which parameters to biplot/pair, use only the first
+#'   max_names (or FALSE to use all names)
 #' @param na.rm Should NA values in measure_var be removed?
 #' @param ... passed to \code{aes_string()}
 #' 
@@ -40,7 +42,7 @@
 #' long_pairs(pocmaj_long, id_vars = c("core", "depth"), name_var = "param")
 #'
 long_pairs <- function(x, id_vars, name_var, names_x = NULL, 
-                       names_y = NULL, validate = TRUE) {
+                       names_y = NULL, validate = TRUE, max_names = 5) {
   
   # CMD hack for dplyr names
   .name <- NULL; rm(.name); . <- NULL; rm(.); .name_x <- NULL; rm(.name_x)
@@ -69,6 +71,13 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   
   # make name combinations
   if(is.null(names_x) && is.null(names_y)) {
+    # check that all_params isn't too long
+    if(!identical(max_names, FALSE) && (length(all_params) > max_names)) {
+      all_params <- all_params[1:max_names]
+      message(sprintf("Only using first %s names. ", max_names),
+              "Use max_names = FALSE to use all combinations of names.")
+    }
+    
     # all combinations of all_params
     name_x <- rev(all_params[1:length(all_params)-1])
     name_y <- rev(all_params[2:length(all_params)])
@@ -78,6 +87,9 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
             "), names_y = c(", 
             paste0('"', name_y, '"', collapse = ", "), 
             ")")
+    
+    # use unique_combinations to generate matches, such that none are duplicated
+    name_combinations <- unique_combinations(all_params)
   } else if(is.null(names_y)) {
     # check for missing names
     missing_names <- setdiff(names_x, all_params)
@@ -92,6 +104,9 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
             "), names_y = c(", 
             paste0('"', name_y, '"', collapse = ", "), 
             ")")
+    
+    # use unique_combinations to generate matches, such that none are duplicated
+    name_combinations <- unique_combinations(names_x)
   } else {
     # check for missing names
     missing_names <- setdiff(c(names_x, names_y), all_params)
@@ -101,13 +116,13 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
     # combinations are already specified
     name_x <- names_x
     name_y <- names_y
+    
+    # use expand.grid to generate name combinations
+    name_combinations <- expand.grid(.name_x = name_x, .name_y = name_y, 
+                                     stringsAsFactors = FALSE) %>%
+      # don't include combinations with the same parameter
+      dplyr::filter(.name_x != .name_y)
   }
-  
-  # create name combinations
-  name_combinations <- expand.grid(.name_x = name_x, .name_y = name_y, 
-                                   stringsAsFactors = FALSE) %>%
-    # don't include combinations with the same parameter
-    dplyr::filter(.name_x != .name_y)
   
   # use name combinations to filter and join data, rbinding into a single long
   # data frame at the end
@@ -134,7 +149,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
 #' @rdname long_pairs
 #' @export
 long_biplot <- function(x, id_vars, name_var, measure_var = "value", 
-                        names_x = NULL, na.rm = FALSE, ...) {
+                        names_x = NULL, na.rm = FALSE, max_names = 5, ...) {
   
   # CMD hack for dplyr names
   .name <- NULL; rm(.name); .value <- NULL; rm(.value)
@@ -171,12 +186,21 @@ long_biplot <- function(x, id_vars, name_var, measure_var = "value",
          ")")
   }
   
-  # use spread to use automatic biplotting functionality in base plot
-  x %>%
+  # use spread to make a wide data frame
+  x_wide <- x %>%
     dplyr::select(dplyr::one_of(c(id_vars, ".name", ".value"))) %>%
     tidyr::spread(.name, .value) %>%
-    dplyr::select(-dplyr::one_of(id_vars)) %>%
-    graphics::plot(...)
+    dplyr::select(-dplyr::one_of(id_vars))
+  
+  # check that there aren't an unreasonable number of parameters
+  if(!identical(max_names, FALSE) && (ncol(x_wide) > max_names)) {
+    x_wide <- x_wide[, 1:max_names, drop = FALSE]
+    message(sprintf("Only using first %s names. ", max_names),
+            "Use max_names = FALSE to use all combinations of names.")
+  }
+  
+  # use graphics::plot to produce the biplot
+  graphics::plot(x_wide, ...)
 }
 
 #' @rdname long_pairs
@@ -187,7 +211,7 @@ autobiplot <- function(x, ...) UseMethod("autobiplot")
 #' @export
 autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", names_x = NULL, 
                                   names_y = NULL, error_var = NULL, na.rm = TRUE, validate = TRUE,
-                                  labeller = ggplot2::label_value, ...) {
+                                  max_names = 5, labeller = ggplot2::label_value, ...) {
   
   # CMD hack for dplyr names
   .value <- NULL; rm(.value)
@@ -215,7 +239,8 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
   
   # create data pairs
   data_pairs <- long_pairs(x, id_vars = id_vars, name_var = ".name",
-                           names_x = names_x, names_y = names_y, validate = validate)
+                           names_x = names_x, names_y = names_y, validate = validate,
+                           max_names = max_names)
   
   # assign error geometry, if error column is specified
   ggerror <- NULL
@@ -272,4 +297,17 @@ autobiplot.mudata <- function(x, ...) {
              name_var = "param", measure_var="value", ...)
 }
 
+
+unique_combinations <- function(vect) {
+  if(length(vect) == 0) {
+    return(tibble::tibble(.name_x = character(0), .name_y = character(0)))
+  }
+  
+  plyr::ldply(1:(length(vect) - 1), function(i) {
+    tibble::tibble(
+      .name_x = vect[i],
+      .name_y = vect[(i+1):length(vect)]
+    )
+  })
+}
 

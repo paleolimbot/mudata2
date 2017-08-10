@@ -165,5 +165,30 @@ test_that("long_pairs works with sqlite sources", {
   expect_identical(pairs_sqlite, pairs_local)
 })
 
+test_that("max_names is respected in long_pairs, autobiplot, and long_biplot", {
+  # kentvillegreenwood has enough parameters that biplotting is a little unwieldy
+  kvdata <- kentvillegreenwood$data
+  # define function to count the number of pairs found
+  n_combinations <- function(long_pairs_result) {
+    long_pairs_result %>%
+      dplyr::distinct(.name_x, .name_y) %>%
+      nrow()
+  }
+  
+  expect_message(long_pairs(kvdata, id_vars = c("location", "date"), name_var = "param"),
+                 "Only using first 5 names. Use max_names = FALSE to use all combinations of names.")
+  expect_message(autobiplot(kvdata, id_vars = c("location", "date"), name_var = "param"),
+                 "Only using first 5 names. Use max_names = FALSE to use all combinations of names.")
+  expect_message(long_biplot(kvdata, id_vars = c("location", "date"), name_var = "param"),
+                 "Only using first 5 names. Use max_names = FALSE to use all combinations of names.")
+
+  constrained_result <- long_pairs(kvdata, id_vars = c("location", "date"), name_var = "param",
+                                   max_names = 5)
+  unconstrained_result <- long_pairs(kvdata, id_vars = c("location", "date"), name_var = "param", 
+                                     max_names = FALSE)
+  expect_equal(n_combinations(constrained_result), 4*5 / 2)
+  expect_equal(n_combinations(unconstrained_result), 10*11 / 2)
+})
+
 # clean temporary database
 unlink(sql_file)

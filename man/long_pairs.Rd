@@ -8,16 +8,16 @@
 \title{Biplot a parameter-long data frame}
 \usage{
 long_pairs(x, id_vars, name_var, names_x = NULL, names_y = NULL,
-  validate = TRUE)
+  validate = TRUE, max_names = 5)
 
 long_biplot(x, id_vars, name_var, measure_var = "value", names_x = NULL,
-  na.rm = FALSE, ...)
+  na.rm = FALSE, max_names = 5, ...)
 
 autobiplot(x, ...)
 
 \method{autobiplot}{data.frame}(x, id_vars, name_var, measure_var = "value",
   names_x = NULL, names_y = NULL, error_var = NULL, na.rm = TRUE,
-  validate = TRUE, labeller = ggplot2::label_value, ...)
+  validate = TRUE, max_names = 5, labeller = ggplot2::label_value, ...)
 }
 \arguments{
 \item{x}{the object to biplot}
@@ -32,6 +32,9 @@ autobiplot(x, ...)
 of \code{namesx}.}
 
 \item{validate}{Ensure id_vars identify unique rows}
+
+\item{max_names}{When guessing which parameters to biplot/pair, use only the first
+max_names (or FALSE to use all names)}
 
 \item{measure_var}{The column containing the values to plot}
 

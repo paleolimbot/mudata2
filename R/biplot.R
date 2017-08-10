@@ -297,7 +297,7 @@ autobiplot.mudata <- function(x, ...) {
              name_var = "param", measure_var="value", ...)
 }
 
-
+# a function to generate unique combination of things
 unique_combinations <- function(vect) {
   if(length(vect) == 0) {
     return(tibble::tibble(.name_x = character(0), .name_y = character(0)))

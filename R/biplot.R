@@ -63,7 +63,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   
   # make a list of parameter names
   all_params <- dplyr::ungroup(data) %>%
-    dplyr::distinct(data, .name) %>% 
+    dplyr::distinct(.name) %>% 
     dplyr::collect() %>% .$.name %>%
     as.character()
   

@@ -7,6 +7,19 @@ pocmaj_data <- pocmajsum %>%
   tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
   dplyr::select(location = core, param, depth, value)
 kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
+# create sqlite database with kvtemp dataset
+sql_file <- tempfile()[1]
+kg_sql <- dplyr::src_sqlite(sql_file, create = TRUE)
+sources <- sapply(c("data", "locations", "params", "datasets", "columns"),
+                  function(table) {
+                    dplyr::copy_to(kg_sql, kvtemp[[table]], table)
+                  }, simplify = FALSE)
+# create remote dataset
+kvtemp_sqlite <- mudata(data = sources$data, locations = sources$locations,
+                        params = sources$params, datasets = sources$datasets,
+                        columns = sources$columns)
+
+# ---- tests ----
 
 test_that("autobiplot works on both data frames and mudata objects", {
   expect_is(autobiplot(pocmaj_data, id_vars = c("location", "depth"), name_var = "param"),
@@ -138,3 +151,19 @@ test_that("long_pairs handles zero-row combinations gracefully", {
   expect_equal(nrow(zero_pairs), 0)
 })
 
+test_that("long_pairs works with sqlite sources", {
+  df_local <- kvtemp$data %>% dplyr::collect()
+  pairs_sqlite <- long_pairs(kvtemp_sqlite$data, id_vars = c("location", "date"), 
+                             names_x = c("meantemp", "maxtemp"), names_y = c("mintemp", "meantemp"),
+                             name_var = "param") %>%
+    dplyr::mutate(date = as.numeric(date))
+  pairs_local <- long_pairs(df_local, id_vars = c("location", "date"), 
+                            names_x = c("meantemp", "maxtemp"), names_y = c("mintemp", "meantemp"),
+                            name_var = "param") %>%
+    dplyr::mutate(date = as.numeric(date))
+  
+  expect_identical(pairs_sqlite, pairs_local)
+})
+
+# clean temporary database
+unlink(sql_file)

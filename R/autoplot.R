@@ -1,32 +1,33 @@
-#' Smart plotting of tidy data frames
+
+#' Smart plotting of parameter-long data frames
 #' 
-#' This function uses ggplot to plot a 'long' data frame with a few \code{id.vars}, 
+#' These functions are intended to quickly visualize plot a parameter-long
+#' data frame with a few \code{id.vars}, 
 #' or variables that identify the values in the \code{value} column. The function
 #' is optimised to plot multi-parameter spatiotemporal data either horizontally
 #' (time on the x axis) or vertically (time on the y axis). Facets are intended
 #' to be by parameter, which is guessed based on the right-most variable named
 #' in \code{id.vars}. This is intended to produce a quick visual of an object to
 #' examine its contents.
-#' 
 #'
-#' @param x A \code{data.frame}
-#' @param id.vars Columns that identify unique values
-#' @param measure.var Column that contains values to be plotted
-#' @param xvar Column to be used on the x-axis
-#' @param yvar Column to be used on the y-axis
+#' @param .data A \code{data.frame}
+#' @param id_vars Columns that identify unique values
+#' @param measure_var Column that contains values to be plotted
+#' @param x Column to be used on the x-axis
+#' @param y Column to be used on the y-axis
 #' @param facets Column to be used as facetting variable
-#' @param geom GGPlot geometries to be used. Can be any combination of point, path, or line.
-#' @param subset Subset to plot
-#' @param errors The colum that contains uncertainty information
-#' @param ... Passed on to \code{aes_string()}
-#'
-#' @return A ggplot object
+#' @param geom Can be any combination of point, path, or line.
+#' @param error_var The column to be used for plus/minus error bars
+#' @param facet_args Passed on to \link[ggplot2]{facet_wrap}
+#' @param max_facets Constrain the maximum number of facets, where available
+#' @param scales Customize aesthetic mapping in long_plot()
+#' @param ... Additional aesthetic mappings, passed on to 
+#'   (or treated similarly to) \link[ggplot2]{aes_string}
 #'
 #' @export
 #'
 #' @examples
 #' data(pocmajsum)
-#' long_plot(pocmajsum, c("core", "depth"), "Ca")
 #'
 #' library(tidyr)
 #' pocmaj_long <- pocmajsum %>%
@@ -66,7 +67,8 @@ long_ggplot <- function(.data, ..., facet_args = list()) {
     # create the facet argument as a formula if unspecified
     # (this lets the user correct a sub-optimally guessed facet spec)
     if(!("facets" %in% facet_args)) {
-      facet_args$facets <- as.formula(sprintf("~%s", paste(args$mapping$facets, collapse = "+")))
+      facet_args$facets <- stats::as.formula(sprintf("~%s", paste(args$mapping$facets, 
+                                                                  collapse = "+")))
     }
     
     plot_facet <- do.call(ggplot2::facet_wrap, facet_args)
@@ -74,9 +76,6 @@ long_ggplot <- function(.data, ..., facet_args = list()) {
   
   # create error bars if error_var is specified
   if(!is.null(args$mapping$error_var)) {
-    # optimal size for error bars range(measure_var) / 50 (or so)
-    error_bar_size <- range(.data$measure_var, na.rm = TRUE) / 50
-    
     # guess axis for error bars based on mapping and measure_var
     # aesthetic for error bars is measure_var+/-error_var
     if(args$mapping$y == args$mapping$measure_var) {
@@ -84,18 +83,21 @@ long_ggplot <- function(.data, ..., facet_args = list()) {
       error_bar_mapping <- ggplot2::aes_string(
         ymin = sprintf("%s-%s", args$mapping$measure_var, args$mapping$error_var),
         ymax = sprintf("%s+%s", args$mapping$measure_var, args$mapping$error_var),
-        size = sprintf("diff(range(%s, na.rm = TRUE))", measure_var)
+        width = sprintf("diff(range(%s, na.rm = TRUE)) / 30", args$mapping$x)
       )
     } else if(args$mapping$x == args$mapping$measure_var) {
       error_bar_geom <- ggplot2::geom_errorbarh
       error_bar_mapping <- ggplot2::aes_string(
         xmin = sprintf("%s-%s", args$mapping$measure_var, args$mapping$error_var),
         xmax = sprintf("%s+%s", args$mapping$measure_var, args$mapping$error_var),
-        size = sprintf("diff(range(%s, na.rm = TRUE))", measure_var)
+        height = sprintf("diff(range(%s, na.rm = TRUE)) / 30", args$mapping$y)
       )
     } else {
       stop("Cannot guess which direction to place error bars")
     }
+    
+    # create layer
+    plot_error <- error_bar_geom(mapping = error_bar_mapping)
   } else {
     plot_error <- NULL
   }
@@ -110,9 +112,24 @@ long_ggplot <- function(.data, ..., facet_args = list()) {
 
 #' @rdname long_ggplot
 #' @export
-long_plot <- function(.data, ..., max_facets = 9, facet_args = list(), scales = list()) {
-  # use long_plot_base to do the guessing
-  args <- long_plot_base(.data, ...)
+long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y = NULL, 
+                      facets = NULL, geom = "path", error_var = NULL, ...,
+                      max_facets = 9, facet_args = list(), scales = list()) {
+  # CMD plot hack
+  n <- NULL; rm(n); . <- NULL; rm(.); .facet_number <- NULL; rm(.facet_number)
+  
+  # extra args passed on to the plot function, unless they are pch, col, or lty
+  aesthetic_names <- c("pch", "shape", "col", "colour", "color", "lty", "linetype")
+  extra_args <- list(...)
+  plot_args <- extra_args[setdiff(names(extra_args), aesthetic_names)]
+  long_plot_args <- extra_args[intersect(names(extra_args), aesthetic_names)]
+  
+  # use long_plot_base to do the guessing (ignore error_var)
+  args <- do.call(
+    long_plot_base,
+    c(list(.data, id_vars = id_vars, measure_var = measure_var,
+            x = x, y = y, facets = facets, geom = geom),
+            long_plot_args))
   
   # use more_args as the aesthetic mapping
   aesthetic_mapping <- args$mapping$more_args
@@ -139,9 +156,11 @@ long_plot <- function(.data, ..., max_facets = 9, facet_args = list(), scales = 
   # train default scales, if any
   default_scales <- lapply(aesthetic_mapping[!(names(aesthetic_mapping) %in% names(scales))],
                            function(col_name) {
-                             dplyr::distinct_(.data, col_name) %>%
-                               dplyr::mutate(count = 1:n()) %>%
+                             .data %>%
+                               dplyr::ungroup() %>%
+                               dplyr::distinct_(col_name) %>%
                                dplyr::collect() %>%
+                               dplyr::mutate(count = 1:n()) %>%
                                tibble::deframe()
                            })
   scales <- c(scales, default_scales)
@@ -149,10 +168,11 @@ long_plot <- function(.data, ..., max_facets = 9, facet_args = list(), scales = 
   if(!is.null(args$mapping$facets)) {
     # figure out facet info
     facet_df <- .data %>%
+      dplyr::ungroup() %>%
       dplyr::select(dplyr::one_of(args$mapping$facets)) %>%
       dplyr::distinct() %>%
-      dplyr::mutate(.facet_number = 1:n()) %>%
-      dplyr::collect()
+      dplyr::collect() %>%
+      dplyr::mutate(.facet_number = 1:n())
     
     # check number of facets, only plot first max_facets
     if(!identical(max_facets, FALSE) && (nrow(facet_df) > max_facets)) {
@@ -188,15 +208,23 @@ long_plot <- function(.data, ..., max_facets = 9, facet_args = list(), scales = 
     
     # create data by collecting and left_joining facet info
     .data <- .data %>%
+      dplyr::ungroup() %>%
       dplyr::collect() %>%
       dplyr::left_join(facet_df, by = args$mapping$facets) %>%
       dplyr::filter(!is.na(.facet_number))
   } else {
     # collect and make dummy facet number/label columns
     facet_df <- .data %>%
+      dplyr::ungroup() %>%
       dplyr::collect() %>%
       dplyr::mutate(.facet_number = NA_real_, .facet_label = NA_character_)
   }
+  
+  # add some defaults to the plot args
+  plot_args <- c(
+    list(xlab = NA, ylab = NA, type = plot_type),
+    plot_args
+  )
   
   # group by facet number, label and start plotting
   .data %>%
@@ -204,8 +232,7 @@ long_plot <- function(.data, ..., max_facets = 9, facet_args = list(), scales = 
     dplyr::do({
       .facet_label <- unique(.$.facet_label)
       base_mapped_plot(., c(position_mapping, aesthetic_mapping), scales, 
-                       list(main = .facet_label, xlab = NA, ylab = NA,
-                            type = plot_type))
+                       c(list(main = .facet_label), plot_args))
       data.frame()
     })
   
@@ -219,14 +246,14 @@ base_mapped_plot <- function(.data, mapping, scales, plot_args) {
   args <- lapply(names(mapping), function(aes_name) {
     col_data <- .data[[mapping[[aes_name]]]]
     if(aes_name %in% names(scales)) {
-      col_data <- setNames(scales[[aes_name]][col_data], NULL)
+      col_data <- stats::setNames(scales[[aes_name]][col_data], NULL)
     } else {
       col_data
     }
   })
   
   # set names to args from mapping
-  args <- setNames(args, names(mapping))
+  args <- stats::setNames(args, names(mapping))
   
   # add extra plot args, extract plot type
   plot_type <- plot_args$type
@@ -246,8 +273,12 @@ base_mapped_plot <- function(.data, mapping, scales, plot_args) {
   
   # each non-xy aesthetic, add the "series"
   non_position_args <- setdiff(names(args), c("x", "y"))
-  lapply(split(as.data.frame(args),
-               do.call(paste, args[non_position_args])),
+  if(length(non_position_args) == 0) {
+    splitter <- rep(1, length(args$x))
+  } else {
+    splitter <- do.call(paste, args[non_position_args])
+  }
+  lapply(split(as.data.frame(args), splitter),
          function(df) {
            series_args <- c(as.list(df[c("x", "y")]),
                             as.list(dplyr::distinct(df[non_position_args])))
@@ -273,6 +304,9 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   # check for measure_var (and proper .data type)
   .checkcols(.data, '.data', measure_var)
   
+  # check for empty .data
+  if(.isempty(.data)) stop(".data contains no data")
+  
   # guess or check id_vars if needed
   if(is.null(id_vars)) {
     id_vars <- guess_id_vars(colnames(.data), measure_var)
@@ -291,6 +325,9 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   xy_guess <- guess_xy(.data, x, y, numeric_id_vars, measure_var)
   x <- xy_guess$x
   y <- xy_guess$y
+  
+  # make sure x and y are in .data
+  .checkcols(.data, '.data', c(x, y))
   
   # check error_var as needed
   if(!is.null(error_var)) {
@@ -311,6 +348,10 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   # evaluate other aesthetics that should be mapped from id_vars,
   # but not if they are already mapped from ...
   more_args <- list(...)
+  
+  # check additional mapping columns
+  .checkcols(.data, '.data', unlist(more_args))
+  
   # make small effort to rename aesthetics to base-r like names
   aes_renamer <- c("colour" = "col", "color" = "col", "shape" = "pch",
                    "linetype" = "lty")
@@ -327,7 +368,7 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   # here is just an attempt to match up the unmapped_aes to the unmapped_vars to the shortest
   # length of either
   additional_mapping_len <- min(length(unmapped_vars), length(unmapped_aes))
-  additional_mapping <- setNames(utils::head(unmapped_vars, additional_mapping_len),
+  additional_mapping <- stats::setNames(utils::head(unmapped_vars, additional_mapping_len),
                                  utils::head(unmapped_aes, additional_mapping_len))
   
   # turn additional_mapping into a list and extract _facets from it, since
@@ -420,21 +461,20 @@ guess_id_vars <- function(vars, measure_var) {
 
 #' Autoplot a mudata object
 #' 
-#' Produces a quick graphical summary of a mudata object using the ggplot framework.
-#' The \code{subset} argument is quite powerful for filtering, but does not affect the order
-#' of appearance. For this, use \link{subset.mudata}, which by default orders the datasets,
-#' locations, and parameters passed into the function.
+#' Produces a quick graphical summary of a mudata object using the ggplot or base plotting
+#' framework.
 #'
 #' @param x A \link{mudata} object
-#' @param ... Passed on to \link{qualifierplot}
-#'
-#' @return A ggplot object
+#' @param ... Passed on to \link{long_plot} or \link{long_ggplot}
 #'
 #' @export
 #' 
 #' @examples 
 #' data(kentvillegreenwood)
+#' # plot using base plot
 #' plot(kentvillegreenwood)
+#' 
+#' # a prettier plot using ggplot
 #' library(ggplot2)
 #' autoplot(kentvillegreenwood)
 #' 

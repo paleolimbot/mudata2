@@ -12,20 +12,18 @@
 \arguments{
 \item{x}{A \link{mudata} object}
 
-\item{...}{Passed on to \link{qualifierplot}}
-}
-\value{
-A ggplot object
+\item{...}{Passed on to \link{long_plot} or \link{long_ggplot}}
 }
 \description{
-Produces a quick graphical summary of a mudata object using the ggplot framework.
-The \code{subset} argument is quite powerful for filtering, but does not affect the order
-of appearance. For this, use \link{subset.mudata}, which by default orders the datasets,
-locations, and parameters passed into the function.
+Produces a quick graphical summary of a mudata object using the ggplot or base plotting
+framework.
 }
 \examples{
 data(kentvillegreenwood)
+# plot using base plot
 plot(kentvillegreenwood)
+
+# a prettier plot using ggplot
 library(ggplot2)
 autoplot(kentvillegreenwood)
 

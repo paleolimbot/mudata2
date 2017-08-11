@@ -41,7 +41,9 @@
 #' md <- mudata(datatable)
 #' 
 #' # plot mudata contents
-#' plot(md, yvar="depth")
+#' plot(md, y="depth")
+#' library(ggplot2)
+#' autoplot(md, y = "depth")
 #' 
 #' @seealso \link{mudata}
 #' @importFrom magrittr %>%

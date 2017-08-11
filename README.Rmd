@@ -29,10 +29,11 @@ devtools::install_github("paleolimbot/mudata")
 
 The (mostly) universal data format is a collection of five (or more) tables, one of which contains the data in a molten form (see [tidyr](https://cran.r-project.org/package=tidyr)). The easiest way to visualize a mudata object is to inspect the `kentvillegreenwood` dataset within the package. This object is a collection of daily observations from Kentville, Nova Scotia, and Greenwood, Nova Scotia from July and August, 1999.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(mudata)
+library(ggplot2)
 data("kentvillegreenwood")
-plot(kentvillegreenwood)
+autoplot(kentvillegreenwood)
 ```
 
 The default `plot()` function for a `mudata` object uses [ggplot2](https://cran.r-project.org/package=ggplot2) to produce a faceted plot comparing locations and datasets by parameter. However, if we take a look at the structure of the object, we can see that it is just a `list` of 5 `data.frame` objects.
@@ -60,11 +61,11 @@ rbind(kvtemp, kvprecip)
 ```
 
 ```{r}
-plot(kvtemp)
+autoplot(kvtemp)
 ```
 
 ```{r}
-biplot(kvtemp, col="location")
+autobiplot(kvtemp, col="location")
 ```
 
 ## Creating a MUData object
@@ -112,7 +113,7 @@ Now the data is ready to be put into the `mudata()` constructor. If it isn't, th
 
 ```{r}
 md <- mudata(pocmajlong)
-plot(md, yvar="depth")
+autoplot(md, y="depth") + scale_y_reverse()
 ```
 
 ### Case 2: Wide, summarised data with uncertainty
@@ -151,7 +152,7 @@ The data is now ready to be fed to the `mudata()` constructor, after which we ca
 
 ```{r, warning=FALSE}
 md <- mudata(pocmajlong)
-plot(md, yvar="depth", errors="sd")
+autoplot(md, y="depth", error_var="sd") + scale_y_reverse()
 ```
 
 ## And more!

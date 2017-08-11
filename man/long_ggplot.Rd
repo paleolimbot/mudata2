@@ -4,42 +4,46 @@
 \alias{long_ggplot}
 \alias{long_plot}
 \alias{long_plot_base}
-\title{Smart plotting of tidy data frames}
+\title{Smart plotting of parameter-long data frames}
 \usage{
 long_ggplot(.data, ..., facet_args = list())
 
-long_plot(.data, ..., max_facets = 9, facet_args = list(),
-  scales = list())
+long_plot(.data, id_vars = NULL, measure_var = "value", x = NULL,
+  y = NULL, facets = NULL, geom = "path", error_var = NULL, ...,
+  max_facets = 9, facet_args = list(), scales = list())
 
 long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
   y = NULL, facets = NULL, geom = "path", error_var = NULL, ...)
 }
 \arguments{
-\item{...}{Passed on to \code{aes_string()}}
+\item{.data}{A \code{data.frame}}
 
-\item{x}{A \code{data.frame}}
+\item{...}{Additional aesthetic mappings, passed on to 
+(or treated similarly to) \link[ggplot2]{aes_string}}
+
+\item{facet_args}{Passed on to \link[ggplot2]{facet_wrap}}
+
+\item{id_vars}{Columns that identify unique values}
+
+\item{measure_var}{Column that contains values to be plotted}
+
+\item{x}{Column to be used on the x-axis}
+
+\item{y}{Column to be used on the y-axis}
 
 \item{facets}{Column to be used as facetting variable}
 
-\item{geom}{GGPlot geometries to be used. Can be any combination of point, path, or line.}
+\item{geom}{Can be any combination of point, path, or line.}
 
-\item{id.vars}{Columns that identify unique values}
+\item{error_var}{The column to be used for plus/minus error bars}
 
-\item{measure.var}{Column that contains values to be plotted}
+\item{max_facets}{Constrain the maximum number of facets, where available}
 
-\item{xvar}{Column to be used on the x-axis}
-
-\item{yvar}{Column to be used on the y-axis}
-
-\item{subset}{Subset to plot}
-
-\item{errors}{The colum that contains uncertainty information}
-}
-\value{
-A ggplot object
+\item{scales}{Customize aesthetic mapping in long_plot()}
 }
 \description{
-This function uses ggplot to plot a 'long' data frame with a few \code{id.vars}, 
+These functions are intended to quickly visualize plot a parameter-long
+data frame with a few \code{id.vars}, 
 or variables that identify the values in the \code{value} column. The function
 is optimised to plot multi-parameter spatiotemporal data either horizontally
 (time on the x axis) or vertically (time on the y axis). Facets are intended
@@ -49,7 +53,6 @@ examine its contents.
 }
 \examples{
 data(pocmajsum)
-long_plot(pocmajsum, c("core", "depth"), "Ca")
 
 library(tidyr)
 pocmaj_long <- pocmajsum \%>\%

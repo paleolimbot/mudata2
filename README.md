@@ -24,8 +24,9 @@ The (mostly) universal data format is a collection of five (or more) tables, one
 
 ``` r
 library(mudata)
+library(ggplot2)
 data("kentvillegreenwood")
-plot(kentvillegreenwood)
+autoplot(kentvillegreenwood)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-2-1.png)
@@ -219,14 +220,22 @@ rbind(kvtemp, kvprecip)
     ## [1] "mudata" "list"
 
 ``` r
-plot(kvtemp)
+autoplot(kvtemp)
 ```
+
+    ## Using x = "date", y = "value"
+
+    ## Using facets = c("param")
+
+    ## Using col = "location", pch = "dataset"
 
 ![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
-biplot(kvtemp, col="location")
+autobiplot(kvtemp, col="location")
 ```
+
+    ## Using names_x = c("mintemp", "maxtemp"), names_y = c("meantemp", "mintemp")
 
 ![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
@@ -297,8 +306,14 @@ md <- mudata(pocmajlong)
     ## Guessing x columns: depth
 
 ``` r
-plot(md, yvar="depth")
+autoplot(md, y="depth") + scale_y_reverse()
 ```
+
+    ## Using x = "value"
+
+    ## Using facets = c("param")
+
+    ## Using col = "location", pch = "dataset"
 
 ![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
@@ -359,8 +374,14 @@ md <- mudata(pocmajlong)
     ## Guessing x columns: depth
 
 ``` r
-plot(md, yvar="depth", errors="sd")
+autoplot(md, y="depth", error_var="sd") + scale_y_reverse()
 ```
+
+    ## Using x = "value"
+
+    ## Using facets = c("param")
+
+    ## Using col = "location", pch = "dataset"
 
 ![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
 

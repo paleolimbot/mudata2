@@ -13,13 +13,13 @@
 #'
 #' @examples
 #' data(pocmaj)
-#' rename.cols(pocmaj, Ca="Calcium")
+#' rename_cols(pocmaj, Ca="Calcium")
 #'
-rename.cols <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename.cols")
+rename_cols <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename_cols")
 
 #' @export
-#' @rdname rename.cols
-rename.cols.default <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
+#' @rdname rename_cols
+rename_cols.default <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) {
   plyr::rename(.data, list(...), warn_missing = warn_missing, warn_duplicated = warn_duplicated)
 }
 
@@ -40,11 +40,11 @@ rename.cols.default <- function(.data, ..., warn_missing=TRUE, warn_duplicated=T
 #'
 #' @examples
 #' x <- c("fish", "fish", "fish", "whistle")
-#' rename.values(x, fish="newfish")
-#' rename.values(x, whistle="newwhistle")
-#' rename.values(x, fish="newfish", defaultValue="not a fish")
+#' rename_values(x, fish="newfish")
+#' rename_values(x, whistle="newwhistle")
+#' rename_values(x, fish="newfish", defaultValue="not a fish")
 #'
-rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
+rename_values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
   replacer <- list(...)
   if(length(replacer) == 0) return(x)
   
@@ -83,49 +83,49 @@ rename.values <- function(x, ..., defaultValue=x, warn_missing=TRUE) {
 #'
 #' @examples
 #' data(kentvillegreenwood)
-#' md2 <- rename.datasets(kentvillegreenwood, ecclimate="avalley")
+#' md2 <- rename_datasets(kentvillegreenwood, ecclimate="avalley")
 #' validate_mudata(md2)
-#' md2 <- rename.locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
+#' md2 <- rename_locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
 #' validate_mudata(md2)
-#' md2 <- rename.params(kentvillegreenwood, maxtemp="Maximum Temperature")
+#' md2 <- rename_params(kentvillegreenwood, maxtemp="Maximum Temperature")
 #' validate_mudata(md2)
-#' md2 <- rename.cols(kentvillegreenwood, latitude="lat", longitude="lon")
+#' md2 <- rename_cols(kentvillegreenwood, latitude="lat", longitude="lon")
 #' validate_mudata(md2)
 #' 
-rename.datasets <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),
+rename_datasets <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),
                             warn_missing=TRUE) {
   for(dfname in apply_to) {
-    md[[dfname]]$dataset <- rename.values(md[[dfname]]$dataset, ..., warn_missing=warn_missing)
+    md[[dfname]]$dataset <- rename_values(md[[dfname]]$dataset, ..., warn_missing=warn_missing)
   }
   return(md)
 }
 
-#' @rdname rename.datasets
+#' @rdname rename_datasets
 #' @export
-rename.params <- function(md, ..., apply_to=c("data", "params"), warn_missing=TRUE) {
+rename_params <- function(md, ..., apply_to=c("data", "params"), warn_missing=TRUE) {
   for(dfname in apply_to) {
-    md[[dfname]]$param <- rename.values(md[[dfname]]$param, ..., warn_missing=warn_missing)
+    md[[dfname]]$param <- rename_values(md[[dfname]]$param, ..., warn_missing=warn_missing)
   }
   return(md)
 }
 
-#' @rdname rename.datasets
+#' @rdname rename_datasets
 #' @export
-rename.locations <- function(md, ..., apply_to=c("data", "locations"), warn_missing=TRUE) {
+rename_locations <- function(md, ..., apply_to=c("data", "locations"), warn_missing=TRUE) {
   for(dfname in apply_to) {
-    md[[dfname]]$location <- rename.values(md[[dfname]]$location, ..., warn_missing=warn_missing)
+    md[[dfname]]$location <- rename_values(md[[dfname]]$location, ..., warn_missing=warn_missing)
   }
   return(md)
 }
 
-#' @rdname rename.datasets
+#' @rdname rename_datasets
 #' @export
-rename.cols.mudata <- function(.data, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
+rename_cols.mudata <- function(.data, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
                                warn_missing=FALSE, warn_duplicated=TRUE) {
   for(dfname in apply_to) {
-    .data[[dfname]] <- rename.cols(.data[[dfname]], ..., warn_missing=warn_missing, 
+    .data[[dfname]] <- rename_cols(.data[[dfname]], ..., warn_missing=warn_missing, 
                                warn_duplicated=TRUE)
   }
-  .data$columns$column <- rename.values(.data$columns$column, ..., warn_missing=warn_missing)
+  .data$columns$column <- rename_values(.data$columns$column, ..., warn_missing=warn_missing)
   return(.data)
 }

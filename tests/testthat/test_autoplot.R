@@ -199,3 +199,7 @@ test_that("autoplot works on sqlite sources", {
   expect_is(ggplot2::autoplot(kv_sqlite), "ggplot")
   plot(kv_sqlite)
 })
+
+# clean temporary database
+unlink(sql_file)
+rm(kg_sql); gc() # disconnect sqlite database

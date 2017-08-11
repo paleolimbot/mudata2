@@ -62,16 +62,16 @@ test_that("invalid objects are not read", {
   unlink(outfile_json)
 })
 
-# test_that("retyping on read/write works", {
-#   data("kentvillegreenwood")
-#   outfile <- tempfile(fileext = ".zip")
-#   write.mudata.zip(kentvillegreenwood, outfile)
-#   expect_message(read.mudata.zip(outfile, retype=TRUE))
-#   
-#   md2 <- read.mudata.zip(outfile, retype=TRUE)
-#   expect_that(md2, is_a('mudata'))
-#   expect_that(md2$data$x, is_a(md2$columns$type[md2$columns$column == "x"]))
-#   unlink(outfile)
-# })
+test_that("retyping on read/write works", {
+  data("kentvillegreenwood")
+  outfile <- tempfile(fileext = ".zip")
+  write.mudata.zip(kentvillegreenwood, outfile)
+  expect_message(read.mudata.zip(outfile, retype=TRUE))
+  
+  md2 <- read.mudata.zip(outfile, retype=TRUE)
+  expect_that(md2, is_a('mudata'))
+  expect_that(md2$data$x, is_a(md2$columns$type[md2$columns$column == "x"]))
+  unlink(outfile)
+})
 
 

@@ -73,3 +73,4 @@ test_that("mudata constructor works with sqlite data frames", {
 
 # clean temporary database
 unlink(sql_file)
+rm(kg_sql); gc() # disconnect sqlite database

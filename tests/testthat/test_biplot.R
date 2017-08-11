@@ -192,3 +192,4 @@ test_that("max_names is respected in long_pairs, autobiplot, and long_biplot", {
 
 # clean temporary database
 unlink(sql_file)
+rm(kg_sql); gc() # disconnect sqlite database

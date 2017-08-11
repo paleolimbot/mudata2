@@ -69,21 +69,27 @@ test_that("passing invalid inputs throws an error", {
   # other empty tables get caught in validation, but not in construction
   pocmaj_complete <- pocmaj_data %>% 
     dplyr::mutate(dataset = "a_dataset", location = "a_location")
-  expect_silent({
+  expect_silent(
     mudata(pocmaj_complete, 
            locations = data.frame(dataset = character(0), location = character(0)),
            validate = FALSE, x_columns = "depth")
+  )
+  expect_silent(
     mudata(pocmaj_complete, 
            params = data.frame(dataset = character(0), param = character(0)),
            validate = FALSE, x_columns = "depth")
+  )
+  expect_silent(
     mudata(pocmaj_complete, 
            datasets = data.frame(dataset = character(0)),
            validate = FALSE, x_columns = "depth")
+  )
+  expect_silent(
     mudata(pocmaj_complete, 
            columns = data.frame(dataset = character(0), table = character(0),
                                 column = character(0)),
            validate = FALSE, x_columns = "depth")
-  })
+  )
   
   # other zero-row data frames shouldn't work if dataset or location must be added
   expect_error(mudata(pocmaj_data, datasets = data.frame()),

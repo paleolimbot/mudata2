@@ -172,6 +172,11 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
       dplyr::select(dplyr::one_of(args$mapping$facets)) %>%
       dplyr::distinct() %>%
       dplyr::collect() %>%
+      # sort by all facetting variables
+      dplyr::group_by_all() %>%
+      dplyr::arrange(.by_group = TRUE) %>%
+      dplyr::ungroup() %>%
+      # create facet number variable
       dplyr::mutate(.facet_number = 1:n())
     
     # check number of facets, only plot first max_facets
@@ -236,8 +241,8 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
       data.frame()
     })
   
-  # return nothing
-  invisible(NULL)
+  # return debugging information, invisibly
+  invisible(list(args = args, facet_df = facet_df, scales = scales))
 }
 
 base_mapped_plot <- function(.data, mapping, scales, plot_args) {
@@ -260,9 +265,22 @@ base_mapped_plot <- function(.data, mapping, scales, plot_args) {
   plot_args$type <- NULL
   
   # create plot args for the first call to plot()
+  # check for all(is.na()) for x and y
+  if(all(is.na(args$x))) {
+    range_x <- c(0, 0)
+  } else {
+    range_x <- range(args$x, na.rm = TRUE)
+  }
+  
+  if(all(is.na(args$y))) {
+    range_y <- c(0, 0)
+  } else {
+    range_y <- range(args$y, na.rm = TRUE)
+  }
+  
   plot_args <- c(list(
-    x = range(args$x, na.rm = TRUE),
-    y = range(args$y, na.rm = TRUE), type = "n"
+    x = range_x,
+    y = range_y, type = "n"
   ), plot_args)
   
   # setup the plot ranges/axes by plotting the x and y ranges without points

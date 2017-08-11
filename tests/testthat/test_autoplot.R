@@ -127,6 +127,39 @@ test_that("manual tests for plot()", {
   expect_true(TRUE)
 })
 
+test_that("formulas or character vectors can be supplied to facets", {
+  expect_identical(long_plot_base(kentvillegreenwood$data, 
+                                  facets = c("location", "param")),
+                   long_plot_base(kentvillegreenwood$data, 
+                                  facets = ~location + param))
+  
+  expect_identical(long_plot_base(kentvillegreenwood$data, 
+                                  facets = c("location", "param")),
+                   long_plot_base(kentvillegreenwood$data, 
+                                  facets = location ~ param))
+})
+
+test_that("multiple variables can be suppied to facets", {
+  fout <- long_plot_base(kentvillegreenwood$data, facets = c("location", "param"))
+  expect_equal(fout$mapping$facets, c("location", "param"))
+  expect_equal(fout$mapping$more_args$col, "dataset")
+  
+  # manual test of multiple facets
+  expect_false(identical(
+    plot(kentvillegreenwood, facets = location ~ param)$facet_df,
+    plot(kentvillegreenwood, facets = param ~ location)$facet_df
+  ))
+  
+  # check that multiple identical facets are ok
+  expect_identical(plot(kentvillegreenwood, facets = param ~ param)$facet_df,
+                   plot(kentvillegreenwood, facets = ~param)$facet_df)
+  ggplot2::autoplot(kentvillegreenwood, facets = location ~ param)
+  ggplot2::autoplot(kentvillegreenwood, facets = param ~ location)
+  
+  # check that multiple identical facets are ok
+  ggplot2::autoplot(kentvillegreenwood, facets = param ~ param)
+})
+
 test_that("manual tests for autoplot()", {
   ggplot2::autoplot(kentvillegreenwood)
   ggplot2::autoplot(kentvillegreenwood, geom = "point")
@@ -154,17 +187,12 @@ test_that("grouped data frames don't cause problems in plot()", {
     dplyr::summarise(value=mean(param_value), sd=mean(param_value)) %>%
     dplyr::rename(location = core)
   
-  # create mudata object
-  md <- mudata(datatable)
+  # check that autoplot works
+  expect_is(long_ggplot(datatable), "ggplot")
   
-  # plot mudata contents
-  plot(md, y="depth")
-  
-  # check autoplot as well
-  expect_is(ggplot2::autoplot(md), "ggplot")
-  
-  # more of a visual check than a real test
-  expect_true(TRUE)
+  # check that plot works
+  expect_identical(long_plot(datatable)$facet_df,
+                   long_plot(dplyr::ungroup(datatable))$facet_df)
 })
 
 test_that("autoplot works on sqlite sources", {

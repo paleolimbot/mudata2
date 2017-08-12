@@ -5,8 +5,8 @@ test_that("bare types are parsed correctly", {
   expect_equal(parse_type("a_type")$type, "a_type")
   expect_equal(parse_type("a_type2")$type, "a_type2")
   
-  expect_identical(parse_type("a_type")$args, list())
-  expect_identical(parse_type("a_type2")$args, list())
+  expect_identical(parse_type("a_type")$args, setNames(list(), character(0)))
+  expect_identical(parse_type("a_type2")$args, setNames(list(), character(0)))
 })
 
 test_that("invalid bare types are identified", {
@@ -92,6 +92,13 @@ test_that("whitespace/commas in argument strings is correctly handled", {
   expect_error(parse_type("type(key=5 key2='value2')"), "Invalid argument string:.*")
   expect_silent(parse_type("type(key='value', key2=5 )"))
   expect_error(parse_type("type(key='value' key2='value2')"), "Invalid argument string:.*")
+})
+
+test_that("key value pairs within argument strings do not cause errors", {
+  expect_equal(parse_type("type(key = 'within_key=\"value\"')")$args$key,
+               'within_key=\"value\"')
+  expect_equal(parse_type("type(key = 'within_key=5')")$args$key,
+               'within_key=5')
 })
 
 test_that("multiple arguments are all extracted", {

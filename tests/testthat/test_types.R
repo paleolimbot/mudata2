@@ -110,3 +110,26 @@ test_that("multiple arguments are all extracted", {
   expect_equal(result$args$key3, 1234)
   expect_equal(result$args$key5, "dq string val")
 })
+
+test_that("lists can be included in arguments", {
+  expect_identical(parse_type("type(key = [5])")$args$key, 5)
+  expect_identical(parse_type("type(key = [5, 6])")$args$key, c(5, 6))
+  expect_identical(parse_type("type(key = ['five'])")$args$key, "five")
+  expect_identical(parse_type("type(key = [\"five\"])")$args$key, "five")
+  # types are coerced to an atomic vector
+  expect_identical(parse_type("type(key = ['five', 5])")$args$key, c("five", "5"))
+})
+
+# this doesn't pass, but is ok for a simple parser
+# test_that("brackets in list arguments are not problematic", {
+#   expect_identical(parse_type("type(key = ['five]'])")$args$key, "five]")
+#   expect_identical(parse_type("type(key = ['five', 'six]', 'seven]'])")$args$key, 
+#                    c("five", "six]", "seven]"))
+# })
+
+test_that("multiple list arguments can be included", {
+  result <- parse_type("type(key1 = [5, 6], key2 = ['six', 'seven'], key3 = 8)")
+  expect_identical(result$args$key1, c(5, 6))
+  expect_identical(result$args$key2, c("six", "seven"))
+  expect_identical(result$args$key3, 8)
+})

@@ -2,108 +2,108 @@
 context("type parsing")
 
 test_that("bare types are parsed correctly", {
-  expect_equal(parse_type("a_type")$type, "a_type")
-  expect_equal(parse_type("a_type2")$type, "a_type2")
+  expect_equal(parse_type_base("a_type")$type, "a_type")
+  expect_equal(parse_type_base("a_type2")$type, "a_type2")
   
-  expect_identical(parse_type("a_type")$args, setNames(list(), character(0)))
-  expect_identical(parse_type("a_type2")$args, setNames(list(), character(0)))
+  expect_identical(parse_type_base("a_type")$args, setNames(list(), character(0)))
+  expect_identical(parse_type_base("a_type2")$args, setNames(list(), character(0)))
 })
 
 test_that("invalid bare types are identified", {
-  expect_error(parse_type("0type"), "Invalid type specification:.*")
-  expect_error(parse_type("_type"), "Invalid type specification:.*")
-  expect_error(parse_type("Type"), "Invalid type specification:.*")
-  expect_error(parse_type("tYpe"), "Invalid type specification:.*")
+  expect_error(parse_type_base("0type"), "Invalid type specification:.*")
+  expect_error(parse_type_base("_type"), "Invalid type specification:.*")
+  expect_error(parse_type_base("Type"), "Invalid type specification:.*")
+  expect_error(parse_type_base("tYpe"), "Invalid type specification:.*")
 })
 
 test_that("types with zero arguments are parsed correctly", {
-  expect_identical(parse_type("a_type()"), parse_type("a_type"))
-  expect_identical(parse_type("a_type2()"), parse_type("a_type2"))
+  expect_identical(parse_type_base("a_type()"), parse_type_base("a_type"))
+  expect_identical(parse_type_base("a_type2()"), parse_type_base("a_type2"))
 })
 
 test_that("invalid types with zero arguments are identified", {
-  expect_error(parse_type("0type()"), "Invalid type specification:.*")
-  expect_error(parse_type("_type()"), "Invalid type specification:.*")
-  expect_error(parse_type("Type()"), "Invalid type specification:.*")
-  expect_error(parse_type("tYpe()"), "Invalid type specification:.*")
+  expect_error(parse_type_base("0type()"), "Invalid type specification:.*")
+  expect_error(parse_type_base("_type()"), "Invalid type specification:.*")
+  expect_error(parse_type_base("Type()"), "Invalid type specification:.*")
+  expect_error(parse_type_base("tYpe()"), "Invalid type specification:.*")
 })
 
 test_that("types with one argument are parsed correctly", {
   
-  expect_identical(parse_type("type_name(key='value')")$args,
+  expect_identical(parse_type_base("type_name(key='value')")$args,
                    list(key = "value"))
-  expect_identical(parse_type("type_name(key=\"value\")")$args,
+  expect_identical(parse_type_base("type_name(key=\"value\")")$args,
                    list(key = "value"))
-  expect_identical(parse_type("type_name(key=1)")$args,
+  expect_identical(parse_type_base("type_name(key=1)")$args,
                    list(key = 1))
-  expect_identical(parse_type("type_name(key=1.3)")$args,
+  expect_identical(parse_type_base("type_name(key=1.3)")$args,
                    list(key = 1.3))
-  expect_identical(parse_type("type_name(key=13.)")$args,
+  expect_identical(parse_type_base("type_name(key=13.)")$args,
                    list(key = 13))
-  expect_identical(parse_type("type_name(key=.13)")$args,
+  expect_identical(parse_type_base("type_name(key=.13)")$args,
                    list(key = .13))
 })
 
 test_that("various whitespace is allowed in type specifications", {
-  expect_identical(parse_type("type_name(key ='value')")$args,
+  expect_identical(parse_type_base("type_name(key ='value')")$args,
                    list(key = "value"))
-  expect_identical(parse_type("type_name( key=\"value\")")$args,
+  expect_identical(parse_type_base("type_name( key=\"value\")")$args,
                    list(key = "value"))
-  expect_identical(parse_type("type_name(key=1 )")$args,
+  expect_identical(parse_type_base("type_name(key=1 )")$args,
                    list(key = 1))
-  expect_identical(parse_type("type_name(key= 1.3)")$args,
+  expect_identical(parse_type_base("type_name(key= 1.3)")$args,
                    list(key = 1.3))
-  expect_identical(parse_type("type_name(key =13.)")$args,
+  expect_identical(parse_type_base("type_name(key =13.)")$args,
                    list(key = 13))
-  expect_identical(parse_type("type_name(key = .13)")$args,
+  expect_identical(parse_type_base("type_name(key = .13)")$args,
                    list(key = .13))
 })
 
 test_that("types with invalid arguments are identified", {
   # type errors
-  expect_error(parse_type("0type(key='value')"), "Invalid type specification:.*")
-  expect_error(parse_type("_type(key='value')"), "Invalid type specification:.*")
-  expect_error(parse_type("Type(key='value')"), "Invalid type specification:.*")
-  expect_error(parse_type("tYpe(key='value')"), "Invalid type specification:.*")
+  expect_error(parse_type_base("0type(key='value')"), "Invalid type specification:.*")
+  expect_error(parse_type_base("_type(key='value')"), "Invalid type specification:.*")
+  expect_error(parse_type_base("Type(key='value')"), "Invalid type specification:.*")
+  expect_error(parse_type_base("tYpe(key='value')"), "Invalid type specification:.*")
   
   # argument errors
-  expect_error(parse_type("type(key='value)"), "Invalid argument string:.*")
-  expect_error(parse_type("type(key='value\")"), "Invalid argument string:.*")
-  expect_error(parse_type("type(key='value', key2=)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(key='value)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(key='value\")"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(key='value', key2=)"), "Invalid argument string:.*")
   
   # whitespace errors
-  expect_error(parse_type("type(key='value' key2='value2')"), "Invalid argument string:.*")
-  expect_error(parse_type("type(key=5 key2='value2')"), "Invalid argument string:.*")
-  expect_error(parse_type("type(key='value' key2=5)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(key='value' key2='value2')"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(key=5 key2='value2')"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(key='value' key2=5)"), "Invalid argument string:.*")
 
 })
 
 test_that("whitespace/commas in argument strings is correctly handled", {
-  expect_error(parse_type("type(,)"), "Invalid argument string:.*")
-  expect_error(parse_type("type(,a)"), "Invalid argument string:.*")
-  expect_error(parse_type("type(,fish = 'thing')"), "Invalid argument string:.*")
-  expect_error(parse_type("type(fish = 'thing',)"), "Invalid argument string:.*")
-  expect_error(parse_type("type(fish = 'thing' ,)"), "Invalid argument string:.*")
-  expect_error(parse_type("type(fish = 'thing' , )"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(,)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(,a)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(,fish = 'thing')"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(fish = 'thing',)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(fish = 'thing' ,)"), "Invalid argument string:.*")
+  expect_error(parse_type_base("type(fish = 'thing' , )"), "Invalid argument string:.*")
   
-  expect_silent(parse_type("type(key='value', key2='value2' )"))
-  expect_error(parse_type("type(key='value' key2='value2')"), "Invalid argument string:.*")
-  expect_silent(parse_type("type(key=5, key2='value2' )"))
-  expect_error(parse_type("type(key=5 key2='value2')"), "Invalid argument string:.*")
-  expect_silent(parse_type("type(key='value', key2=5 )"))
-  expect_error(parse_type("type(key='value' key2='value2')"), "Invalid argument string:.*")
+  expect_silent(parse_type_base("type(key='value', key2='value2' )"))
+  expect_error(parse_type_base("type(key='value' key2='value2')"), "Invalid argument string:.*")
+  expect_silent(parse_type_base("type(key=5, key2='value2' )"))
+  expect_error(parse_type_base("type(key=5 key2='value2')"), "Invalid argument string:.*")
+  expect_silent(parse_type_base("type(key='value', key2=5 )"))
+  expect_error(parse_type_base("type(key='value' key2='value2')"), "Invalid argument string:.*")
 })
 
 test_that("key value pairs within argument strings do not cause errors", {
-  expect_equal(parse_type("type(key = 'within_key=\"value\"')")$args$key,
+  expect_equal(parse_type_base("type(key = 'within_key=\"value\"')")$args$key,
                'within_key=\"value\"')
-  expect_equal(parse_type("type(key = 'within_key=5')")$args$key,
+  expect_equal(parse_type_base("type(key = 'within_key=5')")$args$key,
                'within_key=5')
 })
 
 test_that("multiple arguments are all extracted", {
   long_type <- "type_name(key='string value', key2=1234.6, key3=1234, key5 = \"dq string val\")"
-  result <- parse_type(long_type)
+  result <- parse_type_base(long_type)
   expect_equal(result$type, "type_name")
   expect_equal(result$args$key, "string value")
   expect_equal(result$args$key2, 1234.6)
@@ -112,24 +112,109 @@ test_that("multiple arguments are all extracted", {
 })
 
 test_that("lists can be included in arguments", {
-  expect_identical(parse_type("type(key = [5])")$args$key, 5)
-  expect_identical(parse_type("type(key = [5, 6])")$args$key, c(5, 6))
-  expect_identical(parse_type("type(key = ['five'])")$args$key, "five")
-  expect_identical(parse_type("type(key = [\"five\"])")$args$key, "five")
+  expect_identical(parse_type_base("type(key = [5])")$args$key, 5)
+  expect_identical(parse_type_base("type(key = [5, 6])")$args$key, c(5, 6))
+  expect_identical(parse_type_base("type(key = ['five'])")$args$key, "five")
+  expect_identical(parse_type_base("type(key = [\"five\"])")$args$key, "five")
   # types are coerced to an atomic vector
-  expect_identical(parse_type("type(key = ['five', 5])")$args$key, c("five", "5"))
+  expect_identical(parse_type_base("type(key = ['five', 5])")$args$key, c("five", "5"))
 })
 
 # this doesn't pass, but is ok for a simple parser
 # test_that("brackets in list arguments are not problematic", {
-#   expect_identical(parse_type("type(key = ['five]'])")$args$key, "five]")
-#   expect_identical(parse_type("type(key = ['five', 'six]', 'seven]'])")$args$key, 
+#   expect_identical(parse_type_base("type(key = ['five]'])")$args$key, "five]")
+#   expect_identical(parse_type_base("type(key = ['five', 'six]', 'seven]'])")$args$key, 
 #                    c("five", "six]", "seven]"))
 # })
 
 test_that("multiple list arguments can be included", {
-  result <- parse_type("type(key1 = [5, 6], key2 = ['six', 'seven'], key3 = 8)")
+  result <- parse_type_base("type(key1 = [5, 6], key2 = ['six', 'seven'], key3 = 8)")
   expect_identical(result$args$key1, c(5, 6))
   expect_identical(result$args$key2, c("six", "seven"))
   expect_identical(result$args$key3, 8)
+})
+
+test_that("default types are handled correctly", {
+  expect_identical(parse_type_base(""), parse_type_base(NA_character_))
+  expect_identical(parse_type_base(""), 
+                   list(type = "guess", 
+                        args = stats::setNames(list(), character(0))))
+})
+
+test_that("type_str values greater than length 1 throw an error", {
+  expect_error(parse_type_base(c("", "")), 
+               "type_str must be a character vector of length 1")
+  expect_error(parse_type_base(character(0)), 
+               "type_str must be a character vector of length 1")
+  expect_error(parse_type_base(NA), 
+               "type_str must be a character vector of length 1")
+  expect_error(parse_type_base(NULL), 
+               "type_str must be a character vector of length 1")
+})
+
+test_that("types that are not in allowed types throw an error", {
+  expect_error(parse_type("type"), "Type must be one of.*")
+  expect_silent(parse_type("date"))
+  expect_silent(parse_type("date()"))
+  expect_silent(parse_type("date(format = '%m%.%d%.%Y')"))
+  expect_error(parse_type("type(format = '')"), "Type must be one of.*")
+  
+  # check list of allowed types
+  expect_silent(parse_type("date"))
+  expect_silent(parse_type("datetime"))
+  expect_silent(parse_type("logical"))
+  expect_silent(parse_type("numeric"))
+  expect_silent(parse_type("character"))
+  expect_silent(parse_type("guess"))
+  expect_silent(parse_type("geometry"))
+  expect_silent(parse_type("json"))
+})
+
+test_that("as_* functions produce the expected output type", {
+  # parsetype returns a list
+  expect_is(parse_type("character"), "list")
+  expect_is(parse_type("datetime"), "list")
+  expect_is(parse_type("geometry"), "list")
+  expect_is(parse_type("json"), "list")
+  
+  # as_col_spec returns a collector
+  expect_is(as_col_spec("character"), "collector")
+  expect_is(as_col_spec("datetime"), "collector")
+  expect_is(as_col_spec("geometry"), "collector_character")
+  expect_is(as_col_spec("json"), "collector_character")
+  
+  # as_parser returns a parsing function
+  expect_is(as_parser("character"), "function")
+  expect_is(as_parser("datetime"), "function")
+  expect_is(as_parser("geometry"), "function")
+  expect_is(as_parser("json"), "function")
+})
+
+test_that("json parsing works as intended", {
+  json_test <- c('{"key": "value", "key2":4}', '{"key": "value2", "key2": 5}')
+  json_r <- list(list(key = "value", "key2" = 4L), list(key = "value2", key2 = 5L))
+  expect_identical(parse_json(json_test), json_r)
+  
+  # make sure NAs be come NULL
+  expect_identical(parse_json(c(NA, json_test)), c(list(NULL), json_r))
+  expect_identical(parse_json(c("", json_test)), c(list(NULL), json_r))
+  expect_identical(parse_json(c("NA", json_test)), c(list(NULL), json_r))
+  
+  # make sure problems are caught
+  expect_warning(parse_json("{'invalid_json'='not valid'}"),
+                 "1 parsing failures in parse_json()")
+  expect_warning(parse_json(c("{'invalid_json'='not valid'}", json_test)),
+                 "1 parsing failures in parse_json()")
+  
+  expect_is(attr(parse_json("{'invalid_json'='not valid'}"), "problems"),
+            "data.frame")
+  # json parsing failure should just return the invalid string
+  expect_equal(parse_json("{'invalid_json'='not valid'}")[[1]], 
+               "{'invalid_json'='not valid'}")
+  
+  # zero-length parsing
+  expect_identical(parse_json(character(0)), list())
+  
+  # expect class
+  expect_is(parse_json("{}"), "list")
 })

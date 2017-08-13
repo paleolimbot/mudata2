@@ -166,7 +166,7 @@ test_that("types that are not in allowed types throw an error", {
   expect_silent(parse_type("numeric"))
   expect_silent(parse_type("character"))
   expect_silent(parse_type("guess"))
-  expect_silent(parse_type("geometry"))
+  expect_silent(parse_type("wkt"))
   expect_silent(parse_type("json"))
 })
 
@@ -174,19 +174,19 @@ test_that("as_* functions produce the expected output type", {
   # parsetype returns a list
   expect_is(parse_type("character"), "list")
   expect_is(parse_type("datetime"), "list")
-  expect_is(parse_type("geometry"), "list")
+  expect_is(parse_type("wkt"), "list")
   expect_is(parse_type("json"), "list")
   
   # as_col_spec returns a collector
   expect_is(as_col_spec("character"), "collector")
   expect_is(as_col_spec("datetime"), "collector")
-  expect_is(as_col_spec("geometry"), "collector_character")
+  expect_is(as_col_spec("wkt"), "collector_character")
   expect_is(as_col_spec("json"), "collector_character")
   
   # as_parser returns a parsing function
   expect_is(as_parser("character"), "function")
   expect_is(as_parser("datetime"), "function")
-  expect_is(as_parser("geometry"), "function")
+  expect_is(as_parser("wkt"), "function")
   expect_is(as_parser("json"), "function")
 })
 
@@ -209,12 +209,51 @@ test_that("json parsing works as intended", {
   expect_is(attr(parse_json("{'invalid_json'='not valid'}"), "problems"),
             "data.frame")
   # json parsing failure should just return the invalid string
-  expect_equal(parse_json("{'invalid_json'='not valid'}")[[1]], 
-               "{'invalid_json'='not valid'}")
+  expect_identical(parse_json("{'invalid_json'='not valid'}")[[1]], 
+                   NULL)
   
   # zero-length parsing
   expect_identical(parse_json(character(0)), list())
   
   # expect class
   expect_is(parse_json("{}"), "list")
+})
+
+test_that("wkt parsing returns an sf::sfc", {
+  wkt_test <- c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")
+  expect_is(parse_wkt(wkt_test), "sfc")
+  expect_length(parse_wkt(wkt_test), 3)
+})
+
+test_that("wkt parsing works when there are parsing errors/NA values", {
+  wkt_test <- c("POINT(0 0)", "", "NA", NA, "POINT(1 1)", "POINT(2 2)")
+  result_na <- parse_wkt(wkt_test)
+  expect_is(result_na, "sfc")
+  expect_length(result_na, 6)
+  expect_null(result_na[[2]])
+  expect_null(result_na[[3]])
+  expect_null(result_na[[4]])
+  expect_null(attr(result_na, "problems"))
+  
+  wkt_test_invalid <- c("typo here", "POINT(0 0)", "", "NA", NA, "POINT(1 1)", 
+                        "not wkt", "also not wkt", "POINT(2 2)")
+  result_invalid <- parse_wkt(wkt_test_invalid)
+  expect_is(result_invalid, "sfc")
+  expect_length(result_invalid, 9)
+  # nas as null
+  expect_null(result_invalid[[3]])
+  expect_null(result_invalid[[4]])
+  expect_null(result_invalid[[5]])
+  # problems as null
+  expect_null(result_invalid[[1]])
+  expect_null(result_invalid[[7]])
+  expect_null(result_invalid[[8]])
+  
+  expect_equal(nrow(attr(result_invalid, "problems")), 3)
+  expect_equal(attr(result_invalid, "problems")$row, c(1, 7, 8))
+})
+
+test_that("wkt parsing works with zero-length input", {
+  expect_is(parse_wkt(character(0)), "sfc")
+  expect_length(parse_wkt(character(0)), 0)
 })

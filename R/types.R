@@ -6,7 +6,7 @@
 #' contain arguments for the sake of completeness (but this shouldn't normally be necessary).
 #'
 #' @param type_str A type string, one of date, datetime, logical, numeric, character, guess,
-#'   geometry, or json.
+#'   wkt, or json.
 #'
 #' @return A parsed version of the type_str, a column specification or parsing function
 #' @export
@@ -32,7 +32,7 @@ as_col_spec <- function(type_str) {
     # get readr funcion and call with type_obj$args
     do.call(get_readr_fun(type_obj$type, "col"), type_obj$args)
   } else {
-    # can't do column specification for json or geometry, but these columns should be
+    # can't do column specification for json or wkt, but these columns should be
     # read as character (ignoring args)
     readr::col_character()
   }
@@ -51,8 +51,8 @@ as_parser <- function(type_str) {
     parse_fun <- get_readr_fun(type_obj$type, "parse")
   } else if(type_obj$type == "json") {
     parse_fun <- parse_json
-  } else if(type_obj$type == "geometry") {
-    parse_fun <- parse_geometry
+  } else if(type_obj$type == "wkt") {
+    parse_fun <- parse_wkt
   }
   
   # return a partial wrapper using type_obj$args
@@ -63,6 +63,54 @@ as_parser <- function(type_str) {
 
 # json parser using jsonlite, simplifying only vectors
 parse_json <- function(x, na = c("NA", ""), ...) {
+  parse_lapply(x, jsonlite::fromJSON, na = na, simplifyVector = TRUE, 
+               simplifyMatrix = FALSE, simplifyDataFrame = FALSE, ...)
+}
+
+# wkt parser using sf::st_as_sfc
+parse_wkt <- function(x, na = c("NA", ""), crs = sf::NA_crs_, ...) {
+  # make x a character vector
+  x <- as.character(x)
+  
+  col <- try(sf::st_as_sfc(x, crs = crs, ...), silent = TRUE)
+  if(inherits(col, "try-error")) {
+    # no way to tell which value was the culprit here, so use parse_wkt_lapply
+    parse_wkt_lapply(x, na = na, crs = crs, ...)
+  } else {
+    col
+  }
+}
+
+# this parses values one-by-one, which is better for identifying errors
+# but is much slower
+parse_wkt_lapply <- function(x, na = c("NA", ""), crs = sf::NA_crs_, ...) {
+  # make x a character vector
+  x <- as.character(x)
+  
+  # use st_as_sfc to parse WKT from non-NA values
+  col <- parse_lapply(x, function(element) {
+    # remove NA values before parsing
+    if(is.na(element) | (element %in% na)) return(NULL)
+    sf::st_as_sfc(element, na = na, ...)[[1]]
+  })
+  
+  # make col an sf::sfc from non-nulls in col
+  col_is_null <- vapply(col, is.null, logical(1))
+  col_sfc <- do.call(sf::st_sfc, c(col[!col_is_null], list(crs = crs)))
+  
+  # copy attributes and class from col_sfc to col
+  parsing_problems <- attr(col, "problems")
+  attributes(col) <- attributes(col_sfc)
+  attr(col, "problems") <- parsing_problems
+  
+  # set n_empty properly
+  attr(col, "n_emtpy") <- sum(col_is_null)
+  
+  # return col
+  col
+}
+
+parse_lapply <- function(x, fun, na = c("NA", ""), ...) {
   # make x a character vector
   x <- as.character(x)
   
@@ -71,8 +119,8 @@ parse_json <- function(x, na = c("NA", ""), ...) {
     # NAs become NULL
     if(is.na(element) || (element %in% na)) return(NULL) # literal NULL
     
-    try(jsonlite::fromJSON(element, simplifyVector = TRUE, simplifyMatrix = FALSE, 
-                           simplifyDataFrame = FALSE, ...), silent = TRUE)
+    # apply fun to elemement
+    try(fun(element), silent = TRUE)
   })
   
   # check for problems
@@ -86,23 +134,12 @@ parse_json <- function(x, na = c("NA", ""), ...) {
                                expected = error_messages, actual = error_values)
     attr(col, "problems") <- problems
     warning(sprintf("%s parsing failures in parse_json()", length(error_rows)))
-    col[has_error] <- as.list(error_values)
+    # error values become NULL
+    col[has_error] <- list(NULL)
   }
   
   # return column
   col
-}
-
-# geometry parser using sf::st_as_sfc
-parse_geometry <- function(x, ...) {
-  col <- try(sf::st_as_sfc(x, ...), silent = TRUE)
-  if(inherits(col, "try-error")) {
-    # no way to tell which value was the culprit here
-    warning("parse_geometry() failed: ", as.character(col))
-    x
-  } else {
-    col
-  }
 }
 
 # there is probably a better way to do this, essentially
@@ -163,7 +200,7 @@ parse_type <- function(type_str) {
   # check that type is in the list of allowed types
   allowed_types_readr <- c("date", "datetime", "logical", "numeric", "character", 
                            "guess")
-  allowed_types_extra <- c("geometry", "json")
+  allowed_types_extra <- c("wkt", "json")
   if(!type_obj$type %in% c(allowed_types_extra, allowed_types_readr)) {
     stop("Type must be one of ", 
          paste(c(allowed_types_readr, allowed_types_extra), collapse = ", "))

@@ -206,12 +206,12 @@ test_that("as_* functions produce the expected output type", {
 test_that("json parsing works as intended", {
   json_test <- c('{"key": "value", "key2":4}', '{"key": "value2", "key2": 5}')
   json_r <- list(list(key = "value", "key2" = 4L), list(key = "value2", key2 = 5L))
-  expect_identical(parse_json(json_test), json_r)
+  expect_identical(parse_json(json_test) %>% unclass(), json_r)
   
   # make sure NAs be come NULL
-  expect_identical(parse_json(c(NA, json_test)), c(list(NULL), json_r))
-  expect_identical(parse_json(c("", json_test)), c(list(NULL), json_r))
-  expect_identical(parse_json(c("NA", json_test)), c(list(NULL), json_r))
+  expect_identical(parse_json(c(NA, json_test)) %>% unclass(), c(list(NULL), json_r))
+  expect_identical(parse_json(c("", json_test)) %>% unclass(), c(list(NULL), json_r))
+  expect_identical(parse_json(c("NA", json_test)) %>% unclass(), c(list(NULL), json_r))
   
   # make sure problems are caught
   expect_warning(parse_json("{'invalid_json'='not valid'}"),
@@ -226,10 +226,10 @@ test_that("json parsing works as intended", {
                    NULL)
   
   # zero-length parsing
-  expect_identical(parse_json(character(0)), list())
+  expect_identical(parse_json(character(0)) %>% unclass(), list())
   
   # expect class
-  expect_is(parse_json("{}"), "list")
+  expect_is(parse_json("{}"), "json_column")
 })
 
 test_that("wkt parsing returns an sf::sfc", {
@@ -269,4 +269,78 @@ test_that("wkt parsing works when there are parsing errors/NA values", {
 test_that("wkt parsing works with zero-length input", {
   expect_is(parse_wkt(character(0)), "sfc")
   expect_length(parse_wkt(character(0)), 0)
+})
+
+test_that("objects generate the correct type strings", {
+  # date and datetime need no additional args, because their writing
+  # is handled in mudata.io.R
+  expect_equal(generate_type_str(Sys.Date()), "date")
+  expect_equal(generate_type_str(Sys.time()), "datetime")
+  expect_equal(generate_type_str(4), "numeric")
+  expect_equal(generate_type_str(4L), "numeric")
+  expect_equal(generate_type_str('text'), "character")
+  
+  # factors get character treatment, as this is how they are written to disk
+  expect_equal(generate_type_str(factor('text', levels = 'text')), "character")
+  expect_equal(generate_type_str(factor('text', levels = 'text', ordered = TRUE)), 
+               "character")
+  
+  # list columns
+  expect_equal(generate_type_str(parse_json("{}")), "json")
+  expect_equal(generate_type_str(parse_wkt("POINT(0 0)")), "wkt")
+  expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = 3857)), "wkt(crs=3857)")
+  hard_crs <- sf::st_crs(3857)
+  hard_crs$epsg <- NA
+  hard_crs_proj4 <- hard_crs$proj4string
+  expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = hard_crs)), 
+               sprintf("wkt(crs='%s')", hard_crs_proj4))
+})
+
+test_that("generate_type_table generates expected output", {
+  test_df <- tibble::tibble(
+    c1 = c(1, 2, 3),
+    c1a = c(1L, 2L, 3L),
+    c2 = c("one", "two", "three"),
+    c3 = factor(c2, levels = c2),
+    c4 = factor(c3, ordered = TRUE),
+    c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
+    c6 = as.POSIXct(c5),
+    c7 = parse_json(c("{}", "{}", "[]")),
+    c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)"))
+  )
+  
+  type_table <- generate_type_table(test_df)
+  expect_is(type_table, "data.frame")
+  expect_equal(colnames(type_table), c("column", "type"))
+  expect_equal(ncol(test_df), nrow(type_table))
+  
+  types <- type_table %>% tibble::deframe()
+  expect_equal(setNames(types, NULL), 
+               c("numeric", "numeric", "character", "character", "character",
+                  "date", "datetime", "json", "wkt"))
+  
+})
+
+test_that("generate_type_table works with sqlite sources", {
+  # create sqlite database with kentville greenwood dataset
+  sql_file <- tempfile()[1]
+  kg_sql <- dplyr::src_sqlite(sql_file, create = TRUE)
+  sources <- sapply(c("data", "locations", "params", "datasets", "columns"),
+                    function(table) {
+                      dplyr::copy_to(kg_sql, kentvillegreenwood[[table]], table)
+                    }, simplify = FALSE)
+  # create remote dataset
+  kv_sqlite <- mudata(data = sources$data, locations = sources$locations,
+                      params = sources$params, datasets = sources$datasets,
+                      columns = sources$columns)
+  
+  # generate type table (data table isn't identical because of datetime in
+  # local but not sqlite)
+  expect_identical(generate_type_table(kv_sqlite$locations),
+                   generate_type_table(kentvillegreenwood$locations))
+  
+  # clean temporary database
+  unlink(sql_file)
+  rm(kg_sql); gc() # disconnect sqlite database
+  
 })

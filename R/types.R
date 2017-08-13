@@ -1,24 +1,45 @@
 
-generate_columns_table <- function(data, locations, params, datasets) {
-  # generate a table of all columns
-  if(.isempty(data)) {
-    # no data, empty auto-generated columns table
-    columns <- tibble::tibble(dataset = character(0), table = character(0),
-                              column = character(0))
+# generate a type table for a data.frame
+generate_type_table <- function(x, default = "guess") {
+  df <- x %>% utils::head() %>% dplyr::collect()
+  vapply(df, generate_type_str, default = default, FUN.VALUE = character(1)) %>%
+    tibble::enframe(name = "column", value = "type")
+}
+
+# generate a type for an object (e.g. column in data frame)
+generate_type_str <- function(x, default = "guess") {
+  # convert class to type name (sfc classes require additional handling)
+  if(inherits(x, "sfc")) {
+    type_string <- "wkt"
   } else {
-    dataset_ids <- dplyr::collect(dplyr::distinct_(datasets, "dataset"))$dataset
-    allcols <- expand.grid(dataset=dataset_ids, 
-                           table=c("data", "locations", "params", "datasets"),
-                           stringsAsFactors = FALSE)
-    columns <- plyr::adply(allcols, 1, function(row) {
-      table <- dplyr::collect(utils::head(get(row$table)))
-      tibble::tibble(column = colnames(table), 
-                     type = vapply(table, function(x) class(x)[1], character(1)))
-    })
+    obj_class <- class(x)[1]
+    class_to_type <- c("character" = "character", "factor" = "character",
+                       "ordered" = "character",
+                       "numeric" = "numeric", "integer" = "numeric",
+                       "logical" = "logical", "Date" = "date", 
+                       "POSIXct" = "datetime", "POSIXlt" = "datetime",
+                       "POSIXt" = "datetime", "sfc" = "wkt",
+                       "json_column" = "json", "list" = "json")
+    type_string <- class_to_type[obj_class]
+    type_string[is.na(type_string)] <- default
   }
   
-  # return columns
-  columns
+  # type strings for wkt columns require some information from the object
+  if(type_string == "wkt") {
+    crs <- sf::st_crs(x)
+    if(is.na(crs)) {
+      # don't do anything for NA crs 
+    } else if(is.null(crs$epsg)) {
+      type_string <- sprintf("wkt(crs='%s')", crs$proj4string)
+    } else if(!is.na(crs$epsg)) {
+      type_string <- sprintf("wkt(crs=%s)", crs$epsg)
+    } else if(!is.na(crs$proj4string)) {
+      type_string <- sprintf("wkt(crs='%s')", crs$proj4string)
+    }
+  }
+  
+  # return type_string unnamed
+  stats::setNames(type_string, NULL)
 }
 
 
@@ -86,8 +107,13 @@ as_parser <- function(type_str) {
 
 # json parser using jsonlite, simplifying only vectors
 parse_json <- function(x, na = c("NA", ""), ...) {
-  parse_lapply(x, jsonlite::fromJSON, na = na, simplifyVector = TRUE, 
-               simplifyMatrix = FALSE, simplifyDataFrame = FALSE, ...)
+  # use parse_lapply to apply jsonlite::fromJSON to the column
+  col <- parse_lapply(x, jsonlite::fromJSON, na = na, simplifyVector = TRUE, 
+                      simplifyMatrix = FALSE, simplifyDataFrame = FALSE, ...)
+  # give result the class json_column
+  class(col) <- c("json_column", "list")
+  col
+  
 }
 
 # wkt parser using sf::st_as_sfc

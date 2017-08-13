@@ -1,4 +1,27 @@
 
+generate_columns_table <- function(data, locations, params, datasets) {
+  # generate a table of all columns
+  if(.isempty(data)) {
+    # no data, empty auto-generated columns table
+    columns <- tibble::tibble(dataset = character(0), table = character(0),
+                              column = character(0))
+  } else {
+    dataset_ids <- dplyr::collect(dplyr::distinct_(datasets, "dataset"))$dataset
+    allcols <- expand.grid(dataset=dataset_ids, 
+                           table=c("data", "locations", "params", "datasets"),
+                           stringsAsFactors = FALSE)
+    columns <- plyr::adply(allcols, 1, function(row) {
+      table <- dplyr::collect(utils::head(get(row$table)))
+      tibble::tibble(column = colnames(table), 
+                     type = vapply(table, function(x) class(x)[1], character(1)))
+    })
+  }
+  
+  # return columns
+  columns
+}
+
+
 #' Describe column types for use in the columns table
 #' 
 #' Type descriptions are basically calls to \code{readr::col_*} or 

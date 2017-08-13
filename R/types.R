@@ -1,4 +1,32 @@
 
+generate_type_table_mudata <- function(x, default = "guess") {
+  # generate a table of all columns from all tables
+  if(.isempty(x$data)) {
+    # no data, empty auto-generated columns table
+    columns <- tibble::tibble(dataset = character(0), table = character(0),
+                              column = character(0))
+  } else {
+    # use all datasets, or if there is no datasets table use NA_character_
+    if("datasets" %in% names(x)) {
+      dataset_ids <- dplyr::collect(dplyr::distinct_(x$datasets, "dataset"))$dataset
+    } else {
+      dataset_ids <- NA_character_
+    }
+    
+    # generate all combinations of dataset_ids and table
+    allcols <- expand.grid(dataset = dataset_ids, table = names(x),
+                           stringsAsFactors = FALSE)
+    
+    # use generate_type_table() to generate column specs
+    columns <- plyr::adply(allcols, 1, function(row) {
+      generate_type_table(x[[row$table]], default = default)
+    })
+  }
+  
+  # return columns
+  columns
+}
+
 # generate a type table for a data.frame
 generate_type_table <- function(x, default = "guess") {
   df <- x %>% utils::head() %>% dplyr::collect()

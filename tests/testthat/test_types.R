@@ -344,3 +344,22 @@ test_that("generate_type_table works with sqlite sources", {
   rm(kg_sql); gc() # disconnect sqlite database
   
 })
+
+test_that("generate_type_table_mudata works on mudata objects", {
+  # inspect type table for kentvillegreenwood
+  types_kg <- generate_type_table_mudata(kentvillegreenwood)
+  expect_equal(colnames(types_kg), c("dataset", "table", "column", "type"))
+  expect_true(setequal(types_kg$dataset, kentvillegreenwood$datasets$dataset))
+  expect_true(setequal(types_kg$table, names(kentvillegreenwood)))
+  
+  all_colnames <- lapply(kentvillegreenwood, colnames) %>% unlist(use.names = FALSE) 
+  expect_true(setequal(types_kg$column, all_colnames))
+  expect_true(setequal(types_kg$type, c("character", "numeric", "date")))
+  
+})
+
+test_that("default type is propgated through generate_type functions", {
+  # can't think of a way to test this, because utils::head()
+  # destroys any class name that hasn't implemented the "[" generic
+  expect_true(TRUE)
+})

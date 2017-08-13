@@ -134,6 +134,19 @@ test_that("multiple list arguments can be included", {
   expect_identical(result$args$key3, 8)
 })
 
+test_that("invalid list item strings are identified", {
+  expect_error(parse_type_base("type(key1 = [5, 6,])"),
+               "Invalid list string:.*")
+  expect_error(parse_type_base("type(key1 = [5 6])"),
+               "Invalid list string:.*")
+  expect_error(parse_type_base("type(key1 = [,5, 6])"),
+               "Invalid list string:.*")
+  expect_error(parse_type_base("type(key1 = [,])"),
+               "Invalid list string:.*")
+  expect_error(parse_type_base("type(key1 = [5, 6,  ])"),
+               "Invalid list string:.*")
+})
+
 test_that("default types are handled correctly", {
   expect_identical(parse_type_base(""), parse_type_base(NA_character_))
   expect_identical(parse_type_base(""), 

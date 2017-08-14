@@ -196,11 +196,12 @@ test_that("as_* functions produce the expected output type", {
   expect_is(as_col_spec("wkt"), "collector_character")
   expect_is(as_col_spec("json"), "collector_character")
   
-  # as_parser returns a parsing function
-  expect_is(as_parser("character"), "function")
-  expect_is(as_parser("datetime"), "function")
-  expect_is(as_parser("wkt"), "function")
-  expect_is(as_parser("json"), "function")
+  # as_parser returns a parsing function that can be called with character(0)
+  all_parsers <- sapply(c(allowed_types_readr, allowed_types_extra), function(type) {
+    as_parser(type)
+  })
+  expect_true(all(vapply(all_parsers, is.function, logical(1))))
+  expect_silent(lapply(all_parsers, function(x) try(x(character(0)))))
 })
 
 test_that("json parsing works as intended", {
@@ -297,7 +298,7 @@ test_that("objects generate the correct type strings", {
                sprintf("wkt(crs='%s')", hard_crs_proj4))
 })
 
-test_that("generate_type_table generates expected output", {
+test_that("generate_type_str generates expected output", {
   test_df <- tibble::tibble(
     c1 = c(1, 2, 3),
     c1a = c(1L, 2L, 3L),
@@ -311,7 +312,7 @@ test_that("generate_type_table generates expected output", {
     c9 = hms::as.hms(1:3)
   )
   
-  type_table <- generate_type_table(test_df)
+  type_table <- generate_type_tbl(test_df)
   expect_is(type_table, "data.frame")
   expect_equal(colnames(type_table), c("column", "type"))
   expect_equal(ncol(test_df), nrow(type_table))
@@ -323,7 +324,7 @@ test_that("generate_type_table generates expected output", {
   
 })
 
-test_that("generate_type_table works with sqlite sources", {
+test_that("generate_type_str works with sqlite sources", {
   # create sqlite database with kentville greenwood dataset
   sql_file <- tempfile()[1]
   kg_sql <- dplyr::src_sqlite(sql_file, create = TRUE)
@@ -338,8 +339,8 @@ test_that("generate_type_table works with sqlite sources", {
   
   # generate type table (data table isn't identical because of datetime in
   # local but not sqlite)
-  expect_identical(generate_type_table(kv_sqlite$locations),
-                   generate_type_table(kentvillegreenwood$locations))
+  expect_identical(generate_type_tbl(kv_sqlite$locations),
+                   generate_type_tbl(kentvillegreenwood$locations))
   
   # clean temporary database
   unlink(sql_file)
@@ -347,9 +348,9 @@ test_that("generate_type_table works with sqlite sources", {
   
 })
 
-test_that("generate_type_table_mudata works on mudata objects", {
+test_that("generate_type_str works on mudata objects", {
   # inspect type table for kentvillegreenwood
-  types_kg <- generate_type_table_mudata(kentvillegreenwood)
+  types_kg <- generate_type_tbl(kentvillegreenwood)
   expect_equal(colnames(types_kg), c("dataset", "table", "column", "type"))
   expect_true(setequal(types_kg$dataset, kentvillegreenwood$datasets$dataset))
   expect_true(setequal(types_kg$table, names(kentvillegreenwood)))
@@ -364,6 +365,6 @@ test_that("default type is propgated through generate_type functions", {
   # the raw type is not included in list of allowed types,
   # so its type str value should be "guess"
   kg2$data$new_column <- raw(nrow(kg2$data))
-  type_table_def <- generate_type_table_mudata(kg2)
+  type_table_def <- generate_type_tbl(kg2)
   expect_equal(type_table_def$type[type_table_def$column == "new_column"], "guess")
 })

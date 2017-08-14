@@ -13,8 +13,8 @@ as_parser(type_str)
 parse_type(type_str)
 }
 \arguments{
-\item{type_str}{A type string, one of date, datetime, logical, numeric, character, guess,
-geometry, or json.}
+\item{type_str}{A type string, one of date, datetime, logical, number, character, guess,
+time, integer, wkt, or json.}
 }
 \value{
 A parsed version of the type_str, a column specification or parsing function

@@ -111,9 +111,10 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   # check columns object
   if(is.null(columns)) {
     # autogenerate columns table
-    columns <- generate_type_table_mudata(list(data = data, locations = locations, 
-                                               params = params, datasets = datasets),
-                                          default = "guess")
+    columns <- list(data = data, locations = locations, 
+                    params = params, datasets = datasets) %>%
+      new_mudata(x_columns = x_columns) %>%
+      generate_type_tbl(default = "guess")
   } else {
     # if there is no dataset column, use mutate to create one
     .checkcols(columns, 'columns', c('table', 'column'))

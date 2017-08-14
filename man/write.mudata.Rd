@@ -5,7 +5,7 @@
 \alias{read.mudata}
 \alias{write.mudata.zip}
 \alias{read.mudata.zip}
-\alias{write.mudata.json}
+\alias{write_mudata_json}
 \alias{read.mudata.json}
 \title{Read/Write mudata objects}
 \usage{
@@ -20,12 +20,10 @@ read.mudata.zip(filename, validate = TRUE, expand.tags = TRUE,
   retype = TRUE, load = c("data", "locations", "params", "datasets",
   "columns"), ...)
 
-write.mudata.json(md, filename, overwrite = FALSE, expand.tags = TRUE,
-  validate = TRUE, ...)
+write_mudata_json(md, filename, overwrite = FALSE, validate = TRUE, ...)
 
-read.mudata.json(filename, validate = TRUE, expand.tags = TRUE,
-  retype = TRUE, load = c("data", "locations", "params", "datasets",
-  "columns"), ...)
+read.mudata.json(filename, validate = TRUE, retype = TRUE,
+  load = c("data", "locations", "params", "datasets", "columns"), ...)
 }
 \arguments{
 \item{md}{a mudata object}
@@ -52,16 +50,16 @@ Read/Write mudata objects
 data(kentvillegreenwood)
 # read/write to zip
 outfile <- tempfile(fileext=".zip")
-write.mudata(kentvillegreenwood, outfile)
-md <- read.mudata(outfile)
-md <- read.mudata(outfile, retype=TRUE)
+#write.mudata(kentvillegreenwood, outfile)
+#md <- read.mudata(outfile)
+#md <- read.mudata(outfile, retype=TRUE)
 unlink(outfile)
 
 # read/write to JSON
 outfile <- tempfile(fileext=".json")
-write.mudata(kentvillegreenwood, outfile)
-md <- read.mudata(outfile)
-md <- read.mudata(outfile, retype=TRUE)
+#write.mudata(kentvillegreenwood, outfile)
+#md <- read.mudata(outfile)
+#md <- read.mudata(outfile, retype=TRUE)
 unlink(outfile)
 
 }

@@ -1,5 +1,21 @@
 
-generate_type_table_mudata <- function(x, default = "guess") {
+#' Generate type descriptors
+#'
+#' These functions generate type descriptors for use in the \link{mudata}
+#' columns table. They are used in \link{mudata_parse_column} to deserialize
+#' a vector read from csv or json.
+#'
+#' @param x An object
+#' @param default The default type descriptor (should usually be 'guess')
+#'
+#' @return A type descriptor or tibble of type descriptors
+#' @export
+#'
+generate_type_tbl <- function(x, default = "guess") UseMethod("generate_type_tbl")
+
+#' @rdname generate_type_tbl
+#' @export
+generate_type_tbl.mudata <- function(x, default = "guess") {
   # generate a table of all columns from all tables
   if(.isempty(x$data)) {
     # no data, empty auto-generated columns table
@@ -17,9 +33,9 @@ generate_type_table_mudata <- function(x, default = "guess") {
     allcols <- expand.grid(dataset = dataset_ids, table = names(x),
                            stringsAsFactors = FALSE)
     
-    # use generate_type_table() to generate column specs
+    # use generate_type_str() to generate column specs
     columns <- plyr::adply(allcols, 1, function(row) {
-      generate_type_table(x[[row$table]], default = default)
+      generate_type_tbl(x[[row$table]], default = default)
     })
   }
   
@@ -28,13 +44,23 @@ generate_type_table_mudata <- function(x, default = "guess") {
 }
 
 # generate a type table for a data.frame
-generate_type_table <- function(x, default = "guess") {
+#' @rdname generate_type_tbl
+#' @export
+generate_type_tbl.tbl <- function(x, default = "guess") {
   df <- x %>% utils::head() %>% dplyr::collect()
   vapply(df, generate_type_str, default = default, FUN.VALUE = character(1)) %>%
     tibble::enframe(name = "column", value = "type")
 }
 
+#' @rdname generate_type_tbl
+#' @export
+generate_type_tbl.data.frame <- function(x, default = "guess") {
+  generate_type_tbl.tbl(x = x, default = default)
+}
+
 # generate a type for an object (e.g. column in data frame)
+#' @rdname generate_type_tbl
+#' @export
 generate_type_str <- function(x, default = "guess") {
   # list of types
   class_to_type <- c("character" = "character", "factor" = "character",
@@ -130,10 +156,24 @@ as_parser <- function(type_str) {
   }
 }
 
-# define allowd types in one place
+# define allowed types in one place
 allowed_types_readr <- c("date", "datetime", "logical", "number", "character", 
                          "guess", "integer", "time")
 allowed_types_extra <- c("wkt", "json")
+
+# define output class types from parsing functions
+parse_output_class <- function(type_str) {
+  # parse type obj
+  type_obj <- parse_type(type_str)
+  
+  output_class_types <- c("date" = "Date", "datetime" = "POSIXct", "logical" = "logical",
+                          "number" = "numeric", "character" = "character",
+                          "integer" = "integer", "time" = "hms", "wkt" = "sfc", 
+                          "json" = "list")
+  
+  # return with no names
+  stats::setNames(output_class_types[type_obj$type], NULL)
+}
 
 # json parser using jsonlite, simplifying only vectors
 parse_json <- function(x, na = c("NA", ""), ...) {
@@ -242,7 +282,7 @@ get_readr_fun <- function(fun, prefix) {
     } else if(fun == "time") {
       readr::col_time
     }
-  } else if(prefix == "col") {
+  } else if(prefix == "parse") {
     if(fun == "date") {
       readr::parse_date
     } else if(fun == "datetime") {

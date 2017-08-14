@@ -74,7 +74,7 @@ context("mudata read/write")
 # })
 
 
-test_that("mudata_prepare_column_write and mudata_parse_column are opposites", {
+test_that("mudata_prepare_column and mudata_parse_column are opposites", {
   # create test df with all supported types
   test_df <- tibble::tibble(
     c1 = c(1, 2, 3),
@@ -84,19 +84,19 @@ test_that("mudata_prepare_column_write and mudata_parse_column are opposites", {
     c4 = factor(c3, ordered = TRUE),
     c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
     c6 = as.POSIXct(c5),
-    c7 = parse_json(c("{}", "{}", "[]")),
+    c7 = structure(list(list(1), list(2), list(3)), class = c("json_column", "list")),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
     c9 = hms::as.hms(1:3)
   )
   
   # get type strings, expected output classes
   type_strs <- generate_type_tbl(test_df) %>% tibble::deframe()
-  output_clases <- vapply(type_strs, parse_output_class, character(1))
+  output_clases <- vapply(type_strs, mudata:::parse_output_class, character(1))
   
   # get prepared columns
-  prepared <- lapply(test_df, mudata_prepare_column_write, format = NA)
-  prepared_json <- lapply(test_df, mudata_prepare_column_write, format = "json")
-  prepared_csv <- lapply(test_df, mudata_prepare_column_write, format = "csv")
+  prepared <- lapply(test_df, mudata_prepare_column, format = NA)
+  prepared_json <- lapply(test_df, mudata_prepare_column, format = "json")
+  prepared_csv <- lapply(test_df, mudata_prepare_column, format = "csv")
   
   # parse prepared columns using mudata_parse_column
   parsed <- mapply(mudata_parse_column, prepared, type_strs, SIMPLIFY = FALSE)
@@ -118,3 +118,98 @@ test_that("mudata_prepare_column_write and mudata_parse_column are opposites", {
   expect_true(all(mapply(inherits, parsed_csv, output_clases)))
 })
 
+test_that("mudata_prepare_tbl works as intended", {
+  # create test df with all supported types
+  test_df <- tibble::tibble(
+    c1 = c(1, 2, 3),
+    c1a = c(1L, 2L, 3L),
+    c2 = c("one", "two", "three"),
+    c3 = factor(c2, levels = c2),
+    c4 = factor(c3, ordered = TRUE),
+    c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
+    c6 = as.POSIXct(c5),
+    c7 = list(list(1), list(2), list(3)),
+    c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
+    c9 = hms::as.hms(1:3)
+  )
+  
+  prepared <- mudata_prepare_tbl(test_df)
+  # the last few columns should be character by default
+  expect_is(prepared$c6, "character")
+  expect_is(prepared$c7, "character")
+  expect_is(prepared$c8, "character")
+  expect_is(prepared$c9, "character")
+  
+  prepared_json <- mudata_prepare_tbl(test_df, format = "json")
+  # the last few columns should be character usually
+  expect_is(prepared_json$c6, "character")
+  expect_is(prepared_json$c7, "list")
+  expect_is(prepared_json$c8, "character")
+  expect_is(prepared_json$c9, "character")
+  
+  # prepared csv should be same as defaults
+  prepared_csv <- mudata_prepare_tbl(test_df, format = "csv")
+  expect_identical(prepared_csv, prepared)
+})
+
+test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
+  # create test df with all supported types
+  test_df <- tibble::tibble(
+    c1 = c(1, 2, 3),
+    c1a = c(1L, 2L, 3L),
+    c2 = c("one", "two", "three"),
+    c3 = factor(c2, levels = c2),
+    c4 = factor(c3, ordered = TRUE),
+    c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
+    c6 = as.POSIXct(c5),
+    c7 = list(list(1), list(2), list(3)),
+    c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
+    c9 = hms::as.hms(1:3)
+  )
+  
+  # create prepared versions
+  prepared <- mudata_prepare_tbl(test_df)
+  prepared_csv <- mudata_prepare_tbl(test_df, format = "csv")
+  prepared_json <- mudata_prepare_tbl(test_df, format = "json")
+  
+  # get type_str vector
+  type_strs <- generate_type_tbl(test_df) %>% tibble::deframe()
+  
+  # create parsed versions
+  parsed <- mudata_parse_tbl(prepared, type_str = type_strs)
+  parsed_csv <- mudata_parse_tbl(prepared_csv, type_str = type_strs)
+  parsed_json <- mudata_parse_tbl(prepared_json, type_str = type_strs)
+  
+  # define function to test equal-ness of columns
+  # in this case dates loose some information, and the class of the JSON
+  # column changes, but the dates still refer to the same moment in time
+  col_equal <- function(val1, val2) {
+    if(inherits(val1, "list") || inherits(val2, "list")) {
+      # integers/numerics get confused here, so use == and mapply
+      if(identical(unclass(val1), unclass(val2))) {
+        return(TRUE)
+      }
+      all_equal <- try(all(mapply(`==`, val1, val2)), silent = TRUE)
+      if(identical(all_equal, TRUE)) {
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    } else if(inherits(val1, "POSIXct") && inherits(val2, "POSIXct")) {
+      all_equal <- all(val1 == val2)
+      if(all_equal && !identical(val1, val2)) warning("date vectors not identical")
+      all_equal
+    } else if(inherits(val1, "factor") || inherits(val2, "factor")) {
+      identical(as.character(val1), as.character(val2))
+    } else {
+      identical(val1, val2)
+    }
+  }
+  
+  # expect true with all parsed dfs
+  # currently time zone information isn't kept with the date vectors
+  # this may be a problem later
+  expect_true(all(mapply(col_equal, test_df, parsed)))
+  expect_true(all(mapply(col_equal, test_df, parsed_csv)))
+  expect_true(all(mapply(col_equal, test_df, parsed_json)))
+})

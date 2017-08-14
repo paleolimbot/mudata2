@@ -36,20 +36,22 @@ generate_type_table <- function(x, default = "guess") {
 
 # generate a type for an object (e.g. column in data frame)
 generate_type_str <- function(x, default = "guess") {
-  # convert class to type name (sfc classes require additional handling)
-  if(inherits(x, "sfc")) {
-    type_string <- "wkt"
-  } else {
-    obj_class <- class(x)[1]
-    class_to_type <- c("character" = "character", "factor" = "character",
-                       "ordered" = "character",
-                       "numeric" = "numeric", "integer" = "numeric",
-                       "logical" = "logical", "Date" = "date", 
-                       "POSIXct" = "datetime", "POSIXlt" = "datetime",
-                       "POSIXt" = "datetime", "sfc" = "wkt",
-                       "json_column" = "json", "list" = "json")
-    type_string <- class_to_type[obj_class]
-    type_string[is.na(type_string)] <- default
+  # list of types
+  class_to_type <- c("character" = "character", "factor" = "character",
+                     "ordered" = "character",
+                     "numeric" = "number", "integer" = "integer",
+                     "logical" = "logical", "Date" = "date", 
+                     "POSIXct" = "datetime", "POSIXlt" = "datetime",
+                     "POSIXt" = "datetime", "hms" = "time", "sfc" = "wkt",
+                     "json_column" = "json", "list" = "json")
+  
+  # check for first class that inherits from the above
+  type_string <- default
+  for(cls in names(class_to_type)) {
+    if(inherits(x, cls)) {
+      type_string <- class_to_type[cls]
+      break
+    }
   }
   
   # type strings for wkt columns require some information from the object
@@ -70,15 +72,14 @@ generate_type_str <- function(x, default = "guess") {
   stats::setNames(type_string, NULL)
 }
 
-
 #' Describe column types for use in the columns table
 #' 
 #' Type descriptions are basically calls to \code{readr::col_*} or 
 #' \code{readr::parse_*}, and can 
 #' contain arguments for the sake of completeness (but this shouldn't normally be necessary).
 #'
-#' @param type_str A type string, one of date, datetime, logical, numeric, character, guess,
-#'   wkt, or json.
+#' @param type_str A type string, one of date, datetime, logical, number, character, guess,
+#'   time, integer, wkt, or json.
 #'
 #' @return A parsed version of the type_str, a column specification or parsing function
 #' @export
@@ -98,8 +99,6 @@ as_col_spec <- function(type_str) {
   # parse, verify type_str
   type_obj <- parse_type(type_str)
   
-  allowed_types_readr <- c("date", "datetime", "logical", "numeric", "character", 
-                           "guess")
   if(type_obj$type %in% allowed_types_readr) {
     # get readr funcion and call with type_obj$args
     do.call(get_readr_fun(type_obj$type, "col"), type_obj$args)
@@ -116,8 +115,6 @@ as_parser <- function(type_str) {
   # parse, verify type_str
   type_obj <- parse_type(type_str)
   
-  allowed_types_readr <- c("date", "datetime", "logical", "numeric", "character", 
-                           "guess")
   if(type_obj$type %in% allowed_types_readr) {
     # get readr funcion
     parse_fun <- get_readr_fun(type_obj$type, "parse")
@@ -132,6 +129,11 @@ as_parser <- function(type_str) {
     do.call(parse_fun, c(list(x), type_obj$args))
   }
 }
+
+# define allowd types in one place
+allowed_types_readr <- c("date", "datetime", "logical", "number", "character", 
+                         "guess", "integer", "time")
+allowed_types_extra <- c("wkt", "json")
 
 # json parser using jsonlite, simplifying only vectors
 parse_json <- function(x, na = c("NA", ""), ...) {
@@ -229,12 +231,16 @@ get_readr_fun <- function(fun, prefix) {
       readr::col_datetime
     } else if(fun == "logical") {
       readr::col_logical
-    } else if(fun == "numeric") {
+    } else if(fun == "number") {
       readr::col_number
     } else if(fun == "character") {
       readr::col_character
     } else if(fun == "guess") {
       readr::col_guess
+    } else if(fun == "integer") {
+      readr::col_integer
+    } else if(fun == "time") {
+      readr::col_time
     }
   } else if(prefix == "col") {
     if(fun == "date") {
@@ -243,12 +249,16 @@ get_readr_fun <- function(fun, prefix) {
       readr::parse_datetime
     } else if(fun == "logical") {
       readr::parse_logical
-    } else if(fun == "numeric") {
+    } else if(fun == "number") {
       readr::parse_number
     } else if(fun == "character") {
       readr::parse_character
     } else if(fun == "guess") {
       readr::parse_guess
+    } else if(fun == "integer") {
+      readr::parse_integer
+    } else if(fun == "time") {
+      readr::parse_time
     }
   }
 }
@@ -274,10 +284,6 @@ parse_type <- function(type_str) {
   # do base parsing of type_str
   type_obj <- parse_type_base(type_str)
   
-  # check that type is in the list of allowed types
-  allowed_types_readr <- c("date", "datetime", "logical", "numeric", "character", 
-                           "guess")
-  allowed_types_extra <- c("wkt", "json")
   if(!type_obj$type %in% c(allowed_types_extra, allowed_types_readr)) {
     stop("Type must be one of ", 
          paste(c(allowed_types_readr, allowed_types_extra), collapse = ", "))

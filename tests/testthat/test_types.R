@@ -176,7 +176,7 @@ test_that("types that are not in allowed types throw an error", {
   expect_silent(parse_type("date"))
   expect_silent(parse_type("datetime"))
   expect_silent(parse_type("logical"))
-  expect_silent(parse_type("numeric"))
+  expect_silent(parse_type("number"))
   expect_silent(parse_type("character"))
   expect_silent(parse_type("guess"))
   expect_silent(parse_type("wkt"))
@@ -276,8 +276,9 @@ test_that("objects generate the correct type strings", {
   # is handled in mudata.io.R
   expect_equal(generate_type_str(Sys.Date()), "date")
   expect_equal(generate_type_str(Sys.time()), "datetime")
-  expect_equal(generate_type_str(4), "numeric")
-  expect_equal(generate_type_str(4L), "numeric")
+  expect_equal(generate_type_str(hms::hms(minutes = 45, hours = 5)), "time")
+  expect_equal(generate_type_str(4), "number")
+  expect_equal(generate_type_str(4L), "integer")
   expect_equal(generate_type_str('text'), "character")
   
   # factors get character treatment, as this is how they are written to disk
@@ -306,7 +307,8 @@ test_that("generate_type_table generates expected output", {
     c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
     c6 = as.POSIXct(c5),
     c7 = parse_json(c("{}", "{}", "[]")),
-    c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)"))
+    c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
+    c9 = hms::as.hms(1:3)
   )
   
   type_table <- generate_type_table(test_df)
@@ -316,8 +318,8 @@ test_that("generate_type_table generates expected output", {
   
   types <- type_table %>% tibble::deframe()
   expect_equal(setNames(types, NULL), 
-               c("numeric", "numeric", "character", "character", "character",
-                  "date", "datetime", "json", "wkt"))
+               c("number", "integer", "character", "character", "character",
+                 "date", "datetime", "json", "wkt", "time"))
   
 })
 
@@ -354,12 +356,14 @@ test_that("generate_type_table_mudata works on mudata objects", {
   
   all_colnames <- lapply(kentvillegreenwood, colnames) %>% unlist(use.names = FALSE) 
   expect_true(setequal(types_kg$column, all_colnames))
-  expect_true(setequal(types_kg$type, c("character", "numeric", "date")))
-  
+  expect_true(setequal(types_kg$type, c("character", "integer", "number", "date")))
 })
 
 test_that("default type is propgated through generate_type functions", {
-  # can't think of a way to test this, because utils::head()
-  # destroys any class name that hasn't implemented the "[" generic
-  expect_true(TRUE)
+  kg2 <- kentvillegreenwood
+  # the raw type is not included in list of allowed types,
+  # so its type str value should be "guess"
+  kg2$data$new_column <- raw(nrow(kg2$data))
+  type_table_def <- generate_type_table_mudata(kg2)
+  expect_equal(type_table_def$type[type_table_def$column == "new_column"], "guess")
 })

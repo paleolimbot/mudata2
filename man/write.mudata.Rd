@@ -6,6 +6,9 @@
 \alias{write.mudata.zip}
 \alias{read.mudata.zip}
 \alias{write_mudata_json}
+\alias{to_mudata_json}
+\alias{read_mudata_json}
+\alias{from_mudata_json}
 \alias{read.mudata.json}
 \title{Read/Write mudata objects}
 \usage{
@@ -20,7 +23,15 @@ read.mudata.zip(filename, validate = TRUE, expand.tags = TRUE,
   retype = TRUE, load = c("data", "locations", "params", "datasets",
   "columns"), ...)
 
-write_mudata_json(md, filename, overwrite = FALSE, validate = TRUE, ...)
+write_mudata_json(md, filename, overwrite = FALSE, validate = TRUE,
+  update_columns = TRUE, pretty = TRUE, ...)
+
+to_mudata_json(md, validate = TRUE, update_columns = TRUE, pretty = FALSE,
+  ...)
+
+read_mudata_json(filename, validate = TRUE, ...)
+
+from_mudata_json(txt, validate = TRUE, ...)
 
 read.mudata.json(filename, validate = TRUE, retype = TRUE,
   load = c("data", "locations", "params", "datasets", "columns"), ...)

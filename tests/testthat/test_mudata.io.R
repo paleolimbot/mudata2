@@ -1,6 +1,13 @@
 
 context("mudata read/write")
 
+# create test data
+pocmaj_data <- pocmajsum %>%
+  dplyr::select(core, depth, Ca, Ti, V) %>%
+  tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
+  dplyr::select(location = core, param, depth, value)
+pocmaj_md <- mudata(pocmaj_data)
+
 # test_that("read/write zip functions work", {
 #   data("kentvillegreenwood")
 #   outfile <- tempfile(fileext = ".zip")
@@ -11,15 +18,67 @@ context("mudata read/write")
 #   unlink(outfile)
 # })
 # 
-# test_that("read/write JSON functions work", {
-#   data("kentvillegreenwood")
-#   outfile <- tempfile(fileext = ".json")
-#   write.mudata.json(kentvillegreenwood, outfile)
-#   md2 <- read.mudata.json(outfile)
-#   expect_that(md2, is_a('mudata'))
-#   expect_true(all(sapply(kentvillegreenwood, nrow) == sapply(md2, nrow)))
-#   unlink(outfile)
-# })
+
+test_that("columns table is updated properly", {
+  kg2 <- kentvillegreenwood
+  kg2$columns[['type']][1] <- "a_new_type"
+  
+  # check that message is produced, and not when quiet = TRUE
+  expect_message(update_columns_table(kg2), 
+                 paste0("Replacing types ecclimate/data/dataset/character ",
+                        "with ecclimate/data/dataset/a_new_type"))
+  expect_silent(update_columns_table(kg2, quiet = TRUE))
+  
+  # check that column was updated
+  updated <- update_columns_table(kg2)
+  expect_identical(kg2$columns$type, updated$columns$type)
+  
+  # check that quiet = TRUE doesn't affect updating
+  expect_identical(update_columns_table(kg2), 
+                   update_columns_table(kg2, quiet = TRUE))
+  
+  # check that updating a columns table that doesn't need upating is quiet
+  expect_identical(update_columns_table(kentvillegreenwood, quiet = FALSE),
+                   kentvillegreenwood)
+  
+  # check that updating a columns table without a type column works
+  kg2$columns$type <- NULL
+  expect_false("type" %in% colnames(kg2$columns))
+  expect_true("type" %in% colnames(update_columns_table(kg2)$columns))
+  expect_identical(update_columns_table(kg2)$columns %>% dplyr::select(-type),
+                   kg2$columns)
+  # should be silent, since no information is replaced
+  expect_silent(update_columns_table(kg2, quiet = FALSE))
+})
+
+test_that("read/write JSON functions work", {
+  
+  test_json <- function(md_object, debug = FALSE) {
+    
+    outfile <- tempfile(fileext = ".json")
+    write_mudata_json(md_object, outfile)
+    md2 <- read_mudata_json(outfile)
+    
+    if(debug) {
+      browser()
+    }
+    
+    # expect identical to original object
+    expect_equal_mudata(md_object, md2)
+    
+    # expect to_ and from_ variants do the same
+    md_json <- to_mudata_json(md_object)
+    md3 <- from_mudata_json(md_json)
+    expect_equal_mudata(md3, md_object)
+    
+    # cleanup file
+    unlink(outfile)
+  }
+  
+  test_json(kentvillegreenwood)
+  test_json(subset(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp")))
+  test_json(pocmaj_md)
+})
 # 
 # test_that("autodetection of read function filename extension works", {
 #   data("kentvillegreenwood")

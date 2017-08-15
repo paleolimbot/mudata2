@@ -3,6 +3,7 @@
 \name{mudata_prepare_column}
 \alias{mudata_prepare_column}
 \alias{mudata_prepare_tbl}
+\alias{mudata_prepare_tbl.default}
 \alias{mudata_prepare_tbl.tbl}
 \alias{mudata_prepare_tbl.data.frame}
 \alias{mudata_prepare_column.default}
@@ -17,6 +18,8 @@
 mudata_prepare_column(x, format = NA, ...)
 
 mudata_prepare_tbl(x, format = NA, ...)
+
+\method{mudata_prepare_tbl}{default}(x, format = NA, ...)
 
 \method{mudata_prepare_tbl}{tbl}(x, format = NA, ...)
 

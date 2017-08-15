@@ -159,16 +159,171 @@ read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TR
 
 #' @rdname write.mudata
 #' @export
-write_mudata_json <- function(md, filename, overwrite=FALSE, validate=TRUE, ...) {
-  if(missing(md)) stop("Parameter md is required")
-  if(missing(filename)) stop("Parameter filename is required")
-  if(validate) validate_mudata(md) # will stop() on error
+write_mudata_json <- function(md, filename, overwrite = FALSE, validate = TRUE, 
+                              update_columns = TRUE, pretty = TRUE, ...) {
+  
+  # check if output file exists, stop if overwrite = FALSE
+  if(file.exists(filename) && !overwrite) stop("File ", filename, 
+                                               " exists. Use ovewrite = TRUE to overwrite.")
+  
+  # call mudate_write_json_common with fun = jsonlite::write_json
+  write_mudata_json_common(md, jsonlite::write_json,
+                           path = filename, validate = validate, 
+                           update_columns = update_columns, pretty = pretty, ...)
+}
+
+#' @rdname write.mudata
+#' @export
+to_mudata_json <- function(md, validate = TRUE, update_columns = TRUE, pretty = FALSE,
+                           ...) {
+  # call mudate_write_json_common with fun = jsonlite::toJSON
+  write_mudata_json_common(md, jsonlite::toJSON, validate = validate, 
+                           update_columns = update_columns, pretty = pretty, ...)
+}
+
+write_mudata_json_common <- function(md, fun, validate = TRUE, update_columns = TRUE, 
+                                     pretty = TRUE, ...) {
+  
+  # prepare using mudata_write_common
+  md_write <- write_mudata_common(md, validate = validate, 
+                                  update_columns = update_columns, format = "json")
+  
+  # add attribute information as an additional list item
+  md_write[["_mudata"]] <- list(x_columns = attr(md, "x_columns"))
   
   # writing is simple, it is just a JSON object of the mudata list with some
   # pre-set parameters
-  jsonlite::write_json(md, filename, dataframe = "columns", na = "null",
-                       digits = NA, POSIXt = "ISO8601", factor = "character",
-                       Date = "ISO8601", ...)
+  fun(md_write, ..., dataframe = "columns", na = "null",
+      digits = NA, POSIXt = "ISO8601", factor = "string",
+      Date = "ISO8601", auto_unbox = TRUE, pretty = pretty)
+}
+
+#' @rdname write.mudata
+#' @export
+read_mudata_json <- function(filename, validate = TRUE, ...) {
+  read_mudata_json_common(jsonlite::read_json, path = filename, validate = validate, ...)
+}
+
+#' @rdname write.mudata
+#' @export
+from_mudata_json <- function(txt, validate = TRUE, ...) {
+  read_mudata_json_common(jsonlite::fromJSON, txt = txt, validate = validate, ...)
+}
+
+read_mudata_json_common <- function(fun, validate = TRUE, ...) {
+  # read to object using fun
+  obj <- fun(..., simplifyDataFrame = FALSE, simplifyMatrix = TRUE, simplifyVector = TRUE)
+  
+  # check basic names, types
+  if(!is.list(obj)) stop("JSON object is not a list")
+  if(!("data" %in% names(obj))) stop("JSON object is missing the data table")
+  mudata_tbls <- c("data", "locations", "params", "datasets", "columns")
+  wrong_type_tbls <- vapply(names(obj), function(tbl_name) {
+    (tbl_name %in% mudata_tbls) && !is.list(obj[[tbl_name]])
+  }, logical(1))
+  if(any(wrong_type_tbls)) {
+    stop("JSON objects of incorrect type: ", 
+         paste(names(obj)[wrong_type_tbls], collapse = ", "))
+  }
+  
+  # extract and remove metadata, if present
+  metadata <- obj[["_mudata"]]
+  x_columns <- obj[["_mudata"]]$x_columns
+  obj[["_mudata"]] <- NULL
+  
+  # get column type information
+  if(("columns" %in% names(obj)) && 
+     all(c("table", "column", "type") %in% names(obj$columns))) {
+    # generate small version of column type table and validate it
+    type_str_tbl <- tibble::tibble(table = obj$columns$table,
+                                column = obj$columns$column, type = obj$columns$type) %>%
+      dplyr::distinct()
+    # types need to be unique to be read by this function
+    .checkunique(type_str_tbl, 'columns', c("table", "column"))
+    
+    # create list of type_str named lists
+    type_str_tbl <- type_str_tbl %>%
+      tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
+    type_strs <- type_str_tbl %>%
+      .$types %>%
+      lapply(tibble::deframe) %>%
+      stats::setNames(type_str_tbl$table)
+  } else {
+    type_strs <- list()
+  }
+  
+  # pass mudata tables to mudata_parse_tbl
+  md <- lapply(intersect(mudata_tbls, names(obj)), 
+               function(tbl_name) {
+                 type_str <- type_strs[[tbl_name]]
+                 if(is.null(type_str)) {
+                   type_str <- NA_character_
+                 }
+                 mudata_parse_tbl(obj[[tbl_name]], type_str = type_str)
+               }) %>%
+    stats::setNames(intersect(mudata_tbls, names(obj)))
+  
+  # pass to mudata
+  md <- mudata(data = md$data, locations = md$locations, params = md$params, 
+               datasets = md$datasets, columns = md$columns, x_columns = x_columns,
+               validate = validate)
+  
+  # add additional obj list items and return
+  new_mudata(c(md, obj[setdiff(names(obj), mudata_tbls)]), x_columns = x_columns)
+}
+
+
+
+# common preparation for write_mudata objects
+write_mudata_common <- function(md, validate = TRUE, update_columns = TRUE, format = NA) {
+  # validate object
+  if(validate) validate_mudata(md)
+  
+  # update columns table
+  if(update_columns) {
+    md <- update_columns_table(md, quiet = FALSE)
+  }
+  
+  # prepare the md to be written
+  md_write <- lapply(md, mudata_prepare_tbl, format = format)
+  
+  # return md_write
+  md_write
+}
+
+# updates the columns table when needed, with an optional warning
+update_columns_table <- function(md, quiet = FALSE) {
+  
+  # generate columns table from original mudata, join to existing cols table
+  generated_cols <- generate_type_tbl(md) %>%
+    dplyr::right_join(md$columns, by = c("dataset", "table", "column"),
+                      prefix = c(".x", ".y"))
+  
+  # check that type.x and type.y are the same, if type was already in the columns table
+  if("type" %in% colnames(md$columns)) {
+    replaced_types <- generated_cols %>% dplyr::filter(type.x != type.y)
+    if(nrow(replaced_types) > 0) {
+      
+      if(!quiet) {
+        message(sprintf("Replacing types %s with %s",
+                        with(replaced_types, paste(dataset, table, column, type.x, sep = "/")),
+                        with(replaced_types, paste(dataset, table, column, type.y, sep = "/"))))
+      }
+    # overwrite the type column in md$columns
+    md$columns <- md$columns %>%
+      dplyr::left_join(generated_cols, by = c("dataset", "table", "column"),
+                       prefix = c(".x", ".y")) %>%
+      dplyr::mutate(type = type.y) %>%
+      dplyr::select(-type.y, -type.x)
+    }
+  } else {
+    # assign type column in md$columns
+    md$columns <- md$columns %>%
+      dplyr::left_join(generated_cols, by = c("dataset", "table", "column"))
+  }
+  
+  # return md
+  md
 }
 
 #' @rdname write.mudata
@@ -218,6 +373,13 @@ mudata_prepare_column <- function(x, format = NA, ...) {
 #' @export 
 mudata_prepare_tbl <- function(x, format = NA, ...) {
   UseMethod("mudata_prepare_tbl")
+}
+
+# by default just return the object
+#' @rdname mudata_prepare_column
+#' @export 
+mudata_prepare_tbl.default <- function(x, format = NA, ...) {
+  x
 }
 
 #' @rdname mudata_prepare_column

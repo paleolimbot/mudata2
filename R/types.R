@@ -65,7 +65,7 @@ generate_type_str <- function(x, default = "guess") {
   # list of types
   class_to_type <- c("character" = "character", "factor" = "character",
                      "ordered" = "character",
-                     "numeric" = "number", "integer" = "integer",
+                     "numeric" = "double", "integer" = "integer",
                      "logical" = "logical", "Date" = "date", 
                      "POSIXct" = "datetime", "POSIXlt" = "datetime",
                      "POSIXt" = "datetime", "hms" = "time", "sfc" = "wkt",
@@ -104,7 +104,7 @@ generate_type_str <- function(x, default = "guess") {
 #' \code{readr::parse_*}, and can 
 #' contain arguments for the sake of completeness (but this shouldn't normally be necessary).
 #'
-#' @param type_str A type string, one of date, datetime, logical, number, character, guess,
+#' @param type_str A type string, one of date, datetime, logical, double, character, guess,
 #'   time, integer, wkt, or json.
 #'
 #' @return A parsed version of the type_str, a column specification or parsing function
@@ -157,7 +157,7 @@ as_parser <- function(type_str) {
 }
 
 # define allowed types in one place
-allowed_types_readr <- c("date", "datetime", "logical", "number", "character", 
+allowed_types_readr <- c("date", "datetime", "logical", "double", "character", 
                          "guess", "integer", "time")
 allowed_types_extra <- c("wkt", "json")
 
@@ -167,7 +167,7 @@ parse_output_class <- function(type_str) {
   type_obj <- parse_type(type_str)
   
   output_class_types <- c("date" = "Date", "datetime" = "POSIXct", "logical" = "logical",
-                          "number" = "numeric", "character" = "character",
+                          "double" = "numeric", "character" = "character",
                           "integer" = "integer", "time" = "hms", "wkt" = "sfc", 
                           "json" = "list")
   
@@ -271,8 +271,8 @@ get_readr_fun <- function(fun, prefix) {
       readr::col_datetime
     } else if(fun == "logical") {
       readr::col_logical
-    } else if(fun == "number") {
-      readr::col_number
+    } else if(fun == "double") {
+      readr::col_double
     } else if(fun == "character") {
       readr::col_character
     } else if(fun == "guess") {
@@ -289,8 +289,8 @@ get_readr_fun <- function(fun, prefix) {
       readr::parse_datetime
     } else if(fun == "logical") {
       readr::parse_logical
-    } else if(fun == "number") {
-      readr::parse_number
+    } else if(fun == "double") {
+      readr::parse_double
     } else if(fun == "character") {
       readr::parse_character
     } else if(fun == "guess") {

@@ -53,6 +53,13 @@ read.mudata.json(filename, validate = TRUE, retype = TRUE,
 table.}
 
 \item{load}{a list of csv files (without the .csv extension) to load from the source.}
+
+\item{update_columns}{Update the columns table "type" column to reflect the internal
+R types of columns (reccommended).}
+
+\item{pretty}{Produce pretty or minified JSON output}
+
+\item{txt}{JSON text from which to read a mudata object.}
 }
 \description{
 Read/Write mudata objects

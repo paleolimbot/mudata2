@@ -6,6 +6,10 @@
 #' @param filename file to read/write (can also be a directory)
 #' @param overwrite Pass \code{TRUE} to overwrite if \code{zipfile} already exists.
 #' @param validate flag to validate mudata object upon read or before write
+#' @param update_columns Update the columns table "type" column to reflect the internal
+#'   R types of columns (reccommended).
+#' @param pretty Produce pretty or minified JSON output
+#' @param txt JSON text from which to read a mudata object.
 #' @param expand.tags flag to expand tags to columns
 #' @param retype Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
 #'   table.
@@ -242,6 +246,7 @@ read_mudata_json_common <- function(fun, validate = TRUE, ...) {
     .checkunique(type_str_tbl, 'columns', c("table", "column"))
     
     # create list of type_str named lists
+    . <- NULL; rm(.) # CMD hack
     type_str_tbl <- type_str_tbl %>%
       tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
     type_strs <- type_str_tbl %>%
@@ -301,6 +306,7 @@ update_columns_table <- function(md, quiet = FALSE) {
   
   # check that type.x and type.y are the same, if type was already in the columns table
   if("type" %in% colnames(md$columns)) {
+    type.x <- NULL; rm(type.x); type.y <- NULL; rm(type.y) # CMD hack
     replaced_types <- generated_cols %>% dplyr::filter(type.x != type.y)
     if(nrow(replaced_types) > 0) {
       

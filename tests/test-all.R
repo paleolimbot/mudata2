@@ -30,6 +30,7 @@ expect_equal_mudata <- function(md1, md2) {
   }
 }
 
-expect_silent(expect_equal_mudata(kentvillegreenwood, kentvillegreenwood))
+# will not work until inside test_check
+# expect_silent(expect_equal_mudata(kentvillegreenwood, kentvillegreenwood))
 
 test_check("mudata")

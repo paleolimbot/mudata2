@@ -1,4 +1,6 @@
 
+library(magrittr)
+
 # get sample climate data using rclimateca package
 
 kv_locations <- rclimateca::ecclimatelocs %>% 

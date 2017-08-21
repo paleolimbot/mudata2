@@ -13,7 +13,7 @@ as_parser(type_str)
 parse_type(type_str)
 }
 \arguments{
-\item{type_str}{A type string, one of date, datetime, logical, number, character, guess,
+\item{type_str}{A type string, one of date, datetime, logical, double, character, guess,
 time, integer, wkt, or json.}
 }
 \value{

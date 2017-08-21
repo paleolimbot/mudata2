@@ -176,7 +176,7 @@ test_that("types that are not in allowed types throw an error", {
   expect_silent(parse_type("date"))
   expect_silent(parse_type("datetime"))
   expect_silent(parse_type("logical"))
-  expect_silent(parse_type("number"))
+  expect_silent(parse_type("double"))
   expect_silent(parse_type("character"))
   expect_silent(parse_type("guess"))
   expect_silent(parse_type("wkt"))
@@ -278,7 +278,7 @@ test_that("objects generate the correct type strings", {
   expect_equal(generate_type_str(Sys.Date()), "date")
   expect_equal(generate_type_str(Sys.time()), "datetime")
   expect_equal(generate_type_str(hms::hms(minutes = 45, hours = 5)), "time")
-  expect_equal(generate_type_str(4), "number")
+  expect_equal(generate_type_str(4), "double")
   expect_equal(generate_type_str(4L), "integer")
   expect_equal(generate_type_str('text'), "character")
   
@@ -319,7 +319,7 @@ test_that("generate_type_str generates expected output", {
   
   types <- type_table %>% tibble::deframe()
   expect_equal(setNames(types, NULL), 
-               c("number", "integer", "character", "character", "character",
+               c("double", "integer", "character", "character", "character",
                  "date", "datetime", "json", "wkt", "time"))
   
 })
@@ -357,7 +357,7 @@ test_that("generate_type_str works on mudata objects", {
   
   all_colnames <- lapply(kentvillegreenwood, colnames) %>% unlist(use.names = FALSE) 
   expect_true(setequal(types_kg$column, all_colnames))
-  expect_true(setequal(types_kg$type, c("character", "integer", "number", "date")))
+  expect_true(setequal(types_kg$type, c("character", "integer", "double", "date")))
 })
 
 test_that("default type is propgated through generate_type functions", {

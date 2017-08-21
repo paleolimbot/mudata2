@@ -321,3 +321,37 @@ test_that("datetimes are identical when read/written", {
   test_with_tz("UTC+4")
 })
 
+test_that("write directory function doesn't overwrite without permission", {
+  outfile <- tempfile()[1]
+  write_mudata_dir(kentvillegreenwood, outfile)
+  
+  expect_error(write_mudata_dir(kentvillegreenwood, outfile),
+               "Directory .*? exists. Use ovewrite = TRUE to overwrite.")
+  expect_silent(write_mudata_dir(kentvillegreenwood, outfile, overwrite = TRUE))
+  unlink(outfile, recursive = TRUE)  
+})
+
+test_that("read/write directory functions work", {
+  
+  test_dir <- function(md_object, debug = FALSE) {
+    
+    outfile <- tempfile(fileext = ".mudata")
+    write_mudata_dir(md_object, outfile)
+    md2 <- read_mudata_dir(outfile)
+    
+    if(debug) {
+      browser()
+    }
+    
+    # expect identical to original object
+    expect_equal_mudata(md_object, md2)
+    
+    # cleanup file
+    unlink(outfile, recursive = TRUE)
+  }
+  
+  test_dir(kentvillegreenwood)
+  test_dir(subset(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp")))
+  test_dir(pocmaj_md)
+})
+

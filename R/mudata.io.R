@@ -10,11 +10,7 @@
 #'   R types of columns (reccommended).
 #' @param pretty Produce pretty or minified JSON output
 #' @param txt JSON text from which to read a mudata object.
-#' @param expand.tags flag to expand tags to columns
-#' @param retype Pass \code{TRUE} to retype columns based on the 'type' column of the 'columns'
-#'   table.
-#' @param load a list of csv files (without the .csv extension) to load from the source.
-#' @param ... passed to read/write.csv
+#' @param ... passed to read/write functions
 #'
 #' @export
 #' 
@@ -22,21 +18,21 @@
 #' data(kentvillegreenwood)
 #' # read/write to zip
 #' outfile <- tempfile(fileext=".zip")
-#' #write.mudata(kentvillegreenwood, outfile)
+#' #write_mudata(kentvillegreenwood, outfile)
 #' #md <- read.mudata(outfile)
 #' #md <- read.mudata(outfile, retype=TRUE)
 #' unlink(outfile)
 #' 
 #' # read/write to JSON
 #' outfile <- tempfile(fileext=".json")
-#' #write.mudata(kentvillegreenwood, outfile)
+#' #write_mudata(kentvillegreenwood, outfile)
 #' #md <- read.mudata(outfile)
 #' #md <- read.mudata(outfile, retype=TRUE)
 #' unlink(outfile)
 #'
-write.mudata <- function(md, filename, ...) {
+write_mudata <- function(md, filename, ...) {
   if(grepl("[.]zip$", filename)) {
-    write.mudata.zip(md, filename, ...)
+    # write_mudata.zip(md, filename, ...) # not a function YET
   } else if(grepl("[.]json$", filename)) {
     write_mudata_json(md, filename, ...)
   } else {
@@ -44,124 +40,149 @@ write.mudata <- function(md, filename, ...) {
   }
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
-read.mudata <- function(filename, ...) {
+read_mudata <- function(filename, ...) {
   if(grepl("[.]zip$", filename) || dir.exists(filename)) {
-    read.mudata.zip(filename, ...)
+    # read.mudata.zip(filename, ...) # not a function YET!
   } else if(grepl("[.]json$", filename)) {
-    read.mudata.json(filename, ...)
+    read_mudata_json(filename, ...)
   } else {
     stop("Don't know which format to read file '", filename, "'")
   }
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
-write.mudata.zip <- function(md, filename, overwrite=FALSE, expand.tags=TRUE, validate=TRUE, ...) {
-  if(missing(md)) stop("Parameter md is required")
-  if(missing(filename)) stop("Parameter filename is required")
-  if(validate) validate_mudata(md) # will stop() on invalid mudata
-  
-  if(file.exists(filename)) {
-    if(overwrite) {
-      unlink(filename)
-    } else {
-      stop("File ", filename, ' exists...pass overwrite=TRUE to continue')
-    }
-  }
-  zipfolder <- tempfile()
-  dir.create(zipfolder)
-  if(expand.tags) {
-    md <- expand.tags(md)
-  } else {
-    md <- condense.tags(md)
+write_mudata_dir <- function(md, filename, overwrite = FALSE, validate = TRUE,
+                             update_columns = TRUE, ...) {
+  # check that filename isn't a file
+  if(file.exists(filename) && !dir.exists(filename)) {
+    stop("Not a directory: ", filename)
   }
   
-  mdnames <- names(md)
-  filesWritten <- sapply(mdnames, function(tname) {
-    .writetocsv(md[[tname]], file.path(zipfolder, paste0(tname, ".csv")), ...)
+  # check that dir doesn't already exist
+  if(file.exists(filename) && !overwrite) stop("Directory ", filename, 
+                                               " exists. Use ovewrite = TRUE to overwrite.")
+  
+  # prepare using mudata_write_common
+  md_write <- write_mudata_common(md, validate = validate, 
+                                  update_columns = update_columns, format = "csv")
+  
+  # create output directory
+  dir.create(filename, showWarnings = FALSE)
+  # check that output directory was created
+  if(!dir.exists(filename)) stop("Failed to create directory: ", filename)
+  
+  # treat attributes like a tbl
+  md_write[["_mudata"]] <- tibble::tibble(
+    x_columns = jsonlite::toJSON(attr(md, "x_columns"))
+  )
+  
+  # safe lapply on md_write to write_csv
+  result <- lapply(names(md_write), function(tbl_name) {
+    fname <- file.path(filename, paste0(tbl_name, ".csv"))
+    try(readr::write_csv(md_write[[tbl_name]], fname, na = ""))
   })
-  filenames <- paste0(mdnames[filesWritten], ".csv")
-  cwd <- getwd()
-  setwd(zipfolder)
-  tryCatch(utils::zip("zipfile.zip", filenames),
-           error=function(err) {
-             setwd(cwd)
-             unlink(zipfolder, recursive = TRUE)
-             stop(err)
-           })
-  setwd(cwd)
-  tmpzip <- file.path(zipfolder, "zipfile.zip")
-  file.copy(tmpzip, filename)
-  unlink(tmpzip)
-  unlink(zipfolder, recursive = TRUE)
+  
+  # check that write succeeded
+  errors <- vapply(result, inherits, "try-error", FUN.VALUE = logical(1))
+  if(any(errors)) {
+    error_text <- vapply(result[errors], as.character, character(1))
+    stop("Error writing mudata to CSV:\n", 
+         paste(sprintf(" %s.csv: %s", names(md_write)[errors], error_text),
+               collapse = "\n"))
+  } else {
+    # return the input object, invisibly
+    invisible(md)
+  }
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
-read.mudata.zip <- function(filename, validate=TRUE, expand.tags=TRUE, retype=TRUE,
-                        load=c("data", "locations", "params", "datasets", "columns"), ...) {
-  if(!("data" %in% load)) stop("'data' must be in argument load")
-  tmpfold <- tempfile()
-  deleteOnExit <- TRUE
-  if(dir.exists(filename)) {
-    tmpfold <- filename
-    deleteOnExit <- FALSE
-  } else {
-    utils::unzip(filename, exdir = tmpfold)
+read_mudata_dir <- function(filename, validate = TRUE, ...) {
+  # check that filename is a directory
+  if(!dir.exists(filename)) stop(filename, " does not exist or is not a directory")
+  # look for data.csv within filename
+  data_csv <- list.files(filename, pattern = "^data\\.csv$", recursive = TRUE,
+                         full.names = TRUE)[1]
+  if(is.na(data_csv)) stop("data.csv not found within ", filename)
+  # use dirname(data_csv) as base directory
+  mudir <- dirname(data_csv)
+  # warn user if this is a different directory than filename
+  # (usually occurs when somebody manually extracts a .zip file)
+  if(gsub("[/\\\\]$", "", mudir) != gsub("[/\\\\]$", "", filename)) {
+    message("Reading from ", mudir)
   }
   
-  md <- tryCatch({
-    obj <- sapply(load, function(name) {
-      fname <- list.files(tmpfold, pattern=paste0(name, '.csv'), 
-                          full.names = TRUE, recursive = TRUE)
-      if(name == "data" && length(fname)==0) stop('data.csv not found')
-      .readfiletocsv(fname, validate, ...)
-    }, USE.NAMES = TRUE, simplify = FALSE)
-    
-    mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
-                  columns=obj$columns, validate=validate)
-    morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
-    for(name in morenames) {
-      mud[[name]] <- obj[[name]]
+  # find columns.csv, read it in
+  columns_csv <- file.path(mudir, "columns.csv")
+  type_strs <- list()
+  if(file.exists(columns_csv)) {
+    # try to generate type_str_tbl
+    type_str_tbl <- try(readr::read_csv(columns_csv, col_names = TRUE,
+                                        col_types = readr::cols(.default = readr::col_character())))
+    if(all(c("table", "column", "type") %in% names(type_str_tbl))) {
+      # generate small version of column type table and validate it
+      type_str_tbl <- type_str_tbl %>%
+        dplyr::select(dplyr::one_of(c("table", "column", "type"))) %>%
+        dplyr::distinct()
+      # types need to be unique to be read by this function
+      .checkunique(type_str_tbl, 'columns', c("table", "column"))
+      
+      # create list of type_str named lists
+      . <- NULL; rm(.) # CMD hack
+      type_str_tbl <- type_str_tbl %>%
+        tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
+      type_strs <- type_str_tbl %>%
+        .$types %>%
+        lapply(tibble::deframe) %>%
+        stats::setNames(type_str_tbl$table)
     }
-    mud
-  }, error=function(err) {
-    if(deleteOnExit) {
-      unlink(tmpfold, recursive = TRUE)
-    }
-    stop(err)
+  }
+  
+  # iterate over csv files in mudir, reading as character
+  csv_files <- list.files(mudir, pattern = "\\.csv$", full.names = TRUE)
+  table_names <- gsub("\\.csv$", "", basename(csv_files))
+  obj <- lapply(stats::setNames(csv_files, table_names), function(csv_name) {
+    readr::read_csv(csv_name, col_names = TRUE, 
+                    col_types = readr::cols(.default = readr::col_character()), ...)
   })
-  if(deleteOnExit) {
-    unlink(tmpfold, recursive = TRUE)
-  }
-  return(md)
-}
-
-.writetocsv <- function(df, fname, ...) {
-  if(!is.null(df)) {
-    utils::write.csv(df, fname, row.names = FALSE, ...)
-    return(TRUE)
-  } else {
-    return(FALSE)
-  }
-}
-
-.readfiletocsv <- function(fname, validate, ...) {
-  if(length(fname) == 0) {
-    return(NULL)
-  } else {
-    df <- try(utils::read.csv(path.expand(fname[1]), stringsAsFactors = FALSE, ...), silent = TRUE)
-    if(validate && !('data.frame' %in% class(df))) {
-      return(NULL)
-    } else {
-      return(df)
+                
+  
+  # remove metadata, extract x_columns
+  meta <- obj[["_mudata"]]
+  obj[["_mudata"]] <- NULL
+  # retreive x_columns
+  x_columns <- NULL
+  if(!is.null(meta) && ("x_columns" %in% colnames(meta))) {
+    x_cols_json <- try(jsonlite::fromJSON(meta$x_columns))
+    if(is.character(x_cols_json)) {
+      x_columns <- x_cols_json
     }
   }
+  
+  # pass mudata tables to mudata_parse_tbl
+  obj <- lapply(names(obj), 
+                function(tbl_name) {
+                  type_str <- type_strs[[tbl_name]]
+                  if(is.null(type_str)) {
+                    type_str <- NA_character_
+                  }
+                  mudata_parse_tbl(obj[[tbl_name]], type_str = type_str)
+                }) %>%
+    stats::setNames(names(obj))
+  
+  # pass to mudata
+  md <- mudata(data = obj$data, locations = obj$locations, params = obj$params, 
+               datasets = obj$datasets, columns = obj$columns, x_columns = x_columns,
+               validate = validate)
+  
+  # add additional obj list items and return
+  new_mudata(c(md, obj[setdiff(names(obj), names(md))]), x_columns = x_columns)
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
 write_mudata_json <- function(md, filename, overwrite = FALSE, validate = TRUE, 
                               update_columns = TRUE, pretty = TRUE, ...) {
@@ -176,7 +197,7 @@ write_mudata_json <- function(md, filename, overwrite = FALSE, validate = TRUE,
                            update_columns = update_columns, pretty = pretty, ...)
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
 to_mudata_json <- function(md, validate = TRUE, update_columns = TRUE, pretty = FALSE,
                            ...) {
@@ -202,13 +223,13 @@ write_mudata_json_common <- function(md, fun, validate = TRUE, update_columns = 
       Date = "ISO8601", auto_unbox = TRUE, pretty = pretty)
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
 read_mudata_json <- function(filename, validate = TRUE, ...) {
   read_mudata_json_common(jsonlite::read_json, path = filename, validate = validate, ...)
 }
 
-#' @rdname write.mudata
+#' @rdname write_mudata
 #' @export
 from_mudata_json <- function(txt, validate = TRUE, ...) {
   read_mudata_json_common(jsonlite::fromJSON, txt = txt, validate = validate, ...)
@@ -257,6 +278,10 @@ read_mudata_json_common <- function(fun, validate = TRUE, ...) {
     type_strs <- list()
   }
   
+  # redefine mudata_tbls to mean all list-like objects in obj
+  # these should all be tbls with the same logic from columns applied
+  mudata_tbls <- names(obj)[vapply(obj, is.list, logical(1))]
+  
   # pass mudata tables to mudata_parse_tbl
   md <- lapply(intersect(mudata_tbls, names(obj)), 
                function(tbl_name) {
@@ -276,8 +301,6 @@ read_mudata_json_common <- function(fun, validate = TRUE, ...) {
   # add additional obj list items and return
   new_mudata(c(md, obj[setdiff(names(obj), mudata_tbls)]), x_columns = x_columns)
 }
-
-
 
 # common preparation for write_mudata objects
 write_mudata_common <- function(md, validate = TRUE, update_columns = TRUE, format = NA) {
@@ -331,30 +354,6 @@ update_columns_table <- function(md, quiet = FALSE) {
   # return md
   md
 }
-
-#' @rdname write.mudata
-#' @export
-read.mudata.json <- function(filename, validate=TRUE, retype=TRUE,
-                             load = c("data", "locations", "params", "datasets", "columns"), 
-                             ...) {
-  obj <- sapply(jsonlite::read_json(filename, simplifyVector = TRUE, ...), 
-                function(obj) {
-                  if(is.list(obj)) {
-                    data.frame(sapply(obj, unlist, USE.NAMES = TRUE, simplify = FALSE), 
-                               stringsAsFactors = FALSE)
-                  } else {
-                    obj
-                  }
-                }, USE.NAMES = TRUE, simplify = FALSE)
-  mud <- mudata(data=obj$data, locations=obj$locations, params=obj$params, datasets=obj$datasets,
-                columns=obj$columns, validate=validate)
-  morenames <- load[!(load %in% c("data", "locations", "params", "datasets", "columns"))]
-  for(name in morenames) {
-    mud[[name]] <- obj[[name]]
-  }
-  return(mud)
-}
-
 
 #' Prepare mudata table columns for writing
 #' 

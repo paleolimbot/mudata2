@@ -298,6 +298,15 @@ test_that("objects generate the correct type strings", {
                sprintf("wkt(crs='%s')", hard_crs_proj4))
 })
 
+test_that("datetimes with timezones generate the correct strings", {
+  dt <- Sys.time()
+  expect_equal(generate_type_str(dt), "datetime")
+  attr(dt, "tzone") <- "America/Halifax"
+  expect_equal(generate_type_str(dt), "datetime(tzone='America/Halifax')")
+  attr(dt, "tzone") <- "UTC"
+  expect_equal(generate_type_str(dt), "datetime(tzone='UTC')")
+})
+
 test_that("generate_type_str generates expected output", {
   test_df <- tibble::tibble(
     c1 = c(1, 2, 3),
@@ -307,7 +316,7 @@ test_that("generate_type_str generates expected output", {
     c4 = factor(c3, ordered = TRUE),
     c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
     c6 = as.POSIXct(c5),
-    c7 = parse_json(c("{}", "{}", "[]")),
+    c7 = structure(list(list(1), list(2), list(3)), class = c("json_column", "list")),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
     c9 = hms::as.hms(1:3)
   )

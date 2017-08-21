@@ -414,7 +414,11 @@ mudata_prepare_column.default <- function(x, format = NA, ...) x
 #' @rdname mudata_prepare_column
 #' @export 
 mudata_prepare_column.POSIXt <- function(x, format = NA, ...) {
-  strftime(x, "%Y-%m-%dT%H:%M:%S%z", ...)
+  tzone <- attr(x, "tzone")
+  if(is.null(tzone)) {
+    tzone <- ""
+  }
+  strftime(x, "%Y-%m-%dT%H:%M:%S", tz = tzone, ...)
 }
 
 # sfc columns are converted to WKT using sf::st_as_text()

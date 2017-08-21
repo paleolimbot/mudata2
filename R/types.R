@@ -80,7 +80,7 @@ generate_type_str <- function(x, default = "guess") {
     }
   }
   
-  # type strings for wkt columns require some information from the object
+  # type strings for wkt, datetime columns require some information from the object
   if(type_string == "wkt") {
     crs <- sf::st_crs(x)
     if(is.na(crs)) {
@@ -91,6 +91,14 @@ generate_type_str <- function(x, default = "guess") {
       type_string <- sprintf("wkt(crs=%s)", crs$epsg)
     } else if(!is.na(crs$proj4string)) {
       type_string <- sprintf("wkt(crs='%s')", crs$proj4string)
+    }
+  } else if(type_string == "datetime") {
+    tzone <- attr(x, "tzone")
+    if(is.null(tzone) || is.na(tzone) || (tzone == "")) {
+      # no timezone specified, no arguments to datetime
+    } else {
+      # datetime reqires tzone as argument
+      type_string <- sprintf("datetime(tzone='%s')", tzone)
     }
   }
   
@@ -148,6 +156,8 @@ as_parser <- function(type_str) {
     parse_fun <- parse_json
   } else if(type_obj$type == "wkt") {
     parse_fun <- parse_wkt
+  } else if(type_obj$type == "datetime") {
+    parse_fun <- parse_mudata_datetime
   }
   
   # return a partial wrapper using type_obj$args
@@ -157,9 +167,9 @@ as_parser <- function(type_str) {
 }
 
 # define allowed types in one place
-allowed_types_readr <- c("date", "datetime", "logical", "double", "character", 
+allowed_types_readr <- c("date", "logical", "double", "character", 
                          "guess", "integer", "time")
-allowed_types_extra <- c("wkt", "json")
+allowed_types_extra <- c("wkt", "json", "datetime")
 
 # define output class types from parsing functions
 parse_output_class <- function(type_str) {
@@ -174,6 +184,14 @@ parse_output_class <- function(type_str) {
   # return with no names
   stats::setNames(output_class_types[type_obj$type], NULL)
 }
+
+# custom date parser that allows for a tz argument
+parse_mudata_datetime <- function(x, tzone = "", ...) {
+  result <- readr::parse_datetime(x, ...)
+  # if tzone is not "", pass to lubirdate::force_tz to set timezone
+  lubridate::force_tz(result, tzone = tzone)
+}
+
 
 # json parser using jsonlite, simplifying only vectors
 parse_json <- function(x, na = c("NA", ""), ...) {
@@ -267,8 +285,6 @@ get_readr_fun <- function(fun, prefix) {
   if(prefix == "col") {
     if(fun == "date") {
       readr::col_date
-    } else if(fun == "datetime") {
-      readr::col_datetime
     } else if(fun == "logical") {
       readr::col_logical
     } else if(fun == "double") {
@@ -285,8 +301,6 @@ get_readr_fun <- function(fun, prefix) {
   } else if(prefix == "parse") {
     if(fun == "date") {
       readr::parse_date
-    } else if(fun == "datetime") {
-      readr::parse_datetime
     } else if(fun == "logical") {
       readr::parse_logical
     } else if(fun == "double") {

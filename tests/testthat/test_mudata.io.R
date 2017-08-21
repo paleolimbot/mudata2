@@ -256,8 +256,19 @@ test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
       }
     } else if(inherits(val1, "POSIXct") && inherits(val2, "POSIXct")) {
       all_equal <- all(val1 == val2)
+      tz1 <- attr(val1, "tzone")
+      tz2 <- attr(val2, "tzone")
+      if(is.null(tz1) || identical(tz1, "")) {
+        if(is.null(tz2) || identical(tz2, "")) {
+          tzequal <- TRUE
+        } else {
+          tzequal <- FALSE
+        }
+      } else {
+        tzequal <- identical(tz1, tz2)
+      }
       if(all_equal && !identical(val1, val2)) warning("date vectors not identical")
-      all_equal
+      all_equal && tzequal
     } else if(inherits(val1, "factor") || inherits(val2, "factor")) {
       identical(as.character(val1), as.character(val2))
     } else {
@@ -272,3 +283,41 @@ test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
   expect_true(all(mapply(col_equal, test_df, parsed_csv)))
   expect_true(all(mapply(col_equal, test_df, parsed_json)))
 })
+
+test_that("datetimes are identical when read/written", {
+  
+  test_with_tz <- function(tz_name, debug = FALSE) {
+    if(debug) {
+      browser()
+    }
+    dt <- seq(as.POSIXct("1980-01-01 09:00"), as.POSIXct("1980-01-01 17:00"), by = 3600)
+    dt <- lubridate::force_tz(dt, tz_name)
+    expect_length(dt, 9)
+    expect_equal(attr(dt, "tzone"), tz_name)
+    
+    # make sure prepared doesn't change when tzone is unspecified ("")
+    prepared_dt <- mudata_prepare_column(dt)
+    expect_equal(head(prepared_dt, 1), "1980-01-01T09:00:00")
+    expect_equal(tail(prepared_dt, 1), "1980-01-01T17:00:00")
+    
+    # make sure times are read in identically
+    type_str <- generate_type_str(dt)
+    parsed_dt <- mudata_parse_column(prepared_dt, type_str = type_str)
+    # try equality
+    expect_equal(dt, parsed_dt)
+    # check tzone attribute
+    expect_equal(attr(dt, "tzone"), attr(parsed_dt, "tz"))
+    # object should be identical
+    expect_identical(dt, parsed_dt)
+  }
+  
+  # test with lots of timezones
+  test_with_tz("")
+  test_with_tz("America/Halifax")
+  test_with_tz("UTC")
+  test_with_tz("America/Boise")
+  test_with_tz("Pacific/Auckland")
+  # lots of warnings, but no problems
+  test_with_tz("UTC+4")
+})
+

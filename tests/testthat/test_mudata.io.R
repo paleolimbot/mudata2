@@ -51,6 +51,13 @@ test_that("columns table is updated properly", {
   expect_silent(update_columns_table(kg2, quiet = FALSE))
 })
 
+test_that("update_columns_table works when columns are added", {
+  kg2 <- kentvillegreenwood
+  kg2$data$new_column <- "new_value"
+  updated <- mudata:::update_columns_table(kg2)$columns
+  expect_true("new_columns" %in% updated$columns)
+})
+
 test_that("read/write JSON functions work", {
   
   test_json <- function(md_object, debug = FALSE) {

@@ -206,6 +206,12 @@ parse_json <- function(x, na = c("NA", ""), ...) {
 
 # wkt parser using sf::st_as_sfc
 parse_wkt <- function(x, na = c("NA", ""), crs = sf::NA_crs_, ...) {
+  # check if sf is installed, if not, return character vector with a warning
+  if(!requireNamespace("sf", quietly = TRUE)) {
+    warning("Package 'sf' required to read wkt columns. Keeping column as is.")
+    return(x)
+  }
+  
   # make x a character vector
   x <- as.character(x)
   

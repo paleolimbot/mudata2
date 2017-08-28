@@ -31,7 +31,9 @@ test_that("columns table is updated properly", {
   
   # check that column was updated
   updated <- update_columns_table(kg2)
-  expect_identical(kg2$columns$type, updated$columns$type)
+  expect_identical(kg2$columns$type[-1], updated$columns$type[-1])
+  expect_true("a_new_type" %in% kg2$columns$type)
+  expect_false("a_new_type" %in% updated$columns$type)
   
   # check that quiet = TRUE doesn't affect updating
   expect_identical(update_columns_table(kg2), 
@@ -54,8 +56,8 @@ test_that("columns table is updated properly", {
 test_that("update_columns_table works when columns are added", {
   kg2 <- kentvillegreenwood
   kg2$data$new_column <- "new_value"
-  updated <- mudata:::update_columns_table(kg2)$columns
-  expect_true("new_columns" %in% updated$columns)
+  updated <- update_columns_table(kg2)$columns
+  expect_true("new_column" %in% updated$column)
 })
 
 test_that("read/write JSON functions work", {

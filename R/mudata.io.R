@@ -302,7 +302,7 @@ read_mudata_json_common <- function(fun, validate = TRUE, ...) {
   new_mudata(c(md, obj[setdiff(names(obj), mudata_tbls)]), x_columns = x_columns)
 }
 
-# common preparation for write_mudata objects
+
 write_mudata_common <- function(md, validate = TRUE, update_columns = TRUE, format = NA) {
   # validate object
   if(validate) validate_mudata(md)
@@ -319,37 +319,51 @@ write_mudata_common <- function(md, validate = TRUE, update_columns = TRUE, form
   md_write
 }
 
-# updates the columns table when needed, with an optional warning
+#' Update the columns table
+#'
+#' @param md A mudata object
+#' @param quiet Suppress changes to existing types
+#'
+#' @return A mudata object
+#' @export
+#' 
 update_columns_table <- function(md, quiet = FALSE) {
   
   # generate columns table from original mudata, join to existing cols table
-  generated_cols <- generate_type_tbl(md) %>%
-    dplyr::right_join(md$columns, by = c("dataset", "table", "column"),
-                      prefix = c(".x", ".y"))
+  generated_cols <- generate_type_tbl(md)
+  
+  # join with columns to see if any types need to be updated
+  generated_cols_joined <- md$columns %>%
+    dplyr::left_join(generated_cols, by = c("dataset", "table", "column"),
+                     prefix = c(".x", ".y"))
   
   # check that type.x and type.y are the same, if type was already in the columns table
   if("type" %in% colnames(md$columns)) {
     type.x <- NULL; rm(type.x); type.y <- NULL; rm(type.y) # CMD hack
-    replaced_types <- generated_cols %>% dplyr::filter(type.x != type.y)
-    if(nrow(replaced_types) > 0) {
+    replaced_types <- generated_cols_joined %>% dplyr::filter(type.x != type.y)
+    if((nrow(replaced_types) > 0) && !quiet) {
+      message(sprintf("Replacing types %s with %s",
+                      with(replaced_types, paste(dataset, table, column, type.y, sep = "/")),
+                      with(replaced_types, paste(dataset, table, column, type.x, sep = "/"))))
       
-      if(!quiet) {
-        message(sprintf("Replacing types %s with %s",
-                        with(replaced_types, paste(dataset, table, column, type.x, sep = "/")),
-                        with(replaced_types, paste(dataset, table, column, type.y, sep = "/"))))
-      }
-    # overwrite the type column in md$columns
-    md$columns <- md$columns %>%
-      dplyr::left_join(generated_cols, by = c("dataset", "table", "column"),
-                       prefix = c(".x", ".y")) %>%
-      dplyr::mutate(type = type.y) %>%
-      dplyr::select(-type.y, -type.x)
     }
+    
+    # overwrite the type column in md$columns, add new column data
+    md$columns <- generated_cols %>%
+      dplyr::left_join(md$columns, by = c("dataset", "table", "column"),
+                       prefix = c(".x", ".y")) %>%
+      dplyr::mutate(type = type.x) %>%
+      dplyr::select(-type.y, -type.x)
   } else {
-    # assign type column in md$columns
-    md$columns <- md$columns %>%
-      dplyr::left_join(generated_cols, by = c("dataset", "table", "column"))
+    # overwrite the md columns table (in case new columns were added)
+    md$columns <- generated_cols %>%
+      dplyr::left_join(md$columns, by = c("dataset", "table", "column"))
   }
+  
+  # remove the columns table metadata, make sure output is a tibble
+  md$columns <- md$columns %>%
+    dplyr::filter(table != "columns") %>%
+    tibble::as_tibble()
   
   # return md
   md

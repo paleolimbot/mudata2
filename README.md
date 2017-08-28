@@ -63,7 +63,7 @@ str(kentvillegreenwood)
     ##   ..$ dataset: chr [1:17] "ecclimate" "ecclimate" "ecclimate" "ecclimate" ...
     ##   ..$ table  : chr [1:17] "data" "data" "data" "data" ...
     ##   ..$ column : chr [1:17] "dataset" "location" "param" "date" ...
-    ##   ..$ type   : chr [1:17] "character" "character" "character" "Date" ...
+    ##   ..$ type   : chr [1:17] "character" "character" "character" "date" ...
     ##  - attr(*, "x_columns")= chr "date"
     ##  - attr(*, "class")= chr [1:2] "mudata" "list"
 
@@ -129,14 +129,14 @@ kvtemp
     ##  1 ecclimate      data   dataset character
     ##  2 ecclimate      data  location character
     ##  3 ecclimate      data     param character
-    ##  4 ecclimate      data      date      Date
-    ##  5 ecclimate      data     value   numeric
+    ##  4 ecclimate      data      date      date
+    ##  5 ecclimate      data     value    double
     ##  6 ecclimate      data     flags character
     ##  7 ecclimate locations   dataset character
     ##  8 ecclimate locations  location character
     ##  9 ecclimate locations stationid   integer
-    ## 10 ecclimate locations  latitude   numeric
-    ## 11 ecclimate locations longitude   numeric
+    ## 10 ecclimate locations  latitude    double
+    ## 11 ecclimate locations longitude    double
     ## 12 ecclimate locations  province character
     ## 13 ecclimate    params   dataset character
     ## 14 ecclimate    params     param character
@@ -199,14 +199,14 @@ rbind(kvtemp, kvprecip)
     ##  1 ecclimate      data   dataset character
     ##  2 ecclimate      data  location character
     ##  3 ecclimate      data     param character
-    ##  4 ecclimate      data      date      Date
-    ##  5 ecclimate      data     value   numeric
+    ##  4 ecclimate      data      date      date
+    ##  5 ecclimate      data     value    double
     ##  6 ecclimate      data     flags character
     ##  7 ecclimate locations   dataset character
     ##  8 ecclimate locations  location character
     ##  9 ecclimate locations stationid   integer
-    ## 10 ecclimate locations  latitude   numeric
-    ## 11 ecclimate locations longitude   numeric
+    ## 10 ecclimate locations  latitude    double
+    ## 11 ecclimate locations longitude    double
     ## 12 ecclimate locations  province character
     ## 13 ecclimate    params   dataset character
     ## 14 ecclimate    params     param character
@@ -347,10 +347,10 @@ pocmajwide <- pocmajsum %>%
   rename(location = core)
 ```
 
-Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel.melt()`.
+Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
 
 ``` r
-pocmajlong <- parallel.melt(pocmajwide, id.vars=c("location", "depth"), 
+pocmajlong <- parallel_melt(pocmajwide, id.vars=c("location", "depth"), 
                             value=c("Ca", "Ti", "V"), 
                             sd=c("Ca_sd", "Ti_sd", "V_sd"),
                             variable.name = "param")

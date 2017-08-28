@@ -135,10 +135,10 @@ pocmajwide <- pocmajsum %>%
   rename(location = core)
 ```
 
-Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel.melt()`.
+Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
 
 ```{r}
-pocmajlong <- parallel.melt(pocmajwide, id.vars=c("location", "depth"), 
+pocmajlong <- parallel_melt(pocmajwide, id.vars=c("location", "depth"), 
                             value=c("Ca", "Ti", "V"), 
                             sd=c("Ca_sd", "Ti_sd", "V_sd"),
                             variable.name = "param")

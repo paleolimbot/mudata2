@@ -169,7 +169,7 @@ test_that("manual tests for autoplot()", {
   ggplot2::autoplot(kentvillegreenwood, y = "date")
   
   # check error bars
-  pocmajlong <- parallel.melt(pocmajsum, id.vars=c("core", "depth"), 
+  pocmajlong <- parallel_melt(pocmajsum, id.vars=c("core", "depth"), 
                               value=c("Ca", "Ti", "V"), 
                               sd=c("Ca_sd", "Ti_sd", "V_sd"),
                               variable.name = "param")
@@ -199,6 +199,14 @@ test_that("autoplot works on sqlite sources", {
   expect_is(ggplot2::autoplot(kv_sqlite), "ggplot")
   plot(kv_sqlite)
 })
+
+test_that("numeric variables are correctly identified", {
+  df <- data.frame(a=factor("a factor"), b="not a factor", c=4,
+                   d=4.5, e=Sys.Date(), f=Sys.time())
+  expect_that(names(df)[sapply(df, is.numericish)], equals(c("c", "d", "e", "f")))
+  expect_that(!sapply(df, is.numericish), equals(sapply(df, ggplot2:::is.discrete)))
+})
+
 
 # clean temporary database
 unlink(sql_file)

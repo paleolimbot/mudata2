@@ -8,16 +8,32 @@ pocmaj_data <- pocmajsum %>%
   dplyr::select(location = core, param, depth, value)
 pocmaj_md <- mudata(pocmaj_data)
 
-# test_that("read/write zip functions work", {
-#   data("kentvillegreenwood")
-#   outfile <- tempfile(fileext = ".zip")
-#   write.mudata.zip(kentvillegreenwood, outfile)
-#   md2 <- read.mudata.zip(outfile)
-#   expect_that(md2, is_a('mudata'))
-#   expect_true(all(sapply(kentvillegreenwood, nrow) == sapply(md2, nrow)))
-#   unlink(outfile)
-# })
-# 
+test_that("read/write zip functions work", {
+  outfile <- tempfile(fileext = ".zip")
+  write_mudata_zip(kentvillegreenwood, outfile)
+  md2 <- read_mudata_zip(outfile)
+  expect_is(md2, 'mudata')
+  expect_true(all(sapply(kentvillegreenwood, nrow) == sapply(md2, nrow)))
+  expect_equal_mudata(kentvillegreenwood, md2)
+  unlink(outfile)
+})
+
+test_that("write zip does not affect working directory", {
+  wd <- getwd()
+  outfile <- tempfile(fileext = ".zip")
+  write_mudata_zip(kentvillegreenwood, outfile)
+  expect_equal(getwd(), wd)
+  unlink(outfile)
+})
+
+test_that("read/write zip cleans up temporary files", {
+  tfiles <- list.files(tempdir())
+  outfile <- tempfile(fileext = ".zip")
+  write_mudata_zip(kentvillegreenwood, outfile)
+  read_mudata_zip(outfile)
+  unlink(outfile)
+  expect_true(setequal(tfiles, list.files(tempdir())))
+})
 
 test_that("columns table is updated properly", {
   kg2 <- kentvillegreenwood
@@ -88,59 +104,58 @@ test_that("read/write JSON functions work", {
   test_json(subset(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp")))
   test_json(pocmaj_md)
 })
-# 
-# test_that("autodetection of read function filename extension works", {
-#   data("kentvillegreenwood")
-#   outfile_json <- tempfile(fileext = ".json")
-#   write.mudata(kentvillegreenwood, outfile_json)
-#   expect_true(file.exists(outfile_json))
-#   expect_that(read.mudata.json(outfile_json), is_a('mudata'))
-#   unlink(outfile_json)
-#   
-#   outfile_zip <- tempfile(fileext = ".zip")
-#   write.mudata(kentvillegreenwood, outfile_zip)
-#   expect_true(file.exists(outfile_zip))
-#   expect_that(read.mudata.zip(outfile_zip), is_a('mudata'))
-#   unlink(outfile_zip)
-# })
-# 
-# test_that("invalid objects are not written", {
-#   data("kentvillegreenwood")
-#   kentvillegreenwood$data <- rbind(kentvillegreenwood$data, kentvillegreenwood$data)
-#   expect_error(validate_mudata(kentvillegreenwood))
-#   expect_error(write.mudata.json(kentvillegreenwood, tempfile()))
-#   expect_error(write.mudata.zip(kentvillegreenwood, tempfile()))
-# })
-# 
-# test_that("invalid objects are not read", {
-#   data("kentvillegreenwood")
-#   kentvillegreenwood$data <- rbind(kentvillegreenwood$data, kentvillegreenwood$data)
-#   expect_error(validate_mudata(kentvillegreenwood))
-#   outfile_json <- tempfile(fileext = ".json")
-#   outfile_zip <- tempfile(fileext = ".zip")
-#   
-#   write.mudata(kentvillegreenwood, outfile_json, validate=FALSE)
-#   write.mudata(kentvillegreenwood, outfile_zip, validate=FALSE)
-#   
-#   expect_error(read.mudata(outfile_json))
-#   expect_error(read.mudata(outfile_zip))
-#   
-#   unlink(outfile_zip)
-#   unlink(outfile_json)
-# })
-# 
-# test_that("retyping on read/write works", {
-#   data("kentvillegreenwood")
-#   outfile <- tempfile(fileext = ".zip")
-#   write.mudata.zip(kentvillegreenwood, outfile)
-#   expect_message(read.mudata.zip(outfile, retype=TRUE))
-#   
-#   md2 <- read.mudata.zip(outfile, retype=TRUE)
-#   expect_that(md2, is_a('mudata'))
-#   expect_that(md2$data$x, is_a(md2$columns$type[md2$columns$column == "x"]))
-#   unlink(outfile)
-# })
 
+test_that("autodetection of read function filename extension works", {
+  outfile_json <- tempfile(fileext = ".json")
+  write_mudata(kentvillegreenwood, outfile_json)
+  expect_true(file.exists(outfile_json))
+  expect_is(read_mudata_json(outfile_json), 'mudata')
+  unlink(outfile_json)
+
+  outfile_zip <- tempfile(fileext = ".zip")
+  write_mudata(kentvillegreenwood, outfile_zip)
+  expect_true(file.exists(outfile_zip))
+  expect_is(read_mudata_zip(outfile_zip), 'mudata')
+  unlink(outfile_zip)
+})
+
+test_that("invalid objects are not written", {
+  kentvillegreenwood$data <- rbind(kentvillegreenwood$data, kentvillegreenwood$data)
+  expect_error(validate_mudata(kentvillegreenwood))
+  expect_error(write_mudata_json(kentvillegreenwood, tempfile()), 
+               "Duplicate data in data table")
+  expect_error(write_mudata_zip(kentvillegreenwood, tempfile()), 
+               "Duplicate data in data table")
+})
+
+test_that("invalid objects are not read", {
+  kentvillegreenwood$data <- rbind(kentvillegreenwood$data, kentvillegreenwood$data)
+  expect_error(validate_mudata(kentvillegreenwood))
+  outfile_json <- tempfile(fileext = ".json")
+  outfile_zip <- tempfile(fileext = ".zip")
+
+  write_mudata(kentvillegreenwood, outfile_json, validate=FALSE)
+  write_mudata(kentvillegreenwood, outfile_zip, validate=FALSE)
+
+  expect_error(read_mudata(outfile_json), "Duplicate data in data table")
+  expect_error(read_mudata(outfile_zip), "Duplicate data in data table")
+
+  unlink(outfile_zip)
+  unlink(outfile_json)
+})
+
+test_that("retyping on read/write works", {
+  outfile <- tempfile(fileext = ".zip")
+  data("kentvillegreenwood")
+  kg2 <- kentvillegreenwood
+  kg2$data$date <- as.POSIXct(kg2$data$date)
+  write_mudata_zip(kg2, outfile)
+  
+  md2 <- read_mudata_zip(outfile)
+  expect_is(md2, 'mudata')
+  expect_is(md2$data$date, "POSIXct")
+  unlink(outfile)
+})
 
 test_that("mudata_prepare_column and mudata_parse_column are opposites", {
   # create test df with all supported types

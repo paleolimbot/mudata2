@@ -19,24 +19,25 @@
 #' # read/write to zip
 #' outfile <- tempfile(fileext=".zip")
 #' #write_mudata(kentvillegreenwood, outfile)
-#' #md <- read.mudata(outfile)
-#' #md <- read.mudata(outfile, retype=TRUE)
+#' #md <- read_mudata(outfile)
+#' #md <- read_mudata(outfile, retype=TRUE)
 #' unlink(outfile)
 #' 
 #' # read/write to JSON
 #' outfile <- tempfile(fileext=".json")
 #' #write_mudata(kentvillegreenwood, outfile)
-#' #md <- read.mudata(outfile)
-#' #md <- read.mudata(outfile, retype=TRUE)
+#' #md <- read_mudata(outfile)
+#' #md <- read_mudata(outfile, retype=TRUE)
 #' unlink(outfile)
 #'
 write_mudata <- function(md, filename, ...) {
   if(grepl("[.]zip$", filename)) {
-    # write_mudata.zip(md, filename, ...) # not a function YET
+    write_mudata_zip(md, filename, ...)
   } else if(grepl("[.]json$", filename)) {
     write_mudata_json(md, filename, ...)
   } else {
-    stop("Don't know which format to write file '", filename, "'")
+    message("Using write_mudata_dir() to write to ", filename)
+    write_mudata_dir(md, filename, ...)
   }
 }
 
@@ -44,12 +45,60 @@ write_mudata <- function(md, filename, ...) {
 #' @export
 read_mudata <- function(filename, ...) {
   if(grepl("[.]zip$", filename) || dir.exists(filename)) {
-    # read.mudata.zip(filename, ...) # not a function YET!
+    read_mudata_zip(filename, ...)
   } else if(grepl("[.]json$", filename)) {
     read_mudata_json(filename, ...)
+  } else if(dir.exists(filename)) {
+    read_mudata_dir(filename, ...)
   } else {
     stop("Don't know which format to read file '", filename, "'")
   }
+}
+
+
+#' @rdname write_mudata
+#' @export
+write_mudata_zip <- function(md, filename, overwrite = FALSE, validate = TRUE,
+                             update_columns = TRUE, ...) {
+  # check if output file exists, stop if overwrite = FALSE
+  if(file.exists(filename) && !overwrite) stop("File ", filename, 
+                                               " exists. Use ovewrite = TRUE to overwrite.")
+  
+  # create a temporary directory, use write_mudata_dir to write to it
+  dir_file <- tempfile()[1]
+  on.exit(unlink(dir_file, recursive = TRUE))
+  write_mudata_dir(md, dir_file, overwrite = TRUE, validate = validate,
+                   update_columns = update_columns, ...)
+  
+  # the zip function is tricky in that it requires a working directory change
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+  
+  # use utils::zip to create a zip file
+  setwd(dir_file)
+  utils::zip(filename, list.files(), flags = "-q")
+  
+  # return md, invisibly
+  invisible(md)
+}
+
+#' @rdname write_mudata
+#' @export
+read_mudata_zip <- function(filename, validate = TRUE, ...) {
+  # check that file exists
+  if(!file.exists(filename)) stop("File ", filename, " does not exist")
+  if(dir.exists(filename)) stop(filename, " is a directory")
+  
+  # create temporary directory, make sure is cleaned up on exit
+  dir_file <- tempfile()[1]
+  dir.create(dir_file)
+  on.exit(unlink(dir_file, recursive = TRUE))
+  
+  # unzip zipfile to temporary directory
+  utils::unzip(filename, exdir = dir_file)
+  
+  # use read_mudata_dir on the temporary directory
+  read_mudata_dir(dir_file, validate = validate, ...)
 }
 
 #' @rdname write_mudata

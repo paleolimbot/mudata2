@@ -3,6 +3,8 @@
 \name{write_mudata}
 \alias{write_mudata}
 \alias{read_mudata}
+\alias{write_mudata_zip}
+\alias{read_mudata_zip}
 \alias{write_mudata_dir}
 \alias{read_mudata_dir}
 \alias{write_mudata_json}
@@ -14,6 +16,11 @@
 write_mudata(md, filename, ...)
 
 read_mudata(filename, ...)
+
+write_mudata_zip(md, filename, overwrite = FALSE, validate = TRUE,
+  update_columns = TRUE, ...)
+
+read_mudata_zip(filename, validate = TRUE, ...)
 
 write_mudata_dir(md, filename, overwrite = FALSE, validate = TRUE,
   update_columns = TRUE, ...)
@@ -56,15 +63,15 @@ data(kentvillegreenwood)
 # read/write to zip
 outfile <- tempfile(fileext=".zip")
 #write_mudata(kentvillegreenwood, outfile)
-#md <- read.mudata(outfile)
-#md <- read.mudata(outfile, retype=TRUE)
+#md <- read_mudata(outfile)
+#md <- read_mudata(outfile, retype=TRUE)
 unlink(outfile)
 
 # read/write to JSON
 outfile <- tempfile(fileext=".json")
 #write_mudata(kentvillegreenwood, outfile)
-#md <- read.mudata(outfile)
-#md <- read.mudata(outfile, retype=TRUE)
+#md <- read_mudata(outfile)
+#md <- read_mudata(outfile, retype=TRUE)
 unlink(outfile)
 
 }

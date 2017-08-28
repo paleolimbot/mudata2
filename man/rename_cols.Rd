@@ -24,7 +24,7 @@ after the operation.}
 A copy of the modified object
 }
 \description{
-Essentially a thin convenience wrapper around \code{plyr::rename(x, list(...))}.
+Rename columns in a data frame or list
 }
 \examples{
 data(pocmaj)

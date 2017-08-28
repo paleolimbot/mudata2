@@ -4,17 +4,21 @@
 \alias{rename_values}
 \title{Replace/rename values in a vector}
 \usage{
-rename_values(x, ..., defaultValue = x, warn_missing = TRUE)
+rename_values(x, ..., default_value = x, warn_missing = TRUE,
+  warn_duplicated = TRUE)
 }
 \arguments{
 \item{x}{Vector of values to replace}
 
 \item{...}{Key/value pairs in the form \code{oldvalue="newvalue"}}
 
-\item{defaultValue}{A vector of values to use as the default should the value not
+\item{default_value}{A vector of values to use as the default should the value not
 be found in \code{...}}
 
 \item{warn_missing}{Print a message if any old names are not actually present in x}
+
+\item{warn_duplicated}{Print a message if any name appears more than once in x 
+after the operation.}
 }
 \value{
 A vector with values replaced
@@ -27,6 +31,6 @@ is useful when performing rename operations when values are held in character ve
 x <- c("fish", "fish", "fish", "whistle")
 rename_values(x, fish="newfish")
 rename_values(x, whistle="newwhistle")
-rename_values(x, fish="newfish", defaultValue="not a fish")
+rename_values(x, fish="newfish", default_value = "not a fish")
 
 }

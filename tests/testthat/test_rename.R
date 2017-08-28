@@ -10,19 +10,19 @@ test_that("rename_cols function works", {
 test_that("rename_cols outputs a message when no names are found", {
   df <- data.frame(a=1, b=2, c=3, d=4)
   expect_message(rename_cols(df, notacolumn="willnotbeacolumn"), 
-                 "The following `from` values were not present in `x`: notacolumn")
+                 "Not all values were found: notacolumn")
 })
 
 test_that("rename_cols outputs a warning when duplicate names are created", {
   df <- data.frame(a=1, b=2, c=3, d=4)
-  expect_warning(rename_cols(df, b="a"))
+  expect_message(rename_cols(df, b="a"), "Possible duplicated values in x: a")
 })
 
 test_that("rename_values function works", {
   x <- c("fish", "fish", "fish", "whistle")
   expect_that(rename_values(x, fish="newfish"), equals(c("newfish", "newfish", "newfish", "whistle")))
   expect_that(rename_values(x, whistle="newwhistle"), equals(c("fish", "fish", "fish", "newwhistle")))
-  expect_that(rename_values(x, fish="newfish", defaultValue="not a fish"), 
+  expect_that(rename_values(x, fish="newfish", default_value="not a fish"), 
               equals(c("newfish", "newfish", "newfish", "not a fish")))
 })
 
@@ -30,6 +30,12 @@ test_that("rename_values outputs a message if values are not found", {
   x <- c("fish", "fish", "fish", "whistle")
   expect_message(rename_values(x, notfound="willneverbefound"), 
                  "Not all values were found: notfound")
+})
+
+test_that("rename_values outputs a message if values are duplicated", {
+  x <- c("fish", "fish", "fish", "whistle")
+  expect_message(rename_values(x, "whistle"="fish"), 
+                 "Possible duplicated values in x: fish")
 })
 
 test_that("mudata rename works", {

@@ -44,7 +44,7 @@ write_mudata <- function(md, filename, ...) {
 #' @rdname write_mudata
 #' @export
 read_mudata <- function(filename, ...) {
-  if(grepl("[.]zip$", filename) || dir.exists(filename)) {
+  if(grepl("[.]zip$", filename)) {
     read_mudata_zip(filename, ...)
   } else if(grepl("[.]json$", filename)) {
     read_mudata_json(filename, ...)

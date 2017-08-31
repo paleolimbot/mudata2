@@ -117,6 +117,12 @@ test_that("autodetection of read function filename extension works", {
   expect_true(file.exists(outfile_zip))
   expect_is(read_mudata_zip(outfile_zip), 'mudata')
   unlink(outfile_zip)
+  
+  outfile_dir <- tempfile()
+  expect_message(write_mudata(kentvillegreenwood, outfile_dir),
+                 "Using write_mudata_dir.*")
+  expect_is(read_mudata(outfile_dir), "mudata")
+  unlink(outfile_dir, recursive = TRUE)
 })
 
 test_that("invalid objects are not written", {

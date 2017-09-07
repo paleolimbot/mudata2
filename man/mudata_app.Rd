@@ -2,15 +2,25 @@
 % Please edit documentation in R/mudata_app.R
 \name{mudata_app}
 \alias{mudata_app}
-\title{Interactive Plot of a MUData object}
+\alias{mudata_app_clear_cache}
+\title{Interactive Plot of a MUData object using Shiny}
 \usage{
-mudata_app(obj = NULL)
+mudata_app(obj = NULL, obj_name = NULL, save_state = TRUE,
+  load_state = TRUE)
+
+mudata_app_clear_cache()
 }
 \arguments{
 \item{obj}{A mudata object}
+
+\item{obj_name}{The mudata object name to use in code generation}
+
+\item{save_state}{Should changes to the input for this object be saved?}
+
+\item{load_state}{Should the previous input values for this boject be loaded?}
 }
 \description{
-Interactive Plot of a MUData object
+Interactive Plot of a MUData object using Shiny
 }
 \examples{
 if(interactive()) {

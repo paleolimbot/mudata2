@@ -1,8 +1,10 @@
 
-
-#' Interactive Plot of a MUData object
+#' Interactive Plot of a MUData object using Shiny
 #'
 #' @param obj A mudata object
+#' @param obj_name The mudata object name to use in code generation
+#' @param save_state Should changes to the input for this object be saved?
+#' @param load_state Should the previous input values for this boject be loaded?
 #'
 #' @export
 #'
@@ -11,18 +13,18 @@
 #'   mudata_app()
 #' }
 #' 
-mudata_app <- function(obj = NULL, ...) {
-  app <- mudata_app_create(obj, ...)
-  shiny::runApp(app)
-}
-
-mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) {
+mudata_app <- function(obj = NULL, obj_name = NULL, save_state = TRUE, load_state = TRUE) {
+  # get the object name
+  if(is.null(obj_name)) {
+    mudata_shiny_object_name <- deparse(substitute(obj))
+  } else {
+    mudata_shiny_object_name <- obj_name
+  }
+  
   # process inputs
   if(!is.null(obj)) {
     if(!inherits(obj, "mudata")) stop("obj is not a mudata object")
-    # get the object name
     mudata_shiny_object <- obj
-    mudata_shiny_object_name <- deparse(substitute(obj))
   } else {
     mudata_shiny_object <- kentvillegreenwood
     mudata_shiny_object_name <- "kentvillegreenwood"
@@ -36,6 +38,8 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
                     stats::setNames(colnames(md$data), colnames(md$data)))
   
   # make list of datasets, locations, params
+  # CMD hack
+  dataset <- NULL; rm(dataset); location <- NULL; rm(location); param <- NULL; rm(param)
   datasets <- dplyr::distinct(md$datasets, dataset)$dataset
   locations <- dplyr::distinct(md$locations, location)$location
   params <- dplyr::distinct(md$params, param)$param
@@ -58,7 +62,6 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
     }
   } else {
     mudata_shiny_save_inputs <- function(input) {
-      message("Saving Inputs")
       NULL
     }
   }
@@ -90,19 +93,21 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         shiny::checkboxGroupInput("subset_datasets", "Datasets", 
-                           choices = sort(unique(md$data$dataset)),
+                           choices = sort(datasets),
                            selected = default_input_value('subset_datasets',
                                                           NULL)),
         shiny::checkboxGroupInput("subset_locations", "Locations", 
-                           choices = sort(unique(md$data$location)),
+                           choices = sort(locations),
                            selected = default_input_value('subset_locations',
                                                           NULL)),
         shiny::checkboxGroupInput("subset_params", "Params", 
-                           choices = sort(unique(md$data$param)),
+                           choices = sort(params),
                            selected = default_input_value('subset_params',
                                                           NULL)),
         shiny::selectInput("plot_y", "Y Variable:", choices = data_columns,
                     selected = default_input_value('plot_y', "__NULL__")),
+        shiny::checkboxInput("plot_reversed_y", "Reverse", 
+                             value = default_input_value('plot_reversed_y', FALSE)),
         shiny::selectInput("plot_col", "Colour Variable:", choices = data_columns,
                     selected = default_input_value('plot_col', "__NULL__")),
         shiny::selectInput("plot_shape", "Shape Variable:", choices = data_columns,
@@ -117,7 +122,7 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
                            choices = c("point", "line", "path"),
                            selected = default_input_value('plot_geom', 'path')),
         shiny::numericInput("plot_facet_cols", "Facet Columns", 
-                     value = default_input_value('plot_facet_cols', 3), 
+                     value = default_input_value('plot_facet_cols', 2), 
                      min = 1, step = 1)
       ),
       
@@ -125,7 +130,7 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
       shiny::mainPanel(
         shiny::plotOutput("muplot", height = 600),
         shiny::verbatimTextOutput("mutext"),
-        shiny::verbatimTextOutput("input_saved")
+        shiny::textOutput("input_saved")
       )
     )
   ))
@@ -177,11 +182,21 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
     plot_args[!vapply(plot_args, is.null, logical(1))]
   }
   
+  # generate additional ggplot accessories
+  generate_ggplot_accessories <- function(input, output) {
+    if(input$plot_reversed_y) {
+      ggplot2::scale_y_reverse()
+    } else {
+      NULL
+    }
+  }
+  
   # create server object
   server <- shiny::shinyServer(function(input, output) {
     
     output$input_saved <- shiny::reactive({
       mudata_shiny_save_inputs(shiny::reactiveValuesToList(input))
+      "Input saved."
     })
     
     output$muplot <- shiny::renderPlot({
@@ -192,7 +207,8 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
       # subset mudata
       mdplot <- do.call(subset, c(list(md), subset_args))
       # plot mudata
-      do.call(ggplot2::autoplot, c(list(mdplot), plot_args))
+      do.call(ggplot2::autoplot, c(list(mdplot), plot_args)) +
+        generate_ggplot_accessories(input, output)
     })
     
     output$mutext <- shiny::renderText({
@@ -221,13 +237,23 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
                       collapse = ", "))
       )
       
+      # remove subset if there are no args
+      if(length(subset_args) == 0) {
+        calls <- calls[-2]
+      }
+      
       # tidy using formatR
       tidy <- formatR::tidy_source(text = paste(calls, collapse = " %>% "),
                                    output = FALSE, width.cutoff = 80,
                                    indent = 2)$text.tidy
       
-      # insert ggplot2 library cal
-      tidy <- paste0("library(ggplot2)\n", tidy)
+      # add ggplot2 additions
+      if(input$plot_reversed_y) {
+        tidy <- paste0(tidy, " + \n  scale_y_reverse()")
+      }
+      
+      # insert ggplot2, magrittr library call
+      tidy <- paste0("library(ggplot2)\nlibrary(magrittr)\n\n", tidy)
       
       # insert newlines after pipes
       gsub("\\s*%>%\\s*", " %>% \n  ", tidy)
@@ -239,12 +265,15 @@ mudata_app_create <- function(obj = NULL, save_state = TRUE, load_state = TRUE) 
   shiny::shinyApp(ui, server)
 }
 
-# various helpers for mudata apps
-digest_mudata <- function(md) {
-  digest::digest(md)
+#' @rdname mudata_app
+#' @export
+mudata_app_clear_cache <- function() {
+  rm(list = ls(envir = mudata_app_options), envir = mudata_app_options)
 }
 
+# environment to keep track of mudata app input states
 mudata_app_options <- new.env(parent = emptyenv())
 
-
+# this file uses kentvillegreenwood not just in examples
+data("kentvillegreenwood", envir = environment())
 

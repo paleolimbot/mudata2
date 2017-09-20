@@ -256,6 +256,46 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   invisible(TRUE)
 }
 
+#' Coerce objects to mudata
+#'
+#' @param x An object
+#' @param ... Passed to other methods
+#'
+#' @return A \link{mudata} object or an error
+#' @export
+#' 
+as_mudata <- function(x, ...) UseMethod("as_mudata")
+
+#' @rdname as_mudata
+#' @export
+as.mudata <- function(x, ...) UseMethod("as_mudata")
+
+#' @rdname as_mudata
+#' @export
+as_mudata.mudata <- function(x, ...) {
+  x
+}
+
+#' @rdname as_mudata
+#' @export
+as_mudata.data.frame <- function(x, ...) {
+  mudata(data = x, ...)
+}
+
+#' @rdname as_mudata
+#' @export
+as_mudata.tbl <- function(x, ...) {
+  mudata(data = x, ...)
+}
+
+#' @rdname as_mudata
+#' @export
+as_mudata.list <- function(x, ...) {
+  mudata(data = x$data, locations = x$locations,
+         params = x$params, datasets = x$datasets, columns = x$columns,
+         x_columns = attr(x, "x_columns"), ...)
+}
+
 .checkunique <- function(tbl, context, ..., action = stop) {
   # empty tables can be considered unique
   if(.isempty(tbl)) return()

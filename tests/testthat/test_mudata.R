@@ -213,3 +213,26 @@ test_that("grouped data frames don't cause problems in the validate method", {
   expect_silent(validate_mudata(md))
   expect_true(validate_mudata(md))
 })
+
+test_that("coersion methods work as expected", {
+  # mudata
+  expect_identical(kentvillegreenwood, as_mudata(kentvillegreenwood))
+  # tbl
+  expect_identical(as_mudata(kentvillegreenwood$data),
+                   mudata(kentvillegreenwood$data))
+  # data.frame
+  expect_identical(as_mudata(as.data.frame(kentvillegreenwood$data)),
+                   mudata(kentvillegreenwood$data))
+  # list
+  expect_identical(as_mudata(unclass(kentvillegreenwood)),
+                   kentvillegreenwood)
+  # make sure x_columns are passed on if present
+  expect_silent(as_mudata(unclass(kentvillegreenwood)))
+  kg2 <- kentvillegreenwood
+  attr(kg2, "x_columns") <- NULL
+  expect_message(as_mudata(unclass(kg2)))
+  
+  # check as.mudata
+  expect_identical(as_mudata(kentvillegreenwood),
+                   as.mudata(kentvillegreenwood))
+})

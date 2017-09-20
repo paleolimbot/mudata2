@@ -236,3 +236,10 @@ test_that("coersion methods work as expected", {
   expect_identical(as_mudata(kentvillegreenwood),
                    as.mudata(kentvillegreenwood))
 })
+
+test_that("is_mudata works as expected", {
+  expect_true(is_mudata(kentvillegreenwood))
+  expect_true(is.mudata(kentvillegreenwood))
+  expect_false(is_mudata(NULL))
+  expect_false(is.mudata(NULL))
+})

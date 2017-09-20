@@ -256,6 +256,25 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   invisible(TRUE)
 }
 
+#' Test if an object is a mudata object
+#'
+#' @param x An object
+#'
+#' @return TRUE if the object is a mudata, FALSE otherwise
+#' @export
+#'
+#' @examples
+#' is_mudata(kentvillegreenwood)
+is_mudata <- function(x) {
+  inherits(x, "mudata")
+}
+
+#' @rdname is_mudata
+#' @export
+is.mudata <- function(x) {
+  is_mudata(x)
+}
+
 #' Coerce objects to mudata
 #'
 #' @param x An object

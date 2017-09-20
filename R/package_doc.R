@@ -47,6 +47,7 @@
 #' 
 #' @seealso \link{mudata}
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @docType package
 #' @aliases NULL
 "_PACKAGE"

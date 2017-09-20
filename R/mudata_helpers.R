@@ -16,25 +16,26 @@
 #' distinct_datasets(kentvillegreenwood)
 #' 
 distinct_params <- function(x, table = "data") {
-  dplyr::collect(dplyr::distinct(x[[table]], .data$param))$param
+  .distinct_vector(x[[table]], "param")
 }
 
 #' @rdname distinct_params
 #' @export
 distinct_locations <- function(x, table = "data") {
-  dplyr::collect(dplyr::distinct(x[[table]], .data$location))$location
+  .distinct_vector(x[[table]], "location")
 }
 
 #' @rdname distinct_params
 #' @export
 distinct_datasets <- function(x, table = "data") {
-  dplyr::collect(dplyr::distinct(x[[table]], .data$dataset))$dataset
+  .distinct_vector(x[[table]], "dataset")
 }
 
 #' @rdname distinct_params
 #' @export
-distinct_columns <- function(x, table) {
-  colnames(x[[table]])
+distinct_columns <- function(x, table = names(x)) {
+  all_names <- lapply(x[table], colnames)
+  unique(unlist(all_names, use.names = FALSE))
 }
 
 #' Access components of a mudata object

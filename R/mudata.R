@@ -61,6 +61,8 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   }
   
   data <- data %>%
+    # grouped tbls cause problems in other methods
+    dplyr::ungroup() %>%
     # add default location if necessary
     .addlocation(location_id = location_id) %>%
     # add default dataset if necessary
@@ -180,18 +182,19 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   # check base type
   if(!is.list(md)) action("Base type of md is not a list")
   if(is.null(names(md))) action("Base type of md is not a named list")
+  if(any(names(md) == "")) action("All members of md must be named")
   
   # check names
-  required_names <- c("data", "locations", "params", "datasets", "columns")
-  missing_names <- required_names[!(required_names %in% names(md))]
+  missing_names <- setdiff(c("data", "locations", "params", "datasets", "columns"),
+                           names(md))
   if(length(missing_names) > 0) action("The following tables were missing from md: ",
                                      paste(missing_names, collapse = " "))
   
-  # check types
-  wrong_type_names <- !vapply(md[required_names], function(x) dplyr::is.tbl(x) || is.data.frame(x), 
+  # check types (all members of md must be tbls)
+  wrong_type_names <- !vapply(md, function(x) dplyr::is.tbl(x) || is.data.frame(x), 
                               logical(1))
   if(any(wrong_type_names)) action("The following tables were not a tbl or data.frame: ",
-                                 paste(required_names[wrong_type_names], collapse = " "))
+                                   paste(names(md)[wrong_type_names], collapse = " "))
   
   # check attributes
   x_columns <- attr(md, "x_columns")
@@ -212,36 +215,36 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   
   if(check_references) {
     # get unique params, locations, and datasets from the data table
-    params <- dplyr::collect(dplyr::distinct_(md$data, "param"))$param
-    locations <- dplyr::collect(dplyr::distinct_(md$data, "location"))$location
-    datasets <- dplyr::collect(dplyr::distinct_(md$data, "dataset"))$dataset
+    params <- .distinct_vector(md$data, "param")
+    locations <- .distinct_vector(md$data, "location")
+    datasets <- .distinct_vector(md$data, "dataset")
     
     # get unique params, locations, and datasets from the meta tables
-    table_locs <- dplyr::collect(dplyr::distinct_(md$locations, "location"))$location
-    table_params <- dplyr::collect(dplyr::distinct_(md$params, "param"))$param
-    table_datasets <- dplyr::collect(dplyr::distinct_(md$datasets, "dataset"))$dataset
+    table_locs <- .distinct_vector(md$locations, "location")
+    table_params <- .distinct_vector(md$params, "param")
+    table_datasets <- .distinct_vector(md$datasets, "dataset")
     
     # ensure locations in data are in the locations table
-    noinflocs <- locations[!(locations %in% table_locs)]
+    noinflocs <- setdiff(table_locs, locations)
     if(length(noinflocs) > 0) action("Locations not included in location table: ", 
-                                   paste(noinflocs, collapse=' '))
-    noinfparams <- params[!(params %in% table_params)]
+                                     paste(noinflocs, collapse=' '))
+    noinfparams <- setdiff(table_params, params)
     if(length(noinfparams) > 0) action("Params not included in param table: ", 
-                                     paste(noinfparams, collapse=' '))
-    noinfds <- datasets[!(datasets %in% table_datasets)]
+                                       paste(noinfparams, collapse=' '))
+    noinfds <- setdiff(table_datasets, datasets)
     if(length(noinfds) > 0) action("Datasets not included in dataset table: ", 
-                                 paste(noinfds, collapse=' '))
+                                   paste(noinfds, collapse=' '))
     
     # ensure there are no extraneous information in information tables
-    noinflocs <- table_locs[!(table_locs %in% locations)]
+    noinflocs <- setdiff(locations, table_locs)
     if(length(noinflocs) > 0) action("Locations ", paste(noinflocs, collapse=' '), 
-                                   " not included in data")
-    noinfparams <- table_params[!(table_params %in% params)]
-    if(length(noinfparams) > 0) action("Parameters ", paste(noinfparams, collapse=' '), 
                                      " not included in data")
-    noinfds <- table_datasets[!(table_datasets %in% datasets)]
+    noinfparams <- setdiff(params, table_params)
+    if(length(noinfparams) > 0) action("Parameters ", paste(noinfparams, collapse=' '), 
+                                       " not included in data")
+    noinfds <- setdiff(datasets, table_datasets)
     if(length(noinfds) > 0) action("Datasets ", paste(noinfds, collapse=' '), 
-                                 " not included in data")
+                                   " not included in data")
   }
   
   if(check_unique) {
@@ -252,8 +255,8 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
     .checkunique(md$columns, "columns", "dataset", "table", "column", action = action)
   }
   
-  # return TRUE
-  invisible(TRUE)
+  # return the object, invisibly
+  invisible(md)
 }
 
 #' Test if an object is a mudata object
@@ -309,6 +312,12 @@ as_mudata.tbl <- function(x, ...) {
 
 #' @rdname as_mudata
 #' @export
+as_mudata.src_sql <- function(x, ...) {
+  mudata_db(db = x, ...)
+}
+
+#' @rdname as_mudata
+#' @export
 as_mudata.list <- function(x, ...) {
   mudata(data = x$data, locations = x$locations,
          params = x$params, datasets = x$datasets, columns = x$columns,
@@ -319,19 +328,29 @@ as_mudata.list <- function(x, ...) {
   # empty tables can be considered unique
   if(.isempty(tbl)) return()
   
-  . <- NULL; rm(.) # cmd hack
   lengths <- tbl %>% 
     dplyr::ungroup() %>%
-    dplyr::count_(c(...)) %>%
+    dplyr::select(dplyr::one_of(c(...))) %>%
+    dplyr::group_by_all() %>%
+    dplyr::tally() %>%
     dplyr::ungroup() %>%
-    dplyr::select(dplyr::matches("(^n$)|(^nn$)")) %>%
+    dplyr::select(.data$n) %>%
     dplyr::distinct() %>%
-    dplyr::collect() %>%
-    .[[1]]
+    dplyr::collect()
   
-  if((length(lengths) != 1) || (lengths[1] != 1)) {
+  if(!identical(lengths[[1]], 1L)) {
     action(sprintf("Duplicate %s in %s table", context, context))
   }
+}
+
+# gets distinct values of a single column as a vector
+.distinct_vector <- function(tbl, col) {
+  col <- tbl %>%
+    dplyr::ungroup() %>%
+    dplyr::select(dplyr::one_of(col)) %>%
+    dplyr::distinct() %>%
+    dplyr::collect()
+  col[[1]]
 }
 
 # checks for emtpy tbls
@@ -344,7 +363,7 @@ as_mudata.list <- function(x, ...) {
   if(!inherits(df, "data.frame") && !inherits(df, "tbl")) {
     action(sprintf("Table '%s' is not a data.frame", name))
   }
-  missingcols <- required_cols[!(required_cols %in% colnames(df))]
+  missingcols <- setdiff(required_cols, colnames(df))
   if(length(missingcols)>0) action(sprintf("Table '%s' is missing columns %s",
                                            name,
                                            paste0("'", missingcols, "'", collapse=", ")))

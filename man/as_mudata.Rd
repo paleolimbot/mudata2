@@ -6,6 +6,7 @@
 \alias{as_mudata.mudata}
 \alias{as_mudata.data.frame}
 \alias{as_mudata.tbl}
+\alias{as_mudata.src_sql}
 \alias{as_mudata.list}
 \title{Coerce objects to mudata}
 \usage{
@@ -18,6 +19,8 @@ as.mudata(x, ...)
 \method{as_mudata}{data.frame}(x, ...)
 
 \method{as_mudata}{tbl}(x, ...)
+
+\method{as_mudata}{src_sql}(x, ...)
 
 \method{as_mudata}{list}(x, ...)
 }

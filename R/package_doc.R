@@ -1,6 +1,4 @@
 
-
-
 #' A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data
 #' 
 #' The 'mudata' package for R is a set of tools to create, manipulate, and 

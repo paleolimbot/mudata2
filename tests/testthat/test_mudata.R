@@ -125,21 +125,21 @@ test_that("duplicate data is detected", {
 
 test_that("duplicate location metadata are detected", {
   data("kentvillegreenwood")
-  expect_true(validate_mudata(kentvillegreenwood))
+  expect_is(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$locations <- rbind(kentvillegreenwood$locations, kentvillegreenwood$locations[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate locations in locations table")
 })
 
 test_that("duplicate param metadata are detected", {
   data("kentvillegreenwood")
-  expect_true(validate_mudata(kentvillegreenwood))
+  expect_is(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$params <- rbind(kentvillegreenwood$params, kentvillegreenwood$params[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate params in params table")
 })
 
 test_that("duplicate dataset metadata are detected", {
   data("kentvillegreenwood")
-  expect_true(validate_mudata(kentvillegreenwood))
+  expect_is(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$datasets <- rbind(kentvillegreenwood$datasets, kentvillegreenwood$datasets[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate datasets in datasets table")
 })
@@ -147,7 +147,7 @@ test_that("duplicate dataset metadata are detected", {
 
 test_that("duplicate column metadata are detected", {
   data("kentvillegreenwood")
-  expect_true(validate_mudata(kentvillegreenwood))
+  expect_is(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$columns <- rbind(kentvillegreenwood$columns, kentvillegreenwood$columns[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate columns in columns table")
 })
@@ -202,7 +202,7 @@ test_that("grouped data frames don't cause problems in the mudata constructor", 
   
   md2 <- new_mudata(lapply(md2, dplyr::ungroup), x_columns = attr(md2, "x_columns"))
   expect_silent(validate_mudata(md2))
-  expect_true(validate_mudata(md2))
+  expect_is(validate_mudata(md2), "mudata")
   
   expect_true(all(mapply(function(x, y) identical(as.data.frame(x), as.data.frame(y)), md, md2)))
 })
@@ -211,7 +211,7 @@ test_that("grouped data frames don't cause problems in the validate method", {
   md <- mudata(pocmaj_data)
   md$data <- dplyr::group_by(md$data, location, param)
   expect_silent(validate_mudata(md))
-  expect_true(validate_mudata(md))
+  expect_is(validate_mudata(md), "mudata")
 })
 
 test_that("coersion methods work as expected", {

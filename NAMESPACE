@@ -3,6 +3,7 @@
 S3method(as_mudata,data.frame)
 S3method(as_mudata,list)
 S3method(as_mudata,mudata)
+S3method(as_mudata,src_sql)
 S3method(as_mudata,tbl)
 S3method(autobiplot,data.frame)
 S3method(autobiplot,mudata)

@@ -313,7 +313,7 @@ as_mudata.tbl <- function(x, ...) {
 #' @rdname as_mudata
 #' @export
 as_mudata.src_sql <- function(x, ...) {
-  mudata_db(db = x, ...)
+  mudata_sql(db = x, ...)
 }
 
 #' @rdname as_mudata
@@ -424,9 +424,27 @@ guess_x_columns <- function(df, quiet = FALSE) {
 #' @return A mudata object
 #' @export
 #'
-mudata_db <- function(db, data = "data", locations = "locations", params = "params", 
-                      datasets = "datasets", columns = "columns") {
+mudata_sql <- function(db, data = "data", locations = NA, params = NA, 
+                      datasets = NA, columns = NA) {
   if(!inherits(db, "src_sql")) stop("'db' must be an 'src_sql'")
+  
+  # get tables from source
+  src_tbls <- dplyr::src_tbls(db)
+  
+  # set default values for non-data tbls
+  if(identical(locations, NA) && "locations" %in% src_tbls) {
+    locations <- "locations"
+  }
+  if(identical(params, NA) && "params" %in% src_tbls) {
+    params <- "params"
+  }
+  if(identical(datasets, NA) && "datasets" %in% src_tbls) {
+    datasets <- "datasets"
+  }
+  if(identical(columns, NA) && "columns" %in% src_tbls) {
+    columns <- "columns"
+  }
+  
   mudata(
     data = dplyr::tbl(db, data),
     locations = if(is.null(locations)) NULL else dplyr::tbl(db, locations),

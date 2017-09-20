@@ -71,6 +71,21 @@ test_that("mudata constructor works with sqlite data frames", {
   expect_equal(unique(kg2$columns$dataset), "the_default")
 })
 
+test_that("mudata_sql works as expected", {
+  # using default arguments
+  mdb <- mudata_sql(kg_sql)
+  kg2 <- mudata(data = sources$data, locations = sources$locations,
+                params = sources$params, datasets = sources$datasets,
+                columns = sources$columns)
+  expect_identical(dplyr::collect(mdb), dplyr::collect(kg2))
+  
+  # using only data table
+  kdb_def <- mudata_sql(kg_sql, locations = NULL, params = NULL, datasets = NULL,
+                       columns = NULL)
+  kg2_def <- mudata(data = sources$data)
+  expect_identical(dplyr::collect(kdb_def), dplyr::collect(kg2_def))
+})
+
 test_that("distinct_* functions return the correct values", {
   kg2 <- mudata(data = sources$data, locations = sources$locations,
                 params = sources$params, datasets = sources$datasets,

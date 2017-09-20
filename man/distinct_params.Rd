@@ -13,7 +13,7 @@ distinct_locations(x, table = "data")
 
 distinct_datasets(x, table = "data")
 
-distinct_columns(x, table)
+distinct_columns(x, table = names(x))
 }
 \arguments{
 \item{x}{A mudata object}

@@ -5,6 +5,10 @@
 \alias{distinct_locations}
 \alias{distinct_datasets}
 \alias{distinct_columns}
+\alias{unique_params}
+\alias{unique_locations}
+\alias{unique_datasets}
+\alias{unique_columns}
 \title{Get distinct params, locations, and datasets from a mudata object}
 \usage{
 distinct_params(x, table = "data")
@@ -14,6 +18,14 @@ distinct_locations(x, table = "data")
 distinct_datasets(x, table = "data")
 
 distinct_columns(x, table = names(x))
+
+unique_params(x, table = "data")
+
+unique_locations(x, table = "data")
+
+unique_datasets(x, table = "data")
+
+unique_columns(x, table = names(x))
 }
 \arguments{
 \item{x}{A mudata object}

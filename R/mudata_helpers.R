@@ -38,6 +38,30 @@ distinct_columns <- function(x, table = names(x)) {
   unique(unlist(all_names, use.names = FALSE))
 }
 
+#' @rdname distinct_params
+#' @export
+unique_params <- function(x, table = "data") {
+  distinct_params(x, table = table)
+}
+
+#' @rdname distinct_params
+#' @export
+unique_locations <- function(x, table = "data") {
+  distinct_locations(x, table = table)
+}
+
+#' @rdname distinct_params
+#' @export
+unique_datasets <- function(x, table = "data") {
+  distinct_datasets(x, table = table)
+}
+
+#' @rdname distinct_params
+#' @export
+unique_columns <- function(x, table = names(x)) {
+  distinct_columns(x, table = table)
+}
+
 #' Access components of a mudata object
 #'
 #' @param x A mudata object

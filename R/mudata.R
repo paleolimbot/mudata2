@@ -168,8 +168,15 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
 new_mudata <- function(md, x_columns) {
   # check base type of md
   if(!is.list(md)) stop("Base type of md is not a list")
+  # check for sql tables in md
+  is_sql <- vapply(md, inherits, "tbl_sql", FUN.VALUE = logical(1))
+  if(any(is_sql)) {
+    classes <- c("mudata_sql", "mudata", "list")
+  } else {
+    classes <- c("mudata", "list")
+  }
   # return classed list
-  structure(md, x_columns = x_columns, class = c("mudata", "list"))
+  structure(md, x_columns = x_columns, class = classes)
 }
 
 #' @rdname new_mudata

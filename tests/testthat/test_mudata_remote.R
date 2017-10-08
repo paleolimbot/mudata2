@@ -15,6 +15,7 @@ test_that("mudata constructor works with local data frames", {
                        params = kentvillegreenwood$params, datasets = kentvillegreenwood$datasets,
                        columns = kentvillegreenwood$columns)
   expect_is(kg2, "mudata")
+  expect_false(inherits(kg2, "mudata_sql"))
   expect_is(validate_mudata(kg2), "mudata")
   
   # try with automatic metadata fixing
@@ -43,6 +44,7 @@ test_that("mudata constructor works with sqlite data frames", {
                        columns = sources$columns)
   
   expect_is(kg2, "mudata")
+  expect_is(kg2, "mudata_sql")
   expect_is(validate_mudata(kg2), "mudata")
   expect_output(print(kg2))
   

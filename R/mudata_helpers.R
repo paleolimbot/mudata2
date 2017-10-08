@@ -70,37 +70,37 @@ unique_columns <- function(x, table = names(x)) {
 #' @export
 #'
 #' @examples
-#' data_tbl(kentvillegreenwood)
+#' tbl_data(kentvillegreenwood)
 #' 
-data_tbl <- function(x) {
+tbl_data <- function(x) {
   x$data
 }
 
-#' @rdname data_tbl
+#' @rdname tbl_data
 #' @export
-params_tbl <- function(x) {
+tbl_params <- function(x) {
   x$params
 }
 
-#' @rdname data_tbl
+#' @rdname tbl_data
 #' @export
-locations_tbl <- function(x) {
+tbl_locations <- function(x) {
   x$locations
 }
 
-#' @rdname data_tbl
+#' @rdname tbl_data
 #' @export
-datasets_tbl <- function(x) {
+tbl_datasets <- function(x) {
   x$datasets
 }
 
-#' @rdname data_tbl
+#' @rdname tbl_data
 #' @export
-columns_tbl <- function(x) {
+tbl_columns <- function(x) {
   x$columns
 }
 
-#' @rdname data_tbl
+#' @rdname tbl_data
 #' @export
 x_columns <- function(x) {
   attr(x, "x_columns")

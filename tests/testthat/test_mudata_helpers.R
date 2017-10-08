@@ -12,11 +12,11 @@ test_that("distinct_* functions return the correct values", {
 })
 
 test_that("accessors return the correct values", {
-  expect_identical(data_tbl(kentvillegreenwood), kentvillegreenwood$data)
-  expect_identical(params_tbl(kentvillegreenwood), kentvillegreenwood$params)
-  expect_identical(locations_tbl(kentvillegreenwood), kentvillegreenwood$locations)
-  expect_identical(datasets_tbl(kentvillegreenwood), kentvillegreenwood$datasets)
-  expect_identical(columns_tbl(kentvillegreenwood), kentvillegreenwood$columns)
+  expect_identical(tbl_data(kentvillegreenwood), kentvillegreenwood$data)
+  expect_identical(tbl_params(kentvillegreenwood), kentvillegreenwood$params)
+  expect_identical(tbl_locations(kentvillegreenwood), kentvillegreenwood$locations)
+  expect_identical(tbl_datasets(kentvillegreenwood), kentvillegreenwood$datasets)
+  expect_identical(tbl_columns(kentvillegreenwood), kentvillegreenwood$columns)
   expect_identical(x_columns(kentvillegreenwood), attr(kentvillegreenwood, "x_columns"))
 })
 

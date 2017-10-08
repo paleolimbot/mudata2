@@ -2,16 +2,20 @@
 % Please edit documentation in R/mudata.R
 \name{subset.mudata}
 \alias{subset.mudata}
+\alias{filter.mudata}
 \alias{collect.mudata}
 \title{Subset (filter) a MuData object}
 \usage{
 \method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
   locations = NULL)
 
+\method{filter}{mudata}(.data, ..., datasets = NULL, params = NULL,
+  locations = NULL)
+
 \method{collect}{mudata}(x, ...)
 }
 \arguments{
-\item{x}{The object to subset}
+\item{x, .data}{The object to subset}
 
 \item{...}{Aguments to/from methods}
 

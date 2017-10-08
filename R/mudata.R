@@ -484,29 +484,34 @@ rbind.mudata <- function(..., validate=TRUE) {
 
 #' Subset (filter) a MuData object
 #'
-#' @param x The object to subset
+#' @param x,.data The object to subset
 #' @param datasets Vector of datasets to include
 #' @param params  Vector of parameters to include
 #' @param locations Vector of locations to include
 #' @param ... Aguments to/from methods
 #'
 #' @return A subsetted mudata object
+#' @importFrom rlang !!
 #' @export
 #'
-subset.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
+subset.mudata <- function(x, ..., datasets = NULL, params = NULL, 
+                          locations = NULL) {
   
   # cmd hack
   dataset <- NULL; rm(dataset); location <- NULL; rm(location); param <- NULL; rm(param)
   
+  # enquos ...
+  filter_args <- rlang::quos(...)
+  
   # lazily filter data
-  dta <- dplyr::filter(x$data, ...)
-  if(!is.null(datasets)) {
+  dta <- dplyr::filter(x$data, !!!filter_args)
+  if(!.check_null_lazy(datasets)) {
     dta <- dplyr::filter(dta, dataset %in% datasets)
   }
-  if(!is.null(locations)) {
+  if(!.check_null_lazy(locations)) {
     dta <- dplyr::filter(dta, location %in% locations)
   }
-  if(!is.null(params)) {
+  if(!.check_null_lazy(params)) {
     dta <- dplyr::filter(dta, param %in% params)
   }
   
@@ -524,6 +529,79 @@ subset.mudata <- function(x, ..., datasets=NULL, params=NULL, locations=NULL) {
   new_mudata(list(data=dta, locations=lc, params=pm, datasets=ds, 
                  columns=cl), x_columns = attr(x, "x_columns"))
 }
+
+#' @rdname subset.mudata
+#' @importFrom dplyr filter
+#' @export
+filter.mudata <- function(.data, ..., datasets = NULL, params = NULL, 
+                          locations = NULL) {
+  
+  # quo-ify datasets, params, locations
+  datasets <- rlang::enquo(datasets)
+  locations <- rlang::enquo(locations)
+  params <- rlang::enquo(params)
+  
+  # evaluate datasets, locations, params to character vectors
+  if(!.check_null_lazy(datasets)) {
+    datasets <- tidyselect::vars_select(distinct_datasets(.data), !!datasets)
+  }
+  if(!.check_null_lazy(locations)) {
+    locations <- tidyselect::vars_select(distinct_locations(.data), !!locations)
+  }
+  if(!.check_null_lazy(params)) {
+    params <- tidyselect::vars_select(distinct_params(.data), !!params)
+  }
+  
+  # enquos ...
+  filter_args <- rlang::quos(...)
+  
+  # call subset()
+  subset.mudata(.data, !!!filter_args, datasets = datasets, params = params, locations = locations)
+}
+
+.check_null_lazy <- function(x) {
+  identical(NULL, try(eval(x[[2]], envir = environment(x)), silent = TRUE))
+}
+
+.tidyselect_vars <- function(x, type) {
+  singular <- type
+  plural <- paste0(type, "s")
+  vars <- .distinct_vector(x[[plural]], singular)
+  attr(vars, "vars_type") <- c(singular, plural)
+  vars
+}
+
+#' @export
+#' @importFrom tidyselect everything matches starts_with ends_with num_range
+#' @importFrom tidyselect contains one_of last_col
+tidyselect::everything
+
+#' @export
+tidyselect::matches
+
+#' @export
+tidyselect::starts_with
+
+#' @export
+tidyselect::ends_with
+
+#' @export
+tidyselect::ends_with
+
+#' @export
+tidyselect::contains
+
+#' @export
+tidyselect::num_range
+
+#' @export
+tidyselect::one_of
+
+#' @export
+tidyselect::last_col
+
+#' @export
+dplyr::filter
 
 #' @rdname subset.mudata
 #' @importFrom dplyr collect

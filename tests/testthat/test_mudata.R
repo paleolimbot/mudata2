@@ -176,6 +176,57 @@ test_that("mudata objects subset properly", {
   expect_identical(sort(unique(mdbothsub$params$param)), c("Ti", "V"))
 })
 
+test_that("tidyselect helpers work with filter()", {
+  
+  # check everything()
+  expect_identical(
+    filter(kentvillegreenwood, params = everything(),
+           locations = everything(),
+           datasets = everything()),
+  
+    subset(kentvillegreenwood, params = NULL,
+           locations = NULL,
+           datasets = NULL)
+  )
+  
+  # check matches(), params
+  expect_identical(
+    filter(kentvillegreenwood, params = matches("temp")),
+    subset(kentvillegreenwood, params = c("maxtemp", "meantemp", "mintemp"))
+  )
+  
+  # check starts_with(), locations
+  expect_identical(
+    filter(kentvillegreenwood, locations = starts_with("kent")),
+    subset(kentvillegreenwood, locations = "KENTVILLE CDA CS")
+  )
+  
+  # check ends_with(), datasets
+  expect_identical(
+    filter(kentvillegreenwood, datasets = ends_with("imate")),
+    kentvillegreenwood
+  )
+  
+  # check quoted names
+  expect_identical(
+    filter(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp")),
+    subset(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp"))
+  )
+  
+  # check ... calls to filter
+  expect_identical(
+    filter(kentvillegreenwood, param == "maxtemp"),
+    subset(kentvillegreenwood, param == "maxtemp")
+  )
+  
+  # check bare variable names
+  expect_identical(
+    filter(kentvillegreenwood, params = c(maxtemp, mintemp, meantemp)),
+    subset(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp"))
+  )
+  
+})
+
 test_that("recombined subsetted objects are the same as the original", {
   md <- mudata(pocmaj_data)
   mdlocsub <- subset(md, locations="MAJ-1")

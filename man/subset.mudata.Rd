@@ -2,12 +2,21 @@
 % Please edit documentation in R/mudata.R
 \name{subset.mudata}
 \alias{subset.mudata}
+\alias{select_datasets}
+\alias{select_locations}
+\alias{select_params}
 \alias{filter.mudata}
 \alias{collect.mudata}
 \title{Subset (filter) a MuData object}
 \usage{
 \method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
   locations = NULL)
+
+select_datasets(x, ...)
+
+select_locations(x, ...)
+
+select_params(x, ...)
 
 \method{filter}{mudata}(.data, ..., datasets = NULL, params = NULL,
   locations = NULL)

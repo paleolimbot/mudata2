@@ -531,6 +531,64 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 }
 
 #' @rdname subset.mudata
+#' @export
+select_datasets <- function(x, ...) {
+  # quo-ify datasets
+  datasets <- rlang::quos(...)
+  # use tidyselect to get dataset names
+  datasets <- tidyselect::vars_select(.tidyselect_vars(x, "dataset"), rlang::UQS(datasets))
+  new_datasets <- names(datasets)
+  # use subset() to do the subsetting
+  md_out <- subset.mudata(x, datasets = datasets)
+  # rename datasets using rename_dataset
+  if(any(new_datasets != datasets)) {
+    renamer <- datasets[new_datasets != datasets]
+    rename_datasets(md_out, stats::setNames(names(renamer), renamer))
+  } else {
+    md_out
+  }
+}
+
+#' @rdname subset.mudata
+#' @export
+select_locations <- function(x, ...) {
+  # quo-ify locations
+  locations <- rlang::quos(...)
+  # use tidyselect to get location names
+  locations <- tidyselect::vars_select(.tidyselect_vars(x, "location"), rlang::UQS(locations))
+  new_locations <- names(locations)
+  # use subset() to do the subsetting
+  md_out <- subset.mudata(x, locations = locations)
+  # rename datasets using rename_dataset
+  if(any(new_locations != locations)) {
+    renamer <- locations[new_locations != locations]
+    rename_locations(md_out, stats::setNames(names(renamer), renamer))
+  } else {
+    md_out
+  }
+}
+
+#' @rdname subset.mudata
+#' @export
+select_params <- function(x, ...) {
+  # quo-ify params
+  params <- rlang::quos(...)
+  # use tidyselect to get location names
+  params <- tidyselect::vars_select(.tidyselect_vars(x, "param"), rlang::UQS(params))
+  new_params <- names(params)
+  # use subset() to do the subsetting
+  md_out <- subset.mudata(x, params = params)
+  # rename datasets using rename_dataset
+  if(any(new_params != params)) {
+    renamer <- params[new_params != params]
+    rename_params(md_out, stats::setNames(names(renamer), renamer))
+  } else {
+    md_out
+  }
+}
+
+
+#' @rdname subset.mudata
 #' @importFrom dplyr filter
 #' @export
 filter.mudata <- function(.data, ..., datasets = NULL, params = NULL, 

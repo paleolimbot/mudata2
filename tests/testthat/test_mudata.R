@@ -235,6 +235,38 @@ test_that("tidyselect helpers work with filter()", {
   
 })
 
+test_that("select* methods work", {
+  expect_identical(
+    kentvillegreenwood %>% select_datasets(ecclimate) %>% distinct_datasets(),
+    "ecclimate"
+  )
+  expect_identical(
+    kentvillegreenwood %>% select_datasets(newds = ecclimate) %>% distinct_datasets(),
+    "newds"
+  )
+  expect_identical(
+    kentvillegreenwood %>% select_locations("GREENWOOD A") %>% distinct_locations(),
+    "GREENWOOD A"
+  )
+  expect_identical(
+    kentvillegreenwood %>% select_locations(Greenwood = "GREENWOOD A") %>% distinct_locations(),
+    "Greenwood"
+  )
+  expect_true(setequal(
+    kentvillegreenwood %>% select_locations(Greenwood = "GREENWOOD A", "KENTVILLE CDA CS") %>% 
+      distinct_locations(),
+    c("KENTVILLE CDA CS", "Greenwood")
+  ))
+  expect_true(setequal(
+    kentvillegreenwood %>% select_params(ends_with("temp")) %>% distinct_params(),
+    c("mintemp", "maxtemp", "meantemp")
+  ))
+  expect_true(setequal(
+    kentvillegreenwood %>% select_params(MaxTemp = maxtemp, mintemp) %>% distinct_params(),
+    c("MaxTemp", "mintemp")
+  ))
+})
+
 test_that("recombined subsetted objects are the same as the original", {
   md <- mudata(pocmaj_data)
   mdlocsub <- subset(md, locations="MAJ-1")

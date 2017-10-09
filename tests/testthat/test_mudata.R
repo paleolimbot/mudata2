@@ -225,6 +225,14 @@ test_that("tidyselect helpers work with filter()", {
     subset(kentvillegreenwood, params = c("maxtemp", "mintemp", "meantemp"))
   )
   
+  # check error messages
+  expect_error(filter(kentvillegreenwood, params = "not_a_param"),
+               "Strings must match param names")
+  expect_error(filter(kentvillegreenwood, locations = "not_a_location"),
+               "Strings must match location names")
+  expect_error(filter(kentvillegreenwood, datasets = "not_a_dataset"),
+               "Strings must match dataset names")
+  
 })
 
 test_that("recombined subsetted objects are the same as the original", {

@@ -543,13 +543,13 @@ filter.mudata <- function(.data, ..., datasets = NULL, params = NULL,
   
   # evaluate datasets, locations, params to character vectors
   if(!.check_null_lazy(datasets)) {
-    datasets <- tidyselect::vars_select(distinct_datasets(.data), !!datasets)
+    datasets <- tidyselect::vars_select(.tidyselect_vars(.data, "dataset"), !!datasets)
   }
   if(!.check_null_lazy(locations)) {
-    locations <- tidyselect::vars_select(distinct_locations(.data), !!locations)
+    locations <- tidyselect::vars_select(.tidyselect_vars(.data, "location"), !!locations)
   }
   if(!.check_null_lazy(params)) {
-    params <- tidyselect::vars_select(distinct_params(.data), !!params)
+    params <- tidyselect::vars_select(.tidyselect_vars(.data, "param"), !!params)
   }
   
   # enquos ...
@@ -567,7 +567,7 @@ filter.mudata <- function(.data, ..., datasets = NULL, params = NULL,
   singular <- type
   plural <- paste0(type, "s")
   vars <- .distinct_vector(x[[plural]], singular)
-  attr(vars, "vars_type") <- c(singular, plural)
+  attr(vars, "type") <- c(singular, plural)
   vars
 }
 
@@ -602,6 +602,9 @@ tidyselect::last_col
 
 #' @export
 dplyr::filter
+
+#' @export
+magrittr::`%>%`
 
 #' @rdname subset.mudata
 #' @importFrom dplyr collect

@@ -9,11 +9,11 @@
 \usage{
 update_datasets(x, datasets, ...)
 
-update_locations(x, locations, ..., datasets)
+update_locations(x, locations, datasets, ...)
 
-update_params(x, params, ..., datasets)
+update_params(x, params, datasets, ...)
 
-update_columns(x, tables, columns, ..., datasets)
+update_columns(x, columns, tables, datasets, ...)
 }
 \arguments{
 \item{x}{A mudata object}
@@ -26,9 +26,9 @@ update_columns(x, tables, columns, ..., datasets)
 
 \item{params}{One or more params to update}
 
-\item{tables}{One or more tables to update (columns table)}
-
 \item{columns}{One or more columns to update (columns table)}
+
+\item{tables}{One or more tables to update (columns table)}
 }
 \value{
 A modified version of x

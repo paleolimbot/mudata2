@@ -140,7 +140,7 @@ update_datasets <- function(x, datasets, ...) {
 
 #' @rdname update_datasets
 #' @export
-update_locations <- function(x, locations, ..., datasets) {
+update_locations <- function(x, locations, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "locations")
   }
@@ -162,7 +162,7 @@ update_locations <- function(x, locations, ..., datasets) {
 
 #' @rdname update_datasets
 #' @export
-update_params <- function(x, params, ..., datasets) {
+update_params <- function(x, params, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "params")
   }
@@ -184,7 +184,7 @@ update_params <- function(x, params, ..., datasets) {
 
 #' @rdname update_datasets
 #' @export
-update_columns <- function(x, tables, columns, ..., datasets) {
+update_columns <- function(x, columns, tables, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "columns")
   }

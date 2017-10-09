@@ -143,7 +143,7 @@ test_that("update_params() function works as expected", {
 test_that("update_columns() works as expected", {
   # check updated value
   updated_type <- kentvillegreenwood %>%
-    update_columns("data", "flags", type = "newtype") %>%
+    update_columns("flags", tables = "data", type = "newtype") %>%
     tbl_columns()
   expect_identical(kentvillegreenwood$columns[-4], updated_type[-4])
   expect_identical(
@@ -153,7 +153,7 @@ test_that("update_columns() works as expected", {
   
   # check new value
   new_key <- kentvillegreenwood %>%
-    update_columns("data", "flags", unit = "newunit") %>%
+    update_columns("flags", tables = "data", unit = "newunit") %>%
     tbl_columns()
   expect_identical(kentvillegreenwood$columns, new_key[-5])
   expect_identical(

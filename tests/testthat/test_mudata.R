@@ -35,13 +35,15 @@ test_that("x_columns are correctly assigned/identified", {
   # ...but should still assign the x_columns attribute
   expect_equal(attr(mudata(pocmaj_data, x_columns = "depth"), "x_columns"), "depth")
   
+  # x_columns should be able to be character(0), for the case where there is no axis other than
+  # dataset, location, and param
   # when zero x_columns are passed (or guessed), there should be an error
-  pocmajinv <- pocmaj_data %>% dplyr::select(-depth)
-  expect_error(mudata(pocmajinv), "Could not guess x columns from names: location, param, value")
-  expect_error(mudata(pocmaj_data, x_columns = character(0)),
-               "x_columns must be a character vector of length > 0")
-  expect_error(mudata(pocmaj_data, x_columns = "not_in_pocmaj_data"),
-               "Table 'data' is missing columns 'not_in_pocmaj_data'")
+  # pocmajinv <- pocmaj_data %>% dplyr::select(-depth)
+  # expect_error(mudata(pocmajinv), "Could not guess x columns from names: location, param, value")
+  # expect_error(mudata(pocmaj_data, x_columns = character(0)),
+  #              "x_columns must be a character vector of length > 0")
+  # expect_error(mudata(pocmaj_data, x_columns = "not_in_pocmaj_data"),
+  #              "Table 'data' is missing columns 'not_in_pocmaj_data'")
 })
 
 test_that("passing invalid inputs throws an error", {

@@ -55,7 +55,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   if(is.null(x_columns)) {
     x_columns <- guess_x_columns(data)
   } else {
-    if(length(x_columns) == 0) stop("x_columns must be a character vector of length > 0")
+    # x_columns should be able to be character(0), for the case where there is no axis other than
+    # dataset, location, and param
+    # if(length(x_columns) == 0) stop("x_columns must be a character vector of length > 0")
     if(!is.character(x_columns)) stop("x_columns must be a character vector of length > 0")
     .checkcols(data, 'data', x_columns)
   }
@@ -405,12 +407,17 @@ as_mudata.list <- function(x, ...) {
 
 # guesses the "x" column, or the column along which the data are aligned
 guess_x_columns <- function(df, quiet = FALSE) {
+  # make sure value is a column
+  if(!("value" %in% colnames(df))) stop("Could not guess x columns: no 'value' column")
+  
   # looking for the column name(s) before 'value'
   value <- which(colnames(df) == "value")[1]
   cols <- setdiff(colnames(df)[1:value], c("dataset", "location", "param", "value"))
   
-  if(length(cols) == 0) stop("Could not guess x columns from names: ",
-                             paste(colnames(df), collapse = ", "))
+  # x_columns should be able to be character(0), for the case where there is no axis other than
+  # dataset, location, and param
+  #if(length(cols) == 0) stop("Could not guess x columns from names: ",
+  #                           paste(colnames(df), collapse = ", "))
   
   if(!quiet) message("Guessing x columns: ",
                      paste(cols, collapse = ", "))

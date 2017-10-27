@@ -12,7 +12,8 @@ Imports: reshape2, ggplot2, plyr, dplyr (>= 0.7), jsonlite (>= 1.2), methods, ti
   magrittr, stringr, readr, tidyr, lubridate, hms, rlang, tidyselect
 Depends:
     R (>= 3.2.2)
-Suggests: testthat, RSQLite, dbplyr, sf, shiny, digest, formatR
+Suggests: testthat, RSQLite, dbplyr, sf, shiny, digest, formatR,
+    covr
 License: GPL-2
 URL: https://github.com/paleolimbot/mudata
 BugReports: https://github.com/paleolimbot/mudata/issues

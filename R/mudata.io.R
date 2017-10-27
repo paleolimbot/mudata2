@@ -166,28 +166,15 @@ read_mudata_dir <- function(filename, validate = TRUE, ...) {
   
   # find columns.csv, read it in
   columns_csv <- file.path(mudir, "columns.csv")
-  type_strs <- list()
   if(file.exists(columns_csv)) {
     # try to generate type_str_tbl
-    type_str_tbl <- try(readr::read_csv(columns_csv, col_names = TRUE,
-                                        col_types = readr::cols(.default = readr::col_character())))
-    if(all(c("table", "column", "type") %in% names(type_str_tbl))) {
-      # generate small version of column type table and validate it
-      type_str_tbl <- type_str_tbl %>%
-        dplyr::select(dplyr::one_of(c("table", "column", "type"))) %>%
-        dplyr::distinct()
-      # types need to be unique to be read by this function
-      .checkunique(type_str_tbl, 'columns', c("table", "column"))
-      
-      # create list of type_str named lists
-      . <- NULL; rm(.) # CMD hack
-      type_str_tbl <- type_str_tbl %>%
-        tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
-      type_strs <- type_str_tbl %>%
-        .$types %>%
-        lapply(tibble::deframe) %>%
-        stats::setNames(type_str_tbl$table)
-    }
+    columns_tbl <- try(readr::read_csv(columns_csv, 
+                                        col_names = TRUE,
+                                        col_types = readr::cols(.default = readr::col_character())),
+                        silent = TRUE)
+    type_strs <- type_strs_from_columns(columns_tbl)
+  } else {
+    type_strs <- list()
   }
   
   # iterate over csv files in mudir, reading as character
@@ -202,6 +189,7 @@ read_mudata_dir <- function(filename, validate = TRUE, ...) {
   # remove metadata, extract x_columns
   meta <- obj[["_mudata"]]
   obj[["_mudata"]] <- NULL
+  
   # retreive x_columns
   x_columns <- NULL
   if(!is.null(meta) && ("x_columns" %in% colnames(meta))) {
@@ -211,24 +199,14 @@ read_mudata_dir <- function(filename, validate = TRUE, ...) {
     }
   }
   
-  # pass mudata tables to mudata_parse_tbl
-  obj <- lapply(names(obj), 
-                function(tbl_name) {
-                  type_str <- type_strs[[tbl_name]]
-                  if(is.null(type_str)) {
-                    type_str <- NA_character_
-                  }
-                  mudata_parse_tbl(obj[[tbl_name]], type_str = type_str)
-                }) %>%
-    stats::setNames(names(obj))
+  # recreate metadata list
+  metadata <- list(x_columns = x_columns)
   
-  # pass to mudata
-  md <- mudata(data = obj$data, locations = obj$locations, params = obj$params, 
-               datasets = obj$datasets, columns = obj$columns, x_columns = x_columns,
-               validate = validate)
+  # mudata tbls are all objects in obj
+  mudata_tbls <- names(obj)
   
-  # add additional obj list items and return
-  new_mudata(c(md, obj[setdiff(names(obj), names(md))]), x_columns = x_columns)
+  # use read_common to apply retyping and create mudata object
+  read_common(obj, mudata_tbls, metadata, type_strs, validate = validate)
 }
 
 #' @rdname write_mudata
@@ -300,55 +278,30 @@ read_mudata_json_common <- function(fun, validate = TRUE, ...) {
          paste(names(obj)[wrong_type_tbls], collapse = ", "))
   }
   
-  # extract and remove metadata, if present
-  metadata <- obj[["_mudata"]]
-  x_columns <- obj[["_mudata"]]$x_columns
-  obj[["_mudata"]] <- NULL
-  
   # get column type information
   if(("columns" %in% names(obj)) && 
      all(c("table", "column", "type") %in% names(obj$columns))) {
     # generate small version of column type table and validate it
-    type_str_tbl <- tibble::tibble(table = obj$columns$table,
-                                column = obj$columns$column, type = obj$columns$type) %>%
-      dplyr::distinct()
-    # types need to be unique to be read by this function
-    .checkunique(type_str_tbl, 'columns', c("table", "column"))
+    columns_tbl <- tibble::tibble(table = obj$columns$table,
+                                  column = obj$columns$column, 
+                                  type = obj$columns$type)
     
-    # create list of type_str named lists
-    . <- NULL; rm(.) # CMD hack
-    type_str_tbl <- type_str_tbl %>%
-      tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
-    type_strs <- type_str_tbl %>%
-      .$types %>%
-      lapply(tibble::deframe) %>%
-      stats::setNames(type_str_tbl$table)
+    # use type_strs from generate_type_strs
+    type_strs <- type_strs_from_columns(columns_tbl)
   } else {
-    type_strs <- list()
+    type_strs <- type_strs_from_columns(NULL)
   }
   
-  # redefine mudata_tbls to mean all list-like objects in obj
+  # extract and remove metadata, if present
+  metadata <- obj[["_mudata"]]
+  obj[["_mudata"]] <- NULL
+  
+  # define mudata_tbls to mean all list-like objects in obj
   # these should all be tbls with the same logic from columns applied
   mudata_tbls <- names(obj)[vapply(obj, is.list, logical(1))]
   
-  # pass mudata tables to mudata_parse_tbl
-  md <- lapply(intersect(mudata_tbls, names(obj)), 
-               function(tbl_name) {
-                 type_str <- type_strs[[tbl_name]]
-                 if(is.null(type_str)) {
-                   type_str <- NA_character_
-                 }
-                 mudata_parse_tbl(obj[[tbl_name]], type_str = type_str)
-               }) %>%
-    stats::setNames(intersect(mudata_tbls, names(obj)))
-  
-  # pass to mudata
-  md <- mudata(data = md$data, locations = md$locations, params = md$params, 
-               datasets = md$datasets, columns = md$columns, x_columns = x_columns,
-               validate = validate)
-  
-  # add additional obj list items and return
-  new_mudata(c(md, obj[setdiff(names(obj), mudata_tbls)]), x_columns = x_columns)
+  # use read_common to apply retyping and create mudata object
+  read_common(obj, mudata_tbls, metadata, type_strs, validate = validate)
 }
 
 
@@ -366,6 +319,64 @@ write_mudata_common <- function(md, validate = TRUE, update_columns = TRUE, form
   
   # return md_write
   md_write
+}
+
+# common function to transform tbls, pass to mudata constructor
+read_common <- function(obj, mudata_tbls, meta_list, type_strs, validate) {
+  
+  # pass mudata tables to mudata_parse_tbl
+  md <- lapply(intersect(mudata_tbls, names(obj)), 
+               function(tbl_name) {
+                 type_str <- type_strs[[tbl_name]]
+                 if(is.null(type_str)) {
+                   type_str <- NA_character_
+                 }
+                 mudata_parse_tbl(obj[[tbl_name]], type_str = type_str)
+               }) %>%
+    stats::setNames(intersect(mudata_tbls, names(obj)))
+  
+  # only using x_columns from meta_tbl (both may be NULL)
+  x_columns <- meta_list$x_columns
+  
+  # pass to mudata
+  md <- mudata(data = md$data, locations = md$locations, params = md$params, 
+               datasets = md$datasets, columns = md$columns, x_columns = x_columns,
+               validate = validate)
+  
+  # add additional obj list items and return
+  new_mudata(c(md, obj[setdiff(names(obj), mudata_tbls)]), x_columns = x_columns)
+}
+
+# common function to read a columns table (type_str_tbl)
+type_strs_from_columns <- function(columns_tbl) {
+  if(is.null(columns_tbl)) return(list())
+  if(!all(c("table", "column", "type") %in% colnames(columns_tbl))) {
+    # no types specified, quietly return list()
+    return(list())
+  }
+  
+  # get distinct table, column, type info
+  type_str_tbl <- columns_tbl %>%
+    dplyr::select("table", "column", "type") %>%
+    dplyr::distinct()
+  
+  # types need to be unique to be read by this function
+  is_unique <- try(.checkunique(type_str_tbl, 'columns', c("table", "column")), silent = TRUE)
+  if(inherits(is_unique, "try-error")) {
+    # duplicate values = slightly malformed columns table. return list() with a message
+    message("Possibly malformed columns table: different data types for at least one column among datasets.")
+    return(list())
+  }
+  
+  # create list of type_str named lists
+  . <- NULL; rm(.) # CMD hack
+  type_str_tbl <- type_str_tbl %>%
+    tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
+  type_strs <- type_str_tbl %>%
+    .$types %>%
+    lapply(tibble::deframe) %>%
+    stats::setNames(type_str_tbl$table)
+  type_strs
 }
 
 #' Update the columns table

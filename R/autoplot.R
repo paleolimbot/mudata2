@@ -483,6 +483,8 @@ guess_id_vars <- function(vars, measure_var) {
 #' framework.
 #'
 #' @param x A \link{mudata} object
+#' @param xvar The variable on the x-axis
+#' @param yvar The variable on the y-axis
 #' @param ... Passed on to \link{long_plot} or \link{long_ggplot}
 #'
 #' @export
@@ -498,9 +500,9 @@ guess_id_vars <- function(vars, measure_var) {
 #' 
 #' @importFrom ggplot2 autoplot
 #'
-autoplot.mudata <- function(x, ...) {
+autoplot.mudata <- function(x, xvar = NULL, yvar = NULL, ...) {
   long_ggplot(x$data, id_vars=c("dataset", "location", "param", attr(x, "x_columns")[1]), 
-              measure_var="value", ...)
+              measure_var="value", x = xvar, y = yvar, ...)
 }
 
 #' @rdname autoplot.mudata

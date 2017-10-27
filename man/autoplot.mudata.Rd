@@ -5,12 +5,16 @@
 \alias{plot.mudata}
 \title{Autoplot a mudata object}
 \usage{
-\method{autoplot}{mudata}(x, ...)
+\method{autoplot}{mudata}(x, xvar = NULL, yvar = NULL, ...)
 
 \method{plot}{mudata}(x, ...)
 }
 \arguments{
 \item{x}{A \link{mudata} object}
+
+\item{xvar}{The variable on the x-axis}
+
+\item{yvar}{The variable on the y-axis}
 
 \item{...}{Passed on to \link{long_plot} or \link{long_ggplot}}
 }

@@ -37,7 +37,12 @@ test_that("x_columns are correctly assigned/identified", {
   
   # x_columns should be able to be character(0), for the case where there is no axis other than
   # dataset, location, and param
-  # when zero x_columns are passed (or guessed), there should be an error
+  pocmaj_nodepth <- pocmaj_data %>% 
+    dplyr::filter(depth == 0) %>%
+    dplyr::select(-depth)
+  expect_identical(x_columns(mudata(pocmaj_nodepth)), character(0))
+  
+  # when zero x_columns are passed (or guessed), previouslly there should have been an error
   # pocmajinv <- pocmaj_data %>% dplyr::select(-depth)
   # expect_error(mudata(pocmajinv), "Could not guess x columns from names: location, param, value")
   # expect_error(mudata(pocmaj_data, x_columns = character(0)),

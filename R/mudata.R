@@ -24,6 +24,7 @@
 #'   all dataset/table/column combinations.
 #' @param x_columns A vector of column names from the data table that in combination with
 #'   'dataset', 'location', and 'param' identify unique rows.
+#' @param ...,more_tbls More tbls (as named arguments) to be included in the mudata object
 #' @param dataset_id The dataset id to use if a datasets column is omitted.
 #' @param location_id The location id if a location column is omitted.
 #' @param validate Pass \code{FALSE} to skip validation of input tables.
@@ -47,8 +48,17 @@
 #' mudata(datatable)
 #' 
 mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NULL,
-                   x_columns = NULL,
+                   x_columns = NULL, ..., more_tbls = NULL,
                    dataset_id='default', location_id = 'default', validate = TRUE) {
+  # check validity of extra tbls
+  more_tbls <- c(list(...), as.list(more_tbls))
+  if(length(more_tbls) > 0 && (is.null(names(more_tbls)) || any(names(more_tbls) == ""))) {
+    stop("more_tbls must only contain named tbls")
+  }
+  if(!all(vapply(more_tbls, function(x) dplyr::is.tbl(x) || is.data.frame(x), logical(1)))) {
+    stop("more_tbls must only contain tbls")
+  }
+  
   # check data object
   .checkcols(data, 'data', c('param', 'value'))
   # check for x_columns if necessary
@@ -115,8 +125,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   # check columns object
   if(is.null(columns)) {
     # autogenerate columns table
-    columns <- list(data = data, locations = locations, 
-                    params = params, datasets = datasets) %>%
+    columns <- c(list(data = data, locations = locations, 
+                      params = params, datasets = datasets),
+                 more_tbls) %>%
       new_mudata(x_columns = x_columns) %>%
       generate_type_tbl(default = "guess")
   } else {
@@ -128,8 +139,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   }
   
   # create a list of tables
-  mdlist <- list(data = data, locations = locations, params = params,
-                 datasets = datasets, columns = columns)
+  mdlist <- c(list(data = data, locations = locations, params = params,
+                   datasets = datasets, columns = columns),
+              more_tbls)
   
   # coerce to tbls using dplyr
   mdlist <- lapply(mdlist, dplyr::as.tbl)

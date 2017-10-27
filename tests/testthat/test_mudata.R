@@ -210,3 +210,42 @@ test_that("is_mudata works as expected", {
   expect_false(is_mudata(NULL))
   expect_false(is.mudata(NULL))
 })
+
+test_that("more_tbls argument works as expected in the mudata constructor", {
+  # create a possible fictional table that might want to be included in a mudata object
+  flags_dict <- kentvillegreenwood %>% 
+    tbl_data() %>% 
+    dplyr::filter(!is.na(flags)) %>% 
+    dplyr::distinct(param, flags) %>%
+    dplyr::mutate(data_number = 1:4, data_date = as.Date("1970-01-01") + 1:4, 
+                  data_chr = c("one", "two", "three", "four"))
+  
+  # expect that flags_dict makes it into the mudata and columns table
+  kg2 <- mudata(kentvillegreenwood$data, flags_dict = flags_dict)
+  expect_true("flags_dict" %in% names(kg2))
+  expect_true("flags_dict" %in% kg2$columns$table)
+  expect_identical(kg2$flags_dict, flags_dict)
+  
+  # expect that ... and more_tbls do the same thing
+  expect_identical(
+    mudata(kentvillegreenwood$data, flags_dict = flags_dict),
+    mudata(kentvillegreenwood$data, more_tbls = list(flags_dict = flags_dict))
+  )
+  
+  # check that invalid values to more_tbls generate errors
+  # no names
+  expect_error(
+    mudata(kentvillegreenwood$data, more_tbls = list(flags_dict)),
+    "more_tbls must only contain named tbls"
+  )
+  # some names
+  expect_error(
+    mudata(kentvillegreenwood$data, more_tbls = list(flags_dict = flags_dict, flags_dict)),
+    "more_tbls must only contain named tbls"
+  )
+  # not tbls
+  expect_error(
+    mudata(kentvillegreenwood$data, more_tbls = list(flags_dict = list('not a tibble'))),
+    "more_tbls must only contain tbls"
+  )
+})

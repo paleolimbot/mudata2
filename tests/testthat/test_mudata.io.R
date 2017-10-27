@@ -420,3 +420,29 @@ test_that("read/write directory functions work", {
   test_dir(pocmaj_md)
 })
 
+test_that("additional tbls can be included in mudata read/write", {
+  
+  # create a possible fictional table that might want to be included in a mudata object
+  flags_dict <- kentvillegreenwood %>% 
+    tbl_data() %>% 
+    dplyr::filter(!is.na(flags)) %>% 
+    dplyr::distinct(param, flags) %>%
+    dplyr::mutate(data_number = 1:4, data_date = as.Date("1970-01-01") + 1:4, 
+                  data_chr = c("one", "two", "three", "four"))
+  
+  kg2 <- kentvillegreenwood
+  kg2$flags_dict <- flags_dict
+  kg2 <- update_columns_table(kg2)
+  
+  outfile <- tempfile(fileext = ".mudata")
+  write_mudata_dir(kg2, outfile)
+  kg3 <- read_mudata_dir(outfile)
+  expect_identical(kg3, kg2)
+  
+  outfile_json <- tempfile(fileext = ".json")
+  write_mudata_json(kg2, outfile_json)
+  kg4 <- read_mudata_json(outfile_json)
+  expect_identical(kg4, kg2)
+  
+})
+

@@ -5,8 +5,8 @@
 \title{Create a MuData object}
 \usage{
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
-  columns = NULL, x_columns = NULL, dataset_id = "default",
-  location_id = "default", validate = TRUE)
+  columns = NULL, x_columns = NULL, ..., more_tbls = NULL,
+  dataset_id = "default", location_id = "default", validate = TRUE)
 }
 \arguments{
 \item{data}{The data table, which is a molten data frame containing the columns (at least)
@@ -33,6 +33,8 @@ all dataset/table/column combinations.}
 
 \item{x_columns}{A vector of column names from the data table that in combination with
 'dataset', 'location', and 'param' identify unique rows.}
+
+\item{..., more_tbls}{More tbls (as named arguments) to be included in the mudata object}
 
 \item{dataset_id}{The dataset id to use if a datasets column is omitted.}
 

@@ -339,12 +339,10 @@ read_common <- function(obj, mudata_tbls, meta_list, type_strs, validate) {
   x_columns <- meta_list$x_columns
   
   # pass to mudata
-  md <- mudata(data = md$data, locations = md$locations, params = md$params, 
-               datasets = md$datasets, columns = md$columns, x_columns = x_columns,
-               validate = validate)
-  
-  # add additional obj list items and return
-  new_mudata(c(md, obj[setdiff(names(obj), mudata_tbls)]), x_columns = x_columns)
+  md_obj <- mudata(data = md$data, locations = md$locations, params = md$params, 
+                   datasets = md$datasets, columns = md$columns, x_columns = x_columns,
+                   more_tbls = md[setdiff(names(md), c("data", "locations", "params", "datasets", "columns"))],
+                   validate = validate)
 }
 
 # common function to read a columns table (type_str_tbl)

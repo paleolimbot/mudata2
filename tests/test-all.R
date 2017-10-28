@@ -1,4 +1,4 @@
 
 library(testthat)
 
-test_check("mudata")
+test_check("mudata2")

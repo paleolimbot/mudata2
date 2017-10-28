@@ -1,9 +1,9 @@
-R package 'mudata'
+R package 'mudata2'
 ================
 Dewey Dunnington
 February 26, 2017
 
-[![](http://cranlogs.r-pkg.org/badges/mudata)](https://cran.r-project.org/package=mudata) [![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata) [![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg)](https://codecov.io/github/paleolimbot/mudata?branch=master)
+[![](http://cranlogs.r-pkg.org/badges/mudata)](https://cran.r-project.org/package=mudata2) [![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata) [![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg)](https://codecov.io/github/paleolimbot/mudata?branch=master)
 
 The 'mudata' package for R is a set of tools to create, manipulate, and visualize multi-parameter, spatiotemporal data. Data of this type includes all data where multiple parameters (e.g. wind speed, precipitation, temperature) are measured along a common axis (e.g. time, depth) at discrete locations (e.g. climate stations). These data include long-term climate data collected from climate stations, paleolimnological data, ice core data, and ocean core data among many others. Data of this type is often voluminous and difficult to organize given its multi-dimensional nature. The (mostly) universal data (mudata) format is an attempt to organize these data in a common way to facilitate their documentation and comparison.
 
@@ -23,7 +23,7 @@ The MUData format
 The (mostly) universal data format is a collection of five (or more) tables, one of which contains the data in a molten form (see [tidyr](https://cran.r-project.org/package=tidyr)). The easiest way to visualize a mudata object is to inspect the `kentvillegreenwood` dataset within the package. This object is a collection of daily observations from Kentville, Nova Scotia, and Greenwood, Nova Scotia from July and August, 1999.
 
 ``` r
-library(mudata)
+library(mudata2)
 library(ggplot2)
 data("kentvillegreenwood")
 autoplot(kentvillegreenwood)
@@ -388,4 +388,4 @@ autoplot(md, y="depth", error_var="sd") + scale_y_reverse()
 And more!
 ---------
 
-There is much more to the `mudata()` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users.
+There is much more to the `mudata2` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users.

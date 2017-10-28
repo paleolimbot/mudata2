@@ -215,7 +215,7 @@ test_that("mudata_prepare_column and mudata_parse_column are opposites", {
   
   # get type strings, expected output classes
   type_strs <- generate_type_tbl(test_df) %>% tibble::deframe()
-  output_clases <- vapply(type_strs, mudata:::parse_output_class, character(1))
+  output_clases <- vapply(type_strs, mudata2:::parse_output_class, character(1))
   
   # get prepared columns
   prepared <- lapply(test_df, mudata_prepare_column, format = NA)

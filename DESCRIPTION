@@ -1,4 +1,4 @@
-Package: mudata
+Package: mudata2
 Title: Interchange Tools for Multi-Parameter Spatiotemporal Data
 Version: 0.1.9000
 Authors@R: person("Dewey", "Dunnington", role = c("aut", "cre"),

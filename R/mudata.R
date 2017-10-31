@@ -499,7 +499,7 @@ collect.mudata <- function(x, ...) {
 #' @export
 #'
 #' @examples
-#' # print(kentvillegreenwood)
+#' print(kentvillegreenwood)
 #' 
 print.mudata <- function(x, ..., width = NULL) {
 

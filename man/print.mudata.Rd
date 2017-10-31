@@ -20,6 +20,6 @@ x, invisibly
 Print a mudata object
 }
 \examples{
-# print(kentvillegreenwood)
+print(kentvillegreenwood)
 
 }

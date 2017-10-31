@@ -17,11 +17,11 @@
 \method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
   locations = NULL)
 
-select_datasets(.data, ...)
+select_datasets(.data, ..., .factor = FALSE)
 
-select_locations(.data, ...)
+select_locations(.data, ..., .factor = FALSE)
 
-select_params(.data, ...)
+select_params(.data, ..., .factor = FALSE)
 
 filter_datasets(.data, ...)
 
@@ -41,6 +41,8 @@ filter_params(.data, ...)
 \item{params}{Vector of parameters to include}
 
 \item{locations}{Vector of locations to include}
+
+\item{.factor}{Maintain order of selected components by converting them to factors}
 }
 \value{
 A subsetted mudata object

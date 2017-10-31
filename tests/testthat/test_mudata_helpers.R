@@ -3,13 +3,29 @@ context("mudata helper functions")
 
 test_that("distinct_* functions return the correct values", {
   expect_equal(distinct_params(kentvillegreenwood),
-               unique(kentvillegreenwood$data$param))
+               sort(unique(kentvillegreenwood$data$param)))
   expect_equal(distinct_locations(kentvillegreenwood),
-               unique(kentvillegreenwood$data$location))
+               sort(unique(kentvillegreenwood$data$location)))
   expect_equal(distinct_datasets(kentvillegreenwood), "ecclimate")
   expect_equal(distinct_columns(kentvillegreenwood, "data"),
-               c("dataset", "location", "param", "date", "value", "flags"))
+               sort(c("dataset", "location", "param", "date", "value", "flags")))
   expect_equal(src_tbls(kentvillegreenwood), names(kentvillegreenwood))
+})
+
+test_that("distinct_* functions always return character vectors", {
+  kg2 <- kentvillegreenwood
+  kg2$data$param <- factor(kg2$data$param)
+  kg2$params$param <- factor(kg2$params$param)
+  kg2$data$location <- factor(kg2$data$location)
+  kg2$locations$location <- factor(kg2$locations$location)
+  kg2$data$dataset <- factor(kg2$data$dataset)
+  kg2$locations$dataset <- factor(kg2$locations$dataset)
+  kg2$params$dataset <- factor(kg2$params$dataset)
+  kg2$columns$dataset <- factor(kg2$columns$dataset)
+  
+  expect_is(kg2 %>% distinct_params(), "character")
+  expect_is(kg2 %>% distinct_datasets(), "character")
+  expect_is(kg2 %>% distinct_locations(), "character")
 })
 
 test_that("accessors return the correct values", {
@@ -23,12 +39,12 @@ test_that("accessors return the correct values", {
 
 test_that("unique_* functions return the correct values", {
   expect_equal(unique_params(kentvillegreenwood),
-               unique(kentvillegreenwood$data$param))
+               distinct_params(kentvillegreenwood))
   expect_equal(unique_locations(kentvillegreenwood),
-               unique(kentvillegreenwood$data$location))
+               distinct_locations(kentvillegreenwood))
   expect_equal(unique_datasets(kentvillegreenwood), "ecclimate")
   expect_equal(unique_columns(kentvillegreenwood, "data"),
-               c("dataset", "location", "param", "date", "value", "flags"))
+               distinct_columns(kentvillegreenwood, "data"))
 })
 
 test_that("update_datasets() function works as expected", {

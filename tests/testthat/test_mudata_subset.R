@@ -115,3 +115,40 @@ test_that("identity subsets work", {
   expect_identical(kentvillegreenwood, filter_locations(kentvillegreenwood))
   expect_identical(kentvillegreenwood, filter_params(kentvillegreenwood))
 })
+
+test_that("subsets with factorized columns work", {
+  kg2 <- kentvillegreenwood
+  kg2$data$param <- factor(kg2$data$param)
+  kg2$params$param <- factor(kg2$params$param)
+  kg2$data$location <- factor(kg2$data$location)
+  kg2$locations$location <- factor(kg2$locations$location)
+  kg2$data$dataset <- factor(kg2$data$dataset)
+  kg2$locations$dataset <- factor(kg2$locations$dataset)
+  kg2$params$dataset <- factor(kg2$params$dataset)
+  kg2$columns$dataset <- factor(kg2$columns$dataset)
+  
+  expect_identical(
+    kg2 %>% select_params(ends_with("temp")) %>% distinct_params(),
+    kentvillegreenwood %>% select_params(ends_with("temp")) %>% distinct_params()
+  )
+})
+
+test_that("maintaining order using .factor = TRUE works", {
+  kgtemp <- kentvillegreenwood %>% select_params(mt = mintemp, meantemp, maxtemp, .factor = TRUE)
+  expect_equal(distinct_params(kgtemp), c("mt", "meantemp", "maxtemp"))
+  expect_is(kgtemp$data$param, "factor")
+  expect_is(kgtemp$params$param, "factor")
+  
+  kgloc <- kentvillegreenwood %>% select_locations(Kentville = `KENTVILLE CDA CS`, Greenwood = `GREENWOOD A`,
+                                                   .factor = TRUE)
+  expect_equal(distinct_locations(kgloc), c("Kentville", "Greenwood"))
+  expect_is(kgloc$data$location, "factor")
+  expect_is(kgloc$locations$location, "factor")
+  
+  kgds <- kentvillegreenwood %>% select_datasets(everything(), .factor = TRUE)
+  expect_is(kgds$data$dataset, "factor")
+  expect_is(kgds$params$dataset, "factor")
+  expect_is(kgds$locations$dataset, "factor")
+  expect_is(kgds$datasets$dataset, "factor")
+  expect_is(kgds$columns$dataset, "factor")
+})

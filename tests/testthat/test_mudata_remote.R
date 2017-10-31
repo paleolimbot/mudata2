@@ -111,12 +111,12 @@ test_that("distinct_* functions return the correct values", {
                 columns = sources$columns)
   
   expect_equal(distinct_params(kg2),
-               unique(kentvillegreenwood$data$param))
+               distinct_params(kentvillegreenwood))
   expect_equal(distinct_locations(kg2),
-               unique(kentvillegreenwood$data$location))
+               distinct_locations(kentvillegreenwood))
   expect_equal(distinct_datasets(kg2), "ecclimate")
   expect_equal(distinct_columns(kg2, "data"),
-               c("dataset", "location", "param", "date", "value", "flags"))
+               distinct_columns(kentvillegreenwood, "data"))
 })
 
 test_that("autoplot/plot works on sqlite sources", {

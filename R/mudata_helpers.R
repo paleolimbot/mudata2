@@ -16,26 +16,26 @@
 #' distinct_datasets(kentvillegreenwood)
 #' 
 distinct_params <- function(x, table = "data") {
-  .distinct_vector(x[[table]], "param")
+  as.character(sort(.distinct_vector(x[[table]], "param")))
 }
 
 #' @rdname distinct_params
 #' @export
 distinct_locations <- function(x, table = "data") {
-  .distinct_vector(x[[table]], "location")
+  as.character(sort(.distinct_vector(x[[table]], "location")))
 }
 
 #' @rdname distinct_params
 #' @export
 distinct_datasets <- function(x, table = "data") {
-  .distinct_vector(x[[table]], "dataset")
+  as.character(sort(.distinct_vector(x[[table]], "dataset")))
 }
 
 #' @rdname distinct_params
 #' @export
 distinct_columns <- function(x, table = names(x)) {
   all_names <- lapply(x[table], colnames)
-  unique(unlist(all_names, use.names = FALSE))
+  sort(unique(unlist(all_names, use.names = FALSE)))
 }
 
 #' @rdname distinct_params

@@ -26,6 +26,7 @@ rbind.mudata <- function(..., validate=TRUE) {
 #' @param datasets Vector of datasets to include
 #' @param params  Vector of parameters to include
 #' @param locations Vector of locations to include
+#' @param .factor Maintain order of selected components by converting them to factors
 #' @param ... Aguments to/from methods
 #'
 #' @return A subsetted mudata object
@@ -54,7 +55,7 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 
 #' @rdname subset.mudata
 #' @export
-select_datasets <- function(.data, ...) {
+select_datasets <- function(.data, ..., .factor = FALSE) {
   # quo-ify datasets
   datasets <- rlang::quos(...)
   # use tidyselect to get dataset names
@@ -65,15 +66,19 @@ select_datasets <- function(.data, ...) {
   # rename datasets using rename_dataset
   if(any(new_datasets != datasets)) {
     renamer <- datasets[new_datasets != datasets]
-    rename_datasets(md_out, stats::setNames(names(renamer), renamer))
-  } else {
-    md_out
+    md_out <- rename_datasets(md_out, stats::setNames(names(renamer), renamer))
   }
+  
+  if(.factor) {
+    md_out <- .factorize(md_out, "dataset", new_datasets)
+  }
+  
+  md_out
 }
 
 #' @rdname subset.mudata
 #' @export
-select_locations <- function(.data, ...) {
+select_locations <- function(.data, ..., .factor = FALSE) {
   # quo-ify locations
   locations <- rlang::quos(...)
   # use tidyselect to get location names
@@ -84,15 +89,19 @@ select_locations <- function(.data, ...) {
   # rename datasets using rename_dataset
   if(any(new_locations != locations)) {
     renamer <- locations[new_locations != locations]
-    rename_locations(md_out, stats::setNames(names(renamer), renamer))
-  } else {
-    md_out
+    md_out <- rename_locations(md_out, stats::setNames(names(renamer), renamer))
+  } 
+  
+  if(.factor) {
+    md_out <- .factorize(md_out, "location", new_locations)
   }
+  
+  md_out
 }
 
 #' @rdname subset.mudata
 #' @export
-select_params <- function(.data, ...) {
+select_params <- function(.data, ..., .factor = FALSE) {
   # quo-ify params
   params <- rlang::quos(...)
   # use tidyselect to get location names
@@ -103,10 +112,14 @@ select_params <- function(.data, ...) {
   # rename datasets using rename_dataset
   if(any(new_params != params)) {
     renamer <- params[new_params != params]
-    rename_params(md_out, stats::setNames(names(renamer), renamer))
-  } else {
-    md_out
+    md_out <- rename_params(md_out, stats::setNames(names(renamer), renamer))
   }
+  
+  if(.factor) {
+    md_out <- .factorize(md_out, "param", new_params)
+  }
+  
+  md_out
 }
 
 #' @rdname subset.mudata
@@ -144,7 +157,7 @@ filter_data <- function(.data, ...) {
   
   # keep class of original
   new_mudata(list(data=dta, locations=lc, params=pm, datasets=ds, 
-                  columns=cl), x_columns = attr(.data, "x_columns"))
+                  columns=cl), x_columns = x_columns(.data))
 }
 
 #' @rdname subset.mudata
@@ -173,14 +186,20 @@ filter_params <- function(.data, ...) {
   filter_data(.data, paste(.data$dataset, .data$param, sep = "/////") %in% params)
 }
 
-.check_null_lazy <- function(x) {
-  identical(NULL, try(eval(x[[2]], envir = environment(x)), silent = TRUE))
-}
-
 .tidyselect_vars <- function(x, type) {
   singular <- type
   plural <- paste0(type, "s")
-  vars <- .distinct_vector(x[[plural]], singular)
+  vars <- as.character(.distinct_vector(x[[plural]], singular))
   attr(vars, "type") <- c(singular, plural)
   vars
 }
+
+.factorize <- function(md, column, levels) {
+  for(tbl in src_tbls(md)) {
+    if(column %in% colnames(md[[tbl]])) {
+      md[[tbl]][[column]] <- factor(md[[tbl]][[column]], levels = levels)
+    }
+  }
+  md
+}
+

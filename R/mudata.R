@@ -480,41 +480,77 @@ mudata_sql <- function(db, data = "data", locations = NA, params = NA,
   )
 }
 
-#' @export
-#' @importFrom tidyselect everything matches starts_with ends_with num_range
-#' @importFrom tidyselect contains one_of last_col
-tidyselect::everything
-
-#' @export
-tidyselect::matches
-
-#' @export
-tidyselect::starts_with
-
-#' @export
-tidyselect::ends_with
-
-#' @export
-tidyselect::ends_with
-
-#' @export
-tidyselect::contains
-
-#' @export
-tidyselect::num_range
-
-#' @export
-tidyselect::one_of
-
-#' @export
-tidyselect::last_col
-
-#' @export
-magrittr::`%>%`
-
 #' @rdname subset.mudata
 #' @importFrom dplyr collect
 #' @export
 collect.mudata <- function(x, ...) {
   new_mudata(lapply(x, dplyr::collect), x_columns = attr(x, "x_columns"))
 }
+
+
+
+#' Print a mudata object
+#'
+#' @param x A mudata object
+#' @param width The number of characters to use as console width
+#' @param ... Passed to other methods
+#'
+#' @return x, invisibly
+#' @export
+#'
+#' @examples
+#' # print(kentvillegreenwood)
+#' 
+print.mudata <- function(x, ..., width = NULL) {
+
+  cat(format_vector(prefix = "A mudata object aligned along ", x_columns(x), width = width))
+  cat("\n")
+  cat(format_vector(prefix = "  distinct_datasets():  ", distinct_datasets(x), width = width))
+  cat("\n")
+  cat(format_vector(prefix = "  distinct_locations(): ", distinct_locations(x), width = width))
+  cat("\n")
+  cat(format_vector(prefix = "  distinct_params():    ", distinct_params(x), width = width))
+  cat("\n")
+  cat(format_vector(prefix = "  src_tbls():           ", src_tbls(x), width = width))
+  
+  cat("\n\ntbl_data() %>% head():\n")
+  
+  print(utils::head(tbl_data(x)), width = width)
+  invisible(x)
+}
+
+format_vector <- function(x, width = NULL, quote = '"', prefix = "") {
+  if(is.null(width)) {
+    width <- getOption("width")
+  }
+  # use only non-prefix space
+  effective_width <- width - nchar(prefix)
+  
+  # if zero length, use <none>
+  if(length(x) == 0) return(paste0(prefix, "<none>"))
+  
+  # try to fit as many possible values into to one line as possible
+  out_len <- length(x)
+  while(out_len > 0) {
+    out_x <- x[seq_len(out_len)]
+    if((length(x) - length(out_x)) > 0) {
+      out_more <- sprintf(" ... and %s more", length(x) - length(out_x))
+    } else {
+      out_more <- ""
+    }
+    out_chars <- paste0(quote, out_x, quote, collapse = ", ")
+    out_text <- paste0(prefix, out_chars, out_more)
+    if(nchar(out_text) <= effective_width) return(out_text)
+    
+    # exponential backoff in case lists are extra long
+    if(out_len <= 2) {
+      break
+    } else {
+      out_len <- round(out_len * 0.75)
+    }
+  }
+  
+  # no values will fit within width
+  return(sprintf("%s... %s values", prefix, length(x)))
+}
+

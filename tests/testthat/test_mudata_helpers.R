@@ -9,6 +9,7 @@ test_that("distinct_* functions return the correct values", {
   expect_equal(distinct_datasets(kentvillegreenwood), "ecclimate")
   expect_equal(distinct_columns(kentvillegreenwood, "data"),
                c("dataset", "location", "param", "date", "value", "flags"))
+  expect_equal(src_tbls(kentvillegreenwood), names(kentvillegreenwood))
 })
 
 test_that("accessors return the correct values", {

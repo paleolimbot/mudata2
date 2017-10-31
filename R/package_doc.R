@@ -49,3 +49,42 @@
 #' @docType package
 #' @aliases NULL
 "_PACKAGE"
+
+# ---- functions from other packages that are exported ----
+
+#' @export
+#' @importFrom tidyselect everything matches starts_with ends_with num_range
+#' @importFrom tidyselect contains one_of last_col
+tidyselect::everything
+
+#' @export
+tidyselect::matches
+
+#' @export
+tidyselect::starts_with
+
+#' @export
+tidyselect::ends_with
+
+#' @export
+tidyselect::ends_with
+
+#' @export
+tidyselect::contains
+
+#' @export
+tidyselect::num_range
+
+#' @export
+tidyselect::one_of
+
+#' @export
+tidyselect::last_col
+
+#' @importFrom ggplot2 autoplot
+#' @export
+ggplot2::autoplot
+
+#' @importFrom magrittr %>%
+#' @export
+magrittr::`%>%`

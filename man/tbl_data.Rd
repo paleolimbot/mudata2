@@ -6,6 +6,7 @@
 \alias{tbl_locations}
 \alias{tbl_datasets}
 \alias{tbl_columns}
+\alias{tbl.mudata}
 \alias{x_columns}
 \title{Access components of a mudata object}
 \usage{
@@ -19,10 +20,16 @@ tbl_datasets(x)
 
 tbl_columns(x)
 
+\method{tbl}{mudata}(src, which, ...)
+
 x_columns(x)
 }
 \arguments{
-\item{x}{A mudata object}
+\item{x, src}{A mudata object}
+
+\item{which}{Which tbl to extract}
+
+\item{...}{Unused}
 }
 \value{
 The appropriate component

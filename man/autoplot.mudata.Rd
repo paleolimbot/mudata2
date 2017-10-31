@@ -5,18 +5,14 @@
 \alias{plot.mudata}
 \title{Autoplot a mudata object}
 \usage{
-\method{autoplot}{mudata}(x, xvar = NULL, yvar = NULL, ...)
+\method{autoplot}{mudata}(object, ...)
 
 \method{plot}{mudata}(x, ...)
 }
 \arguments{
-\item{x}{A \link{mudata} object}
-
-\item{xvar}{The variable on the x-axis}
-
-\item{yvar}{The variable on the y-axis}
-
 \item{...}{Passed on to \link{long_plot} or \link{long_ggplot}}
+
+\item{x, object}{A \link{mudata} object}
 }
 \description{
 Produces a quick graphical summary of a mudata object using the ggplot or base plotting

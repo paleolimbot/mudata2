@@ -62,9 +62,17 @@ unique_columns <- function(x, table = names(x)) {
   distinct_columns(x, table = table)
 }
 
+#' @rdname distinct_params
+#' @export
+src_tbls <- function(x) {
+  names(x)
+}
+
 #' Access components of a mudata object
 #'
-#' @param x A mudata object
+#' @param x,src A mudata object
+#' @param which Which tbl to extract
+#' @param ... Unused
 #'
 #' @return The appropriate component
 #' @export
@@ -98,6 +106,13 @@ tbl_datasets <- function(x) {
 #' @export
 tbl_columns <- function(x) {
   x$columns
+}
+
+#' @rdname tbl_data
+#' @importFrom dplyr tbl
+#' @export
+tbl.mudata <- function(src, which, ...) {
+  src[[which]]
 }
 
 #' @rdname tbl_data

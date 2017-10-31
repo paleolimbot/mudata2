@@ -482,9 +482,7 @@ guess_id_vars <- function(vars, measure_var) {
 #' Produces a quick graphical summary of a mudata object using the ggplot or base plotting
 #' framework.
 #'
-#' @param x A \link{mudata} object
-#' @param xvar The variable on the x-axis
-#' @param yvar The variable on the y-axis
+#' @param x,object A \link{mudata} object
 #' @param ... Passed on to \link{long_plot} or \link{long_ggplot}
 #'
 #' @export
@@ -500,16 +498,16 @@ guess_id_vars <- function(vars, measure_var) {
 #' 
 #' @importFrom ggplot2 autoplot
 #'
-autoplot.mudata <- function(x, xvar = NULL, yvar = NULL, ...) {
-  long_ggplot(x$data, id_vars=c("dataset", "location", "param", attr(x, "x_columns")[1]), 
-              measure_var="value", x = xvar, y = yvar, ...)
+autoplot.mudata <- function(object, ...) {
+  long_ggplot(object$data, id_vars=c("dataset", "location", "param", x_columns(object)[1]), 
+              measure_var="value", ...)
 }
 
 #' @rdname autoplot.mudata
 #' @importFrom graphics plot
 #' @export
 plot.mudata <- function(x, ...) {
-  long_plot(x$data, id_vars=c("dataset", "location", "param", attr(x, "x_columns")[1]), 
+  long_plot(x$data, id_vars=c("dataset", "location", "param", x_columns(x)[1]), 
             measure_var="value", ...)
 }
 

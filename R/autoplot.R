@@ -35,7 +35,7 @@
 #' long_plot(pocmaj_long, col="core")
 #' long_ggplot(pocmaj_long, col="core")
 #'
-long_ggplot <- function(.data, ..., facet_args = list()) {
+long_ggplot <- function(.data, ..., max_facets = 9, facet_args = list()) {
   # use long_plot_base to do the guessing
   args <- long_plot_base(.data, ...)
   
@@ -70,6 +70,17 @@ long_ggplot <- function(.data, ..., facet_args = list()) {
       facet_args$facets <- stats::as.formula(sprintf("~%s", paste(args$mapping$facets, 
                                                                   collapse = "+")))
     }
+    
+    # filter such that there are only max_facets number of facets
+    facet_df <- create_facet_df(.data, args$mapping$facets, max_facets)
+    # create data by collecting and left_joining facet info
+    # CMD hack
+    .facet_number <- NULL; rm(.facet_number)
+    .data <- .data %>%
+      dplyr::ungroup() %>%
+      dplyr::collect() %>%
+      dplyr::left_join(facet_df, by = args$mapping$facets) %>%
+      dplyr::filter(!is.na(.facet_number))
     
     plot_facet <- do.call(ggplot2::facet_wrap, facet_args)
   }
@@ -167,24 +178,7 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
   
   if(!is.null(args$mapping$facets)) {
     # figure out facet info
-    facet_df <- .data %>%
-      dplyr::ungroup() %>%
-      dplyr::select(dplyr::one_of(args$mapping$facets)) %>%
-      dplyr::distinct() %>%
-      dplyr::collect() %>%
-      # sort by all facetting variables
-      dplyr::group_by_all() %>%
-      dplyr::arrange(.by_group = TRUE) %>%
-      dplyr::ungroup() %>%
-      # create facet number variable
-      dplyr::mutate(.facet_number = 1:n())
-    
-    # check number of facets, only plot first max_facets
-    if(!identical(max_facets, FALSE) && (nrow(facet_df) > max_facets)) {
-      message(sprintf("Using first %s facets of %s. ", max_facets, nrow(facet_df)),
-              "Use max_facets = FALSE to plot all facets")
-      facet_df <- utils::head(facet_df, max_facets)
-    }
+    facet_df <- create_facet_df(.data, args$mapping$facets, max_facets)
     
     # assign facet labels by pasting each non-facet_number column together
     facet_df$.facet_label <- vapply(seq_len(nrow(facet_df)), function(i) {
@@ -415,6 +409,33 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
     x = x, y = y, error_var = error_var, facets = facets,
     measure_var = measure_var, more_args = more_args
   ))
+}
+
+create_facet_df <- function(.data, facets, max_facets) {
+  # CMD plot hack
+  n <- NULL; rm(n)
+  
+  # get all distinct combos of facet vars
+  facet_df <- .data %>%
+    dplyr::ungroup() %>%
+    dplyr::select(dplyr::one_of(facets)) %>%
+    dplyr::distinct() %>%
+    dplyr::collect() %>%
+    # sort by all facetting variables
+    dplyr::group_by_all() %>%
+    dplyr::arrange(.by_group = TRUE) %>%
+    dplyr::ungroup() %>%
+    # create facet number variable
+    dplyr::mutate(.facet_number = 1:n())
+  
+  # check number of facets, only plot first max_facets
+  if(!identical(max_facets, FALSE) && (nrow(facet_df) > max_facets)) {
+    message(sprintf("Using first %s facets of %s. ", max_facets, nrow(facet_df)),
+            "Use max_facets = FALSE to plot all facets")
+    facet_df <- utils::head(facet_df, max_facets)
+  }
+  
+  facet_df
 }
 
 # guesses x and y based on the numeircness of .data

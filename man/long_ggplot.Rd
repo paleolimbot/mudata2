@@ -6,7 +6,7 @@
 \alias{long_plot_base}
 \title{Smart plotting of parameter-long data frames}
 \usage{
-long_ggplot(.data, ..., facet_args = list())
+long_ggplot(.data, ..., max_facets = 9, facet_args = list())
 
 long_plot(.data, id_vars = NULL, measure_var = "value", x = NULL,
   y = NULL, facets = NULL, geom = "path", error_var = NULL, ...,
@@ -20,6 +20,8 @@ long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
 
 \item{...}{Additional aesthetic mappings, passed on to 
 (or treated similarly to) \link[ggplot2]{aes_string}}
+
+\item{max_facets}{Constrain the maximum number of facets, where available}
 
 \item{facet_args}{Passed on to \link[ggplot2]{facet_wrap}}
 
@@ -36,8 +38,6 @@ long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
 \item{geom}{Can be any combination of point, path, or line.}
 
 \item{error_var}{The column to be used for plus/minus error bars}
-
-\item{max_facets}{Constrain the maximum number of facets, where available}
 
 \item{scales}{Customize aesthetic mapping in long_plot()}
 }

@@ -88,6 +88,23 @@ test_that("mudata_sql works as expected", {
   expect_identical(dplyr::collect(kdb_def), dplyr::collect(kg2_def))
 })
 
+test_that("summary and print methods are sql type safe", {
+  # create remote dataset
+  kg2 <- mudata(data = sources$data, locations = sources$locations,
+                params = sources$params, datasets = sources$datasets,
+                columns = sources$columns)
+  
+  # print method
+  expect_identical(print(kg2), kg2)
+  expect_output(print(kg2))
+  
+  # summary method
+  expect_is(summary(kg2), "tbl_df")
+  expect_equal(summary(kg2) %>% colnames(), 
+               c("param", "location", "dataset", "mean_value", "sd_value", "n", "n_NA"))
+  
+})
+
 test_that("distinct_* functions return the correct values", {
   kg2 <- mudata(data = sources$data, locations = sources$locations,
                 params = sources$params, datasets = sources$datasets,
@@ -100,6 +117,31 @@ test_that("distinct_* functions return the correct values", {
   expect_equal(distinct_datasets(kg2), "ecclimate")
   expect_equal(distinct_columns(kg2, "data"),
                c("dataset", "location", "param", "date", "value", "flags"))
+})
+
+test_that("autoplot/plot works on sqlite sources", {
+  kg2 <- mudata(data = sources$data, locations = sources$locations,
+                params = sources$params, datasets = sources$datasets,
+                columns = sources$columns)
+  expect_is(ggplot2::autoplot(kg2), "ggplot")
+  plot(kg2)
+})
+
+test_that("long_pairs works with sqlite sources", {
+  kg2 <- mudata(data = sources$data, locations = sources$locations,
+                params = sources$params, datasets = sources$datasets,
+                columns = sources$columns)
+  df_local <- kg2$data %>% dplyr::collect()
+  pairs_sqlite <- long_pairs(kg2$data, id_vars = c("location", "date"), 
+                             names_x = c("meantemp", "maxtemp"), names_y = c("mintemp", "meantemp"),
+                             name_var = "param") %>%
+    dplyr::mutate(date = as.numeric(date))
+  pairs_local <- long_pairs(df_local, id_vars = c("location", "date"), 
+                            names_x = c("meantemp", "maxtemp"), names_y = c("mintemp", "meantemp"),
+                            name_var = "param") %>%
+    dplyr::mutate(date = as.numeric(date))
+  
+  expect_identical(pairs_sqlite, pairs_local)
 })
 
 # clean temporary database

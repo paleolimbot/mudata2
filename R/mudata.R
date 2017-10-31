@@ -491,7 +491,7 @@ collect.mudata <- function(x, ...) {
 
 #' Print a mudata object
 #'
-#' @param x A mudata object
+#' @param x,object A mudata object
 #' @param width The number of characters to use as console width
 #' @param ... Passed to other methods
 #'
@@ -517,6 +517,42 @@ print.mudata <- function(x, ..., width = NULL) {
   
   print(utils::head(tbl_data(x)), width = width)
   invisible(x)
+}
+
+#' @export
+#' @rdname print.mudata
+summary.mudata <- function(object, ...) {
+  data <- tbl_data(object)
+  data_head <- utils::head(data) %>% dplyr::collect()
+  
+  # empty data, empty summary
+  if(nrow(data_head) == 0) {
+    return(tibble::tibble(param = character(0), location = character(0), dataset = character(0)))
+  }
+  
+  # numeric, non sql data
+  n <- NULL; rm(n); value <- NULL; rm(value); sd <- NULL; rm(sd)
+  if(is.numeric(data_head$value) && !inherits(data, "tbl_sql")) {
+    df <- data %>%
+      dplyr::group_by_at(dplyr::vars("param", "location", "dataset")) %>%
+      dplyr::summarise(mean_value = mean(value, na.rm = TRUE), 
+                       sd_value = stats::sd(value, na.rm = TRUE), 
+                       n = n(), 
+                       n_NA = sum(is.na(value)))
+  } else if(is.numeric(data_head$value) && inherits(data, "tbl_sql")) {
+    df <- data %>%
+      dplyr::group_by_at(dplyr::vars("param", "location", "dataset")) %>%
+      dplyr::summarise(mean_value = mean(value), 
+                       sd_value = sd(value), 
+                       n = n(), 
+                       n_NA = sum(is.na(value)))
+  } else {
+    df <- data %>%
+      dplyr::group_by_at(dplyr::vars("param", "location", "dataset")) %>%
+      dplyr::summarise(n = n())
+  }
+  
+  df %>% dplyr::ungroup() %>% dplyr::collect()
 }
 
 format_vector <- function(x, width = NULL, quote = '"', prefix = "") {

@@ -165,6 +165,20 @@ test_that("printing of a mudata actually prints things", {
   expect_output(print(md))
 })
 
+test_that("mudata summaries are tibbles", {
+  md <- mudata(pocmaj_data)
+  expect_is(summary(md), "tbl_df")
+  expect_equal(summary(md) %>% colnames(), 
+               c("param", "location", "dataset", "mean_value", "sd_value", "n", "n_NA"))
+  
+  # check with value as non-numeric
+  md$data$value <- as.character(md$data$value)
+  expect_is(summary(md), "tbl_df")
+  expect_equal(summary(md) %>% colnames(), 
+               c("param", "location", "dataset", "n"))
+  
+})
+
 test_that("grouped data frames don't cause problems in the mudata constructor", {
   md <- mudata(pocmaj_data)
   expect_silent(mudata(dplyr::group_by(pocmaj_data, location, param), 

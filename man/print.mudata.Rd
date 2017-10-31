@@ -2,12 +2,15 @@
 % Please edit documentation in R/mudata.R
 \name{print.mudata}
 \alias{print.mudata}
+\alias{summary.mudata}
 \title{Print a mudata object}
 \usage{
 \method{print}{mudata}(x, ..., width = NULL)
+
+\method{summary}{mudata}(object, ...)
 }
 \arguments{
-\item{x}{A mudata object}
+\item{x, object}{A mudata object}
 
 \item{...}{Passed to other methods}
 

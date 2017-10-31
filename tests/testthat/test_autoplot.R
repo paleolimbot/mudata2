@@ -7,17 +7,6 @@ pocmaj_data <- pocmajsum %>%
   tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
   dplyr::select(location = core, param, depth, value)
 kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
-# create sqlite database with kvtemp dataset
-sql_file <- tempfile()[1]
-kg_sql <- dplyr::src_sqlite(sql_file, create = TRUE)
-sources <- sapply(c("data", "locations", "params", "datasets", "columns"),
-                  function(table) {
-                    dplyr::copy_to(kg_sql, kentvillegreenwood[[table]], table)
-                  }, simplify = FALSE)
-# create remote dataset
-kv_sqlite <- mudata(data = sources$data, locations = sources$locations,
-                    params = sources$params, datasets = sources$datasets,
-                    columns = sources$columns)
 
 # ---- tests ----
 
@@ -195,19 +184,9 @@ test_that("grouped data frames don't cause problems in plot()", {
                    long_plot(dplyr::ungroup(datatable))$facet_df)
 })
 
-test_that("autoplot works on sqlite sources", {
-  expect_is(ggplot2::autoplot(kv_sqlite), "ggplot")
-  plot(kv_sqlite)
-})
-
 test_that("numeric variables are correctly identified", {
   df <- data.frame(a=factor("a factor"), b="not a factor", c=4,
                    d=4.5, e=Sys.Date(), f=Sys.time())
   expect_that(names(df)[sapply(df, is.numericish)], equals(c("c", "d", "e", "f")))
   expect_that(!sapply(df, is.numericish), equals(sapply(df, ggplot2:::is.discrete)))
 })
-
-
-# clean temporary database
-unlink(sql_file)
-rm(kg_sql); gc() # disconnect sqlite database

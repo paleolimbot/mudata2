@@ -9,7 +9,7 @@
 \alias{unique_locations}
 \alias{unique_datasets}
 \alias{unique_columns}
-\alias{src_tbls}
+\alias{src_tbls.mudata}
 \title{Get distinct params, locations, and datasets from a mudata object}
 \usage{
 distinct_params(x, table = "data")
@@ -28,7 +28,7 @@ unique_datasets(x, table = "data")
 
 unique_columns(x, table = names(x))
 
-src_tbls(x)
+\method{src_tbls}{mudata}(x)
 }
 \arguments{
 \item{x}{A mudata object}

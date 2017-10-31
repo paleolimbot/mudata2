@@ -19,9 +19,9 @@
 \alias{reexports}
 \alias{one_of}
 \alias{reexports}
-\alias{last_col}
-\alias{reexports}
 \alias{autoplot}
+\alias{reexports}
+\alias{src_tbls}
 \alias{reexports}
 \alias{\%>\%}
 \title{Objects exported from other packages}
@@ -31,10 +31,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
+  \item{dplyr}{\code{\link[dplyr]{everything}}, \code{\link[dplyr]{matches}}, \code{\link[dplyr]{starts_with}}, \code{\link[dplyr]{ends_with}}, \code{\link[dplyr]{ends_with}}, \code{\link[dplyr]{contains}}, \code{\link[dplyr]{num_range}}, \code{\link[dplyr]{one_of}}, \code{\link[dplyr]{src_tbls}}}
+
   \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
 
   \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
-
-  \item{tidyselect}{\code{\link[tidyselect]{everything}}, \code{\link[tidyselect]{matches}}, \code{\link[tidyselect]{starts_with}}, \code{\link[tidyselect]{ends_with}}, \code{\link[tidyselect]{ends_with}}, \code{\link[tidyselect]{contains}}, \code{\link[tidyselect]{num_range}}, \code{\link[tidyselect]{one_of}}, \code{\link[tidyselect]{last_col}}}
 }}
 

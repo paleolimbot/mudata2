@@ -53,37 +53,38 @@
 # ---- functions from other packages that are exported ----
 
 #' @export
-#' @importFrom tidyselect everything matches starts_with ends_with num_range
-#' @importFrom tidyselect contains one_of last_col
-tidyselect::everything
+#' @importFrom dplyr everything matches starts_with ends_with num_range
+#' @importFrom dplyr contains one_of
+dplyr::everything
 
 #' @export
-tidyselect::matches
+dplyr::matches
 
 #' @export
-tidyselect::starts_with
+dplyr::starts_with
 
 #' @export
-tidyselect::ends_with
+dplyr::ends_with
 
 #' @export
-tidyselect::ends_with
+dplyr::ends_with
 
 #' @export
-tidyselect::contains
+dplyr::contains
 
 #' @export
-tidyselect::num_range
+dplyr::num_range
 
 #' @export
-tidyselect::one_of
-
-#' @export
-tidyselect::last_col
+dplyr::one_of
 
 #' @importFrom ggplot2 autoplot
 #' @export
 ggplot2::autoplot
+
+#' @importFrom ggplot2 autoplot
+#' @export
+dplyr::src_tbls
 
 #' @importFrom magrittr %>%
 #' @export

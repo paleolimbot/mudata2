@@ -229,6 +229,14 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   .checkcols(md$columns, 'columns', c('dataset', 'table', 'column'), action = action)
   .checkcols(md$params, 'params', c('dataset', 'param'), action = action)
   
+  # check column types
+  .checktypes(md$locations, 'locations', c('dataset', 'location'), c("character", "factor"), action = action)
+  .checktypes(md$data, 'data', c('dataset', 'location', 'param'), c("character", "factor"), action = action)
+  .checktypes(md$datasets, 'datasets', 'dataset', c("character", "factor"), action = action)
+  .checktypes(md$columns, 'columns', 'dataset', c("character", "factor"), action = action)
+  .checktypes(md$columns, 'columns', c('table', 'column'), "character", action = action)
+  .checktypes(md$params, 'params', c('dataset', 'param'), c("character", "factor"), action = action)
+  
   if(check_unique) {
     # ensure data is summarised
     .checkunique(md$data, "data", "dataset", "location", "param", x_columns, action = action)
@@ -342,7 +350,9 @@ as_mudata.src_sql <- function(x, ...) {
 as_mudata.list <- function(x, ...) {
   mudata(data = x$data, locations = x$locations,
          params = x$params, datasets = x$datasets, columns = x$columns,
-         x_columns = attr(x, "x_columns"), ...)
+         x_columns = attr(x, "x_columns"), 
+         more_tbls = x[setdiff(names(x), c("data", "locations", "params", "datasets", "columns"))],
+         ...)
 }
 
 .checkunique <- function(tbl, context, ..., action = stop) {
@@ -377,6 +387,18 @@ as_mudata.list <- function(x, ...) {
 # checks for emtpy tbls
 .isempty <- function(tbl) {
   nrow(dplyr::collect(utils::head(tbl))) == 0
+}
+
+.checktypes <- function(df, name, cols, types, action = stop) {
+  df_head <- utils::head(dplyr::collect(df))
+  wrong_type_cols <- !vapply(cols, 
+                             function(col_name) any(class(df_head[[col_name]]) %in% types), 
+                             logical(1))
+  if(any(wrong_type_cols)) {
+    action(sprintf("Table '%s' has columns of incorrect type: %s",
+                   name,
+                   paste0("'", cols[wrong_type_cols], "'", collapse = ", ")))
+  }
 }
 
 # ensures all columns in required_cols are in df, and that df has colnames to begin with

@@ -66,7 +66,7 @@ select_datasets <- function(.data, ..., .factor = FALSE) {
   # rename datasets using rename_dataset
   if(any(new_datasets != datasets)) {
     renamer <- datasets[new_datasets != datasets]
-    md_out <- rename_datasets(md_out, stats::setNames(names(renamer), renamer))
+    md_out <- rename_datasets_base(md_out, stats::setNames(names(renamer), renamer))
   }
   
   if(.factor) {
@@ -86,10 +86,10 @@ select_locations <- function(.data, ..., .factor = FALSE) {
   new_locations <- names(locations)
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$location %in% locations)
-  # rename datasets using rename_dataset
+  # rename datasets using rename_locations_base
   if(any(new_locations != locations)) {
     renamer <- locations[new_locations != locations]
-    md_out <- rename_locations(md_out, stats::setNames(names(renamer), renamer))
+    md_out <- rename_locations_base(md_out, stats::setNames(names(renamer), renamer))
   } 
   
   if(.factor) {
@@ -109,10 +109,10 @@ select_params <- function(.data, ..., .factor = FALSE) {
   new_params <- names(params)
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$param %in% params)
-  # rename datasets using rename_dataset
+  # rename datasets using rename_params_base
   if(any(new_params != params)) {
     renamer <- params[new_params != params]
-    md_out <- rename_params(md_out, stats::setNames(names(renamer), renamer))
+    md_out <- rename_params_base(md_out, stats::setNames(names(renamer), renamer))
   }
   
   if(.factor) {

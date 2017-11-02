@@ -1,3 +1,105 @@
+
+#' Rename things in a mudata object
+#'
+#' @param .data A mudata object
+#' @param ... Variables to rename in the form new_var = old_var
+#'
+#' @return A modified mudata object
+#' @export
+#' @rdname renamers
+#'
+#' @examples
+#' rename_datasets(kentvillegreenwood, avalley = ecclimate)
+#' rename_locations(kentvillegreenwood, Greenwood = starts_with("GREENWOOD"))
+#' rename_params(kentvillegreenwood, max_temp = maxtemp)
+#' rename_columns(kentvillegreenwood, lon = longitude, lat = latitude)
+#' 
+rename_locations <- function(.data, ...) {
+  # quo-ify locations
+  locations <- rlang::quos(...)
+  # use tidyselect to get location names
+  locations <- tidyselect::vars_rename(.tidyselect_vars(.data, "location"), rlang::UQS(locations))
+  new_locations <- names(locations)
+
+  # rename datasets using rename_locations_base
+  if(any(new_locations != locations)) {
+    renamer <- locations[new_locations != locations]
+    md_out <- rename_locations_base(.data, stats::setNames(names(renamer), renamer))
+  } 
+  
+  # return md_out
+  md_out
+}
+
+#' @export
+#' @rdname renamers
+rename_params <- function(.data, ...) {
+  # quo-ify params
+  params <- rlang::quos(...)
+  # use tidyselect to get location names
+  params <- tidyselect::vars_rename(.tidyselect_vars(.data, "param"), rlang::UQS(params))
+  new_params <- names(params)
+
+  # rename datasets using rename_params_base
+  if(any(new_params != params)) {
+    renamer <- params[new_params != params]
+    md_out <- rename_params_base(.data, stats::setNames(names(renamer), renamer))
+  }
+  
+  # return md_out
+  md_out
+}
+
+#' @export
+#' @rdname renamers
+rename_datasets <- function(.data, ...) {
+  # quo-ify datasets
+  datasets <- rlang::quos(...)
+  # use tidyselect to get dataset names
+  datasets <- tidyselect::vars_rename(.tidyselect_vars(.data, "dataset"), rlang::UQS(datasets))
+  new_datasets <- names(datasets)
+
+  # rename datasets using rename_dataset
+  if(any(new_datasets != datasets)) {
+    renamer <- datasets[new_datasets != datasets]
+    md_out <- rename_datasets_base(.data, stats::setNames(names(renamer), renamer))
+  }
+  
+  # return md_out
+  md_out
+}
+
+#' @export
+#' @rdname renamers
+rename_columns <- function(.data, ...) {
+  # quo-ify datasets
+  columns <- rlang::quos(...)
+  # use tidyselect to get dataset names
+  columns <- tidyselect::vars_rename(distinct_columns(.data), rlang::UQS(columns))
+  new_columns <- names(columns)
+  
+  # rename datasets using rename_dataset
+  if(any(new_columns != columns)) {
+    renamer <- columns[new_columns != columns]
+    # don't allow renaming of required columns
+    if(any(renamer %in% c("dataset", "location", "param", "table", "column", "value"))) {
+      stop("Cannot rename required mudata columns")
+    }
+    md_out <- rename_cols_base(.data, stats::setNames(names(renamer), renamer))
+    # rename x_columns as well
+    attr(md_out, "x_columns") <- rename_values_base(x_columns(md_out), 
+                                                    stats::setNames(names(renamer), renamer),
+                                                    warn_missing = FALSE, warn_duplicated = TRUE)
+  }
+  
+  # return md_out
+  md_out
+}
+
+
+
+
+
 #' Rename a column in an object
 #'
 #' Rename columns in a data frame or list
@@ -9,18 +111,14 @@
 #'   after the operation.
 #'
 #' @return A copy of the modified object
-#' @export
+#' @keywords internal
 #'
-#' @examples
-#' data(pocmaj)
-#' rename_cols(pocmaj, Ca="Calcium")
-#'
-rename_cols <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename_cols")
+rename_cols_base <- function(.data, ..., warn_missing=TRUE, warn_duplicated=TRUE) UseMethod("rename_cols_base")
 
 #' @export
-#' @rdname rename_cols
-rename_cols.default <- function(.data, ..., warn_missing = TRUE, warn_duplicated = TRUE) {
-  names(.data) <- rename_values(names(.data), ..., warn_missing = warn_missing, 
+#' @rdname rename_cols_base
+rename_cols_base.default <- function(.data, ..., warn_missing = TRUE, warn_duplicated = TRUE) {
+  names(.data) <- rename_values_base(names(.data), ..., warn_missing = warn_missing, 
                                 warn_duplicated = warn_duplicated)
   .data
 }
@@ -40,15 +138,9 @@ rename_cols.default <- function(.data, ..., warn_missing = TRUE, warn_duplicated
 #'   after the operation.
 #'
 #' @return A vector with values replaced
-#' @export
+#' @keywords internal
 #'
-#' @examples
-#' x <- c("fish", "fish", "fish", "whistle")
-#' rename_values(x, fish="newfish")
-#' rename_values(x, whistle="newwhistle")
-#' rename_values(x, fish="newfish", default_value = "not a fish")
-#'
-rename_values <- function(x, ..., default_value = x, warn_missing = TRUE, 
+rename_values_base <- function(x, ..., default_value = x, warn_missing = TRUE, 
                           warn_duplicated = TRUE) {
   replacer <- list(...)
   if(length(replacer) == 0) return(x)
@@ -101,53 +193,39 @@ rename_values <- function(x, ..., default_value = x, warn_missing = TRUE,
 #'   after the operation.
 #'
 #' @return A modified \link{mudata} object.
-#' @export
-#'
-#' @examples
-#' data(kentvillegreenwood)
-#' md2 <- rename_datasets(kentvillegreenwood, ecclimate="avalley")
-#' validate_mudata(md2)
-#' md2 <- rename_locations(kentvillegreenwood, "GREENWOOD A"="Greenwood")
-#' validate_mudata(md2)
-#' md2 <- rename_params(kentvillegreenwood, maxtemp="Maximum Temperature")
-#' validate_mudata(md2)
-#' md2 <- rename_cols(kentvillegreenwood, latitude="lat", longitude="lon")
-#' validate_mudata(md2)
+#' @keywords internal
 #' 
-rename_datasets <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),
+rename_datasets_base <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),
                             warn_missing=TRUE) {
   for(dfname in apply_to) {
-    md[[dfname]]$dataset <- rename_values(md[[dfname]]$dataset, ..., warn_missing=warn_missing)
+    md[[dfname]]$dataset <- rename_values_base(md[[dfname]]$dataset, ..., warn_missing=warn_missing)
   }
   return(md)
 }
 
-#' @rdname rename_datasets
-#' @export
-rename_params <- function(md, ..., apply_to=c("data", "params"), warn_missing=TRUE) {
+#' @rdname rename_datasets_base
+rename_params_base <- function(md, ..., apply_to=c("data", "params"), warn_missing=TRUE) {
   for(dfname in apply_to) {
-    md[[dfname]]$param <- rename_values(md[[dfname]]$param, ..., warn_missing=warn_missing)
+    md[[dfname]]$param <- rename_values_base(md[[dfname]]$param, ..., warn_missing=warn_missing)
   }
   return(md)
 }
 
-#' @rdname rename_datasets
-#' @export
-rename_locations <- function(md, ..., apply_to=c("data", "locations"), warn_missing=TRUE) {
+#' @rdname rename_datasets_base
+rename_locations_base <- function(md, ..., apply_to=c("data", "locations"), warn_missing=TRUE) {
   for(dfname in apply_to) {
-    md[[dfname]]$location <- rename_values(md[[dfname]]$location, ..., warn_missing=warn_missing)
+    md[[dfname]]$location <- rename_values_base(md[[dfname]]$location, ..., warn_missing=warn_missing)
   }
   return(md)
 }
 
-#' @rdname rename_datasets
-#' @export
-rename_cols.mudata <- function(.data, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
+#' @rdname rename_datasets_base
+rename_cols_base.mudata <- function(.data, ..., apply_to=c("datasets", "locations", "params", "data", "columns"),
                                warn_missing=FALSE, warn_duplicated=TRUE) {
   for(dfname in apply_to) {
-    .data[[dfname]] <- rename_cols(.data[[dfname]], ..., warn_missing=warn_missing, 
+    .data[[dfname]] <- rename_cols_base(.data[[dfname]], ..., warn_missing=warn_missing, 
                                warn_duplicated=TRUE)
   }
-  .data$columns$column <- rename_values(.data$columns$column, ..., warn_missing=warn_missing)
+  .data$columns$column <- rename_values_base(.data$columns$column, ..., warn_missing=warn_missing)
   return(.data)
 }

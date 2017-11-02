@@ -125,7 +125,9 @@ write_mudata_dir <- function(md, filename, overwrite = FALSE, validate = TRUE,
   
   # treat attributes like a tbl
   md_write[["_mudata"]] <- tibble::tibble(
-    x_columns = jsonlite::toJSON(attr(md, "x_columns"))
+    x_columns = jsonlite::toJSON(attr(md, "x_columns")),
+    mudata_version = paste(c("R", unlist(packageVersion("mudata2")[[1]])),
+                           collapse = ".")
   )
   
   # safe lapply on md_write to write_csv
@@ -241,7 +243,9 @@ write_mudata_json_common <- function(md, fun, validate = TRUE, update_columns = 
                                   update_columns = update_columns, format = "json")
   
   # add attribute information as an additional list item
-  md_write[["_mudata"]] <- list(x_columns = attr(md, "x_columns"))
+  md_write[["_mudata"]] <- list(x_columns = x_columns(md),
+                                mudata_version = paste(c("R", unlist(packageVersion("mudata2")[[1]])),
+                                                       collapse = "."))
   
   # writing is simple, it is just a JSON object of the mudata list with some
   # pre-set parameters
@@ -343,6 +347,7 @@ read_common <- function(obj, mudata_tbls, meta_list, type_strs, validate) {
                    datasets = md$datasets, columns = md$columns, x_columns = x_columns,
                    more_tbls = md[setdiff(names(md), c("data", "locations", "params", "datasets", "columns"))],
                    validate = validate)
+  md_obj
 }
 
 # common function to read a columns table (type_str_tbl)

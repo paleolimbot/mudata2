@@ -73,7 +73,8 @@ src_tbls.mudata <- function(x) {
 #'
 #' @param x,src A mudata object
 #' @param which Which tbl to extract
-#' @param ... Unused
+#' @param key,value Passed to \link[tidyr]{spread}
+#' @param ... Passed to other methods
 #'
 #' @return The appropriate component
 #' @export
@@ -83,6 +84,18 @@ src_tbls.mudata <- function(x) {
 #' 
 tbl_data <- function(x) {
   x$data
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_data_wide <- function(x, key = "param", value = "value", ...) {
+  key_quo <- rlang::enquo(key)
+  value_quo <- rlang::enquo(value)
+  x %>%
+    tbl_data() %>%
+    dplyr::select(one_of(c("dataset", "location", "param", x_columns(x))), 
+                  rlang::UQ(key_quo), rlang::UQ(value_quo)) %>%
+    tidyr::spread(key = rlang::UQ(key_quo), value = rlang::UQ(value_quo), ...)
 }
 
 #' @rdname tbl_data

@@ -37,6 +37,16 @@ test_that("accessors return the correct values", {
   expect_identical(x_columns(kentvillegreenwood), attr(kentvillegreenwood, "x_columns"))
 })
 
+test_that("tbl_data_wide works as expected", {
+  expect_identical(
+    tbl_data_wide(kentvillegreenwood),
+    kentvillegreenwood %>%
+      tbl_data() %>%
+      dplyr::select(-flags) %>%
+      tidyr::spread(key = param, value = value)
+  )
+})
+
 test_that("unique_* functions return the correct values", {
   expect_equal(unique_params(kentvillegreenwood),
                distinct_params(kentvillegreenwood))

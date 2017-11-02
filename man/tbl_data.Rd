@@ -2,6 +2,7 @@
 % Please edit documentation in R/mudata_helpers.R
 \name{tbl_data}
 \alias{tbl_data}
+\alias{tbl_data_wide}
 \alias{tbl_params}
 \alias{tbl_locations}
 \alias{tbl_datasets}
@@ -11,6 +12,8 @@
 \title{Access components of a mudata object}
 \usage{
 tbl_data(x)
+
+tbl_data_wide(x, key = "param", value = "value", ...)
 
 tbl_params(x)
 
@@ -27,9 +30,11 @@ x_columns(x)
 \arguments{
 \item{x, src}{A mudata object}
 
-\item{which}{Which tbl to extract}
+\item{key, value}{Passed to \link[tidyr]{spread}}
 
-\item{...}{Unused}
+\item{...}{Passed to other methods}
+
+\item{which}{Which tbl to extract}
 }
 \value{
 The appropriate component

@@ -1,5 +1,5 @@
 
-library(magrittr)
+library(mudata2)
 
 # get sample climate data using rclimateca package
 
@@ -33,12 +33,7 @@ kv_data <- kentvillegreenwood_raw %>%
 kv_datasets <- tibble::tibble(dataset = "ecclimate", url = "http://climate.weather.gc.ca/")
 
 kentvillegreenwood <- mudata(kv_data, locations = kv_locations, params = kv_params,
-                             datasets = kv_datasets)
-
-# plot data to check
-# qualifierplot(kentvillegreenwood$data, 
-#               id.vars = c("dataset", "location", "param", "date"), 
-#                measure.var = "value")
+                             datasets = kv_datasets)             measure.var = "value")
 
 devtools::use_data(kentvillegreenwood, overwrite = TRUE)
 unlink("ec.cache/", recursive = TRUE)

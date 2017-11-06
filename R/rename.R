@@ -142,6 +142,16 @@ rename_cols_base.default <- function(.data, ..., warn_missing = TRUE, warn_dupli
 #'
 rename_values_base <- function(x, ..., default_value = x, warn_missing = TRUE, 
                           warn_duplicated = TRUE) {
+  # if a factor, apply the rename operation to the levels
+  if(is.factor(x)) {
+    if(identical(default_value, x)){
+      default_value <- levels(x)
+    }
+    levels(x) <- rename_values_base(levels(x), ..., default_value = default_value,
+                                    warn_missing = warn_missing, warn_duplicated = warn_duplicated)
+    return(x)
+  }
+  
   replacer <- list(...)
   if(length(replacer) == 0) return(x)
   

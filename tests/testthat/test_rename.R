@@ -64,6 +64,29 @@ test_that("rename functions throw errors", {
   expect_message(rename_columns(kg2, date = flags), "Possible duplicated values in x")
 })
 
+test_that("rename works when some values are factors", {
+  expect_identical(
+    rename_datasets(kentvillegreenwood %>% 
+                      select_datasets(everything(), .factor = TRUE), avalley = ecclimate) %>% 
+      distinct_datasets(),
+    "avalley"
+  )
+  expect_identical(
+    kentvillegreenwood %>%
+      select_locations(`KENTVILLE CDA CS`, `GREENWOOD A`, .factor = TRUE) %>%
+      rename_locations(Greenwood = starts_with("GREENWOOD")) %>% 
+      distinct_locations(),
+    c("KENTVILLE CDA CS", "Greenwood")
+  )
+  expect_identical(
+    kentvillegreenwood %>%
+      select_params(mintemp, meantemp, maxtemp, .factor = TRUE) %>%
+      rename_params(min_temp = mintemp) %>% 
+      distinct_params(),
+    c("min_temp", "meantemp", "maxtemp")
+  )
+})
+
 # ---- base renaming functions ----
 
 test_that("rename_cols_base function works", {
@@ -103,6 +126,14 @@ test_that("rename_values_base outputs a message if values are duplicated", {
                  "Possible duplicated values in x: fish")
 })
 
+test_that("rename_values_base works on factors", {
+  expect_identical(
+    rename_values_base(factor(c("one", "two", "three", "one"), levels = c("one", "two", "three")), 
+                       "one" = "number one"),
+    factor(c("number one", "two", "three", "number one"), levels = c("number one", "two", "three"))
+  )
+})
+
 test_that("mudata rename works", {
   data("kentvillegreenwood")
   md2 <- rename_datasets_base(kentvillegreenwood, ecclimate="avalley")
@@ -123,4 +154,3 @@ test_that("mudata rename works", {
   expect_true("lat" %in% md2$columns$column)
   expect_false("latitude" %in% md2$columns$column)
 })
-

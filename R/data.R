@@ -4,6 +4,8 @@
 #' Bulk geochemistry of a gravity core from Alta Lake, Whistler, British Columbia,
 #' Canada.
 #' 
+#' @format A \link{mudata} object
+#' 
 #' @references
 #' Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of 
 #' development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330. 
@@ -20,6 +22,8 @@
 #' 
 #' Bulk geochemistry of a gravity core from Long Lake, Cumberland Marshes Region, 
 #' Nova Scotia-New Brunswick Border Region, Canada.
+#' 
+#' @format A \link{mudata} object
 #' 
 #' @references
 #' Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal 
@@ -52,7 +56,7 @@
 #'
 #' Climate data for Kentville and Greenwood (Nova Scotia) for July and August of 1999.
 #'
-#' @format A \link{mudata} object (list with elements data, locations, params, datasets, columns)
+#' @format A \link{mudata} object
 #' 
 #' @source Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
 #' 

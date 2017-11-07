@@ -4,7 +4,7 @@
 \name{long_lake}
 \alias{long_lake}
 \title{Long Lake Lake Gravity/Percussion Core Data}
-\format{An object of class \code{mudata} (inherits from \code{list}) of length 5.}
+\format{A \link{mudata} object}
 \usage{
 long_lake
 }

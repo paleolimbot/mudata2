@@ -4,7 +4,7 @@
 \name{alta_lake}
 \alias{alta_lake}
 \title{Alta Lake Gravity Core Data}
-\format{An object of class \code{mudata} (inherits from \code{list}) of length 5.}
+\format{A \link{mudata} object}
 \usage{
 alta_lake
 }

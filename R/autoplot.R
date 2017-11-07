@@ -144,6 +144,10 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
   
   # use more_args as the aesthetic mapping
   aesthetic_mapping <- args$mapping$more_args
+  # remove NULLs from aestheic mapping
+  null_cols <- vapply(aesthetic_mapping, is.null, logical(1))
+  aesthetic_mapping <- aesthetic_mapping[!null_cols]
+  
   position_mapping <- args$mapping[c("x", "y")]
   
   # convert geoms to plot.default "type" parameter
@@ -504,6 +508,9 @@ guess_id_vars <- function(vars, measure_var) {
 #' framework.
 #'
 #' @param x,object A \link{mudata} object
+#' @param facets Column to be used as facet column
+#' @param col Column to be used as colour aesthetic
+#' @param pch Column to be used as shape aesthetic
 #' @param ... Passed on to \link{long_plot} or \link{long_ggplot}
 #'
 #' @export
@@ -519,16 +526,18 @@ guess_id_vars <- function(vars, measure_var) {
 #' 
 #' @importFrom ggplot2 autoplot
 #'
-autoplot.mudata <- function(object, ...) {
-  long_ggplot(object$data, id_vars=c("dataset", "location", "param", x_columns(object)[1]), 
+autoplot.mudata <- function(object, facets = "param", col = "location", pch = "dataset", ...) {
+  long_ggplot(object$data, id_vars=c("dataset", "location", "param", x_columns(object)), 
+              facets = facets, col = col, pch = pch,
               measure_var="value", ...)
 }
 
 #' @rdname autoplot.mudata
 #' @importFrom graphics plot
 #' @export
-plot.mudata <- function(x, ...) {
-  long_plot(x$data, id_vars=c("dataset", "location", "param", x_columns(x)[1]), 
+plot.mudata <- function(x, facets = "param", col = "location", pch = "dataset", ...) {
+  long_plot(x$data, id_vars=c("dataset", "location", "param", x_columns(x)), 
+            facets = facets, col = col, pch = pch,
             measure_var="value", ...)
 }
 

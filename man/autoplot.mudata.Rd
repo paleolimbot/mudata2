@@ -5,11 +5,19 @@
 \alias{plot.mudata}
 \title{Autoplot a mudata object}
 \usage{
-\method{autoplot}{mudata}(object, ...)
+\method{autoplot}{mudata}(object, facets = "param", col = "location",
+  pch = "dataset", ...)
 
-\method{plot}{mudata}(x, ...)
+\method{plot}{mudata}(x, facets = "param", col = "location",
+  pch = "dataset", ...)
 }
 \arguments{
+\item{facets}{Column to be used as facet column}
+
+\item{col}{Column to be used as colour aesthetic}
+
+\item{pch}{Column to be used as shape aesthetic}
+
 \item{...}{Passed on to \link{long_plot} or \link{long_ggplot}}
 
 \item{x, object}{A \link{mudata} object}

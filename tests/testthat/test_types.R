@@ -174,7 +174,7 @@ test_that("types that are not in allowed types throw an error", {
   
   # check list of allowed types
   expect_silent(parse_type("date"))
-  expect_silent(parse_type("datetime"))
+  expect_silent(parse_type(""))
   expect_silent(parse_type("logical"))
   expect_silent(parse_type("double"))
   expect_silent(parse_type("character"))
@@ -299,12 +299,14 @@ test_that("objects generate the correct type strings", {
 })
 
 test_that("datetimes with timezones generate the correct strings", {
+  # type strings are always parameter-less, because datetimes are always converted
+  # to UTC before they are written
   dt <- Sys.time()
   expect_equal(generate_type_str(dt), "datetime")
   attr(dt, "tzone") <- "America/Halifax"
-  expect_equal(generate_type_str(dt), "datetime(tzone='America/Halifax')")
+  expect_equal(generate_type_str(dt), "datetime")
   attr(dt, "tzone") <- "UTC"
-  expect_equal(generate_type_str(dt), "datetime(tzone='UTC')")
+  expect_equal(generate_type_str(dt), "datetime")
 })
 
 test_that("generate_type_str generates expected output", {
@@ -346,7 +348,7 @@ test_that("generate_type_str works with sqlite sources", {
                       params = sources$params, datasets = sources$datasets,
                       columns = sources$columns)
   
-  # generate type table (data table isn't identical because of datetime in
+  # generate type table (data table isn't identical because of  in
   # local but not sqlite)
   expect_identical(generate_type_tbl(kv_sqlite$locations),
                    generate_type_tbl(kentvillegreenwood$locations))

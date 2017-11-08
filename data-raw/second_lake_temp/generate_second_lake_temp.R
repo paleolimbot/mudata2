@@ -36,6 +36,7 @@ second_lake_temp <- mudata(temp_data, dataset_id = "second_lake_temp",
   update_params("temp", method = "Thermistor", unit = "degees Celcius") %>%
   update_columns_table() %>%
   update_columns("datetime", description = "Date/time in UTC") %>%
-  update_columns("depth", description = "Depth in the water column (meters)")
+  update_columns("depth", description = "Depth in the water column (meters)") %>%
+  update_columns_table()
 
 devtools::use_data(second_lake_temp, overwrite = TRUE)

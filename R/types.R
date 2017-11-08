@@ -88,14 +88,6 @@ generate_type_str <- function(x, default = "guess") {
     } else if(!is.na(crs$proj4string)) {
       type_string <- sprintf("wkt(crs='%s')", crs$proj4string)
     }
-  } else if(type_string == "datetime") {
-    tzone <- attr(x, "tzone")
-    if(is.null(tzone) || is.na(tzone) || (tzone == "")) {
-      # no timezone specified, no arguments to datetime
-    } else {
-      # datetime reqires tzone as argument
-      type_string <- sprintf("datetime(tzone='%s')", tzone)
-    }
   }
   
   # return type_string unnamed
@@ -181,7 +173,10 @@ parse_output_class <- function(type_str) {
 }
 
 # custom date parser that allows for a tz argument
-parse_mudata_datetime <- function(x, tzone = "", ...) {
+parse_mudata_datetime <- function(x, tzone = "UTC", ...) {
+  if(identical(tzone, "") || is.null(tzone) || is.na(tzone)) {
+    tzone <- "UTC"
+  }
   result <- readr::parse_datetime(x, ...)
   # if tzone is not "", pass to lubirdate::force_tz to set timezone
   lubridate::force_tz(result, tzone = tzone)

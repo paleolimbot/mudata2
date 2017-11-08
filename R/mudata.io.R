@@ -494,10 +494,10 @@ mudata_prepare_column.default <- function(x, format = NA, ...) x
 #' @export 
 mudata_prepare_column.POSIXt <- function(x, format = NA, ...) {
   tzone <- attr(x, "tzone")
-  if(is.null(tzone)) {
-    tzone <- ""
+  if(!identical(tzone, "UTC")) {
+    message("Converting POSIXt column to UTC")
   }
-  strftime(x, "%Y-%m-%dT%H:%M:%S", tz = tzone, ...)
+  strftime(x, "%Y-%m-%dT%H:%M:%S", tz = "UTC", ...)
 }
 
 # sfc columns are converted to WKT using sf::st_as_text()

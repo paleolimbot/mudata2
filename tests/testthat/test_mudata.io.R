@@ -285,7 +285,7 @@ test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
     c3 = factor(c2, levels = c2),
     c4 = factor(c3, ordered = TRUE),
     c5 = as.Date(c(1, 2, 3), origin = Sys.Date()),
-    c6 = as.POSIXct(c5),
+    c6 = lubridate::force_tz(as.POSIXct(c5), "UTC"),
     c7 = list(list(1), list(2), list(3)),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
     c9 = hms::as.hms(1:3)
@@ -332,7 +332,7 @@ test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
       } else {
         tzequal <- identical(tz1, tz2)
       }
-      if(all_equal && !identical(val1, val2)) warning("date vectors not identical")
+      if(all_equal && !identical(val1, val2)) stop("date vectors not identical")
       all_equal && tzequal
     } else if(inherits(val1, "factor") || inherits(val2, "factor")) {
       identical(as.character(val1), as.character(val2))
@@ -356,34 +356,48 @@ test_that("datetimes are identical when read/written", {
       browser()
     }
     dt <- seq(as.POSIXct("1980-01-01 09:00"), as.POSIXct("1980-01-01 17:00"), by = 3600)
-    dt <- lubridate::force_tz(dt, tz_name)
+    dt <- lubridate::force_tz(dt, tz_name) # version of dt in the object
+    dt_utc <- lubridate::with_tz(dt, "UTC") # version of dt we want to write
+    
     expect_length(dt, 9)
     expect_equal(attr(dt, "tzone"), tz_name)
     
-    # make sure prepared doesn't change when tzone is unspecified ("")
+    # make sure prepared version is in UTC
     prepared_dt <- mudata_prepare_column(dt)
-    expect_equal(head(prepared_dt, 1), "1980-01-01T09:00:00")
-    expect_equal(tail(prepared_dt, 1), "1980-01-01T17:00:00")
+    expect_true(all(readr::parse_datetime(prepared_dt) == lubridate::with_tz(dt, "UTC")))
     
-    # make sure times are read in identically
+    # make sure times are read in and refer to the same moment in time
     type_str <- generate_type_str(dt)
     parsed_dt <- mudata_parse_column(prepared_dt, type_str = type_str)
     # try equality
-    expect_equal(dt, parsed_dt)
+    expect_equal(lubridate::with_tz(dt, "UTC"), parsed_dt)
     # check tzone attribute
-    expect_equal(attr(dt, "tzone"), attr(parsed_dt, "tz"))
-    # object should be identical
-    expect_identical(dt, parsed_dt)
+    expect_equal(attr(parsed_dt, "tzone"), "UTC")
   }
   
   # test with lots of timezones
-  # test_with_tz("") # this line causes Travis CI to fail
+  test_with_tz("") # "unspecified" usually means system default
   test_with_tz("America/Halifax")
   test_with_tz("UTC")
   test_with_tz("America/Boise")
   test_with_tz("Pacific/Auckland")
-  # lots of warnings, but no problems
-  # test_with_tz("UTC+4")
+})
+
+test_that("read/write mudatas containing datetime objects works", {
+  slt <- second_lake_temp
+  outfile <- tempfile(fileext = ".json")
+  expect_silent(write_mudata(slt, outfile))
+  expect_equal_mudata(slt, read_mudata(outfile))
+  unlink(outfile)
+  
+  outfile <- tempfile(fileext = ".json")
+  # set timezone attribute to halifax, not changing the moment in time
+  slt$data$datetime <- lubridate::with_tz(slt$data$datetime, "America/Halifax")
+  expect_message(write_mudata(slt, outfile), "Converting POSIXt column to UTC")
+  dt <- read_mudata(outfile) %>% .$data %>% .$datetime
+  expect_identical(attr(dt, "tzone"), "UTC")
+  expect_equal(lubridate::with_tz(slt$data$datetime, "UTC"), dt)
+  unlink(outfile)
 })
 
 test_that("write directory function doesn't overwrite without permission", {

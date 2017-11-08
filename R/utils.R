@@ -53,9 +53,8 @@ parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   }
   
   # use a hack to get column names as character using tidyeval and dplyr
-  col_names <- tibble::as_tibble(stats::setNames(as.list(colnames(x)), colnames(x)))
   lst_as_colnames <- lapply(lst, function(name_quo) {
-    dplyr::select(col_names, !!name_quo) %>% colnames()
+    tidyselect::vars_select(colnames(x), rlang::UQ(name_quo))
   })
   
   # pass to parallel gather base

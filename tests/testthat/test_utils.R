@@ -27,7 +27,7 @@ test_that("unnamed arguments are not allowed in parallel_melt", {
 })
 
 test_that("parallel_gather produces the expected output", {
-  data(pocmajsum)
+
   # melt automatically using parallel_melt
   pocmajlong <- parallel_melt(pocmajsum, id.vars=c("core", "depth"),
                               value=c("Ca", "Ti", "V"),

@@ -376,7 +376,7 @@ test_that("datetimes are identical when read/written", {
   }
   
   # test with lots of timezones
-  test_with_tz("") # "unspecified" usually means system default
+  # test_with_tz("") # "unspecified" does not work on all systems in the same way
   test_with_tz("America/Halifax")
   test_with_tz("UTC")
   test_with_tz("America/Boise")

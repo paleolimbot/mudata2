@@ -59,19 +59,22 @@ R types of columns (reccommended).}
 Read/Write mudata objects
 }
 \examples{
-data(kentvillegreenwood)
+# read/write to directory
+outfile <- tempfile(fileext=".mudata")
+write_mudata(kentvillegreenwood, outfile)
+md <- read_mudata(outfile)
+unlink(outfile)
+
 # read/write to zip
 outfile <- tempfile(fileext=".zip")
-#write_mudata(kentvillegreenwood, outfile)
-#md <- read_mudata(outfile)
-#md <- read_mudata(outfile, retype=TRUE)
+write_mudata(kentvillegreenwood, outfile)
+md <- read_mudata(outfile)
 unlink(outfile)
 
 # read/write to JSON
 outfile <- tempfile(fileext=".json")
-#write_mudata(kentvillegreenwood, outfile)
-#md <- read_mudata(outfile)
-#md <- read_mudata(outfile, retype=TRUE)
+write_mudata(kentvillegreenwood, outfile)
+md <- read_mudata(outfile)
 unlink(outfile)
 
 }

@@ -1,391 +1,329 @@
-R package 'mudata2'
-================
-Dewey Dunnington
-February 26, 2017
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+mudata2
+=======
 
 [![](http://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2) [![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata) [![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg)](https://codecov.io/github/paleolimbot/mudata?branch=master)
 
-The 'mudata' package for R is a set of tools to create, manipulate, and visualize multi-parameter, spatiotemporal data. Data of this type includes all data where multiple parameters (e.g. wind speed, precipitation, temperature) are measured along a common axis (e.g. time, depth) at discrete locations (e.g. climate stations). These data include long-term climate data collected from climate stations, paleolimnological data, ice core data, and ocean core data among many others. Data of this type is often voluminous and difficult to organize given its multi-dimensional nature. The (mostly) universal data (mudata) format is an attempt to organize these data in a common way to facilitate their documentation and comparison.
+The **mudata2** package provides tools to read, write, and add metadata to multi-parameter spatiotemporal data. The term "multi-parameter spatiotemporal data" is a mouthful, but all it means is that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
 
 Installation
 ------------
 
-The `mudata` package is in active development and can be installed from GitHub:
+You can install mudata2 from github with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("paleolimbot/mudata")
 ```
 
-The MUData format
------------------
+Using mudata objects
+--------------------
 
-The (mostly) universal data format is a collection of five (or more) tables, one of which contains the data in a molten form (see [tidyr](https://cran.r-project.org/package=tidyr)). The easiest way to visualize a mudata object is to inspect the `kentvillegreenwood` dataset within the package. This object is a collection of daily observations from Kentville, Nova Scotia, and Greenwood, Nova Scotia from July and August, 1999.
+The basic idea of a mudata object is to store data with embedded documentation. For example, the `ns_climate` dataset is a collection of monthly climate observations from [Nova Scotia](https://www.wikipedia.org/wiki/Nova_Scotia) (Canada), from [Environment Canada](http://climate.weather.gc.ca/). You can have a quick glance at the object using `print()`, `summary()` or `autoplot()`.
 
 ``` r
 library(mudata2)
-library(ggplot2)
-data("kentvillegreenwood")
-autoplot(kentvillegreenwood)
+print(ns_climate)
+#> A mudata object aligned along "date"
+#>   distinct_datasets():  "ecclimate_monthly"
+#>   distinct_locations(): ... 15 values
+#>   distinct_params():    ... 11 values
+#>   src_tbls():           ... 5 values
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 7
+#>             dataset          location         param       date value  flag
+#>               <chr>             <chr>         <chr>     <date> <dbl> <chr>
+#> 1 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-01-01    NA     M
+#> 2 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-02-01    NA     M
+#> 3 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-03-01    NA     M
+#> 4 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-04-01    NA     M
+#> 5 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-05-01    NA     M
+#> 6 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-06-01    NA     M
+#> # ... with 1 more variables: flag_text <chr>
+summary(ns_climate)
+#> # A tibble: 137 x 7
+#>              param             location           dataset mean_value
+#>              <chr>                <chr>             <chr>      <dbl>
+#>  1 dir_of_max_gust    SABLE ISLAND 6454 ecclimate_monthly   19.77258
+#>  2   extr_max_temp ANNAPOLIS ROYAL 6289 ecclimate_monthly   19.93257
+#>  3   extr_max_temp         BADDECK 6297 ecclimate_monthly   18.85291
+#>  4   extr_max_temp      BEAVERBANK 6301 ecclimate_monthly   17.22857
+#>  5   extr_max_temp    COLLEGEVILLE 6329 ecclimate_monthly   20.33914
+#>  6   extr_max_temp           DIGBY 6338 ecclimate_monthly   19.04834
+#>  7   extr_max_temp   KENTVILLE CDA 6375 ecclimate_monthly   21.00661
+#>  8   extr_max_temp      MAHONE BAY 6396 ecclimate_monthly   20.76598
+#>  9   extr_max_temp   MOUNT UNIACKE 6413 ecclimate_monthly   19.67059
+#> 10   extr_max_temp      NAPPAN CDA 6414 ecclimate_monthly   19.33575
+#> # ... with 127 more rows, and 3 more variables: sd_value <dbl>, n <int>,
+#> #   n_NA <int>
+autoplot(ns_climate)
 ```
 
-![](README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-2-1.png)
+![](README-summary-1.png)
 
-The default `plot()` function for a `mudata` object uses [ggplot2](https://cran.r-project.org/package=ggplot2) to produce a faceted plot comparing locations and datasets by parameter. However, if we take a look at the structure of the object, we can see that it is just a `list` of 5 `data.frame` objects.
+You can extract the data from the object using `tbl_data()` or `tbl_data_wide()`:
 
 ``` r
-str(kentvillegreenwood)
+ns_climate %>% tbl_data()
+#> # A tibble: 115,541 x 7
+#>              dataset          location         param       date value
+#>                <chr>             <chr>         <chr>     <date> <dbl>
+#>  1 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-01-01    NA
+#>  2 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-02-01    NA
+#>  3 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-03-01    NA
+#>  4 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-04-01    NA
+#>  5 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-05-01    NA
+#>  6 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-06-01    NA
+#>  7 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-07-01    NA
+#>  8 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-08-01    NA
+#>  9 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-09-01    NA
+#> 10 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-10-01  12.2
+#> # ... with 115,531 more rows, and 2 more variables: flag <chr>,
+#> #   flag_text <chr>
+ns_climate %>% tbl_data_wide()
+#> # A tibble: 14,311 x 14
+#>              dataset             location       date dir_of_max_gust
+#>  *             <chr>                <chr>     <date>           <dbl>
+#>  1 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-01-01              NA
+#>  2 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-02-01              NA
+#>  3 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-03-01              NA
+#>  4 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-04-01              NA
+#>  5 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-05-01              NA
+#>  6 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-06-01              NA
+#>  7 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-07-01              NA
+#>  8 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-08-01              NA
+#>  9 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-09-01              NA
+#> 10 ecclimate_monthly ANNAPOLIS ROYAL 6289 1914-10-01              NA
+#> # ... with 14,301 more rows, and 10 more variables: extr_max_temp <dbl>,
+#> #   extr_min_temp <dbl>, mean_max_temp <dbl>, mean_min_temp <dbl>,
+#> #   mean_temp <dbl>, snow_grnd_last_day <dbl>, spd_of_max_gust <dbl>,
+#> #   total_precip <dbl>, total_rain <dbl>, total_snow <dbl>
 ```
 
-    ## List of 5
-    ##  $ data     :Classes 'tbl_df', 'tbl' and 'data.frame':   1364 obs. of  6 variables:
-    ##   ..$ dataset : chr [1:1364] "ecclimate" "ecclimate" "ecclimate" "ecclimate" ...
-    ##   ..$ location: chr [1:1364] "KENTVILLE CDA CS" "KENTVILLE CDA CS" "KENTVILLE CDA CS" "KENTVILLE CDA CS" ...
-    ##   ..$ param   : chr [1:1364] "maxtemp" "maxtemp" "maxtemp" "maxtemp" ...
-    ##   ..$ date    : Date[1:1364], format: "1999-07-01" ...
-    ##   ..$ value   : num [1:1364] 28.5 30.7 26.4 28.6 26 25.3 28.6 23.9 22.8 20.9 ...
-    ##   ..$ flags   : chr [1:1364] NA NA NA NA ...
-    ##  $ locations:Classes 'tbl_df', 'tbl' and 'data.frame':   2 obs. of  6 variables:
-    ##   ..$ dataset  : chr [1:2] "ecclimate" "ecclimate"
-    ##   ..$ location : chr [1:2] "GREENWOOD A" "KENTVILLE CDA CS"
-    ##   ..$ stationid: int [1:2] 6354 27141
-    ##   ..$ latitude : num [1:2] 45 45.1
-    ##   ..$ longitude: num [1:2] -64.9 -64.5
-    ##   ..$ province : chr [1:2] "NOVA SCOTIA" "NOVA SCOTIA"
-    ##  $ params   :Classes 'tbl_df', 'tbl' and 'data.frame':   11 obs. of  3 variables:
-    ##   ..$ dataset: chr [1:11] "ecclimate" "ecclimate" "ecclimate" "ecclimate" ...
-    ##   ..$ param  : chr [1:11] "maxtemp" "mintemp" "meantemp" "heatdegdays" ...
-    ##   ..$ label  : chr [1:11] "Max Temp (C)" "Min Temp (C)" "Mean Temp (C)" "Heat Deg Days (C)" ...
-    ##  $ datasets :Classes 'tbl_df', 'tbl' and 'data.frame':   1 obs. of  2 variables:
-    ##   ..$ dataset: chr "ecclimate"
-    ##   ..$ url    : chr "http://climate.weather.gc.ca/"
-    ##  $ columns  :Classes 'tbl_df', 'tbl' and 'data.frame':   17 obs. of  4 variables:
-    ##   ..$ dataset: chr [1:17] "ecclimate" "ecclimate" "ecclimate" "ecclimate" ...
-    ##   ..$ table  : chr [1:17] "data" "data" "data" "data" ...
-    ##   ..$ column : chr [1:17] "dataset" "location" "param" "date" ...
-    ##   ..$ type   : chr [1:17] "character" "character" "character" "date" ...
-    ##  - attr(*, "x_columns")= chr "date"
-    ##  - attr(*, "class")= chr [1:2] "mudata" "list"
-
-The most important of these is the `$data` table, which contains the actual parameter measurements. All of the other tables are ways to document the information contained in the data table, such as the coordinates of each location (in this case there is also quite a bit more information about each location, such as the various identifiers used by climate organizations), or the units in which each parameter is measured. The first few rows of this table are as follows:
-
-| dataset   | location         | param   | date       |  value| flags |
-|:----------|:-----------------|:--------|:-----------|------:|:------|
-| ecclimate | KENTVILLE CDA CS | maxtemp | 1999-07-15 |   28.4| NA    |
-| ecclimate | KENTVILLE CDA CS | maxtemp | 1999-07-16 |   30.9| NA    |
-| ecclimate | KENTVILLE CDA CS | maxtemp | 1999-07-17 |   34.6| NA    |
-| ecclimate | KENTVILLE CDA CS | maxtemp | 1999-07-18 |   32.8| NA    |
-| ecclimate | KENTVILLE CDA CS | maxtemp | 1999-07-19 |   28.6| NA    |
-| ecclimate | KENTVILLE CDA CS | maxtemp | 1999-07-20 |   23.3| NA    |
-
-The package contains functions to `plot()` the data (using the [ggplot2](https://cran.r-project.org/package=ggplot2) framework), `print()` a description of the object, and `subset()` the object. Combining objects can be accomplished by `rbind()`-ing two `mudata` objects.
+You can have a look at the embedded documentation using `tbl_params()`, `tbl_locations()`, `tbl_datasets()`, and `tbl_columns()`:
 
 ``` r
-kvtemp <- subset(kentvillegreenwood, params=c("mintemp", "maxtemp", "meantemp"))
-kvtemp
+ns_climate %>% tbl_params()
+#> # A tibble: 11 x 4
+#>              dataset              param                      label
+#>                <chr>              <chr>                      <chr>
+#>  1 ecclimate_monthly      mean_max_temp          Mean Max Temp (C)
+#>  2 ecclimate_monthly      mean_min_temp          Mean Min Temp (C)
+#>  3 ecclimate_monthly          mean_temp              Mean Temp (C)
+#>  4 ecclimate_monthly      extr_max_temp          Extr Max Temp (C)
+#>  5 ecclimate_monthly      extr_min_temp          Extr Min Temp (C)
+#>  6 ecclimate_monthly         total_rain            Total Rain (mm)
+#>  7 ecclimate_monthly         total_snow            Total Snow (cm)
+#>  8 ecclimate_monthly       total_precip          Total Precip (mm)
+#>  9 ecclimate_monthly snow_grnd_last_day    Snow Grnd Last Day (cm)
+#> 10 ecclimate_monthly    dir_of_max_gust Dir of Max Gust (10's deg)
+#> 11 ecclimate_monthly    spd_of_max_gust     Spd of Max Gust (km/h)
+#> # ... with 1 more variables: unit <chr>
+ns_climate %>% tbl_locations()
+#> # A tibble: 15 x 19
+#>              dataset               location              name    province
+#>                <chr>                  <chr>             <chr>       <chr>
+#>  1 ecclimate_monthly   ANNAPOLIS ROYAL 6289   ANNAPOLIS ROYAL NOVA SCOTIA
+#>  2 ecclimate_monthly           BADDECK 6297           BADDECK NOVA SCOTIA
+#>  3 ecclimate_monthly        BEAVERBANK 6301        BEAVERBANK NOVA SCOTIA
+#>  4 ecclimate_monthly      COLLEGEVILLE 6329      COLLEGEVILLE NOVA SCOTIA
+#>  5 ecclimate_monthly             DIGBY 6338             DIGBY NOVA SCOTIA
+#>  6 ecclimate_monthly     KENTVILLE CDA 6375     KENTVILLE CDA NOVA SCOTIA
+#>  7 ecclimate_monthly        MAHONE BAY 6396        MAHONE BAY NOVA SCOTIA
+#>  8 ecclimate_monthly     MOUNT UNIACKE 6413     MOUNT UNIACKE NOVA SCOTIA
+#>  9 ecclimate_monthly        NAPPAN CDA 6414        NAPPAN CDA NOVA SCOTIA
+#> 10 ecclimate_monthly         PARRSBORO 6428         PARRSBORO NOVA SCOTIA
+#> 11 ecclimate_monthly     PORT HASTINGS 6441     PORT HASTINGS NOVA SCOTIA
+#> 12 ecclimate_monthly      SABLE ISLAND 6454      SABLE ISLAND NOVA SCOTIA
+#> 13 ecclimate_monthly ST MARGARET'S BAY 6456 ST MARGARET'S BAY NOVA SCOTIA
+#> 14 ecclimate_monthly       SPRINGFIELD 6473       SPRINGFIELD NOVA SCOTIA
+#> 15 ecclimate_monthly   UPPER STEWIACKE 6495   UPPER STEWIACKE NOVA SCOTIA
+#> # ... with 15 more variables: climate_id <chr>, station_id <int>,
+#> #   wmo_id <int>, tc_id <chr>, latitude <dbl>, longitude <dbl>,
+#> #   elevation <dbl>, first_year <int>, last_year <int>,
+#> #   hly_first_year <int>, hly_last_year <int>, dly_first_year <int>,
+#> #   dly_last_year <int>, mly_first_year <int>, mly_last_year <int>
+ns_climate %>% tbl_datasets()
+#> # A tibble: 1 x 2
+#>             dataset                           url
+#>               <chr>                         <chr>
+#> 1 ecclimate_monthly http://climate.weather.gc.ca/
+ns_climate %>% tbl_columns()
+#> # A tibble: 32 x 5
+#>              dataset     table    column      type
+#>                <chr>     <chr>     <chr>     <chr>
+#>  1 ecclimate_monthly      data   dataset character
+#>  2 ecclimate_monthly      data  location character
+#>  3 ecclimate_monthly      data     param character
+#>  4 ecclimate_monthly      data      date      date
+#>  5 ecclimate_monthly      data     value    double
+#>  6 ecclimate_monthly      data      flag character
+#>  7 ecclimate_monthly      data flag_text character
+#>  8 ecclimate_monthly locations   dataset character
+#>  9 ecclimate_monthly locations  location character
+#> 10 ecclimate_monthly locations      name character
+#> # ... with 22 more rows, and 1 more variables: description <chr>
 ```
 
-    ## $data
-    ## # A tibble: 372 x 6
-    ##      dataset         location   param       date value flags
-    ##        <chr>            <chr>   <chr>     <date> <dbl> <chr>
-    ##  1 ecclimate KENTVILLE CDA CS maxtemp 1999-07-01  28.5  <NA>
-    ##  2 ecclimate KENTVILLE CDA CS maxtemp 1999-07-02  30.7  <NA>
-    ##  3 ecclimate KENTVILLE CDA CS maxtemp 1999-07-03  26.4  <NA>
-    ##  4 ecclimate KENTVILLE CDA CS maxtemp 1999-07-04  28.6  <NA>
-    ##  5 ecclimate KENTVILLE CDA CS maxtemp 1999-07-05  26.0  <NA>
-    ##  6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3  <NA>
-    ##  7 ecclimate KENTVILLE CDA CS maxtemp 1999-07-07  28.6  <NA>
-    ##  8 ecclimate KENTVILLE CDA CS maxtemp 1999-07-08  23.9  <NA>
-    ##  9 ecclimate KENTVILLE CDA CS maxtemp 1999-07-09  22.8  <NA>
-    ## 10 ecclimate KENTVILLE CDA CS maxtemp 1999-07-10  20.9  <NA>
-    ## # ... with 362 more rows
-    ## 
-    ## $locations
-    ## # A tibble: 2 x 6
-    ##     dataset         location stationid latitude longitude    province
-    ##       <chr>            <chr>     <int>    <dbl>     <dbl>       <chr>
-    ## 1 ecclimate      GREENWOOD A      6354    44.98    -64.92 NOVA SCOTIA
-    ## 2 ecclimate KENTVILLE CDA CS     27141    45.07    -64.48 NOVA SCOTIA
-    ## 
-    ## $params
-    ## # A tibble: 3 x 3
-    ##     dataset    param         label
-    ##       <chr>    <chr>         <chr>
-    ## 1 ecclimate  maxtemp  Max Temp (C)
-    ## 2 ecclimate  mintemp  Min Temp (C)
-    ## 3 ecclimate meantemp Mean Temp (C)
-    ## 
-    ## $datasets
-    ## # A tibble: 1 x 2
-    ##     dataset                           url
-    ##       <chr>                         <chr>
-    ## 1 ecclimate http://climate.weather.gc.ca/
-    ## 
-    ## $columns
-    ## # A tibble: 17 x 4
-    ##      dataset     table    column      type
-    ##        <chr>     <chr>     <chr>     <chr>
-    ##  1 ecclimate      data   dataset character
-    ##  2 ecclimate      data  location character
-    ##  3 ecclimate      data     param character
-    ##  4 ecclimate      data      date      date
-    ##  5 ecclimate      data     value    double
-    ##  6 ecclimate      data     flags character
-    ##  7 ecclimate locations   dataset character
-    ##  8 ecclimate locations  location character
-    ##  9 ecclimate locations stationid   integer
-    ## 10 ecclimate locations  latitude    double
-    ## 11 ecclimate locations longitude    double
-    ## 12 ecclimate locations  province character
-    ## 13 ecclimate    params   dataset character
-    ## 14 ecclimate    params     param character
-    ## 15 ecclimate    params     label character
-    ## 16 ecclimate  datasets   dataset character
-    ## 17 ecclimate  datasets       url character
-    ## 
-    ## attr(,"x_columns")
-    ## [1] "date"
-    ## attr(,"class")
-    ## [1] "mudata" "list"
+You can subset mudata objects using `select_params()`, `select_locations()`, and `select_datasets()`, which use **dplyr**-like selection syntax to quickly subset mudata objects.
 
 ``` r
-kvprecip <- subset(kentvillegreenwood, params="totalprecip")
-rbind(kvtemp, kvprecip)
+ns_climate %>% 
+  select_params(contains("temp"))
+#> A mudata object aligned along "date"
+#>   distinct_datasets():  "ecclimate_monthly"
+#>   distinct_locations(): ... 15 values
+#>   distinct_params():    ... 5 values
+#>   src_tbls():           ... 5 values
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 7
+#>             dataset          location         param       date value  flag
+#>               <chr>             <chr>         <chr>     <date> <dbl> <chr>
+#> 1 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-01-01    NA     M
+#> 2 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-02-01    NA     M
+#> 3 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-03-01    NA     M
+#> 4 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-04-01    NA     M
+#> 5 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-05-01    NA     M
+#> 6 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-06-01    NA     M
+#> # ... with 1 more variables: flag_text <chr>
+ns_climate %>% 
+  select_locations(Kentville = starts_with("KENTVILLE"),
+                   Sable = starts_with("SABLE"))
+#> A mudata object aligned along "date"
+#>   distinct_datasets():  "ecclimate_monthly"
+#>   distinct_locations(): "Kentville", "Sable"
+#>   distinct_params():    ... 11 values
+#>   src_tbls():           ... 5 values
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 7
+#>             dataset location         param       date value  flag
+#>               <chr>    <chr>         <chr>     <date> <dbl> <chr>
+#> 1 ecclimate_monthly    Sable mean_max_temp 1897-01-01    NA     M
+#> 2 ecclimate_monthly    Sable mean_max_temp 1897-02-01    NA     M
+#> 3 ecclimate_monthly    Sable mean_max_temp 1897-03-01    NA     M
+#> 4 ecclimate_monthly    Sable mean_max_temp 1897-04-01    NA     M
+#> 5 ecclimate_monthly    Sable mean_max_temp 1897-05-01    NA     M
+#> 6 ecclimate_monthly    Sable mean_max_temp 1897-06-01    NA     M
+#> # ... with 1 more variables: flag_text <chr>
 ```
 
-    ## $data
-    ## # A tibble: 496 x 6
-    ##      dataset         location   param       date value flags
-    ##        <chr>            <chr>   <chr>     <date> <dbl> <chr>
-    ##  1 ecclimate KENTVILLE CDA CS maxtemp 1999-07-01  28.5  <NA>
-    ##  2 ecclimate KENTVILLE CDA CS maxtemp 1999-07-02  30.7  <NA>
-    ##  3 ecclimate KENTVILLE CDA CS maxtemp 1999-07-03  26.4  <NA>
-    ##  4 ecclimate KENTVILLE CDA CS maxtemp 1999-07-04  28.6  <NA>
-    ##  5 ecclimate KENTVILLE CDA CS maxtemp 1999-07-05  26.0  <NA>
-    ##  6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3  <NA>
-    ##  7 ecclimate KENTVILLE CDA CS maxtemp 1999-07-07  28.6  <NA>
-    ##  8 ecclimate KENTVILLE CDA CS maxtemp 1999-07-08  23.9  <NA>
-    ##  9 ecclimate KENTVILLE CDA CS maxtemp 1999-07-09  22.8  <NA>
-    ## 10 ecclimate KENTVILLE CDA CS maxtemp 1999-07-10  20.9  <NA>
-    ## # ... with 486 more rows
-    ## 
-    ## $locations
-    ## # A tibble: 2 x 6
-    ##     dataset         location stationid latitude longitude    province
-    ##       <chr>            <chr>     <int>    <dbl>     <dbl>       <chr>
-    ## 1 ecclimate      GREENWOOD A      6354    44.98    -64.92 NOVA SCOTIA
-    ## 2 ecclimate KENTVILLE CDA CS     27141    45.07    -64.48 NOVA SCOTIA
-    ## 
-    ## $params
-    ## # A tibble: 4 x 3
-    ##     dataset       param             label
-    ##       <chr>       <chr>             <chr>
-    ## 1 ecclimate     maxtemp      Max Temp (C)
-    ## 2 ecclimate     mintemp      Min Temp (C)
-    ## 3 ecclimate    meantemp     Mean Temp (C)
-    ## 4 ecclimate totalprecip Total Precip (mm)
-    ## 
-    ## $datasets
-    ## # A tibble: 1 x 2
-    ##     dataset                           url
-    ##       <chr>                         <chr>
-    ## 1 ecclimate http://climate.weather.gc.ca/
-    ## 
-    ## $columns
-    ## # A tibble: 17 x 4
-    ##      dataset     table    column      type
-    ##        <chr>     <chr>     <chr>     <chr>
-    ##  1 ecclimate      data   dataset character
-    ##  2 ecclimate      data  location character
-    ##  3 ecclimate      data     param character
-    ##  4 ecclimate      data      date      date
-    ##  5 ecclimate      data     value    double
-    ##  6 ecclimate      data     flags character
-    ##  7 ecclimate locations   dataset character
-    ##  8 ecclimate locations  location character
-    ##  9 ecclimate locations stationid   integer
-    ## 10 ecclimate locations  latitude    double
-    ## 11 ecclimate locations longitude    double
-    ## 12 ecclimate locations  province character
-    ## 13 ecclimate    params   dataset character
-    ## 14 ecclimate    params     param character
-    ## 15 ecclimate    params     label character
-    ## 16 ecclimate  datasets   dataset character
-    ## 17 ecclimate  datasets       url character
-    ## 
-    ## attr(,"x_columns")
-    ## [1] "date"
-    ## attr(,"class")
-    ## [1] "mudata" "list"
+Finally, you can `filter()` individual tables using **dplyr**-like syntax (these functions also make sure all tables stay synced with each other):
 
 ``` r
-autoplot(kvtemp)
+library(lubridate)
+#> 
+#> Attaching package: 'lubridate'
+#> The following object is masked from 'package:base':
+#> 
+#>     date
+ns_climate %>%
+  filter_data(month(date) == 6)
+#> A mudata object aligned along "date"
+#>   distinct_datasets():  "ecclimate_monthly"
+#>   distinct_locations(): ... 15 values
+#>   distinct_params():    ... 11 values
+#>   src_tbls():           ... 5 values
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 7
+#>             dataset          location         param       date value  flag
+#>               <chr>             <chr>         <chr>     <date> <dbl> <chr>
+#> 1 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-06-01    NA     M
+#> 2 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1898-06-01  13.4  <NA>
+#> 3 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1899-06-01  14.4  <NA>
+#> 4 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1900-06-01  14.6  <NA>
+#> 5 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1901-06-01  15.3  <NA>
+#> 6 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1902-06-01  13.6  <NA>
+#> # ... with 1 more variables: flag_text <chr>
+ns_climate %>%
+  filter_locations(last_year > 2000)
+#> A mudata object aligned along "date"
+#>   distinct_datasets():  "ecclimate_monthly"
+#>   distinct_locations(): ... 9 values
+#>   distinct_params():    ... 11 values
+#>   src_tbls():           ... 5 values
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 7
+#>             dataset          location         param       date value  flag
+#>               <chr>             <chr>         <chr>     <date> <dbl> <chr>
+#> 1 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-01-01    NA     M
+#> 2 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-02-01    NA     M
+#> 3 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-03-01    NA     M
+#> 4 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-04-01    NA     M
+#> 5 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-05-01    NA     M
+#> 6 ecclimate_monthly SABLE ISLAND 6454 mean_max_temp 1897-06-01    NA     M
+#> # ... with 1 more variables: flag_text <chr>
 ```
 
-    ## Using x = "date", y = "value"
+Creating mudata objects
+-----------------------
 
-    ## Using facets = c("param")
+Objects are created using the `mudata()` function, which takes a data frame/tibble with columns (at least) `param` and `value`. If you have more than one location, you will need a `location` column, and if you have points measured at more than one time, you'll need a column that describes the point in time (probably called `date` or `datetime`, or if you're a [paleolimnologist](https://www.wikipedia.org/wiki/Paleolimnology) like me, `depth` and/or `age`).
 
-    ## Using col = "location", pch = "dataset"
-
-![](README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-7-1.png)
+As an example, we'll use a small subset of data from two cores I collected a long time ago:
 
 ``` r
-autobiplot(kvtemp, col="location")
+library(tidyverse)
+poc_maj <- pocmajsum %>%
+  select(core, depth, Ca, Ti, V)
+poc_maj
+#> # A tibble: 12 x 5
+#>     core depth       Ca       Ti        V
+#>    <chr> <int>    <dbl>    <dbl>    <dbl>
+#>  1 MAJ-1     0 1884.667 2369.667 78.33333
+#>  2 MAJ-1     1 1418.000 2409.000 70.00000
+#>  3 MAJ-1     2 1550.000 2376.000 70.00000
+#>  4 MAJ-1     3 1448.000 2485.000 64.00000
+#>  5 MAJ-1     4 1247.000 2414.000 57.00000
+#>  6 MAJ-1     5 1412.333 1897.333 81.00000
+#>  7 POC-2     0 1622.000 2038.000 33.00000
+#>  8 POC-2     1 1488.000 2016.000 36.00000
+#>  9 POC-2     2 2416.000 3270.000 79.00000
+#> 10 POC-2     3 2253.000 3197.000 79.00000
+#> 11 POC-2     4 2372.000 3536.000 87.00000
+#> 12 POC-2     5 2635.333 3890.000 87.00000
 ```
 
-    ## Using names_x = c("mintemp", "maxtemp"), names_y = c("meantemp", "mintemp")
-
-![](README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png)
-
-Creating a MUData object
-------------------------
-
-Creating a `mudata` object from your own data is slightly more difficult, but the package contains a few functions to (hopefully) make things a bit easier. The key is creating the `$data` table in the correct format; the rest can be handled automatically by the `mudata()` constructor.
-
-### Case 1: Wide, summarised data
-
-Probably the most common case, wide, summarised data is the norm in most disciplines. If you've gotten this far, there is a good chance that you have data like this hanging around somewhere:
+Here, `depth` is the depth in the core, and `Ca`, `Ti`, and `V` are elemental concentrations in the sediment. To get this into parameter-long format, we need to use the `gather()` function in the **tidyr** package, and rename the `core` column to `location`.
 
 ``` r
-data("pocmajsum")
-pocmajwide <- pocmajsum %>%
-  select(core, depth, Ca, V, Ti)
-```
-
-| core  |  depth|    Ca|    V|    Ti|
-|:------|------:|-----:|----:|-----:|
-| MAJ-1 |      0|  1885|   78|  2370|
-| MAJ-1 |      1|  1418|   70|  2409|
-| MAJ-1 |      2|  1550|   70|  2376|
-| MAJ-1 |      3|  1448|   64|  2485|
-| MAJ-1 |      4|  1247|   57|  2414|
-| MAJ-1 |      5|  1412|   81|  1897|
-| POC-2 |      0|  1622|   33|  2038|
-| POC-2 |      1|  1488|   36|  2016|
-| POC-2 |      2|  2416|   79|  3270|
-| POC-2 |      3|  2253|   79|  3197|
-| POC-2 |      4|  2372|   87|  3536|
-| POC-2 |      5|  2635|   87|  3890|
-
-This is a small subset of paleolimnological data for two sediment cores near Halifax, Nova Scotia. The data is a multi-parameter spatiotemporal dataset because it contains multiple parameters (calcium, titanium, and vanadium concentrations) measured along a common axis (depth in the sediment core) at discrete locations (cores named MAJ-1 and POC-2). Currently, our columns are not named properly: for the `mudata` format the terminology is 'location' not 'core'. The `rename()` function in `dplyr` does all the work here, easily renaming columns in place.
-
-``` r
-pocmajwide <- pocmajwide %>%
+poc_maj_long <- poc_maj %>%
+  gather(Ca, Ti, V, key = "param", value = "value") %>%
   rename(location = core)
+poc_maj_long
+#> # A tibble: 36 x 4
+#>    location depth param    value
+#>       <chr> <int> <chr>    <dbl>
+#>  1    MAJ-1     0    Ca 1884.667
+#>  2    MAJ-1     1    Ca 1418.000
+#>  3    MAJ-1     2    Ca 1550.000
+#>  4    MAJ-1     3    Ca 1448.000
+#>  5    MAJ-1     4    Ca 1247.000
+#>  6    MAJ-1     5    Ca 1412.333
+#>  7    POC-2     0    Ca 1622.000
+#>  8    POC-2     1    Ca 1488.000
+#>  9    POC-2     2    Ca 2416.000
+#> 10    POC-2     3    Ca 2253.000
+#> # ... with 26 more rows
 ```
 
-Finally, we need to get the data into a "long" format, with a column named "param" and our actual values in a single column (called "value", predictably). This can be done using the `gather()` function in the [tidyr](https://cran.r-project.org/package=tidyr) package.
+This is the form of data needed by the `mudata()` constructor.
 
 ``` r
-library(tidyr)
-pocmajlong <- pocmajwide %>%
-  gather(Ca, Ti, V, key = "param", value = "value")
+poc_maj_md <- mudata(poc_maj_long)
+#> Guessing x columns: depth
+autoplot(poc_maj_md, y = "depth") + scale_y_reverse()
+#> Using x = "value"
 ```
 
-The (first six rows of the) data now look like this:
+![](README-poc-maj-1.png)
 
-| location |  depth| param |  value|
-|:---------|------:|:------|------:|
-| MAJ-1    |      0| Ca    |   1885|
-| MAJ-1    |      1| Ca    |   1418|
-| MAJ-1    |      2| Ca    |   1550|
-| MAJ-1    |      3| Ca    |   1448|
-| MAJ-1    |      4| Ca    |   1247|
-| MAJ-1    |      5| Ca    |   1412|
+More information
+----------------
 
-The last important thing to consider is the axis on which the data are aligned. This sounds complicated but isn't: these axes are the same axes you might use to plot the data, in this case `depth`. The `mudata()` constructor needs to know which column this is, either by explicitly passing `x_columns = "depth"` or by placing the column between "param" and "value". In most cases (like this one) it can be guessed (you'll see a message telling you which columns were assigned this value).
-
-Now the data is ready to be put into the `mudata()` constructor. If it isn't, the constructor will throw an error (hopefully) telling you how to fix the data.
-
-``` r
-md <- mudata(pocmajlong)
-```
-
-    ## Guessing x columns: depth
-
-``` r
-autoplot(md, y="depth") + scale_y_reverse()
-```
-
-    ## Using x = "value"
-
-    ## Using facets = c("param")
-
-    ## Using col = "location", pch = "dataset"
-
-![](README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png)
-
-### Case 2: Wide, summarised data with uncertainty
-
-Data is often output in a format similar to the format above, but with uncertainty information in paired columns. Data from an ICP-MS, for example is often in this format, with the concentration and a +/- column next to it. One of the advantages of a long format is the ability to include this information in a way that makes plotting with error bars easy. The `pocmajsum` dataset is a version of the dataset described above, but with standard deviation values in paired columns with the value itself.
-
-``` r
-data("pocmajsum")
-```
-
-| core  |  depth|    Ca|  Ca\_sd|    Ti|  Ti\_sd|    V|  V\_sd|
-|:------|------:|-----:|-------:|-----:|-------:|----:|------:|
-| MAJ-1 |      0|  1885|     452|  2370|     401|   78|      9|
-| MAJ-1 |      1|  1418|      NA|  2409|      NA|   70|     NA|
-| MAJ-1 |      2|  1550|      NA|  2376|      NA|   70|     NA|
-| MAJ-1 |      3|  1448|      NA|  2485|      NA|   64|     NA|
-| MAJ-1 |      4|  1247|      NA|  2414|      NA|   57|     NA|
-| MAJ-1 |      5|  1412|     126|  1897|      81|   81|     12|
-| POC-2 |      0|  1622|     509|  2038|     608|   33|      5|
-| POC-2 |      1|  1488|      NA|  2016|      NA|   36|     NA|
-| POC-2 |      2|  2416|      NA|  3270|      NA|   79|     NA|
-| POC-2 |      3|  2253|      NA|  3197|      NA|   79|     NA|
-| POC-2 |      4|  2372|      NA|  3536|      NA|   87|     NA|
-| POC-2 |      5|  2635|     143|  3890|      45|   87|      8|
-
-As above, we need to rename the "core" and column to "location" using the `rename()` function (from `dplyr`).
-
-``` r
-pocmajwide <- pocmajsum %>%
-  rename(location = core)
-```
-
-Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
-
-``` r
-pocmajlong <- parallel_melt(pocmajwide, id.vars=c("location", "depth"), 
-                            value=c("Ca", "Ti", "V"), 
-                            sd=c("Ca_sd", "Ti_sd", "V_sd"),
-                            variable.name = "param")
-```
-
-| location |  depth| param |  value|   sd|
-|:---------|------:|:------|------:|----:|
-| MAJ-1    |      0| Ca    |   1885|  452|
-| MAJ-1    |      1| Ca    |   1418|   NA|
-| MAJ-1    |      2| Ca    |   1550|   NA|
-| MAJ-1    |      3| Ca    |   1448|   NA|
-| MAJ-1    |      4| Ca    |   1247|   NA|
-| MAJ-1    |      5| Ca    |   1412|  126|
-
-The data is now ready to be fed to the `mudata()` constructor, after which we can use the `plot()` function to add error bars based on the `sd` column.
-
-``` r
-md <- mudata(pocmajlong)
-```
-
-    ## Guessing x columns: depth
-
-``` r
-autoplot(md, y="depth", error_var="sd") + scale_y_reverse()
-```
-
-    ## Using x = "value"
-
-    ## Using facets = c("param")
-
-    ## Using col = "location", pch = "dataset"
-
-![](README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-20-1.png)
-
-And more!
----------
-
-There is much more to the `mudata2` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users.
+For more examples of `mudata` objects, see `alta_lake`, `long_lake`, and `kentvillegreenwood`. For more examples of mudata usage, see the package vignettes (coming soon...).

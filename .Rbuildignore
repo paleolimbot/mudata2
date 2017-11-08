@@ -5,3 +5,4 @@
 ^README_files$
 ^\.travis\.yml$
 ^codecov\.yml$
+^README-.*\.png$

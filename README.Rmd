@@ -1,160 +1,112 @@
 ---
-title: "R package 'mudata2'"
-author: "Dewey Dunnington"
-date: "February 26, 2017"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-library(dplyr)
-library(mudata2)
-library(ggplot2)
-knitr::opts_chunk$set(echo = TRUE)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
 ```
 
-[![](http://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2) [![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata) [![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg)](https://codecov.io/github/paleolimbot/mudata?branch=master)
+# mudata2
 
-The 'mudata' package for R is a set of tools to create, manipulate, and visualize multi-parameter, spatiotemporal data. Data of this type includes all data where multiple parameters (e.g. wind speed, precipitation, temperature) are measured along a common axis (e.g. time, depth) at discrete locations (e.g. climate stations). These data include long-term climate data collected from climate stations, paleolimnological data, ice core data, and ocean core data among many others. Data of this type is often voluminous and difficult to organize given its multi-dimensional nature. The (mostly) universal data (mudata) format is an attempt to organize these data in a common way to facilitate their documentation and comparison.
+<!-- [![](http://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2) [![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata) [![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg)](https://codecov.io/github/paleolimbot/mudata?branch=master) -->
+
+The **mudata2** package provides tools to read, write, and add metadata to multi-parameter spatiotemporal data. The term "multi-parameter spatiotemporal data" is a mouthful, but all it means is that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
 
 ## Installation
 
-The `mudata` package is in active development and can be installed from GitHub:
+You can install mudata2 from github with:
 
-```{r, eval=FALSE}
+```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("paleolimbot/mudata")
 ```
 
-## The MUData format
+## Using mudata objects
 
-The (mostly) universal data format is a collection of five (or more) tables, one of which contains the data in a molten form (see [tidyr](https://cran.r-project.org/package=tidyr)). The easiest way to visualize a mudata object is to inspect the `kentvillegreenwood` dataset within the package. This object is a collection of daily observations from Kentville, Nova Scotia, and Greenwood, Nova Scotia from July and August, 1999.
+The basic idea of a mudata object is to store data with embedded documentation. For example, the `ns_climate` dataset is a collection of monthly climate observations from [Nova Scotia](https://www.wikipedia.org/wiki/Nova_Scotia) (Canada), from [Environment Canada](http://climate.weather.gc.ca/). You can have a quick glance at the object using `print()`, `summary()` or `autoplot()`.
 
-```{r, warning=FALSE, message=FALSE}
+```{r summary, message = FALSE, warning = FALSE}
 library(mudata2)
-library(ggplot2)
-data("kentvillegreenwood")
-autoplot(kentvillegreenwood)
+print(ns_climate)
+summary(ns_climate)
+autoplot(ns_climate)
 ```
 
-The default `plot()` function for a `mudata` object uses [ggplot2](https://cran.r-project.org/package=ggplot2) to produce a faceted plot comparing locations and datasets by parameter. However, if we take a look at the structure of the object, we can see that it is just a `list` of 5 `data.frame` objects.
+You can extract the data from the object using `tbl_data()` or `tbl_data_wide()`:
 
 ```{r}
-str(kentvillegreenwood)
+ns_climate %>% tbl_data()
+ns_climate %>% tbl_data_wide()
 ```
 
-The most important of these is the `$data` table, which contains the actual parameter measurements. All of the other tables are ways to document the information contained in the data table, such as the coordinates of each location (in this case there is also quite a bit more information about each location, such as the various identifiers used by climate organizations), or the units in which each parameter is measured. The first few rows of this table are as follows:
-
-```{r, echo=FALSE}
-knitr::kable(head(kentvillegreenwood$data[15:25,]), row.names = F)
-```
-
-The package contains functions to `plot()` the data (using the [ggplot2](https://cran.r-project.org/package=ggplot2) framework), `print()` a description of the object, and `subset()` the object. Combining objects can be accomplished by `rbind()`-ing two `mudata` objects.
+You can have a look at the embedded documentation using `tbl_params()`, `tbl_locations()`, `tbl_datasets()`, and `tbl_columns()`:
 
 ```{r}
-kvtemp <- subset(kentvillegreenwood, params=c("mintemp", "maxtemp", "meantemp"))
-kvtemp
+ns_climate %>% tbl_params()
+ns_climate %>% tbl_locations()
+ns_climate %>% tbl_datasets()
+ns_climate %>% tbl_columns()
 ```
+
+You can subset mudata objects using `select_params()`, `select_locations()`, and `select_datasets()`, which use **dplyr**-like selection syntax to quickly subset mudata objects.
 
 ```{r}
-kvprecip <- subset(kentvillegreenwood, params="totalprecip")
-rbind(kvtemp, kvprecip)
+ns_climate %>% 
+  select_params(contains("temp"))
+ns_climate %>% 
+  select_locations(Kentville = starts_with("KENTVILLE"),
+                   Sable = starts_with("SABLE"))
 ```
+
+Finally, you can `filter()` individual tables using **dplyr**-like syntax (these functions also make sure all tables stay synced with each other):
 
 ```{r}
-autoplot(kvtemp)
+library(lubridate)
+ns_climate %>%
+  filter_data(month(date) == 6)
+ns_climate %>%
+  filter_locations(last_year > 2000)
 ```
+
+## Creating mudata objects
+
+Objects are created using the `mudata()` function, which takes a data frame/tibble with columns (at least) `param` and `value`. If you have more than one location, you will need a `location` column, and if you have points measured at more than one time, you'll need a column that describes the point in time (probably called `date` or `datetime`, or if you're a [paleolimnologist](https://www.wikipedia.org/wiki/Paleolimnology) like me, `depth` and/or `age`).
+
+As an example, we'll use a small subset of data from two cores I collected a long time ago:
+
+```{r, include = FALSE}
+pocmajsum <- tibble::as_tibble(pocmajsum)
+```
+
+```{r, message=FALSE}
+library(tidyverse)
+poc_maj <- pocmajsum %>%
+  select(core, depth, Ca, Ti, V)
+poc_maj
+```
+
+Here, `depth` is the depth in the core, and `Ca`, `Ti`, and `V` are elemental concentrations in the sediment. To get this into parameter-long format, we need to use the `gather()` function in the **tidyr** package, and rename the `core` column to `location`.
 
 ```{r}
-autobiplot(kvtemp, col="location")
-```
-
-## Creating a MUData object
-
-Creating a `mudata` object from your own data is slightly more difficult, but the package contains a few functions to (hopefully) make things a bit easier. The key is creating the `$data` table in the correct format; the rest can be handled automatically by the `mudata()` constructor.
-
-### Case 1: Wide, summarised data
-
-Probably the most common case, wide, summarised data is the norm in most disciplines. If you've gotten this far, there is a good chance that you have data like this hanging around somewhere:
-
-```{r}
-data("pocmajsum")
-pocmajwide <- pocmajsum %>%
-  select(core, depth, Ca, V, Ti)
-```
-
-```{r, echo=FALSE}
-knitr::kable(pocmajwide, row.names = FALSE, digits = 0)
-```
-
-This is a small subset of paleolimnological data for two sediment cores near Halifax, Nova Scotia. The data is a multi-parameter spatiotemporal dataset because it contains multiple parameters (calcium, titanium, and vanadium concentrations) measured along a common axis (depth in the sediment core) at discrete locations (cores named MAJ-1 and POC-2). Currently, our columns are not named properly: for the `mudata` format the terminology is 'location' not 'core'. The `rename()` function in `dplyr` does all the work here, easily renaming columns in place.
-
-```{r}
-pocmajwide <- pocmajwide %>%
+poc_maj_long <- poc_maj %>%
+  gather(Ca, Ti, V, key = "param", value = "value") %>%
   rename(location = core)
+poc_maj_long
 ```
 
-Finally, we need to get the data into a "long" format, with a column named "param" and our actual values in a single column (called "value", predictably). This can be done using the `gather()` function in the [tidyr](https://cran.r-project.org/package=tidyr) package.
+This is the form of data needed by the `mudata()` constructor.
 
-```{r, warning=FALSE}
-library(tidyr)
-pocmajlong <- pocmajwide %>%
-  gather(Ca, Ti, V, key = "param", value = "value")
+```{r poc-maj}
+poc_maj_md <- mudata(poc_maj_long)
+autoplot(poc_maj_md, y = "depth") + scale_y_reverse()
 ```
 
-The (first six rows of the) data now look like this:
+## More information
 
-```{r, echo=FALSE}
-knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
-```
-
-The last important thing to consider is the axis on which the data are aligned. This sounds complicated but isn't: these axes are the same axes you might use to plot the data, in this case `depth`. The `mudata()` constructor needs to know which column this is, either by explicitly passing `x_columns = "depth"` or by placing the column between "param" and "value". In most cases (like this one) it can be guessed (you'll see a message telling you which columns were assigned this value).
-
-Now the data is ready to be put into the `mudata()` constructor. If it isn't, the constructor will throw an error (hopefully) telling you how to fix the data.
-
-```{r}
-md <- mudata(pocmajlong)
-autoplot(md, y="depth") + scale_y_reverse()
-```
-
-### Case 2: Wide, summarised data with uncertainty
-
-Data is often output in a format similar to the format above, but with uncertainty information in paired columns. Data from an ICP-MS, for example is often in this format, with the concentration and a +/- column next to it. One of the advantages of a long format is the ability to include this information in a way that makes plotting with error bars easy. The `pocmajsum` dataset is a version of the dataset described above, but with standard deviation values in paired columns with the value itself.
-
-```{r}
-data("pocmajsum")
-```
-
-```{r, echo=FALSE}
-knitr::kable(pocmajsum, row.names = FALSE, digits = 0)
-```
-
-As above, we need to rename the "core" and column to "location" using the `rename()` function (from `dplyr`).
-
-```{r}
-pocmajwide <- pocmajsum %>%
-  rename(location = core)
-```
-
-Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
-
-```{r}
-pocmajlong <- parallel_melt(pocmajwide, id.vars=c("location", "depth"), 
-                            value=c("Ca", "Ti", "V"), 
-                            sd=c("Ca_sd", "Ti_sd", "V_sd"),
-                            variable.name = "param")
-```
-
-```{r, echo=FALSE}
-knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
-```
-
-The data is now ready to be fed to the `mudata()` constructor, after which we can use the `plot()` function to add error bars based on the `sd` column.
-
-```{r, warning=FALSE}
-md <- mudata(pocmajlong)
-autoplot(md, y="depth", error_var="sd") + scale_y_reverse()
-```
-
-## And more!
-
-There is much more to the `mudata2` package, which we hope will be useful both in its current form and as the project evolves to fit the needs of its users.
+For more examples of `mudata` objects, see `alta_lake`, `long_lake`, and `kentvillegreenwood`. For more examples of mudata usage, see the package vignettes (coming soon...).

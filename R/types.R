@@ -23,19 +23,27 @@ generate_type_tbl.mudata <- function(x, default = "guess") {
   } else {
     # use all datasets, or if there is no datasets table use NA_character_
     if("datasets" %in% names(x)) {
-      dataset_ids <- dplyr::collect(dplyr::distinct_(x$datasets, "dataset"))$dataset
+      dataset_ids <- distinct_datasets(x, table = "datasets")
     } else {
       dataset_ids <- NA_character_
     }
     
     # generate all combinations of dataset_ids and table
-    allcols <- expand.grid(dataset = dataset_ids, table = names(x),
-                           stringsAsFactors = FALSE)
-    
     # use generate_type_str() to generate column specs
-    columns <- plyr::adply(allcols, 1, function(row) {
-      generate_type_tbl(x[[row$table]], default = default)
+    allcols <- expand.grid(dataset = dataset_ids, table = names(x),
+                            stringsAsFactors = FALSE)
+    allcols$.data <- lapply(allcols$table, function(table) {
+      generate_type_tbl(x[[table]], default = default)
     })
+    
+    # unnest the .data column
+    if(nrow(allcols) == 0) {
+      # no datasets/tbls, empty auto-generated columns table
+      columns <- tibble::tibble(dataset = character(0), table = character(0),
+                                column = character(0))
+    } else {
+      columns <- tidyr::unnest(allcols)
+    }
   }
   
   # return columns

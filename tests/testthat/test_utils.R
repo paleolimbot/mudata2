@@ -10,11 +10,11 @@ test_that("parallel_melt produces the expected data frame", {
   expect_that(names(pocmajlong), equals(c("core", "depth", "param", "value", "sd")))
   
   # melt manually
-  ca <- plyr::rename(pocmajsum[c("core", "depth", "Ca", "Ca_sd")], c("Ca"="value", "Ca_sd"="sd"))
+  ca <- dplyr::rename(pocmajsum[c("core", "depth", "Ca", "Ca_sd")], value = Ca, sd = Ca_sd)
   ca$param <- "Ca"
-  ti <- plyr::rename(pocmajsum[c("core", "depth", "Ti", "Ti_sd")], c("Ti"="value", "Ti_sd"="sd"))
+  ti <- dplyr::rename(pocmajsum[c("core", "depth", "Ti", "Ti_sd")], value = Ti, sd = Ti_sd)
   ti$param <- "Ti"
-  v <- plyr::rename(pocmajsum[c("core", "depth", "V", "V_sd")], c("V"="value", "V_sd"="sd"))
+  v <- dplyr::rename(pocmajsum[c("core", "depth", "V", "V_sd")], value = V, sd = V_sd)
   v$param <- "V"
   pocmajlongman <- rbind(ca, ti, v)[c("core", "depth", "param", "value", "sd")]
   

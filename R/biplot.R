@@ -106,7 +106,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
             ")")
     
     # use unique_combinations to generate matches, such that none are duplicated
-    name_combinations <- unique_combinations(names_x)
+    name_combinations <- unique_combinations(names_x) %>% tibble::as_tibble()
   } else {
     # check for missing names
     missing_names <- setdiff(c(names_x, names_y), all_params)
@@ -121,12 +121,14 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
     name_combinations <- expand.grid(.name_x = name_x, .name_y = name_y, 
                                      stringsAsFactors = FALSE) %>%
       # don't include combinations with the same parameter
-      dplyr::filter(.name_x != .name_y)
+      dplyr::filter(.name_x != .name_y) %>%
+      tibble::as_tibble()
   }
   
   # use name combinations to filter and join data, rbinding into a single long
   # data frame at the end
-  data_pairs <- plyr::adply(name_combinations, .margins = 1, function(combination) {
+  name_combinations$.data <- lapply(seq_len(nrow(name_combinations)), function(i) {
+    combination <- name_combinations[i,]
     # filter data to get data_x and data_y
     data_x <- data %>% dplyr::filter(.name == combination$.name_x) %>% dplyr::collect()
     data_y <- data %>% dplyr::filter(.name == combination$.name_y) %>% dplyr::collect()
@@ -137,6 +139,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
     # return data_both
     data_both
   })
+  data_pairs <- tidyr::unnest(name_combinations)
   
   # make name_x and name_y factors with the levels specified
   data_pairs$.name_x <- factor(data_pairs$.name_x, levels = name_x)
@@ -303,11 +306,8 @@ unique_combinations <- function(vect) {
     return(tibble::tibble(.name_x = character(0), .name_y = character(0)))
   }
   
-  plyr::ldply(1:(length(vect) - 1), function(i) {
-    tibble::tibble(
-      .name_x = vect[i],
-      .name_y = vect[(i+1):length(vect)]
-    )
-  })
+  # use utils::combn() to generate combinations
+  utils::combn(as.character(vect), m = 2, simplify = TRUE) %>% 
+    t() %>% tibble::as_tibble() %>% dplyr::select(.name_x = 1, .name_y = 2)
 }
 

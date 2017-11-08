@@ -88,3 +88,25 @@
 #'   autoplot()
 #' 
 "ns_climate"
+
+#' Second Lake Thermistor String Data
+#' 
+#' Temperatures at multiple depths in the water column for a season at Second Lake, Lower Sackville, 
+#' Nova Scotia, Canada.
+#' 
+#' @format A \link{mudata} object
+#' 
+#' @references
+#' Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic 
+#' impact between First and Second Lake, Lower Sackville, Nova Scotia. 
+#' B.Sc.H. Thesis, Acadia University
+#' 
+#' @examples
+#' library(ggplot2)
+#' autoplot(second_lake_temp, y = "depth", x = "datetime", 
+#'          col = "value", geom = "point") + 
+#'   scale_y_reverse()
+#' autoplot(second_lake_temp, x = "datetime", y = "value", 
+#'          facets = c("param", "depth"))
+#' 
+"second_lake_temp"

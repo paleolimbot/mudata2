@@ -9,12 +9,11 @@
 #' @param default The default type descriptor (should usually be 'guess')
 #'
 #' @return A type descriptor or tibble of type descriptors
-#' @export
+#' @keywords internal
 #'
 generate_type_tbl <- function(x, default = "guess") UseMethod("generate_type_tbl")
 
 #' @rdname generate_type_tbl
-#' @export
 generate_type_tbl.mudata <- function(x, default = "guess") {
   # generate a table of all columns from all tables
   if(.isempty(x$data)) {
@@ -45,7 +44,6 @@ generate_type_tbl.mudata <- function(x, default = "guess") {
 
 # generate a type table for a data.frame
 #' @rdname generate_type_tbl
-#' @export
 generate_type_tbl.tbl <- function(x, default = "guess") {
   df <- x %>% utils::head() %>% dplyr::collect()
   vapply(df, generate_type_str, default = default, FUN.VALUE = character(1)) %>%
@@ -53,14 +51,12 @@ generate_type_tbl.tbl <- function(x, default = "guess") {
 }
 
 #' @rdname generate_type_tbl
-#' @export
 generate_type_tbl.data.frame <- function(x, default = "guess") {
   generate_type_tbl.tbl(x = x, default = default)
 }
 
 # generate a type for an object (e.g. column in data frame)
 #' @rdname generate_type_tbl
-#' @export
 generate_type_str <- function(x, default = "guess") {
   # list of types
   class_to_type <- c("character" = "character", "factor" = "character",
@@ -116,18 +112,18 @@ generate_type_str <- function(x, default = "guess") {
 #'   time, integer, wkt, or json.
 #'
 #' @return A parsed version of the type_str, a column specification or parsing function
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' # mostly type specs are just type names
-#' parse_type("character")
-#' as_col_spec("character")
-#' as_parser("character")
+#' # parse_type("character")
+#' # as_col_spec("character")
+#' # as_parser("character")
 #' 
 #' # can also pass arguments if needed
-#' parse_type("datetime(format='%m%.%d%.%Y')")
-#' as_col_spec("datetime(format='%m%.%d%.%Y')")
-#' as_parser("datetime(format='%m%.%d%.%Y')")
+#' # parse_type("datetime(format='%m%.%d%.%Y')")
+#' # as_col_spec("datetime(format='%m%.%d%.%Y')")
+#' # as_parser("datetime(format='%m%.%d%.%Y')")
 #' 
 as_col_spec <- function(type_str) {
   # parse, verify type_str
@@ -144,7 +140,6 @@ as_col_spec <- function(type_str) {
 }
 
 #' @rdname as_col_spec
-#' @export
 as_parser <- function(type_str) {
   # parse, verify type_str
   type_obj <- parse_type(type_str)
@@ -339,7 +334,6 @@ numeric_list_item_regex <- "\\s*([0-9.]+)(\\s*,?\\s*)"
 string_list_item_regex <- "\\s*(['\"])(.*?)\\1(\\s*,?\\s*)"
 
 #' @rdname as_col_spec
-#' @export
 parse_type <- function(type_str) {
   # do base parsing of type_str
   type_obj <- parse_type_base(type_str)

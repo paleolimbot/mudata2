@@ -31,3 +31,4 @@ These functions generate type descriptors for use in the \link{mudata}
 columns table. They are used in \link{mudata_parse_column} to deserialize
 a vector read from csv or json.
 }
+\keyword{internal}

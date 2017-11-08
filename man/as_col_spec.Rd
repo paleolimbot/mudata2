@@ -26,13 +26,14 @@ contain arguments for the sake of completeness (but this shouldn't normally be n
 }
 \examples{
 # mostly type specs are just type names
-parse_type("character")
-as_col_spec("character")
-as_parser("character")
+# parse_type("character")
+# as_col_spec("character")
+# as_parser("character")
 
 # can also pass arguments if needed
-parse_type("datetime(format='\%m\%.\%d\%.\%Y')")
-as_col_spec("datetime(format='\%m\%.\%d\%.\%Y')")
-as_parser("datetime(format='\%m\%.\%d\%.\%Y')")
+# parse_type("datetime(format='\%m\%.\%d\%.\%Y')")
+# as_col_spec("datetime(format='\%m\%.\%d\%.\%Y')")
+# as_parser("datetime(format='\%m\%.\%d\%.\%Y')")
 
 }
+\keyword{internal}

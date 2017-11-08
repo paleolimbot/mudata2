@@ -602,13 +602,15 @@ format_vector <- function(x, width = NULL, quote = '"', prefix = "") {
     
     # exponential backoff in case lists are extra long
     if(out_len <= 2) {
-      break
+      # never print less than 2 values, regardless of width
+      return(out_text)
     } else {
       out_len <- round(out_len * 0.75)
     }
   }
   
   # no values will fit within width
+  # (should never happen)
   return(sprintf("%s... %s values", prefix, length(x)))
 }
 

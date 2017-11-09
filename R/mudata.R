@@ -1,5 +1,5 @@
 
-#' Create a MuData object
+#' Create a mudata object
 #' 
 #' Create a mudata object, which is a collection of five tables: data,
 #' locations, params, datasets, and columns. You are only required to provide

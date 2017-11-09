@@ -2,7 +2,7 @@
 % Please edit documentation in R/mudata.R
 \name{mudata}
 \alias{mudata}
-\title{Create a MuData object}
+\title{Create a mudata object}
 \usage{
 mudata(data, locations = NULL, params = NULL, datasets = NULL,
   columns = NULL, x_columns = NULL, ..., more_tbls = NULL,

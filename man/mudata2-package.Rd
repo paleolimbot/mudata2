@@ -2,54 +2,37 @@
 % Please edit documentation in R/package_doc.R
 \docType{package}
 \name{mudata2-package}
+\alias{mudata2}
+\alias{mudata2-package}
 \title{A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data}
 \description{
 The 'mudata' package for R is a set of tools to create, manipulate, and 
 visualize multi-parameter, spatiotemporal data. Data of this type includes 
 all data where multiple parameters (e.g. wind speed, precipitation, 
-temperature) are measured along a common axis (e.g. time, depth) at discrete 
+temperature) are measured along common axes (e.g. time, depth) at discrete 
 locations (e.g. climate stations). These data include long-term climate data 
-collected from climate stations, paleolimnological data, ice core data, and 
-ocean core data among many others. Data of this type is often voluminous and 
-difficult to organize given its multi-dimensional nature. The (mostly) 
-universal data (mudata) format is an attempt to organize these data in a 
-common way to facilitate their documentation and comparison.
+collected from climate stations, paleolimnological data, ice core data, 
+long-term water quality monitoring data, and ocean core data among many 
+others. Data of this type is often voluminous and difficult to
+organize/document given its multidimensional nature. The (mostly) universal
+data (mudata) format is an attempt to organize these data in a common way to
+facilitate their documentation and comparison.
 }
 \details{
 The (mostly) universal data format is a collection of five (or more) tables, 
-one of which contains the data in a molten form (see \code{reshape2::melt}).
-The easiest way to visualize a mudata object is to inspect the
-\code{kentvillegreenwood} dataset within the package. This object is a collection
-of daily observations from Kentville, Nova Scotia, and Greenwood, Nova Scotia
-from July and August, 1999.
+one of which contains the data in a parameter-long form (see 
+\link[tidyr]{gather}). The easiest way to visualize a mudata object is to 
+inspect the sample datasets within the package (\link{ns_climate}, 
+\link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake}, and 
+\link{second_lake_temp}).
 }
 \examples{
-# inspect the example dataset
-data(kentvillegreenwood)
 print(kentvillegreenwood)
-plot(kentvillegreenwood)
-
-# create a mudata object from a wide data.frame
-library(tidyr)
-library(dplyr)
-# gather columns and summarise replicates
-datatable <- pocmaj \%>\%
-  gather(Ca, Ti, V, key = "param", value = "param_value") \%>\%
-  group_by(core, param, depth) \%>\%
-  summarise(value=mean(param_value), sd=mean(param_value)) \%>\%
-  rename(location = core)
-
-# create mudata object
-md <- mudata(datatable)
-
-# plot mudata contents
-plot(md, y="depth")
-library(ggplot2)
-autoplot(md, y = "depth")
+autoplot(kentvillegreenwood)
 
 }
 \seealso{
-\link{mudata}
+\link{mudata}, \link{read_mudata}
 }
 \author{
 \strong{Maintainer}: Dewey Dunnington \email{dewey@fishandwhistle.net}

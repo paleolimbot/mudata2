@@ -38,25 +38,38 @@ read_mudata_json(filename, validate = TRUE, ...)
 from_mudata_json(txt, validate = TRUE, ...)
 }
 \arguments{
-\item{md}{a mudata object}
+\item{md}{A mudata object}
 
-\item{filename}{file to read/write (can also be a directory)}
+\item{filename}{File to read/write (can also be a directory)}
 
-\item{...}{passed to read/write functions}
+\item{...}{Passed to read/write functions}
 
-\item{overwrite}{Pass \code{TRUE} to overwrite if \code{zipfile} already exists.}
+\item{overwrite}{Pass \code{TRUE} to overwrite if the file/directory already
+exists.}
 
-\item{validate}{flag to validate mudata object upon read or before write}
+\item{validate}{Flag to validate mudata object after read or before write}
 
-\item{update_columns}{Update the columns table "type" column to reflect the internal
-R types of columns (reccommended).}
+\item{update_columns}{Update the columns table "type" column to reflect the
+internal R types of columns (reccommended).}
 
 \item{pretty}{Produce pretty or minified JSON output}
 
 \item{txt}{JSON text from which to read a mudata object.}
 }
 \description{
-Read/Write mudata objects
+These functions will read and write mudata objects to disk using a directory 
+(which contains one .csv file for each table in the object), a ZIP archive 
+(which is a zipped version of the directory format), or a JSON file. The
+base read/write functions attempt to guess which of these types to use
+based on the file extension: use the specific read/write function to
+avoid this.
+}
+\details{
+These functions are designed to make sure that the read/write operations are
+as lossless as possible. Some exceptions to this are if date/time columns are
+not in UTC (in which case they will be converted to UTC before writing), and
+if table names have characters that are not filesystem safe (allowed
+characters are [A-Za-z0-9_.-] and others will be stripped).
 }
 \examples{
 # read/write to directory

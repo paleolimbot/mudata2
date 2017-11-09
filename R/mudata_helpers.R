@@ -6,6 +6,7 @@
 #'   the "data" table is safest, but for large datasets that are not
 #'   in memory, using the meta table (params, locations, or datasets)
 #'   may be useful.
+#' @param ... Passed to other methods
 #'
 #' @return A character vector of distinct parameter names
 #' @export
@@ -14,26 +15,49 @@
 #' distinct_params(kentvillegreenwood)
 #' distinct_locations(kentvillegreenwood)
 #' distinct_datasets(kentvillegreenwood)
-#' 
-distinct_params <- function(x, table = "data") {
+distinct_params <- function(x, ...) {
+  UseMethod("distinct_params")
+}
+
+#' @rdname distinct_params
+#' @export
+distinct_params.default <- function(x, table = "data", ...) {
   as.character(sort(.distinct_vector(x[[table]], "param")))
 }
 
 #' @rdname distinct_params
 #' @export
-distinct_locations <- function(x, table = "data") {
+distinct_locations <- function(x, ...) {
+  UseMethod("distinct_locations")
+}
+
+#' @rdname distinct_params
+#' @export
+distinct_locations.default <- function(x, table = "data", ...) {
   as.character(sort(.distinct_vector(x[[table]], "location")))
 }
 
 #' @rdname distinct_params
 #' @export
-distinct_datasets <- function(x, table = "data") {
+distinct_datasets <- function(x, ...) {
+  UseMethod("distinct_datasets")
+}
+
+#' @rdname distinct_params
+#' @export
+distinct_datasets.default <- function(x, table = "data", ...) {
   as.character(sort(.distinct_vector(x[[table]], "dataset")))
 }
 
 #' @rdname distinct_params
 #' @export
-distinct_columns <- function(x, table = names(x)) {
+distinct_columns <- function(x, ...) {
+  UseMethod("distinct_columns")
+}
+
+#' @rdname distinct_params
+#' @export
+distinct_columns.default <- function(x, table = names(x), ...) {
   all_names <- lapply(x[table], colnames)
   sort(unique(unlist(all_names, use.names = FALSE)))
 }
@@ -81,14 +105,25 @@ src_tbls.mudata <- function(x) {
 #'
 #' @examples
 #' tbl_data(kentvillegreenwood)
-#' 
 tbl_data <- function(x) {
+  UseMethod("tbl_data")
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_data.default <- function(x) {
   x$data
 }
 
 #' @rdname tbl_data
 #' @export
-tbl_data_wide <- function(x, key = "param", value = "value", ...) {
+tbl_data_wide <- function(x, ...) {
+  UseMethod("tbl_data_wide")
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_data_wide.default <- function(x, key = "param", value = "value", ...) {
   key_quo <- rlang::enquo(key)
   value_quo <- rlang::enquo(value)
   x %>%
@@ -101,19 +136,43 @@ tbl_data_wide <- function(x, key = "param", value = "value", ...) {
 #' @rdname tbl_data
 #' @export
 tbl_params <- function(x) {
+  UseMethod("tbl_params")
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_params.default <- function(x) {
   x$params
 }
 
 #' @rdname tbl_data
 #' @export
 tbl_locations <- function(x) {
+  UseMethod("tbl_locations")
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_locations.default <- function(x) {
   x$locations
 }
 
 #' @rdname tbl_data
 #' @export
 tbl_datasets <- function(x) {
+  UseMethod("tbl_datasets")
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_datasets.default <- function(x) {
   x$datasets
+}
+
+#' @rdname tbl_data
+#' @export
+tbl_columns <- function(x) {
+  UseMethod("tbl_columns")
 }
 
 #' @rdname tbl_data
@@ -132,6 +191,12 @@ tbl.mudata <- function(src, which, ...) {
 #' @rdname tbl_data
 #' @export
 x_columns <- function(x) {
+  UseMethod("x_columns")
+}
+
+#' @rdname tbl_data
+#' @export
+x_columns.default <- function(x) {
   attr(x, "x_columns")
 }
 
@@ -153,8 +218,13 @@ x_columns <- function(x) {
 #' kentvillegreenwood %>%
 #'   update_datasets("ecclimate", new_key = "new_value") %>%
 #'   tbl_datasets()
-#' 
-update_datasets <- function(x, datasets, ...) {
+update_datasets <- function(x, ...) {
+  UseMethod("update_datasets")
+}
+
+#' @rdname update_datasets
+#' @export
+update_datasets.default <- function(x, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "datasets")
   }
@@ -169,7 +239,13 @@ update_datasets <- function(x, datasets, ...) {
 
 #' @rdname update_datasets
 #' @export
-update_locations <- function(x, locations, datasets, ...) {
+update_locations <- function(x, ...) {
+  UseMethod("update_locations")
+}
+
+#' @rdname update_datasets
+#' @export
+update_locations.default <- function(x, locations, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "locations")
   }
@@ -191,7 +267,13 @@ update_locations <- function(x, locations, datasets, ...) {
 
 #' @rdname update_datasets
 #' @export
-update_params <- function(x, params, datasets, ...) {
+update_params <- function(x, ...) {
+  UseMethod("update_params")
+}
+
+#' @rdname update_datasets
+#' @export
+update_params.default <- function(x, params, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "params")
   }
@@ -213,7 +295,13 @@ update_params <- function(x, params, datasets, ...) {
 
 #' @rdname update_datasets
 #' @export
-update_columns <- function(x, columns, tables, datasets, ...) {
+update_columns <- function(x, ...) {
+  UseMethod("update_columns")
+}
+
+#' @rdname update_datasets
+#' @export
+update_columns.default <- function(x, columns, tables, datasets, ...) {
   if(missing(datasets)) {
     datasets <- distinct_datasets(x, table = "columns")
   }
@@ -306,7 +394,13 @@ mutate_columns <- function(x, ...) {
 
 #' @rdname mutate_data
 #' @export
-mutate_tbl <- function(x, tbl, ...) {
+mutate_tbl <- function(x, ...) {
+  UseMethod("mutate_tbl")
+}
+
+#' @rdname mutate_data
+#' @export
+mutate_tbl.default <- function(x, tbl, ...) {
   x[[tbl]] <- dplyr::mutate(x[[tbl]], ...)
   x
 }

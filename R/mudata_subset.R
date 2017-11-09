@@ -55,7 +55,13 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 
 #' @rdname subset.mudata
 #' @export
-select_datasets <- function(.data, ..., .factor = FALSE) {
+select_datasets <- function(.data, ...) {
+  UseMethod("select_datasets")
+}
+ 
+#' @rdname subset.mudata
+#' @export
+select_datasets.default <- function(.data, ..., .factor = FALSE) {
   # quo-ify datasets
   datasets <- rlang::quos(...)
   # use tidyselect to get dataset names
@@ -78,7 +84,13 @@ select_datasets <- function(.data, ..., .factor = FALSE) {
 
 #' @rdname subset.mudata
 #' @export
-select_locations <- function(.data, ..., .factor = FALSE) {
+select_locations <- function(.data, ...) {
+  UseMethod("select_locations")
+}
+
+#' @rdname subset.mudata
+#' @export
+select_locations.default <- function(.data, ..., .factor = FALSE) {
   # quo-ify locations
   locations <- rlang::quos(...)
   # use tidyselect to get location names
@@ -97,6 +109,12 @@ select_locations <- function(.data, ..., .factor = FALSE) {
   }
   
   md_out
+}
+
+#' @rdname subset.mudata
+#' @export
+select_params <- function(.data, ...) {
+  UseMethod("select_params")
 }
 
 #' @rdname subset.mudata
@@ -125,6 +143,12 @@ select_params <- function(.data, ..., .factor = FALSE) {
 #' @rdname subset.mudata
 #' @export
 filter_datasets <- function(.data, ...) {
+  UseMethod("filter_datasets")
+}
+
+#' @rdname subset.mudata
+#' @export
+filter_datasets.default <- function(.data, ...) {
   filter_args <- rlang::quos(...)
   if(length(filter_args) == 0) return(.data)
   
@@ -139,6 +163,12 @@ filter_datasets <- function(.data, ...) {
 #' @rdname subset.mudata
 #' @export
 filter_data <- function(.data, ...) {
+  UseMethod("filter_data")
+}
+
+#' @rdname subset.mudata
+#' @export
+filter_data.default <- function(.data, ...) {
   filter_args <- rlang::quos(...)
   if(length(filter_args) == 0) return(.data)
   
@@ -163,6 +193,12 @@ filter_data <- function(.data, ...) {
 #' @rdname subset.mudata
 #' @export
 filter_locations <- function(.data, ...) {
+  UseMethod("filter_locations")
+}
+
+#' @rdname subset.mudata
+#' @export
+filter_locations.default <- function(.data, ...) {
   filter_args <- rlang::quos(...)
   if(length(filter_args) == 0) return(.data)
   
@@ -171,6 +207,12 @@ filter_locations <- function(.data, ...) {
     dplyr::mutate(.id = paste(.data$dataset, .data$location, sep = "/////")) %>%
     dplyr::pull(".id")
   filter_data(.data, paste(.data$dataset, .data$location, sep = "/////") %in% locations)
+}
+
+#' @rdname subset.mudata
+#' @export
+filter_params <- function(.data, ...) {
+  UseMethod("filter_params")
 }
 
 #' @rdname subset.mudata

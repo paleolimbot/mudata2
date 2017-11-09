@@ -4,11 +4,18 @@
 \alias{collect.mudata}
 \alias{subset.mudata}
 \alias{select_datasets}
+\alias{select_datasets.default}
 \alias{select_locations}
+\alias{select_locations.default}
+\alias{select_params}
 \alias{select_params}
 \alias{filter_datasets}
+\alias{filter_datasets.default}
 \alias{filter_data}
+\alias{filter_data.default}
 \alias{filter_locations}
+\alias{filter_locations.default}
+\alias{filter_params}
 \alias{filter_params}
 \title{Subset (filter) a MuData object}
 \usage{
@@ -17,17 +24,31 @@
 \method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
   locations = NULL)
 
-select_datasets(.data, ..., .factor = FALSE)
+select_datasets(.data, ...)
 
-select_locations(.data, ..., .factor = FALSE)
+\method{select_datasets}{default}(.data, ..., .factor = FALSE)
+
+select_locations(.data, ...)
+
+\method{select_locations}{default}(.data, ..., .factor = FALSE)
+
+select_params(.data, ..., .factor = FALSE)
 
 select_params(.data, ..., .factor = FALSE)
 
 filter_datasets(.data, ...)
 
+\method{filter_datasets}{default}(.data, ...)
+
 filter_data(.data, ...)
 
+\method{filter_data}{default}(.data, ...)
+
 filter_locations(.data, ...)
+
+\method{filter_locations}{default}(.data, ...)
+
+filter_params(.data, ...)
 
 filter_params(.data, ...)
 }

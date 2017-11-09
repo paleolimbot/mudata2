@@ -15,6 +15,12 @@
 #' rename_columns(kentvillegreenwood, lon = longitude, lat = latitude)
 #' 
 rename_locations <- function(.data, ...) {
+  UseMethod("rename_locations")
+}
+
+#' @rdname renamers
+#' @export
+rename_locations.default <- function(.data, ...) {
   # quo-ify locations
   locations <- rlang::quos(...)
   # use tidyselect to get location names
@@ -31,9 +37,15 @@ rename_locations <- function(.data, ...) {
   md_out
 }
 
+#' @rdname renamers
+#' @export
+rename_params <- function(.data, ...) {
+  UseMethod("rename_params")
+}
+
 #' @export
 #' @rdname renamers
-rename_params <- function(.data, ...) {
+rename_params.default <- function(.data, ...) {
   # quo-ify params
   params <- rlang::quos(...)
   # use tidyselect to get location names
@@ -50,9 +62,15 @@ rename_params <- function(.data, ...) {
   md_out
 }
 
+#' @rdname renamers
+#' @export
+rename_datasets <- function(.data, ...) {
+  UseMethod("rename_datasets")
+}
+
 #' @export
 #' @rdname renamers
-rename_datasets <- function(.data, ...) {
+rename_datasets.default <- function(.data, ...) {
   # quo-ify datasets
   datasets <- rlang::quos(...)
   # use tidyselect to get dataset names
@@ -69,9 +87,15 @@ rename_datasets <- function(.data, ...) {
   md_out
 }
 
+#' @rdname renamers
+#' @export
+rename_columns <- function(.data, ...) {
+  UseMethod("rename_columns")
+}
+
 #' @export
 #' @rdname renamers
-rename_columns <- function(.data, ...) {
+rename_columns.default <- function(.data, ...) {
   # quo-ify datasets
   columns <- rlang::quos(...)
   # use tidyselect to get dataset names
@@ -95,10 +119,6 @@ rename_columns <- function(.data, ...) {
   # return md_out
   md_out
 }
-
-
-
-
 
 #' Rename a column in an object
 #'

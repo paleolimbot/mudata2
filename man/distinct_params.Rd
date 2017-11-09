@@ -2,9 +2,13 @@
 % Please edit documentation in R/mudata_helpers.R
 \name{distinct_params}
 \alias{distinct_params}
+\alias{distinct_params.default}
 \alias{distinct_locations}
+\alias{distinct_locations.default}
 \alias{distinct_datasets}
+\alias{distinct_datasets.default}
 \alias{distinct_columns}
+\alias{distinct_columns.default}
 \alias{unique_params}
 \alias{unique_locations}
 \alias{unique_datasets}
@@ -12,13 +16,21 @@
 \alias{src_tbls.mudata}
 \title{Get distinct params, locations, and datasets from a mudata object}
 \usage{
-distinct_params(x, table = "data")
+distinct_params(x, ...)
 
-distinct_locations(x, table = "data")
+\method{distinct_params}{default}(x, table = "data", ...)
 
-distinct_datasets(x, table = "data")
+distinct_locations(x, ...)
 
-distinct_columns(x, table = names(x))
+\method{distinct_locations}{default}(x, table = "data", ...)
+
+distinct_datasets(x, ...)
+
+\method{distinct_datasets}{default}(x, table = "data", ...)
+
+distinct_columns(x, ...)
+
+\method{distinct_columns}{default}(x, table = names(x), ...)
 
 unique_params(x, table = "data")
 
@@ -32,6 +44,8 @@ unique_columns(x, table = names(x))
 }
 \arguments{
 \item{x}{A mudata object}
+
+\item{...}{Passed to other methods}
 
 \item{table}{The table to use to calculate the distinct values. Using
 the "data" table is safest, but for large datasets that are not
@@ -48,5 +62,4 @@ Get distinct params, locations, and datasets from a mudata object
 distinct_params(kentvillegreenwood)
 distinct_locations(kentvillegreenwood)
 distinct_datasets(kentvillegreenwood)
-
 }

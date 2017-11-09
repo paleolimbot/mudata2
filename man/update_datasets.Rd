@@ -2,25 +2,37 @@
 % Please edit documentation in R/mudata_helpers.R
 \name{update_datasets}
 \alias{update_datasets}
+\alias{update_datasets.default}
 \alias{update_locations}
+\alias{update_locations.default}
 \alias{update_params}
+\alias{update_params.default}
 \alias{update_columns}
+\alias{update_columns.default}
 \title{Add documentation to mudata objects}
 \usage{
-update_datasets(x, datasets, ...)
+update_datasets(x, ...)
 
-update_locations(x, locations, datasets, ...)
+\method{update_datasets}{default}(x, datasets, ...)
 
-update_params(x, params, datasets, ...)
+update_locations(x, ...)
 
-update_columns(x, columns, tables, datasets, ...)
+\method{update_locations}{default}(x, locations, datasets, ...)
+
+update_params(x, ...)
+
+\method{update_params}{default}(x, params, datasets, ...)
+
+update_columns(x, ...)
+
+\method{update_columns}{default}(x, columns, tables, datasets, ...)
 }
 \arguments{
 \item{x}{A mudata object}
 
-\item{datasets}{One or more datasets to update}
-
 \item{...}{Key/value pairs (values of length 1)}
+
+\item{datasets}{One or more datasets to update}
 
 \item{locations}{One or more locations to update}
 
@@ -40,5 +52,4 @@ Add documentation to mudata objects
 kentvillegreenwood \%>\%
   update_datasets("ecclimate", new_key = "new_value") \%>\%
   tbl_datasets()
-
 }

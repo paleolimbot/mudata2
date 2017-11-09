@@ -2,18 +2,30 @@
 % Please edit documentation in R/rename.R
 \name{rename_locations}
 \alias{rename_locations}
+\alias{rename_locations.default}
 \alias{rename_params}
+\alias{rename_params.default}
 \alias{rename_datasets}
+\alias{rename_datasets.default}
 \alias{rename_columns}
+\alias{rename_columns.default}
 \title{Rename things in a mudata object}
 \usage{
 rename_locations(.data, ...)
 
+\method{rename_locations}{default}(.data, ...)
+
 rename_params(.data, ...)
+
+\method{rename_params}{default}(.data, ...)
 
 rename_datasets(.data, ...)
 
+\method{rename_datasets}{default}(.data, ...)
+
 rename_columns(.data, ...)
+
+\method{rename_columns}{default}(.data, ...)
 }
 \arguments{
 \item{.data}{A mudata object}

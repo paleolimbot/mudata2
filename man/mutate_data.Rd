@@ -7,6 +7,7 @@
 \alias{mutate_datasets}
 \alias{mutate_columns}
 \alias{mutate_tbl}
+\alias{mutate_tbl.default}
 \title{Modify mudata tables}
 \usage{
 mutate_data(x, ...)
@@ -19,7 +20,9 @@ mutate_datasets(x, ...)
 
 mutate_columns(x, ...)
 
-mutate_tbl(x, tbl, ...)
+mutate_tbl(x, ...)
+
+\method{mutate_tbl}{default}(x, tbl, ...)
 }
 \arguments{
 \item{x}{A mudata object}

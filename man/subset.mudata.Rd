@@ -2,69 +2,40 @@
 % Please edit documentation in R/mudata_subset.R
 \name{subset.mudata}
 \alias{subset.mudata}
-\alias{select_datasets}
-\alias{select_datasets.default}
-\alias{select_locations}
-\alias{select_locations.default}
-\alias{select_params}
-\alias{select_params}
-\alias{filter_datasets}
-\alias{filter_datasets.default}
-\alias{filter_data}
-\alias{filter_data.default}
-\alias{filter_locations}
-\alias{filter_locations.default}
-\alias{filter_params}
-\alias{filter_params}
-\title{Subset (filter) a MuData object}
+\title{Subset a MuData object}
 \usage{
 \method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
   locations = NULL)
-
-select_datasets(.data, ...)
-
-\method{select_datasets}{default}(.data, ..., .factor = FALSE)
-
-select_locations(.data, ...)
-
-\method{select_locations}{default}(.data, ..., .factor = FALSE)
-
-select_params(.data, ..., .factor = FALSE)
-
-select_params(.data, ..., .factor = FALSE)
-
-filter_datasets(.data, ...)
-
-\method{filter_datasets}{default}(.data, ...)
-
-filter_data(.data, ...)
-
-\method{filter_data}{default}(.data, ...)
-
-filter_locations(.data, ...)
-
-\method{filter_locations}{default}(.data, ...)
-
-filter_params(.data, ...)
-
-filter_params(.data, ...)
 }
 \arguments{
-\item{x, .data}{The object to subset}
+\item{x}{The object to subset}
 
-\item{...}{Aguments to/from methods}
+\item{...}{Used to \link[dplyr]{filter} the data table}
 
 \item{datasets}{Vector of datasets to include}
 
 \item{params}{Vector of parameters to include}
 
 \item{locations}{Vector of locations to include}
-
-\item{.factor}{Maintain order of selected components by converting them to factors}
 }
 \value{
 A subsetted mudata object
 }
 \description{
-Subset (filter) a MuData object
+This object uses standard evalutation to subset a \link{mudata} object using
+character vectors of datasets, params, and locations. The result is subsetted such
+that all rows in the data table are documented in the other tables (provided)
+they were to begin with. It is preferred to use \link{select_locations},
+\link{select_params}, and \link{select_datasets} to subset a mudata object,
+or \link{filter_data}, \link{filter_locations}, \link{filter_params}, 
+and \link{filter_datasets} to subset by row while maintaining internal
+consistency.
+}
+\examples{
+subset(kentvillegreenwood, params = c("mintemp", "maxtemp"))
+
+}
+\seealso{
+\link{select_locations}, \link{select_params}, \link{select_datasets}, \link{filter_data}, 
+\link{filter_locations}, \link{filter_params}, and \link{filter_datasets}
 }

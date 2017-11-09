@@ -7,13 +7,29 @@
 \method{rbind}{mudata}(..., validate = TRUE)
 }
 \arguments{
-\item{...}{Mudata objects to combine}
+\item{...}{\link{mudata} objects to combine}
 
-\item{validate}{Flag to validate final object}
+\item{validate}{Flag to validate the final object using \link{validate_mudata}.}
 }
 \value{
-A Mudata object
+A mudata object
 }
 \description{
-Combine mudata objects
+This implmentation of \link{rbind} combines component tables using \link[dplyr]{bind_rows}
+and \link[dplyr]{distinct}. When combined object use different datasets, or when subsets of
+the same object are recombined, this function works well. When this is not the case, it
+may be necessary to modify the tables such that when they are passed to \link[dplyr]{bind_rows}
+and \link[dplyr]{distinct}, no duplicate information exists. This should be picked up by
+\link{validate_mudata}.
+}
+\examples{
+rbind(
+  kentvillegreenwood \%>\% 
+    select_params(maxtemp) \%>\% 
+    select_locations(starts_with("KENT")),
+  kentvillegreenwood \%>\% 
+    select_params(mintemp) \%>\% 
+    select_locations(starts_with("GREEN"))
+)
+
 }

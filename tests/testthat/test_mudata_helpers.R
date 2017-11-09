@@ -211,3 +211,50 @@ test_that("update_columns() works as expected", {
     "Zero rows were found for columns"
   )
 })
+
+test_that("mutate shortcuts work", {
+  expect_identical(
+    second_lake_temp %>% mutate_data(datetime = lubridate::with_tz(datetime, "America/Halifax")),
+    {
+      sl2 <- second_lake_temp
+      sl2$data <- sl2$data %>% dplyr::mutate(datetime = lubridate::with_tz(datetime, "America/Halifax"))
+      sl2
+    }
+  )
+  
+  expect_identical(
+    second_lake_temp %>% mutate_params(param_upper = toupper(param)),
+    {
+      sl2 <- second_lake_temp
+      sl2$params <- sl2$params %>% dplyr::mutate(param_upper = toupper(param))
+      sl2
+    }
+  )
+  
+  expect_identical(
+    second_lake_temp %>% mutate_locations(loc_upper = toupper(location)),
+    {
+      sl2 <- second_lake_temp
+      sl2$locations <- sl2$locations %>% dplyr::mutate(loc_upper = toupper(location))
+      sl2
+    }
+  )
+  
+  expect_identical(
+    second_lake_temp %>% mutate_datasets(ds_upper = toupper(dataset)),
+    {
+      sl2 <- second_lake_temp
+      sl2$datasets <- sl2$datasets %>% dplyr::mutate(ds_upper = toupper(dataset))
+      sl2
+    }
+  )
+  
+  expect_identical(
+    second_lake_temp %>% mutate_columns(ds_upper = toupper(dataset)),
+    {
+      sl2 <- second_lake_temp
+      sl2$columns <- sl2$columns %>% dplyr::mutate(ds_upper = toupper(dataset))
+      sl2
+    }
+  )
+})

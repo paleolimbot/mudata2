@@ -260,3 +260,54 @@ update_columns <- function(x, columns, tables, datasets, ...) {
     dplyr::select(-.dummy_variable.)
   x
 }
+
+
+#' Modify mudata tables
+#'
+#' @param x A mudata object
+#' @param tbl The table name to modify
+#' @param ... Passed to \link[dplyr]{mutate}
+#'
+#' @return A modified mudata object
+#' @export
+#'
+#' @examples
+#' library(lubridate)
+#' second_lake_temp %>% 
+#'   mutate_data(datetime = with_tz(datetime, "America/Halifax"))
+#' 
+mutate_data <- function(x, ...) {
+  mutate_tbl(x, "data", ...)
+}
+
+#' @rdname mutate_data
+#' @export
+mutate_params <- function(x, ...) {
+  mutate_tbl(x, "params", ...)
+}
+
+#' @rdname mutate_data
+#' @export
+mutate_locations <- function(x, ...) {
+  mutate_tbl(x, "locations", ...)
+}
+
+#' @rdname mutate_data
+#' @export
+mutate_datasets <- function(x, ...) {
+  mutate_tbl(x, "datasets", ...)
+}
+
+#' @rdname mutate_data
+#' @export
+mutate_columns <- function(x, ...) {
+  mutate_tbl(x, "columns", ...)
+}
+
+#' @rdname mutate_data
+#' @export
+mutate_tbl <- function(x, tbl, ...) {
+  x[[tbl]] <- dplyr::mutate(x[[tbl]], ...)
+  x
+}
+

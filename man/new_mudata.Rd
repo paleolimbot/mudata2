@@ -3,7 +3,7 @@
 \name{new_mudata}
 \alias{new_mudata}
 \alias{validate_mudata}
-\title{Create, validate a MUData object}
+\title{Validate, create a mudata object}
 \usage{
 new_mudata(md, x_columns)
 
@@ -13,20 +13,21 @@ validate_mudata(md, check_unique = TRUE, check_references = TRUE,
 \arguments{
 \item{md}{An object of class 'mudata'}
 
-\item{x_columns}{A vector of column names from the data table that in combination with
-'dataset', 'location', and 'param' identify unique rows.}
+\item{x_columns}{The x_columns attribute (see \link{mudata}).}
 
 \item{check_unique}{Check if columns identify unique values in the appropriate tables}
 
 \item{check_references}{Check the referential integrity of the mudata object}
 
-\item{action}{the function to be called when errors are detected in validate_mudata}
+\item{action}{The function to be called when errors are detected in validate_mudata}
 }
 \description{
-Validates a MUData object by calling \code{stop} when an error is found.
+Validates a mudata object by calling \link{stop} when an error is found;
+creates a mudata object from a \link{list}. Validation is generally performed
+when objects are created using \link{mudata}, or when objects are read/writen
+using \link{read_mudata} and \link{write_mudata}.
 }
 \examples{
-data(kentvillegreenwood)
 validate_mudata(kentvillegreenwood)
 new_mudata(kentvillegreenwood, x_columns = "date")
 

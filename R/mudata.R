@@ -1,47 +1,54 @@
 
 #' Create a MuData object
 #' 
-#' Create an object describing multi-parameter spatiotemporal data in the (mostly) universal
-#' data format. This format is a collection of tables as described below. For an example
-#' of data already in this format, see the \link{kentvillegreenwood} dataset.
+#' Create a mudata object, which is a collection of five tables: data, locations,
+#' params, datasets, and columns. You are only required to provide the data table,
+#' which must contain columns "param" and "value", but will more typically contain
+#' coluns "location", "param", "datetime" (or "date"), and "value". See
+#' \link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake},
+#' and \link{second_lake_temp} for examples of data in this format.
 #'
-#' @param data The data table, which is a molten data frame containing the columns (at least)
-#'   'dataset', 'location', 'x', 'param', and 'value'. The 'dataset' column can be omitted
-#'   if there is only one dataset contained in the object (its name can be specified by
-#'   passing the parameter \code{dataset.id}). The 'location' column can be omitted if
-#'   there is only data for one dataset and one location (its name can be specified by
-#'   passing the parameter \code{location.id}).
+#' @param data A data.frame/\link[tibble]{tibble} with columns "param" and "value", but more typically
+#' coluns "location", "param", "datetime" (or "date", depending on the type of data), and "value".
 #' @param locations The locations table, which is a data frame containing the columns (at least)
-#'   'dataset', and 'location'. If omitted, it will be created automatically using all unique
+#'   "dataset", and "location". If omitted, it will be created automatically using all unique
 #'   dataset/location combinations.
 #' @param params The params table, which is a data frame containing the columns (at least)
-#'   'dataset', and 'param'. If omitted, it will be created automatically using all unique
+#'   "dataset", and "param". If omitted, it will be created automatically using all unique
 #'   dataset/param combinations.
 #' @param datasets The datasets table, which is a data frame containing the column (at least)
-#'   'dataset'. If omitted, it will be generated automatically using all unique datasets.
+#'   "dataset". If omitted, it will be generated automatically using all unique datasets.
 #' @param columns The columns table, which is a data frame containing the columns (at least)
-#'   'dataset', 'table', and 'column'. If omitted, it will be created automatically using 
+#'   "dataset", "table", and "column". If omitted, it will be created automatically using 
 #'   all dataset/table/column combinations.
 #' @param x_columns A vector of column names from the data table that in combination with
-#'   'dataset', 'location', and 'param' identify unique rows.
+#'   "dataset", "location", and "param" identify unique rows. These will typically be
+#'   guessed using the column names between "param" and "value".
 #' @param ...,more_tbls More tbls (as named arguments) to be included in the mudata object
-#' @param dataset_id The dataset id to use if a datasets column is omitted.
-#' @param location_id The location id if a location column is omitted.
-#' @param validate Pass \code{FALSE} to skip validation of input tables.
+#' @param dataset_id The dataset to use if a "dataset" column is omitted.
+#' @param location_id The location if a "location" column is omitted.
+#' @param validate Pass \code{FALSE} to skip validation of input tables using \link{validate_mudata}.
 #'
-#' @return A \code{mudata} object
+#' @return An object of class "mudata", which is a \link{list} with components data, locations,
+#'   params, datasets, columns, and any other tables provided in \code{more_tbls}. All list
+#'   components must be tbls.
 #' @export
 #' 
 #' @examples
+#' # use the data table from kentvillegreenwood as a template
+#' kg_data <- tbl_data(kentvillegreenwood)
+#' # create mudata object using just the data table
+#' mudata(kg_data)
+#' 
+#' # create a mudata object starting from a parameter-wide data frame
 #' library(tidyr)
 #' library(dplyr)
-#' data(pocmaj)
 #' 
 #' # gather columns and summarise replicates
 #' datatable <- pocmaj %>%
 #'   gather(Ca, Ti, V, key = "param", value = "param_value") %>%
 #'   group_by(core, param, depth) %>%
-#'   summarise(value=mean(param_value), sd=mean(param_value)) %>%
+#'   summarise(value = mean(param_value), sd = mean(param_value)) %>%
 #'   rename(location = core)
 #'
 #' # create mudata object
@@ -161,21 +168,22 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   md
 }
 
-#' Create, validate a MUData object
+#' Validate, create a mudata object
 #' 
-#' Validates a MUData object by calling \code{stop} when an error is found.
+#' Validates a mudata object by calling \link{stop} when an error is found;
+#' creates a mudata object from a \link{list}. Validation is generally performed
+#' when objects are created using \link{mudata}, or when objects are read/writen
+#' using \link{read_mudata} and \link{write_mudata}.
 #'
 #' @param md An object of class 'mudata'
 #' @param check_unique Check if columns identify unique values in the appropriate tables
 #' @param check_references Check the referential integrity of the mudata object
-#' @param x_columns A vector of column names from the data table that in combination with
-#'   'dataset', 'location', and 'param' identify unique rows.
-#' @param action the function to be called when errors are detected in validate_mudata
+#' @param x_columns The x_columns attribute (see \link{mudata}).
+#' @param action The function to be called when errors are detected in validate_mudata
 #'
 #' @export
 #' 
 #' @examples 
-#' data(kentvillegreenwood)
 #' validate_mudata(kentvillegreenwood)
 #' new_mudata(kentvillegreenwood, x_columns = "date")
 #' 
@@ -292,11 +300,12 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
 #'
 #' @param x An object
 #'
-#' @return TRUE if the object is a mudata, FALSE otherwise
+#' @return TRUE if the object is a mudata object, FALSE otherwise
 #' @export
 #'
 #' @examples
 #' is_mudata(kentvillegreenwood)
+#' 
 is_mudata <- function(x) {
   inherits(x, "mudata")
 }
@@ -470,7 +479,7 @@ guess_x_columns <- function(df, quiet = FALSE) {
 #' @param columns The name of the columns table
 #'
 #' @return A mudata object
-#' @export
+#' @keywords internal
 #'
 mudata_sql <- function(db, data = "data", locations = NA, params = NA, 
                       datasets = NA, columns = NA) {
@@ -502,13 +511,23 @@ mudata_sql <- function(db, data = "data", locations = NA, params = NA,
   )
 }
 
-#' @rdname subset.mudata
-#' @importFrom dplyr collect
+
+#' Collect all mudata components
+#' 
+#' Objects created by \link{mudata} are generally assumed to be local data frames,
+#' but some methods may function on database tbls (especially in the future). 
+#' This function applies \link[dplyr]{collect} to all component tables.
+#'
+#' @param x A mudata object
+#' @param ... Passed to \link[dplyr]{collect}
+#'
+#' @return A mudata object with all components as local data frames.
 #' @export
+#' @importFrom dplyr collect
+#'
 collect.mudata <- function(x, ...) {
   new_mudata(lapply(x, dplyr::collect), x_columns = attr(x, "x_columns"))
 }
-
 
 
 #' Print a mudata object
@@ -517,7 +536,7 @@ collect.mudata <- function(x, ...) {
 #' @param width The number of characters to use as console width
 #' @param ... Passed to other methods
 #'
-#' @return x, invisibly
+#' @return print returns x (invisibly); summary returns a data frame with summary information.
 #' @export
 #'
 #' @examples

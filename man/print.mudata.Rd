@@ -17,7 +17,7 @@
 \item{width}{The number of characters to use as console width}
 }
 \value{
-x, invisibly
+print returns x (invisibly); summary returns a data frame with summary information.
 }
 \description{
 Print a mudata object

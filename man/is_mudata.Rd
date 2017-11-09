@@ -13,11 +13,12 @@ is.mudata(x)
 \item{x}{An object}
 }
 \value{
-TRUE if the object is a mudata, FALSE otherwise
+TRUE if the object is a mudata object, FALSE otherwise
 }
 \description{
 Test if an object is a mudata object
 }
 \examples{
 is_mudata(kentvillegreenwood)
+
 }

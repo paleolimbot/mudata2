@@ -9,57 +9,64 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
   dataset_id = "default", location_id = "default", validate = TRUE)
 }
 \arguments{
-\item{data}{The data table, which is a molten data frame containing the columns (at least)
-'dataset', 'location', 'x', 'param', and 'value'. The 'dataset' column can be omitted
-if there is only one dataset contained in the object (its name can be specified by
-passing the parameter \code{dataset.id}). The 'location' column can be omitted if
-there is only data for one dataset and one location (its name can be specified by
-passing the parameter \code{location.id}).}
+\item{data}{A data.frame/\link[tibble]{tibble} with columns "param" and "value", but more typically
+coluns "location", "param", "datetime" (or "date", depending on the type of data), and "value".}
 
 \item{locations}{The locations table, which is a data frame containing the columns (at least)
-'dataset', and 'location'. If omitted, it will be created automatically using all unique
+"dataset", and "location". If omitted, it will be created automatically using all unique
 dataset/location combinations.}
 
 \item{params}{The params table, which is a data frame containing the columns (at least)
-'dataset', and 'param'. If omitted, it will be created automatically using all unique
+"dataset", and "param". If omitted, it will be created automatically using all unique
 dataset/param combinations.}
 
 \item{datasets}{The datasets table, which is a data frame containing the column (at least)
-'dataset'. If omitted, it will be generated automatically using all unique datasets.}
+"dataset". If omitted, it will be generated automatically using all unique datasets.}
 
 \item{columns}{The columns table, which is a data frame containing the columns (at least)
-'dataset', 'table', and 'column'. If omitted, it will be created automatically using 
+"dataset", "table", and "column". If omitted, it will be created automatically using 
 all dataset/table/column combinations.}
 
 \item{x_columns}{A vector of column names from the data table that in combination with
-'dataset', 'location', and 'param' identify unique rows.}
+"dataset", "location", and "param" identify unique rows. These will typically be
+guessed using the column names between "param" and "value".}
 
 \item{..., more_tbls}{More tbls (as named arguments) to be included in the mudata object}
 
-\item{dataset_id}{The dataset id to use if a datasets column is omitted.}
+\item{dataset_id}{The dataset to use if a "dataset" column is omitted.}
 
-\item{location_id}{The location id if a location column is omitted.}
+\item{location_id}{The location if a "location" column is omitted.}
 
-\item{validate}{Pass \code{FALSE} to skip validation of input tables.}
+\item{validate}{Pass \code{FALSE} to skip validation of input tables using \link{validate_mudata}.}
 }
 \value{
-A \code{mudata} object
+An object of class "mudata", which is a \link{list} with components data, locations,
+  params, datasets, columns, and any other tables provided in \code{more_tbls}. All list
+  components must be tbls.
 }
 \description{
-Create an object describing multi-parameter spatiotemporal data in the (mostly) universal
-data format. This format is a collection of tables as described below. For an example
-of data already in this format, see the \link{kentvillegreenwood} dataset.
+Create a mudata object, which is a collection of five tables: data, locations,
+params, datasets, and columns. You are only required to provide the data table,
+which must contain columns "param" and "value", but will more typically contain
+coluns "location", "param", "datetime" (or "date"), and "value". See
+\link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake},
+and \link{second_lake_temp} for examples of data in this format.
 }
 \examples{
+# use the data table from kentvillegreenwood as a template
+kg_data <- tbl_data(kentvillegreenwood)
+# create mudata object using just the data table
+mudata(kg_data)
+
+# create a mudata object starting from a parameter-wide data frame
 library(tidyr)
 library(dplyr)
-data(pocmaj)
 
 # gather columns and summarise replicates
 datatable <- pocmaj \%>\%
   gather(Ca, Ti, V, key = "param", value = "param_value") \%>\%
   group_by(core, param, depth) \%>\%
-  summarise(value=mean(param_value), sd=mean(param_value)) \%>\%
+  summarise(value = mean(param_value), sd = mean(param_value)) \%>\%
   rename(location = core)
 
 # create mudata object

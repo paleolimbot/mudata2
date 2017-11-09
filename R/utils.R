@@ -1,47 +1,46 @@
 
 #' Melt multiple sets of columns in parallel
 #'
-#' Essentially this is a wrapper around \link[reshape2]{melt.data.frame} that
-#' is able to \link{cbind} several melt operations. This is useful when a wide
+#' Essentially this is a wrapper around \link[tidyr]{gather} that
+#' is able to \link[dplyr]{bind_cols} with several gather operations. This is useful when a wide
 #' data frame contains uncertainty or flag information in paired columns.
 #'
 #' @param x A data.frame
-#' @param id.vars vector of ID variable names
-#' @param variable.name,key Column name to use to store variables
-#' @param ... Named arguments specifying the \code{measure.vars} to be stored to the
-#'   column name specified.
+#' @param key Column name to use to store variables, which are the column names
+#'   of the first gather operation.
+#' @param ... Named arguments in the form \code{new_col_name = c(old, col, names)}. All
+#'   named arguments must have the same length (i.e., gather the same number of columns). 
 #' @param convert Convert types (see \link[tidyr]{gather})
-#' @param factorsAsStrings,factor_key Control whether factors are converted to character when melted as
-#'   measure variables.
+#' @param factor_key Control whether the key column is a factor or character vector.
 #'
-#' @return A molten data.frame
+#' @seealso \link[tidyr]{gather}
+#' @return A gathered data frame.
 #' @export
 #'
 #' @examples
-#' data(pocmajsum)
-#' parallel_melt(pocmajsum,
-#'               id.vars=c("core", "depth"),
-#'               values=c("Ca", "Ti", "V"),
-#'               err=c("Ca_sd", "Ti_sd", "V_sd"))
+#' # gather paired value/error columns using
+#' # parallel_gather
+#' parallel_gather(pocmajsum, key = "param", 
+#'                 value = c(Ca, Ti, V), 
+#'                 sd = c(Ca_sd, Ti_sd, V_sd))
+#' 
+#' # identical result using only tidyverse functions
+#' library(dplyr)      
+#' library(tidyr)
+#' gathered_values <- pocmajsum %>%
+#'   select(core, depth, Ca, Ti, V) %>%
+#'   gather(Ca, Ti, V, 
+#'          key = "param", value = "value")
+#' gathered_sds <- pocmajsum %>%
+#'   select(core, depth, Ca_sd, Ti_sd, V_sd) %>%
+#'   gather(Ca_sd, Ti_sd, V_sd, 
+#'          key = "param_sd", value = "sd")
+#' 
+#' bind_cols(
+#'   gathered_values,
+#'   gathered_sds %>% select(sd)
+#' )
 #'
-parallel_melt <- function(x, id.vars, ..., variable.name="param", factorsAsStrings=TRUE) {
-  combos <- list(...)
-  combonames <- names(combos)
-  if(length(combonames) != length(combos)) stop("All arguments must be named")
-  lengths <- unique(sapply(combos, length))
-  if(length(lengths) > 1) stop("All melted columns must have the same number of source columns")
-  melted <- lapply(combonames, function(varname) {
-    reshape2::melt(x, id.vars=id.vars, measure.vars=combos[[varname]], value.name=varname,
-                   variable.name=variable.name, factorsAsStrings=factorsAsStrings)
-  })
-  iddata <- melted[[1]][c(id.vars, variable.name)]
-  melted <- lapply(melted, function(df) df[names(df) %in% names(combos)])
-  
-  tibble::as_tibble(do.call(cbind, c(list(iddata), melted)))
-}
-
-#' @export
-#' @rdname parallel_melt
 parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   # enquos arguments
   lst <- rlang::quos(...)
@@ -62,7 +61,7 @@ parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
 }
 
 #' @export
-#' @rdname parallel_melt
+#' @rdname parallel_gather
 parallel_gather_ <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   parallel_gather_base(x, key, list(...), convert = convert, factor_key = factor_key)
 }

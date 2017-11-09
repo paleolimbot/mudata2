@@ -158,10 +158,9 @@ test_that("manual tests for autoplot()", {
   ggplot2::autoplot(kentvillegreenwood, y = "date")
   
   # check error bars
-  pocmajlong <- parallel_melt(pocmajsum, id.vars=c("core", "depth"), 
-                              value=c("Ca", "Ti", "V"), 
-                              sd=c("Ca_sd", "Ti_sd", "V_sd"),
-                              variable.name = "param")
+  pocmajlong <- parallel_gather(pocmajsum, key = "param", 
+                                value = c(Ca, Ti, V),
+                                sd = c(Ca_sd, Ti_sd, V_sd))
   long_ggplot(pocmajlong, error_var = "sd")
   long_ggplot(pocmajlong, y = "depth", error_var = "sd")
   

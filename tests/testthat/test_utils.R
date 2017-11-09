@@ -1,48 +1,31 @@
 
 context("utility functions")
 
-test_that("parallel_melt produces the expected data frame", {
-  data(pocmajsum)
-  # melt automatically
-  pocmajlong <- parallel_melt(pocmajsum, id.vars=c("core", "depth"),
-                              value=c("Ca", "Ti", "V"),
-                              sd=c("Ca_sd", "Ti_sd", "V_sd"))
-  expect_that(names(pocmajlong), equals(c("core", "depth", "param", "value", "sd")))
-  
-  # melt manually
-  ca <- dplyr::rename(pocmajsum[c("core", "depth", "Ca", "Ca_sd")], value = Ca, sd = Ca_sd)
-  ca$param <- "Ca"
-  ti <- dplyr::rename(pocmajsum[c("core", "depth", "Ti", "Ti_sd")], value = Ti, sd = Ti_sd)
-  ti$param <- "Ti"
-  v <- dplyr::rename(pocmajsum[c("core", "depth", "V", "V_sd")], value = V, sd = V_sd)
-  v$param <- "V"
-  pocmajlongman <- rbind(ca, ti, v)[c("core", "depth", "param", "value", "sd")]
-  
-  expect_true(all(sapply(data.frame(pocmajlong == pocmajlongman), all, na.rm=TRUE)))
-})
-
-test_that("unnamed arguments are not allowed in parallel_melt", {
-  expect_error(parallel_melt(data.rame(a=1, b=2), id.vars="a", "b"),
-               "All arguments must be named")
-})
-
 test_that("parallel_gather produces the expected output", {
 
-  # melt automatically using parallel_melt
-  pocmajlong <- parallel_melt(pocmajsum, id.vars=c("core", "depth"),
-                              value=c("Ca", "Ti", "V"),
-                              sd=c("Ca_sd", "Ti_sd", "V_sd")) %>%
-    tibble::as_tibble()
-  expect_that(names(pocmajlong), equals(c("core", "depth", "param", "value", "sd")))
+  # melt manually using gather() and bind_cols()
+  gathered_values <- pocmajsum %>%
+    dplyr::select(core, depth, Ca, Ti, V) %>%
+    tidyr::gather(Ca, Ti, V, 
+                  key = "param", value = "value")
+  gathered_sds <- pocmajsum %>%
+    dplyr::select(core, depth, Ca_sd, Ti_sd, V_sd) %>%
+    tidyr::gather(Ca_sd, Ti_sd, V_sd, 
+                  key = "param_sd", value = "sd")
+  
+  pocmajlong <- dplyr::bind_cols(
+    gathered_values,
+    gathered_sds %>% dplyr::select(sd)
+  ) %>% tibble::as_tibble()
+  
   
   # melt automatically using parallel_gather
   pocmaj_gathered <- parallel_gather(pocmajsum, key = "param", 
                                      value = c(Ca, Ti, V),
-                                     sd = c(Ca_sd, Ti_sd, V_sd),
-                                     factor_key = TRUE) %>%
+                                     sd = c(Ca_sd, Ti_sd, V_sd)) %>%
     tibble::as_tibble()
   
-  # expect identical to parallel_melt output
+  # expect identical to manual parallel gather
   expect_identical(pocmaj_gathered, pocmajlong)
 })
 
@@ -57,8 +40,9 @@ test_that("parallel gather can select variables using dplyr expressions", {
 
 test_that("parallel gather escape hatch returns correct results", {
   pm2 <- pocmajsum %>% dplyr::select(core, depth, Ca, Ti, V, dplyr::ends_with("sd"))
-  expect_identical(parallel_gather_(pm2, key = "param", 
-                                   value = c("Ca", "Ti", "V"), sd = c("Ca_sd", "Ti_sd", "V_sd")),
+  values <- c("Ca", "Ti", "V")
+  sds <- c("Ca_sd", "Ti_sd", "V_sd")
+  expect_identical(parallel_gather_(pm2, key = "param", value = values, sd = sds),
                    parallel_gather(pm2, key = "param", 
                                    value = c(Ca, Ti, V), sd = c(Ca_sd, Ti_sd, V_sd)))
 })

@@ -38,3 +38,6 @@ plot(kentvillegreenwood)
 autoplot(kentvillegreenwood)
 
 }
+\seealso{
+\link{long_ggplot}
+}

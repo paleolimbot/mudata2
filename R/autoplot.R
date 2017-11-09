@@ -518,6 +518,8 @@ guess_id_vars <- function(vars, measure_var) {
 #'
 #' @export
 #' 
+#' @seealso \link{long_ggplot}
+#' 
 #' @examples 
 #' # plot using base plot
 #' plot(kentvillegreenwood)

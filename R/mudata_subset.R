@@ -100,9 +100,8 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 #'   \link{autoplot.mudata}.
 #'
 #' @seealso
-#' \link{distinct_datasets}, \link{distinct_locations}, \link{distinct_params}, 
-#' \link{filter_data}, \link{filter_locations}, \link{filter_params}, 
-#' \link{filter_datasets}.
+#' \link[dplyr]{select}, \link{rename_locations}, \link{distinct_locations}, 
+#' \link{filter_locations}
 #'
 #' @rdname selecters
 #' @return A subsetted mudata object.
@@ -226,7 +225,7 @@ select_params <- function(.data, ..., .factor = FALSE) {
 #' @param ... Objects passed to \link[dplyr]{filter} on the appropriate table
 #' 
 #' @seealso
-#' \link{select_locations}, \link{select_params}, and \link{select_datasets}
+#' \link[dplyr]{filter}, \link{select_locations}
 #'
 #' @rdname filterers
 #' @return A subsetted mudata object

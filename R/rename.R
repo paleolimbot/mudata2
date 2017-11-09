@@ -1,9 +1,16 @@
 
-#' Rename things in a mudata object
+#' Rename identifiers in a mudata object
+#' 
+#' These functions rename locations, datasets, params, and columns, making sure
+#' internal consistency is maintained. These functions use dplyr syntax for renaming
+#' (i.e. the \link[dplyr]{rename} function). This syntax can also be used while
+#' subsetting using \link{select_locations} and family.
 #'
 #' @param .data A mudata object
-#' @param ... Variables to rename in the form new_var = old_var
-#'
+#' @param ... Variables to rename in the form \code{new_var = old_var}
+#' 
+#' @seealso \link[dplyr]{rename}, \link{select_locations}
+#' 
 #' @return A modified mudata object
 #' @export
 #' @rdname renamers

@@ -9,7 +9,7 @@
 \alias{rename_datasets.default}
 \alias{rename_columns}
 \alias{rename_columns.default}
-\title{Rename things in a mudata object}
+\title{Rename identifiers in a mudata object}
 \usage{
 rename_locations(.data, ...)
 
@@ -30,13 +30,16 @@ rename_columns(.data, ...)
 \arguments{
 \item{.data}{A mudata object}
 
-\item{...}{Variables to rename in the form new_var = old_var}
+\item{...}{Variables to rename in the form \code{new_var = old_var}}
 }
 \value{
 A modified mudata object
 }
 \description{
-Rename things in a mudata object
+These functions rename locations, datasets, params, and columns, making sure
+internal consistency is maintained. These functions use dplyr syntax for renaming
+(i.e. the \link[dplyr]{rename} function). This syntax can also be used while
+subsetting using \link{select_locations} and family.
 }
 \examples{
 rename_datasets(kentvillegreenwood, avalley = ecclimate)
@@ -44,4 +47,7 @@ rename_locations(kentvillegreenwood, Greenwood = starts_with("GREENWOOD"))
 rename_params(kentvillegreenwood, max_temp = maxtemp)
 rename_columns(kentvillegreenwood, lon = longitude, lat = latitude)
 
+}
+\seealso{
+\link[dplyr]{rename}, \link{select_locations}
 }

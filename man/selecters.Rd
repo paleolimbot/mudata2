@@ -63,7 +63,6 @@ long_lake \%>\%
 
 }
 \seealso{
-\link{distinct_datasets}, \link{distinct_locations}, \link{distinct_params}, 
-\link{filter_data}, \link{filter_locations}, \link{filter_params}, 
-\link{filter_datasets}.
+\link[dplyr]{select}, \link{rename_locations}, \link{distinct_locations}, 
+\link{filter_locations}
 }

@@ -57,5 +57,5 @@ ns_climate \%>\%
 
 }
 \seealso{
-\link{select_locations}, \link{select_params}, and \link{select_datasets}
+\link[dplyr]{filter}, \link{select_locations}
 }

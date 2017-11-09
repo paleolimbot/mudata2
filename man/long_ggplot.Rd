@@ -25,7 +25,7 @@ long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
 
 \item{facet_args}{Passed on to \link[ggplot2]{facet_wrap}}
 
-\item{id_vars}{Columns that identify unique values}
+\item{id_vars}{Columns that identify unique rows}
 
 \item{measure_var}{Column that contains values to be plotted}
 
@@ -33,7 +33,7 @@ long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
 
 \item{y}{Column to be used on the y-axis}
 
-\item{facets}{Column to be used as facetting variable}
+\item{facets}{Column(s) to be used as facetting variable (using \link[ggplot2]{facet_wrap})}
 
 \item{geom}{Can be any combination of point, path, or line.}
 
@@ -43,19 +43,18 @@ long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
 }
 \description{
 These functions are intended to quickly visualize plot a parameter-long
-data frame with a few \code{id.vars}, 
-or variables that identify the values in the \code{value} column. The function
-is optimised to plot multi-parameter spatiotemporal data either horizontally
+data frame with a few variables that identify single rows in the value column. The function
+is optimised to plot data with a time axis data either horizontally
 (time on the x axis) or vertically (time on the y axis). Facets are intended
-to be by parameter, which is guessed based on the right-most variable named
-in \code{id.vars}. This is intended to produce a quick visual of an object to
-examine its contents.
+to be by parameter, which is guessed based on the right-most discrete variable named
+in id_vars. In the context of a \link{mudata} object, this function almost always
+guesses the axes correctly, but these choices can be overridden.
 }
 \examples{
-data(pocmajsum)
-
 library(tidyr)
+library(dplyr)
 pocmaj_long <- pocmajsum \%>\%
+  select(core, depth, Ca, Ti, V) \%>\%
   gather(Ca, Ti, V, key = "variable", value = "value")
 long_plot(pocmaj_long, col="core")
 long_ggplot(pocmaj_long, col="core")

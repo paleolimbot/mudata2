@@ -2,20 +2,19 @@
 #' Smart plotting of parameter-long data frames
 #' 
 #' These functions are intended to quickly visualize plot a parameter-long
-#' data frame with a few \code{id.vars}, 
-#' or variables that identify the values in the \code{value} column. The function
-#' is optimised to plot multi-parameter spatiotemporal data either horizontally
+#' data frame with a few variables that identify single rows in the value column. The function
+#' is optimised to plot data with a time axis data either horizontally
 #' (time on the x axis) or vertically (time on the y axis). Facets are intended
-#' to be by parameter, which is guessed based on the right-most variable named
-#' in \code{id.vars}. This is intended to produce a quick visual of an object to
-#' examine its contents.
+#' to be by parameter, which is guessed based on the right-most discrete variable named
+#' in id_vars. In the context of a \link{mudata} object, this function almost always
+#' guesses the axes correctly, but these choices can be overridden.
 #'
 #' @param .data A \code{data.frame}
-#' @param id_vars Columns that identify unique values
+#' @param id_vars Columns that identify unique rows
 #' @param measure_var Column that contains values to be plotted
 #' @param x Column to be used on the x-axis
 #' @param y Column to be used on the y-axis
-#' @param facets Column to be used as facetting variable
+#' @param facets Column(s) to be used as facetting variable (using \link[ggplot2]{facet_wrap})
 #' @param geom Can be any combination of point, path, or line.
 #' @param error_var The column to be used for plus/minus error bars
 #' @param facet_args Passed on to \link[ggplot2]{facet_wrap}
@@ -27,10 +26,10 @@
 #' @export
 #'
 #' @examples
-#' data(pocmajsum)
-#'
 #' library(tidyr)
+#' library(dplyr)
 #' pocmaj_long <- pocmajsum %>%
+#'   select(core, depth, Ca, Ti, V) %>%
 #'   gather(Ca, Ti, V, key = "variable", value = "value")
 #' long_plot(pocmaj_long, col="core")
 #' long_ggplot(pocmaj_long, col="core")
@@ -504,8 +503,12 @@ guess_id_vars <- function(vars, measure_var) {
 
 #' Autoplot a mudata object
 #' 
-#' Produces a quick graphical summary of a mudata object using the ggplot or base plotting
-#' framework.
+#' Produces a quick graphical summary of a mudata object. The \code{autoplot()}
+#' function is based on ggplot2's \link[ggplot2]{qplot}, and is the preferred
+#' (and most flexible) plotting method. The \code{plot()} function uses
+#' base R graphics and produces quick summary plot, but is unlikely to be
+#' useful in any other context. Note that all column names must be quoted
+#' (i.e., \code{aesthetic = "col_name"} not \code{aesthetic = col_name}).
 #'
 #' @param x,object A \link{mudata} object
 #' @param facets Column to be used as facet column
@@ -516,12 +519,10 @@ guess_id_vars <- function(vars, measure_var) {
 #' @export
 #' 
 #' @examples 
-#' data(kentvillegreenwood)
 #' # plot using base plot
 #' plot(kentvillegreenwood)
 #' 
-#' # a prettier plot using ggplot
-#' library(ggplot2)
+#' # a more informative plot using ggplot
 #' autoplot(kentvillegreenwood)
 #' 
 #' @importFrom ggplot2 autoplot

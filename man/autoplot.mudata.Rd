@@ -23,16 +23,18 @@
 \item{x, object}{A \link{mudata} object}
 }
 \description{
-Produces a quick graphical summary of a mudata object using the ggplot or base plotting
-framework.
+Produces a quick graphical summary of a mudata object. The \code{autoplot()}
+function is based on ggplot2's \link[ggplot2]{qplot}, and is the preferred
+(and most flexible) plotting method. The \code{plot()} function uses
+base R graphics and produces quick summary plot, but is unlikely to be
+useful in any other context. Note that all column names must be quoted
+(i.e., \code{aesthetic = "col_name"} not \code{aesthetic = col_name}).
 }
 \examples{
-data(kentvillegreenwood)
 # plot using base plot
 plot(kentvillegreenwood)
 
-# a prettier plot using ggplot
-library(ggplot2)
+# a more informative plot using ggplot
 autoplot(kentvillegreenwood)
 
 }

@@ -244,9 +244,9 @@ test_that("wkt parsing works when there are parsing errors/NA values", {
   result_na <- parse_wkt(wkt_test)
   expect_is(result_na, "sfc")
   expect_length(result_na, 6)
-  expect_null(result_na[[2]])
-  expect_null(result_na[[3]])
-  expect_null(result_na[[4]])
+  expect_identical(result_na[[2]], sf::st_point())
+  expect_identical(result_na[[3]], sf::st_point())
+  expect_identical(result_na[[4]], sf::st_point())
   expect_null(attr(result_na, "problems"))
   
   wkt_test_invalid <- c("typo here", "POINT(0 0)", "", "NA", NA, "POINT(1 1)", 
@@ -255,13 +255,13 @@ test_that("wkt parsing works when there are parsing errors/NA values", {
   expect_is(result_invalid, "sfc")
   expect_length(result_invalid, 9)
   # nas as null
-  expect_null(result_invalid[[3]])
-  expect_null(result_invalid[[4]])
-  expect_null(result_invalid[[5]])
+  expect_identical(result_invalid[[3]], sf::st_point())
+  expect_identical(result_invalid[[4]], sf::st_point())
+  expect_identical(result_invalid[[5]], sf::st_point())
   # problems as null
-  expect_null(result_invalid[[1]])
-  expect_null(result_invalid[[7]])
-  expect_null(result_invalid[[8]])
+  expect_identical(result_invalid[[1]], sf::st_point())
+  expect_identical(result_invalid[[7]], sf::st_point())
+  expect_identical(result_invalid[[8]], sf::st_point())
   
   expect_equal(nrow(attr(result_invalid, "problems")), 3)
   expect_equal(attr(result_invalid, "problems")$row, c(1, 7, 8))

@@ -235,20 +235,15 @@ parse_wkt_lapply <- function(x, na = c("NA", ""), crs = sf::NA_crs_, ...) {
     sf::st_as_sfc(element, na = na, ...)[[1]]
   })
   
-  # make col an sf::sfc from non-nulls in col
-  col_is_null <- vapply(col, is.null, logical(1))
-  col_sfc <- do.call(sf::st_sfc, c(col[!col_is_null], list(crs = crs)))
+  # make col an sf::sfc (nulls result in the correct empty geometry as of version 0.5.5)
+  col_sfc <- do.call(sf::st_sfc, c(list(col), list(crs = crs)))
   
   # copy attributes and class from col_sfc to col
   parsing_problems <- attr(col, "problems")
-  attributes(col) <- attributes(col_sfc)
-  attr(col, "problems") <- parsing_problems
-  
-  # set n_empty properly
-  attr(col, "n_emtpy") <- sum(col_is_null)
+  attr(col_sfc, "problems") <- parsing_problems
   
   # return col
-  col
+  col_sfc
 }
 
 parse_lapply <- function(x, fun, na = c("NA", ""), ...) {

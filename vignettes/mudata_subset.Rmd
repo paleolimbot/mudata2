@@ -1,0 +1,184 @@
+---
+title: "Using mudata objects"
+author: "Dewey Dunnington"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mudata_subset}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The **mudata2** package is designed to be used as little as possible. That is, if you need use data that is currently in mudata format, the functions in this package are designed to let you spend as little time as possible reading, subsetting, and inspecting your data. The steps are generally as follows:
+
+- Read in the data using `read_mudata()`
+- See what it contains using `summary()`, `print()`, `autoplot()`, `distinct_locations()`, and `distinct_params()`
+- Inspect the metadata using `tbl_locations()` and `tbl_params()`
+- Pick your parameters using `select_params()` or `filter_params()`
+- Pick your locations using `select_locations()` or `filter_locations()`
+- Extract the data using `tbl_data()` or `tbl_data_wide()`
+
+In this vignette we will use the `ns_climate` dataset within the **mudata2** package, which is a collection of monthly climate observations from [Nova Scotia](https://www.wikipedia.org/wiki/Nova_Scotia) (Canada), sourced from [Environment Canada](http://climate.weather.gc.ca/) using the [rclimateca](https://github.com/paleolimbot/rclimateca) package.
+
+```{r}
+library(mudata2)
+data("ns_climate")
+ns_climate
+```
+
+## Reading an object
+
+The `ns_climate` object is already an object in R, but if it wasn't, you would need to use `read_mudata()` to read it in. If you're curious what a mudata object looks like on disk, you could try using `write_mudata()` to find out. I tend to prefer writing to a directory rather than a JSON or ZIP file, but you can take your pick.
+
+```{r, eval = FALSE}
+# write to directory
+write_mudata(ns_climate, "ns_climate.mudata")
+# write to ZIP
+write_mudata(ns_climate, "ns_climate.mudata.zip")
+# write to JSON
+write_mudata(ns_climate, "ns_climate.mudata.json")
+```
+
+Then, you can read in the object using `read_mudata()`:
+
+```{r, eval = FALSE}
+# read from directory
+read_mudata("ns_climate.mudata")
+# read from ZIP
+read_mudata("ns_climate.mudata.zip")
+# read from JSON
+read_mudata("ns_climate.mudata.json")
+```
+
+## Inspecting an object
+
+The three main ways to quickly inspect a mudata object are `print()`, `summary()`, and `autoplot()`. The `print()` function is what you get when you type the name of the object at the prompt, and gives a short summary of the object. The output suggests a couple of other ways to inspect the object, including `distinct_locations()`, which returns a character vector of location identifiers, and `distinct_params()`, which returns a character vector of parameter identifiers.
+
+```{r}
+print(ns_climate)
+```
+
+The `summary()` function provides some numeric summaries by dataset, location, and parameter if the `value` column of the `data` table is numeric (if it isn't, it provides counts instead).
+
+```{r}
+summary(ns_climate)
+```
+
+Finally, the `autoplot()` function provides an attempt at the best way to plot the object. The smaller the subset, the more useful the plot, but it produces reasonable results for large objects as well. This function produces **ggplot2** objects, which can be modified as such (e.g., ` + scale_y_reverse()`, etc.).
+
+```{r autoplot, warning = FALSE, fig.width=7, fig.height=5}
+autoplot(ns_climate)
+```
+
+## Inspecting metadata
+
+You can have a look at the embedded documentation using `tbl_params()`, and `tbl_locations()`, which contain any additional information about parameters and locations for which data are available. The identifiers (i.e., `param` and `location` columns) of these can be used to subset the object using `select_*()` functions; the tables themselves can be used to subset the object using the `filter_*()` functions.
+
+```{r}
+# extract the parameters table
+ns_climate %>% tbl_params()
+
+# exract the locations table
+ns_climate %>% tbl_locations()
+```
+
+## Subsetting an object
+
+You can subset mudata objects using `select_params()` and `select_locations()`, which use **dplyr**-like selection syntax to quickly subset mudata objects using the identifiers from `distinct_locations()` and `distinct_params()` (respectively).
+
+```{r}
+# find out which parameters are available
+ns_climate %>% distinct_params()
+
+# subset by parameter
+ns_climate %>% select_params(mean_temp, total_precip)
+```
+
+You can also use the **dplyr** select helpers to select related params/locations...
+
+```{r}
+ns_climate %>% select_params(contains("temp"))
+```
+
+...and rename params/locations on the fly.
+
+```{r}
+ns_climate %>% select_locations(Kentville = starts_with("KENT"))
+```
+
+To select params/locations based on the `tbl_params()` and `tbl_locations()` tables, you can use the `filter_*()` functions (note that `last_year` is a column in `tbl_locations()`, and `unit` is a column in `tbl_params()`):
+
+```{r}
+# only use locations whose last data point was after 2000
+ns_climate %>%
+  filter_locations(last_year > 2000)
+
+# use only params measured in mm
+ns_climate %>%
+  filter_params(unit == "mm")
+```
+
+Similarly, we can subset parameters, locations, and the data table all at once using `filter_data()`.
+
+```{r}
+library(lubridate)
+# extract only June temperature from the data table
+ns_climate %>%
+  filter_data(month(date) == 6)
+```
+
+## Extracting data
+
+The data is stored in the data table (i.e., `tbl_data()`) in parameter-long form (that is, one row per measurement rather than one row per observation). This has advantages in that information about each measurement can be stored next to the value (e.g., standard deviation, notes, etc.), however it is rarely the form required for analysis. To extract data in parameter-long form, you can use `tbl_data()`:
+
+```{r}
+ns_climate %>% tbl_data()
+```
+
+To extract data in a more standard parameter-wide form, you can use `tbl_data_wide()`:
+
+```{r}
+ns_climate %>% tbl_data_wide()
+```
+
+The `tbl_data_wide()` function isn't limited to parameter-wide data - data can be anything-wide (Edzer Pebesma has a [great discussion on this](https://www.jstatsoft.org/article/view/v051i07/)). Using `tbl_data_wide()` is identical to using `tbl_data()` and `tidyr::spread()`, with context-specific defaults.
+
+```{r}
+ns_climate %>% 
+  select_params(mean_temp) %>%
+  filter_data(year(date) == 1960) %>%
+  tbl_data_wide(key = location)
+```
+
+## Putting it all together
+
+Using the pipe (`%>%`), we can string all the steps together concisely:
+
+```{r}
+temp_1960 <- ns_climate %>%
+  # pick parameters
+  select_params(contains("temp")) %>%
+  # pick locations
+  select_locations(`Sable Island` = starts_with("SABLE"),
+                   `Kentville` = starts_with("KENT"),
+                   `Badeck` = starts_with("BADD")) %>%
+  # filter data table
+  filter_data(year(date) == 1960) %>%
+  # extract data in wide format
+  tbl_data_wide()
+
+temp_1960
+```
+
+We can then use this data with **ggplot2** to lead us to the conclusion that three locations in the same province had more or less the same monthly temperature characteristics in 1960. 
+
+```{r, warning = FALSE, fig.width = 7, fig.height = 5}
+library(ggplot2)
+ggplot(temp_1960, 
+       aes(x = date, y = mean_temp, 
+           ymin = extr_min_temp, 
+           ymax = extr_max_temp,
+           col = location, fill = location)) +
+  geom_ribbon(alpha = 0.2, col = NA) +
+  geom_line()
+```

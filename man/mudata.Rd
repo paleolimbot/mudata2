@@ -9,48 +9,54 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
   dataset_id = "default", location_id = "default", validate = TRUE)
 }
 \arguments{
-\item{data}{A data.frame/\link[tibble]{tibble} with columns "param" and "value", but more typically
-coluns "location", "param", "datetime" (or "date", depending on the type of data), and "value".}
+\item{data}{A data.frame/\link[tibble]{tibble} containing columns "param" and
+"value" (at least), but more typically columns "location", "param",
+"datetime" (or "date", depending on the type of data), and "value".}
 
-\item{locations}{The locations table, which is a data frame containing the columns (at least)
-"dataset", and "location". If omitted, it will be created automatically using all unique
-dataset/location combinations.}
+\item{locations}{The locations table, which is a data frame containing the
+columns (at least) "dataset", and "location". If omitted, it will be
+created automatically using all unique dataset/location combinations.}
 
-\item{params}{The params table, which is a data frame containing the columns (at least)
-"dataset", and "param". If omitted, it will be created automatically using all unique
-dataset/param combinations.}
+\item{params}{The params table, which is a data frame containing the columns
+(at least) "dataset", and "param". If omitted, it will be created
+automatically using all unique dataset/param combinations.}
 
-\item{datasets}{The datasets table, which is a data frame containing the column (at least)
-"dataset". If omitted, it will be generated automatically using all unique datasets.}
+\item{datasets}{The datasets table, which is a data frame containing the
+column (at least) "dataset". If omitted, it will be generated automatically
+using all unique datasets.}
 
-\item{columns}{The columns table, which is a data frame containing the columns (at least)
-"dataset", "table", and "column". If omitted, it will be created automatically using 
-all dataset/table/column combinations.}
+\item{columns}{The columns table, which is a data frame containing the
+columns (at least) "dataset", "table", and "column". If omitted, it will be
+created automatically using all dataset/table/column combinations.}
 
-\item{x_columns}{A vector of column names from the data table that in combination with
-"dataset", "location", and "param" identify unique rows. These will typically be
-guessed using the column names between "param" and "value".}
+\item{x_columns}{A vector of column names from the data table that in
+combination with "dataset", "location", and "param" identify unique rows.
+These will typically be guessed using the column names between "param" and
+"value".}
 
-\item{..., more_tbls}{More tbls (as named arguments) to be included in the mudata object}
+\item{..., more_tbls}{More tbls (as named arguments) to be included in the
+mudata object}
 
 \item{dataset_id}{The dataset to use if a "dataset" column is omitted.}
 
 \item{location_id}{The location if a "location" column is omitted.}
 
-\item{validate}{Pass \code{FALSE} to skip validation of input tables using \link{validate_mudata}.}
+\item{validate}{Pass \code{FALSE} to skip validation of input tables using
+\link{validate_mudata}.}
 }
 \value{
-An object of class "mudata", which is a \link{list} with components data, locations,
-  params, datasets, columns, and any other tables provided in \code{more_tbls}. All list
-  components must be tbls.
+An object of class "mudata", which is a \link{list} with components
+  data, locations, params, datasets, columns, and any other tables provided
+  in \code{more_tbls}. All list components must be tbls.
 }
 \description{
-Create a mudata object, which is a collection of five tables: data, locations,
-params, datasets, and columns. You are only required to provide the data table,
-which must contain columns "param" and "value", but will more typically contain
-coluns "location", "param", "datetime" (or "date"), and "value". See
-\link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake},
-and \link{second_lake_temp} for examples of data in this format.
+Create a mudata object, which is a collection of five tables: data,
+locations, params, datasets, and columns. You are only required to provide
+the data table, which must contain columns "param" and "value", but will more
+typically contain columns "location", "param", "datetime" (or "date"), and
+"value". See \link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake},
+\link{long_lake}, and \link{second_lake_temp} for examples of data in this
+format.
 }
 \examples{
 # use the data table from kentvillegreenwood as a template

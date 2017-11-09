@@ -1,37 +1,43 @@
 
 #' Create a MuData object
 #' 
-#' Create a mudata object, which is a collection of five tables: data, locations,
-#' params, datasets, and columns. You are only required to provide the data table,
-#' which must contain columns "param" and "value", but will more typically contain
-#' coluns "location", "param", "datetime" (or "date"), and "value". See
-#' \link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake},
-#' and \link{second_lake_temp} for examples of data in this format.
-#'
-#' @param data A data.frame/\link[tibble]{tibble} with columns "param" and "value", but more typically
-#' coluns "location", "param", "datetime" (or "date", depending on the type of data), and "value".
-#' @param locations The locations table, which is a data frame containing the columns (at least)
-#'   "dataset", and "location". If omitted, it will be created automatically using all unique
-#'   dataset/location combinations.
-#' @param params The params table, which is a data frame containing the columns (at least)
-#'   "dataset", and "param". If omitted, it will be created automatically using all unique
-#'   dataset/param combinations.
-#' @param datasets The datasets table, which is a data frame containing the column (at least)
-#'   "dataset". If omitted, it will be generated automatically using all unique datasets.
-#' @param columns The columns table, which is a data frame containing the columns (at least)
-#'   "dataset", "table", and "column". If omitted, it will be created automatically using 
-#'   all dataset/table/column combinations.
-#' @param x_columns A vector of column names from the data table that in combination with
-#'   "dataset", "location", and "param" identify unique rows. These will typically be
-#'   guessed using the column names between "param" and "value".
-#' @param ...,more_tbls More tbls (as named arguments) to be included in the mudata object
+#' Create a mudata object, which is a collection of five tables: data,
+#' locations, params, datasets, and columns. You are only required to provide
+#' the data table, which must contain columns "param" and "value", but will more
+#' typically contain columns "location", "param", "datetime" (or "date"), and
+#' "value". See \link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake},
+#' \link{long_lake}, and \link{second_lake_temp} for examples of data in this
+#' format.
+#' 
+#' @param data A data.frame/\link[tibble]{tibble} containing columns "param" and
+#'   "value" (at least), but more typically columns "location", "param",
+#'   "datetime" (or "date", depending on the type of data), and "value".
+#' @param locations The locations table, which is a data frame containing the
+#'   columns (at least) "dataset", and "location". If omitted, it will be
+#'   created automatically using all unique dataset/location combinations.
+#' @param params The params table, which is a data frame containing the columns
+#'   (at least) "dataset", and "param". If omitted, it will be created
+#'   automatically using all unique dataset/param combinations.
+#' @param datasets The datasets table, which is a data frame containing the
+#'   column (at least) "dataset". If omitted, it will be generated automatically
+#'   using all unique datasets.
+#' @param columns The columns table, which is a data frame containing the
+#'   columns (at least) "dataset", "table", and "column". If omitted, it will be
+#'   created automatically using all dataset/table/column combinations.
+#' @param x_columns A vector of column names from the data table that in
+#'   combination with "dataset", "location", and "param" identify unique rows.
+#'   These will typically be guessed using the column names between "param" and
+#'   "value".
+#' @param ...,more_tbls More tbls (as named arguments) to be included in the
+#'   mudata object
 #' @param dataset_id The dataset to use if a "dataset" column is omitted.
 #' @param location_id The location if a "location" column is omitted.
-#' @param validate Pass \code{FALSE} to skip validation of input tables using \link{validate_mudata}.
-#'
-#' @return An object of class "mudata", which is a \link{list} with components data, locations,
-#'   params, datasets, columns, and any other tables provided in \code{more_tbls}. All list
-#'   components must be tbls.
+#' @param validate Pass \code{FALSE} to skip validation of input tables using
+#'   \link{validate_mudata}.
+#'   
+#' @return An object of class "mudata", which is a \link{list} with components
+#'   data, locations, params, datasets, columns, and any other tables provided
+#'   in \code{more_tbls}. All list components must be tbls.
 #' @export
 #' 
 #' @examples
@@ -50,7 +56,7 @@
 #'   group_by(core, param, depth) %>%
 #'   summarise(value = mean(param_value), sd = mean(param_value)) %>%
 #'   rename(location = core)
-#'
+#' 
 #' # create mudata object
 #' mudata(datatable)
 #' 

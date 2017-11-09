@@ -15,15 +15,15 @@
 \item{...}{passed to plotting methods}
 }
 \value{
-a ggplot object or the result of `plot()`
+A \link[ggplot2]{ggplot} object (autobiplot) or the result of
+  \link[graphics]{plot.default}.
 }
 \description{
-Uses \link{autobiplot} and \link{long_biplot} to biplot values in a 
-\link{mudata} object.
+Uses \link{autobiplot} and \link{long_biplot} to produce parameter vs.
+parameter plots contained in a \link{mudata} object.
 }
 \examples{
-data(kentvillegreenwood)
-kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
+kvtemp <- kentvillegreenwood \%>\% select_params(contains("temp"))
 
 # use base plotting for regular biplot function
 biplot(kvtemp)

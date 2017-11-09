@@ -42,7 +42,7 @@ max_names (or FALSE to use all names)}
 
 \item{...}{passed to \code{aes_string()}}
 
-\item{error_var}{The column containing values for error bars.}
+\item{error_var}{The column containing values for error bars (plus or minus error_var).}
 
 \item{labeller}{The labeller to use to label facets (may want to use \code{label_parsed}
 to use plotmath-style labels)}
@@ -54,7 +54,6 @@ parameter-long data frame, like that of the data table in a \link{mudata} object
 \examples{
 library(tidyr)
 library(dplyr)
-data(pocmajsum)
 
 # create a long, summarised representation of pocmaj data
 pocmaj_long <- pocmajsum \%>\%

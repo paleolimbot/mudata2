@@ -11,7 +11,7 @@
 #' @param names_y The names to be included on the y axes, or NULL for all possible combinations
 #'   of \code{namesx}.
 #' @param measure_var The column containing the values to plot
-#' @param error_var The column containing values for error bars.
+#' @param error_var The column containing values for error bars (plus or minus error_var).
 #' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
 #'   to use plotmath-style labels)
 #' @param validate Ensure id_vars identify unique rows
@@ -25,7 +25,6 @@
 #' @examples 
 #' library(tidyr)
 #' library(dplyr)
-#' data(pocmajsum)
 #' 
 #' # create a long, summarised representation of pocmaj data
 #' pocmaj_long <- pocmajsum %>%
@@ -130,8 +129,8 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   name_combinations$.data <- lapply(seq_len(nrow(name_combinations)), function(i) {
     combination <- name_combinations[i,]
     # filter data to get data_x and data_y
-    data_x <- data %>% dplyr::filter(.name == combination$.name_x) %>% dplyr::collect()
-    data_y <- data %>% dplyr::filter(.name == combination$.name_y) %>% dplyr::collect()
+    data_x <- dplyr::ungroup(data) %>% dplyr::filter(.name == combination$.name_x) %>% dplyr::collect()
+    data_y <- dplyr::ungroup(data) %>% dplyr::filter(.name == combination$.name_y) %>% dplyr::collect()
     # join using join_vars
     data_both <- dplyr::inner_join(data_x, data_y,
                                    by = id_vars, suffix = c("_x", "_y"))
@@ -139,7 +138,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
     # return data_both
     data_both
   })
-  data_pairs <- tidyr::unnest(name_combinations)
+  data_pairs <- dplyr::bind_rows(name_combinations$.data)
   
   # make name_x and name_y factors with the levels specified
   data_pairs$.name_x <- factor(data_pairs$.name_x, levels = name_x)
@@ -266,25 +265,25 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
 
 #' Biplot a mudata object
 #' 
-#' Uses \link{autobiplot} and \link{long_biplot} to biplot values in a 
-#' \link{mudata} object.
-#'
+#' Uses \link{autobiplot} and \link{long_biplot} to produce parameter vs.
+#' parameter plots contained in a \link{mudata} object.
+#' 
 #' @param x A mudata object
 #' @param ... passed to plotting methods
-#'
-#' @return a ggplot object or the result of `plot()`
+#'   
+#' @return A \link[ggplot2]{ggplot} object (autobiplot) or the result of
+#'   \link[graphics]{plot.default}.
 #' @export
 #' 
 #' @examples 
-#' data(kentvillegreenwood)
-#' kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
+#' kvtemp <- kentvillegreenwood %>% select_params(contains("temp"))
 #' 
 #' # use base plotting for regular biplot function
 #' biplot(kvtemp)
 #' 
 #' # use ggplot and facet_grid to biplot
 #' autobiplot(kvtemp, col = "location")
-#'
+#' 
 biplot.mudata <- function(x, ...) {
   # id variables
   id_vars <- c("dataset", "location", "param", attr(x, "x_columns"))

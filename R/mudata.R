@@ -98,7 +98,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   # check datasets object
   if(is.null(datasets)) {
     # create a derived table for datasets
-    datasets <- dplyr::distinct_(dplyr::ungroup(data), "dataset")
+    datasets <- data %>% dplyr::select("dataset") %>% dplyr::distinct()
   } else {
     # if there is no dataset column, use mutate to create one
     .checkcols(datasets, 'datasets', character(0)) # this just checks type of datasets
@@ -110,7 +110,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   
   # check locations object
   if(is.null(locations)) {
-    locations <- dplyr::distinct_(dplyr::ungroup(data), "dataset", "location")
+    locations <- data %>%
+      dplyr::select("dataset", "location") %>%
+      dplyr::distinct()
   } else {
     # if there is no dataset or location column, use mutate to create one
     .checkcols(locations, 'locations', character(0)) # this just checks type of locaitons
@@ -125,7 +127,9 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   
   # check params object
   if(is.null(params)) {
-    params <- dplyr::distinct_(dplyr::ungroup(data), "dataset", "param")
+    params <- data %>%
+      dplyr::select("dataset", "param") %>%
+      dplyr::distinct()
   } else {
     # if there is no dataset column, use mutate to create one
     .checkcols(params, 'params', 'param')

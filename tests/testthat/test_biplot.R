@@ -101,7 +101,7 @@ test_that("long_pairs correctly assigns parameter combinations", {
     dplyr::filter(.name_x != .name_y) %>%
     dplyr::mutate(combo_id = mapply(make_combo_id, .name_x, .name_y)) %>%
     dplyr::distinct(combo_id) %>%
-    .$combo_id
+    dplyr::pull(combo_id)
   
   auto_combinations <- long_pairs(pocmaj_data, id_vars = c("location", "depth"), 
                                   name_var = "param") %>%
@@ -109,7 +109,7 @@ test_that("long_pairs correctly assigns parameter combinations", {
                                     as.character(.name_x), 
                                     as.character(.name_y))) %>%
     dplyr::distinct(combo_id) %>%
-    .$combo_id
+    dplyr::pull(combo_id)
     
   expect_identical(sort(all_combinations), sort(auto_combinations))
 })

@@ -2,12 +2,9 @@
 % Please edit documentation in R/utils.R
 \name{parallel_gather}
 \alias{parallel_gather}
-\alias{parallel_gather_}
 \title{Melt multiple sets of columns in parallel}
 \usage{
 parallel_gather(x, key, ..., convert = FALSE, factor_key = FALSE)
-
-parallel_gather_(x, key, ..., convert = FALSE, factor_key = FALSE)
 }
 \arguments{
 \item{x}{A data.frame}

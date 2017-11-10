@@ -172,7 +172,8 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
                            function(col_name) {
                              .data %>%
                                dplyr::ungroup() %>%
-                               dplyr::distinct_(col_name) %>%
+                               dplyr::select(rlang::UQ(col_name)) %>%
+                               dplyr::distinct() %>%
                                dplyr::collect() %>%
                                dplyr::mutate(count = 1:n()) %>%
                                tibble::deframe()

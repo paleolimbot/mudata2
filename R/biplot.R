@@ -60,12 +60,13 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   
   # make data with known name column
   data <- x %>% 
-    dplyr::rename_(.name = name_var)
+    dplyr::rename(.name = rlang::UQ(name_var))
   
   # make a list of parameter names
   all_params <- dplyr::ungroup(data) %>%
     dplyr::distinct(.name) %>% 
-    dplyr::collect() %>% .$.name %>%
+    dplyr::collect() %>% 
+    dplyr::pull(.name) %>%
     as.character()
   
   # make name combinations
@@ -164,7 +165,7 @@ long_biplot <- function(x, id_vars, name_var, measure_var = "value",
   
   # rename value and name column
   x <- x %>%
-    dplyr::rename_(.name = name_var, .value = measure_var)
+    dplyr::rename(.name = rlang::UQ(name_var), .value = rlang::UQ(measure_var))
   
   # filter to name %in% names_x
   if(!is.null(names_x)) {
@@ -227,10 +228,11 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
   # rename value name and error column
   if(is.null(error_var)) {
     x <- x %>%
-      dplyr::rename_(.name = name_var, .value = measure_var)
+      dplyr::rename(.name = rlang::UQ(name_var), .value = rlang::UQ(measure_var))
   } else {
     x <- x %>%
-      dplyr::rename_(.name = name_var, .value = measure_var, .error = error_var)
+      dplyr::rename(.name = rlang::UQ(name_var), .value = rlang::UQ(measure_var), 
+                    .error = rlang::UQ(error_var))
   }
   
   # remove nas if specified

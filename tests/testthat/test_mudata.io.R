@@ -396,7 +396,7 @@ test_that("read/write mudatas containing datetime objects works", {
   # set timezone attribute to halifax, not changing the moment in time
   slt$data$datetime <- lubridate::with_tz(slt$data$datetime, "America/Halifax")
   expect_message(write_mudata(slt, outfile), "Converting POSIXt column to UTC")
-  dt <- read_mudata(outfile) %>% .$data %>% .$datetime
+  dt <- read_mudata(outfile) %>% tbl_data() %>% dplyr::pull(datetime)
   expect_identical(attr(dt, "tzone"), "UTC")
   expect_equal(lubridate::with_tz(slt$data$datetime, "UTC"), dt)
   unlink(outfile)

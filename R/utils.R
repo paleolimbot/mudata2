@@ -60,12 +60,6 @@ parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   parallel_gather_base(x, key, lst_as_colnames, convert = convert, factor_key = factor_key)
 }
 
-#' @export
-#' @rdname parallel_gather
-parallel_gather_ <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
-  parallel_gather_base(x, key, list(...), convert = convert, factor_key = factor_key)
-}
-
 parallel_gather_base <- function(x, key, lst_as_colnames, convert = FALSE, factor_key = FALSE) {
   # check arguments
   if(length(lst_as_colnames) == 0) stop("Must pass at least one value = columns in parallel_gather()")
@@ -85,10 +79,10 @@ parallel_gather_base <- function(x, key, lst_as_colnames, convert = FALSE, facto
   # do gather for each item in ..., using id_vars and cols mentioned in 
   # each argument
   gathered <- lapply(seq_along(lst_as_colnames), function(i) {
-    tidyr::gather_(x[c(id_vars, lst_as_colnames[[i]])], 
-                   key = key, value = names(lst_as_colnames)[i],
-                   gather_cols = lst_as_colnames[[i]],
-                   na.rm = FALSE, convert = convert, factor_key = factor_key)
+    tidyr::gather(x[c(id_vars, lst_as_colnames[[i]])], 
+                  key = rlang::UQ(key), value = rlang::UQ(names(lst_as_colnames)[i]),
+                  rlang::UQ(lst_as_colnames[[i]]),
+                  na.rm = FALSE, convert = convert, factor_key = factor_key)
   })
   
   # get id data

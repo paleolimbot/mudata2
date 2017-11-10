@@ -389,11 +389,9 @@ type_strs_from_columns <- function(columns_tbl) {
   }
   
   # create list of type_str named lists
-  . <- NULL; rm(.) # CMD hack
   type_str_tbl <- type_str_tbl %>%
-    tidyr::nest_(key_col = "types", nest_cols = c("column", "type"))
-  type_strs <- type_str_tbl %>%
-    .$types %>%
+    tidyr::nest(c("column", "type"), .key = "types")
+  type_strs <- type_str_tbl$types %>%
     lapply(tibble::deframe) %>%
     stats::setNames(type_str_tbl$table)
   type_strs

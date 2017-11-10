@@ -9,49 +9,45 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Objects are created using the `mudata()` function, which takes a data frame/tibble with columns (at least) `param` and `value`. If you have more than one location, you will need a `location` column, and if you have points measured at more than one time, you'll need a column that describes the point in time (probably called `date` or `datetime`, or if you're a [paleolimnologist](https://www.wikipedia.org/wiki/Paleolimnology) like me, `depth` and/or `age`).
+As demonstrated in `vignette("mudata", package = "mudata2")`, mudata objects are easy to use and have a quick data-to-analysis time. In contrast, getting data into the format takes a little more time, and requires some familiarity with **dplyr** and **tidyr**. This process is essentially the data cleaning step, except that instead of discarding all the information that you don't need (or won't fit in the output data structure), you can keep almost everything, possibly adding some documentation that didn't previously exist. This is a front-end investment of time that will make subsequent users of the data better informed about how and why the data were collected in the first place.
 
-As an example, we'll use a small subset of data from two cores I collected a long time ago:
-
-```{r, include = FALSE}
-library(mudata2)
-pocmajsum <- tibble::as_tibble(pocmajsum)
-```
-
-```{r, message=FALSE}
-library(mudata2)
-library(tidyverse)
-poc_maj <- pocmajsum %>%
-  select(core, depth, Ca, Ti, V)
-poc_maj
-```
-
-Here, `depth` is the depth in the core, and `Ca`, `Ti`, and `V` are elemental concentrations in the sediment. To get this into parameter-long format, we need to use the `gather()` function in the **tidyr** package, and rename the `core` column to `location`.
+(Mostly) universal data (mudata) objects are created using the `mudata()` function, which at minimum takes a data frame/tibble with one row per measurement. As an example, I'll use the data table from the `ns_climate` dataset:
 
 ```{r}
-poc_maj_long <- poc_maj %>%
-  gather(Ca, Ti, V, key = "param", value = "value") %>%
-  rename(location = core)
-poc_maj_long
+library(mudata2)
+ns_climate %>% tbl_data()
 ```
 
-This is the form of data needed by the `mudata()` constructor.
+At minimum the data table must contain the columns `param` and `value`. The `param` column contains the identifier of the measured parameter (a character vector), and the `value` column contains the value of the measurement (there is no restriction on what type this is except that it has to be the same type for all parameters; see below for ways around this). To represent measurements at more than one location, you can include a location column with location identifiers (a character vector). To represent measurements at more than one point in time, you can include a column between `param` and `value` specifying at what time the measurement was taken. To the right of the `value` column, you can include any columns needed to add context to `value` (I typically use this for uncertainty, detection limits, and comments on a particular measurement).
 
-```{r poc-maj}
-poc_maj_md <- mudata(poc_maj_long)
-autoplot(poc_maj_md, y = "depth") + scale_y_reverse()
+In the context of `ns_climate`, the `location` column contains station names like "SABLE ISLAND", the `param` column contains measurement names like "mean_max_temp", and the point in time the measurement was taken is included in the `date` column. To the right of the `value` column, there are two columns that add extra "flag" information provided by Environment Canada. These data are distributed with Environment Canada climate downloads, but are often discarded because the 12 paired columns in the standard wide data format in which they are distributed are a bit unwieldy.
+
+In general, the steps to create a mudata object are:
+
+- **Create the data table** using the data wrangling tools in the **tidyverse**.
+- **Create the object** using `mudata()`.
+- **Add the metadata** using `update_locations()`, `update_params()`, and `update_datasets()`.
+- **Update the columns table** using `update_columns_table()` to include the metadata columns you just added in the columns table.
+- **Add column descriptions** using `update_columns()`.
+- **Write the object to disk** using `write_mudata()`.
+
+## Creating the data table
+
+As an example, I'm going to use a small subset of the sediment chemistry data that I work with on a regular basis. Instead of being aligned along the "time" or "date" axis, these data are aligned along the "depth" axis, or in other words, the columns that identify each measurement are `location` (the sediment sample ID), `param` (the chemical that was measured), and `depth` (the position in the sediment sample). This dataset is included in the package as `pocmaj` and `pocmajsum`.
+
+I'll use the **tidyverse** for data wrangling, and the `pocmaj` and `pocmajsum` datasets to illustrate how to get from common data formats to the parameter-long, one-row-per-measurement data needed by the `mudata()` function.
+
+```{r, message = FALSE}
+library(tidyverse)
+data("pocmaj")
+data("pocmajsum")
 ```
-
-## Old readme:
-
-Creating a `mudata` object from your own data is slightly more difficult, but the package contains a few functions to (hopefully) make things a bit easier. The key is creating the `$data` table in the correct format; the rest can be handled automatically by the `mudata()` constructor.
 
 ### Case 1: Wide, summarised data
 
-Probably the most common case, wide, summarised data is the norm in most disciplines. If you've gotten this far, there is a good chance that you have data like this hanging around somewhere:
+Parameter-wide, summarised data is the probably the most common form of data. If you've gotten this far, there is a good chance that you have data like this hanging around somewhere:
 
 ```{r}
-data("pocmajsum")
 pocmajwide <- pocmajsum %>%
   select(core, depth, Ca, V, Ti)
 ```
@@ -60,17 +56,16 @@ pocmajwide <- pocmajsum %>%
 knitr::kable(pocmajwide, row.names = FALSE, digits = 0)
 ```
 
-This is a small subset of paleolimnological data for two sediment cores near Halifax, Nova Scotia. The data is a multi-parameter spatiotemporal dataset because it contains multiple parameters (calcium, titanium, and vanadium concentrations) measured along a common axis (depth in the sediment core) at discrete locations (cores named MAJ-1 and POC-2). Currently, our columns are not named properly: for the `mudata` format the terminology is 'location' not 'core'. The `rename()` function in `dplyr` does all the work here, easily renaming columns in place.
+This is a small subset of paleolimnological data for two sediment cores near Halifax, Nova Scotia. The data is a multi-parameter spatiotemporal dataset because it contains multiple parameters (calcium, titanium, and vanadium concentrations) measured along a common axis (depth in the sediment core) at discrete locations (cores named MAJ-1 and POC-2). Currently, our columns are not named properly: for the mudata format the terminology is 'location' not 'core'. The `rename()` function is the easiest way to do this.
 
 ```{r}
 pocmajwide <- pocmajwide %>%
   rename(location = core)
 ```
 
-Finally, we need to get the data into a "long" format, with a column named "param" and our actual values in a single column (called "value", predictably). This can be done using the `gather()` function in the [tidyr](https://cran.r-project.org/package=tidyr) package.
+Finally, we need to get the data into a parameter-long format, with a column named `param` and our actual values in a single column called `value`. This can be done using the `gather()` function.
 
-```{r, warning=FALSE}
-library(tidyr)
+```{r}
 pocmajlong <- pocmajwide %>%
   gather(Ca, Ti, V, key = "param", value = "value")
 ```
@@ -83,47 +78,170 @@ knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
 
 The last important thing to consider is the axis on which the data are aligned. This sounds complicated but isn't: these axes are the same axes you might use to plot the data, in this case `depth`. The `mudata()` constructor needs to know which column this is, either by explicitly passing `x_columns = "depth"` or by placing the column between "param" and "value". In most cases (like this one) it can be guessed (you'll see a message telling you which columns were assigned this value).
 
-Now the data is ready to be put into the `mudata()` constructor. If it isn't, the constructor will throw an error (hopefully) telling you how to fix the data.
+Now the data is ready to be put into the `mudata()` constructor. If it isn't, the constructor will throw an error telling you how to fix the data.
 
 ```{r}
 md <- mudata(pocmajlong)
-autoplot(md, y="depth") + scale_y_reverse()
+md
 ```
 
 ### Case 2: Wide, summarised data with uncertainty
 
-Data is often output in a format similar to the format above, but with uncertainty information in paired columns. Data from an ICP-MS, for example is often in this format, with the concentration and a +/- column next to it. One of the advantages of a long format is the ability to include this information in a way that makes plotting with error bars easy. The `pocmajsum` dataset is a version of the dataset described above, but with standard deviation values in paired columns with the value itself.
+Data is often output in a format similar to the format above, but with uncertainty information in paired columns. Data from an ICP-MS, for example is often in this format, with the concentration and a +/- column next to it. One of the advantages of a long format is the ability to include this information in a way that makes plotting with error bars easier. The `pocmajsum` dataset is a version of the dataset described above, but with standard deviation values in paired columns with the value itself.
 
-```{r}
-data("pocmajsum")
+```{r, results='hide'}
+pocmajsum
 ```
 
 ```{r, echo=FALSE}
 knitr::kable(pocmajsum, row.names = FALSE, digits = 0)
 ```
 
-As above, we need to rename the "core" and column to "location" using the `rename()` function (from `dplyr`).
+As above, we need to rename the `core` column to `location` using the `rename()` function.
 
 ```{r}
 pocmajwide <- pocmajsum %>%
   rename(location = core)
 ```
 
-Then (also as above), we need to "melt" the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
+Then (also as above), we need to `gather()` the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
 
 ```{r}
 pocmajlong <- parallel_gather(pocmajwide, key = "param",
-                              value=c(Ca, Ti, V), 
-                              sd=c(Ca_sd, Ti_sd, V_sd))
+                              value = c(Ca, Ti, V), 
+                              sd = c(Ca_sd, Ti_sd, V_sd))
 ```
 
 ```{r, echo=FALSE}
 knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
 ```
 
-The data is now ready to be fed to the `mudata()` constructor, after which we can use the `plot()` function to add error bars based on the `sd` column.
+The data is now ready to be fed to the `mudata()` constructor:
 
 ```{r, warning=FALSE}
 md <- mudata(pocmajlong)
-autoplot(md, y="depth", error_var="sd") + scale_y_reverse()
+md
 ```
+
+## Adding metadata
+
+When mudata objects are created using only the data table, the package creates the necessary tables for parameter, location, and dataset metadata (if you have these tables prepared already, you can pass them as the arguments `locations`, `params`, and `datasets`). These tables provide a place to put metadata, but doesn't create any by default. This data is usually needed later, and including it in the object at the point of creation avoids others or future you from scratching their (your) heads with the question "where *did* core POC-2 come from anyway...". To do this, you can update the tables using `update_params()`, `update_locations()`, and `update_datasets()`. The first argument of these functions is a vector of identifiers to update (or all of them if not specified), followed by key/value pairs.
+
+```{r}
+# default parameter table
+md %>%
+  tbl_params()
+
+# parameter table with metadata
+md %>%
+  update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
+  tbl_params()
+```
+
+```{r}
+# default location table
+md %>%
+  tbl_locations()
+
+# location table with metadata
+md %>%
+  update_locations("MAJ-1", latitude = -64.298, longitude = 44.819,
+                   lake = "Lake Major") %>%
+  update_locations("POC-2", latitude = -65.985, longitude = 44.913,
+                   lake = "Pockwock Lake") %>%
+  tbl_locations()
+```
+
+The concept of a "dataset" is intended to refer to the source of a dataset, but could be anything that applies to data, params, and locations labelled with that dataset. In this case it would make sense to add that the source data is the **mudata2** package. The default name is "default", which you can change in the `mudata()` function by passing `dataset_id` or by using `rename_datasets()`.
+
+```{r}
+# default datasets table
+md %>%
+  tbl_datasets()
+
+# datasets table with metadata
+md %>%
+  update_datasets(source = "R package mudata2, version 1.0.0") %>%
+  tbl_datasets()
+```
+
+All together, the param/location/dataset documentation looks like this:
+
+```{r}
+md_doc <- md %>%
+  update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
+  update_locations("MAJ-1", latitude = -63.486, longitude = 44.732,
+                   lake = "Lake Major") %>%
+  update_locations("POC-2", latitude = -63.839, longitude = 44.794,
+                   lake = "Pockwock Lake") %>%
+  update_datasets(source = "R package mudata2, version 1.0.0")
+```
+
+## Adding column metadata
+
+The `mudata()` constructor automatically generates a barebones columns table (`tbl_columns()`), but since the creation of the object we have created new columns that need documentation. Thus, before documenting columns using `update_columns()`, it is necessary to call `update_columns_table()` to synchronize the columns table with the object.
+
+```{r}
+md_doc <- md_doc %>%
+  update_columns_table()
+```
+
+Then, you can use `update_columns()` to add information about various columns to the object.
+
+```{r}
+# default columns table
+md_doc %>%
+  tbl_columns()
+
+# columns with metadata 
+md_doc %>%
+  update_columns("depth", description = "Depth in sediment core (cm)") %>%
+  update_columns("sd", description = "Standard deviation uncertainty of n=3 values") %>%
+  tbl_columns() %>%
+  select(dataset, table, column, description, type)
+```
+
+You'll notice there's a `type` column that is also automatically generated, which I suggest that you don't mess with (it will get overwritten by default before you write the object to disk). If something is the wrong type, you should use the `mudate_*()` family of functions to fix the column type, then run `update_columns_table()` again. From the top, the documentation looks like this:
+
+```{r}
+md_doc <- md %>%
+  update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
+  update_locations("MAJ-1", latitude = -63.486, longitude = 44.732,
+                   lake = "Lake Major") %>%
+  update_locations("POC-2", latitude = -63.839, longitude = 44.794,
+                   lake = "Pockwock Lake") %>%
+  update_datasets(source = "R package mudata2, version 1.0.0") %>%
+  update_columns_table() %>%
+  update_columns("depth", description = "Depth in sediment core (cm)") %>%
+  update_columns("sd", description = "Standard deviation uncertainty of n=3 values")
+```
+
+## Writing mudata objects
+
+There are three possible formats to which mudata objects can be read: A directory of CSV files (one per table), a ZIP archive of the directory format, and a JSON encoding of the tables. You can write all of them using `write_mudata()` with a `filename` of the appropriate extension:
+
+```{r, eval = FALSE}
+# write to directory
+write_mudata(poc_maj, "poc_maj.mudata")
+# write to ZIP
+write_mudata(poc_maj, "poc_maj.mudata.zip")
+# write to JSON
+write_mudata(poc_maj, "poc_maj.mudata.json")
+```
+
+Then, you can read the file/directory using `read_mudata()`:
+
+```{r, eval = FALSE}
+# read from directory
+read_mudata("poc_maj.mudata")
+# read from ZIP
+read_mudata("poc_maj.mudata.zip")
+# read from JSON
+read_mudata("poc_maj.mudata.json")
+```
+
+The convention of using ".mudata.*" isn't necessary, but seems like a good idea to point potential data users in the direction of this package.
+
+## More information
+
+That is most of what there is to creating mudata objects. For more reading, I suggest looking at the documentation for `?mudata`, `?update_locations`, `?mudata_prepare_column`, and `?read_mudata`.

@@ -41,7 +41,7 @@ We have used the mudata format in the following situations:
 More information
 ----------------
 
-For more examples of mudata usage, see the package vignettes: `vignette("mudata_subset", package = "mudata2")`, and `vignette("mudata_create", package = "mudata2")`
+For more examples of mudata usage, see the package vignettes: `vignette("mudata", package = "mudata2")`, and `vignette("mudata_create", package = "mudata2")`
 
 Why mudata*2*?
 --------------

@@ -251,7 +251,7 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
   if(!is.null(error_var)) {
     ggerror <- list(
       ggplot2::geom_errorbar(
-        ggplot2::aes_string(ymax=".value_y+.error_y"), ymin=".value_y-.error_y"),
+        ggplot2::aes_string(ymax=".value_y+.error_y", ymin=".value_y-.error_y")),
       ggplot2::geom_errorbarh(
         ggplot2::aes_string(xmax=".value_x+.error_x", xmin=".value_x-.error_x"))
     )

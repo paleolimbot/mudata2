@@ -46,3 +46,20 @@ test_that("parallel gather works wih tidyeval", {
                    parallel_gather(pm2, key = "param", 
                                    value = c(Ca, Ti, V), sd = c(Ca_sd, Ti_sd, V_sd)))
 })
+
+test_that("paralell gather throws errors", {
+  
+  # check no input
+  expect_error(parallel_gather(pocmajsum, key = "param"),
+               "Must pass at least one value = columns in parallel_gather()")
+  # check unnamed args
+  expect_error(parallel_gather(pocmajsum, key = "param", c(Ca, Ti, V)),
+               "All arguments to parallel_gather\\(\\) must be named")
+  # check inconsistent lengths of args
+  expect_error(
+    parallel_gather(pocmajsum, key = "param", 
+                    value = c(Ca, Ti),
+                    sd = c(Ca_sd, Ti_sd, V_sd)),
+    "All named arguments must refer to the same number of columns"
+  )
+})

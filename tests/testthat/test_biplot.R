@@ -2,18 +2,32 @@
 context("biplot functions")
 
 # create test data
-pocmaj_data <- pocmajsum %>%
-  dplyr::select(core, depth, Ca, Ti, V) %>%
-  tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
-  dplyr::select(location = core, param, depth, value)
+pocmaj_data <- parallel_gather(pocmajsum, key = "param", 
+                               value = c(Ca, Ti, V),
+                               sd = c(Ca_sd, Ti_sd, V_sd)) %>%
+  dplyr::rename(location = core)
 kvtemp <- subset(kentvillegreenwood, params = c("mintemp", "maxtemp", "meantemp"))
 
 # ---- tests ----
 
 test_that("autobiplot works on both data frames and mudata objects", {
+  # these are manual tests
   expect_is(autobiplot(pocmaj_data, id_vars = c("location", "depth"), name_var = "param"),
             "ggplot")
   expect_is(autobiplot(kvtemp), "ggplot")
+})
+
+test_that("biplot works on both data frames and mudata objects", {
+  biplot(kvtemp)
+  long_biplot(pocmaj_data, id_vars = c("location", "depth"), name_var = "param")
+  expect_true(TRUE) # these are manual tests
+})
+
+test_that("error bars show up in autoplot", {
+  autobiplot(pocmaj_data, id_vars = c("location", "depth"), name_var = "param", 
+             error_var = "sd")
+  autobiplot(alta_lake, error_var = "stdev")
+  expect_true(TRUE) # these are manual tests
 })
 
 test_that("long_pairs finds invalid inputs", {
@@ -164,3 +178,5 @@ test_that("max_names is respected in long_pairs, autobiplot, and long_biplot", {
   expect_equal(n_combinations(constrained_result), 4*5 / 2)
   expect_equal(n_combinations(unconstrained_result), 10*11 / 2)
 })
+
+

@@ -549,6 +549,6 @@ plot.mudata <- function(x, facets = "param", col = "location", pch = "dataset", 
 # such as min(), max(), and mean(). Is essentially the opposite of ggplot2's
 # is.discrete(), which may be an alternative.
 is.numericish <- function(x) {
-  return(any(class(x) %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt")))
+  return(any(class(x) %in% c("numeric", "integer", "Date", "POSIXct", "POSIXt", "difftime")))
 }
 

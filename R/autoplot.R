@@ -415,9 +415,8 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   ))
 }
 
+#' @importFrom dplyr n
 create_facet_df <- function(.data, facets, max_facets) {
-  # CMD plot hack
-  n <- NULL; rm(n)
   
   # get all distinct combos of facet vars
   facet_df <- .data %>%

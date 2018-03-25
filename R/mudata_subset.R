@@ -257,7 +257,7 @@ filter_datasets.default <- function(.data, ...) {
   
   datasets <- .data$datasets %>%
     dplyr::filter(rlang::UQS(filter_args)) %>%
-    dplyr::distinct("dataset") %>%
+    dplyr::distinct(.data$dataset) %>%
     dplyr::collect() %>%
     dplyr::pull("dataset")
   filter_data(.data, .data$dataset %in% datasets)
@@ -279,9 +279,9 @@ filter_data.default <- function(.data, ...) {
   dta <- dplyr::filter(.data$data, rlang::UQS(filter_args))
   
   # redefine params, locations, datasets to reflect subsetted data
-  params <- dplyr::distinct(dta, "param")$param
-  locations <- dplyr::distinct(dta, "location")$location
-  datasets <- dplyr::distinct(dta, "dataset")$dataset
+  params <- dplyr::distinct(dta, .data$param)$param
+  locations <- dplyr::distinct(dta, .data$location)$location
+  datasets <- dplyr::distinct(dta, .data$dataset)$dataset
   
   pm <- dplyr::filter(.data$params, .data$param %in% params)
   lc <- dplyr::filter(.data$locations, .data$location %in% locations)

@@ -9,7 +9,12 @@ test_that("distinct_* functions return the correct values", {
   expect_equal(distinct_datasets(kentvillegreenwood), "ecclimate")
   expect_equal(distinct_columns(kentvillegreenwood, "data"),
                sort(c("dataset", "location", "param", "date", "value", "flags")))
+})
+
+test_that("dplyr tbl interface works with mudata objects", {
   expect_equal(src_tbls(kentvillegreenwood), names(kentvillegreenwood))
+  expect_identical(dplyr::tbl(kentvillegreenwood, "datasets"), 
+                   kentvillegreenwood %>% tbl_datasets())
 })
 
 test_that("distinct_* functions always return character vectors", {

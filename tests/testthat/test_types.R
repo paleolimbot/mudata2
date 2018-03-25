@@ -195,6 +195,12 @@ test_that("as_* functions produce the expected output type", {
   expect_is(as_col_spec("datetime"), "collector")
   expect_is(as_col_spec("wkt"), "collector_character")
   expect_is(as_col_spec("json"), "collector_character")
+  expect_is(as_col_spec("date"), "collector_date")
+  expect_is(as_col_spec("logical"), "collector_logical")
+  expect_is(as_col_spec("double"), "collector_double")
+  expect_is(as_col_spec("guess"), "collector_guess")
+  expect_is(as_col_spec("integer"), "collector_integer")
+  expect_is(as_col_spec("time"), "collector_time")
   
   # as_parser returns a parsing function that can be called with character(0)
   all_parsers <- sapply(c(allowed_types_readr, allowed_types_extra), function(type) {
@@ -202,6 +208,14 @@ test_that("as_* functions produce the expected output type", {
   })
   expect_true(all(vapply(all_parsers, is.function, logical(1))))
   expect_silent(lapply(all_parsers, function(x) try(x(character(0)))))
+})
+
+test_that("datetime parsing works as intended", {
+  dt <- lubridate::make_datetime(tz = "UTC")
+  expect_identical(
+    lubridate::tz(parse_mudata_datetime(mudata_prepare_column(dt), tzone = "")),
+    "UTC"
+  )
 })
 
 test_that("json parsing works as intended", {

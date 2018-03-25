@@ -119,6 +119,21 @@ test_that("passing invalid inputs throws an error", {
               "Table 'columns' is missing columns 'table', 'column'")
 })
 
+test_that("dataset/location/param types of incorrect type are detected", {
+  expect_error(
+    mudata(pocmaj_data %>% dplyr::mutate(dataset = 1)),
+    "has columns of incorrect type: 'dataset'"
+  )
+  expect_error(
+    mudata(pocmaj_data %>% dplyr::mutate(location = as.integer(factor(location)))),
+    "has columns of incorrect type: 'location'"
+  )
+  expect_error(
+    mudata(pocmaj_data %>% dplyr::mutate(param = as.integer(factor(param)))),
+    "has columns of incorrect type: 'param'"
+  )
+})
+
 test_that("duplicate data is detected", {
   pocmaj_not_summarised <- pocmaj %>%
     tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
@@ -176,6 +191,10 @@ test_that("mudata summaries are tibbles", {
   expect_equal(summary(md) %>% colnames(), 
                c("param", "location", "dataset", "n"))
   
+})
+
+test_that("empty mudata objects generate empty summaries", {
+   expect_equal(ns_climate %>% select_datasets(character(0)) %>% summary() %>% nrow(), 0)
 })
 
 test_that("grouped data frames don't cause problems in the mudata constructor", {

@@ -76,6 +76,13 @@ test_that("mudata constructor works with sqlite data frames", {
 test_that("mudata_sql works as expected", {
   # using default arguments
   mdb <- mudata_sql(kg_sql)
+  
+  # as_mudata just uses mudata_sql defaults
+  expect_equal(
+    mudata_sql(kg_sql),
+    as_mudata(kg_sql)
+  )
+  
   kg2 <- mudata(data = sources$data, locations = sources$locations,
                 params = sources$params, datasets = sources$datasets,
                 columns = sources$columns)
@@ -157,8 +164,8 @@ test_that("subsetting, filtering, combining functions fail with a suitable error
       "subsetting of mudata_sql objects is not implemented",
       info = sprintf("Function: %s", f)
     )
-    
   }
+  expect_error(rbind(kg2, kg2), "combining of mudata_sql objects is not implemented")
 })
 
 # clean temporary database

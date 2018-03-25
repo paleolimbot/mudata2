@@ -28,6 +28,11 @@ test_that("mudata objects subset properly", {
   expect_identical(unique(mdbothsub$locations$location), "MAJ-1")
   expect_identical(sort(unique(mdbothsub$data$param)), c("Ti", "V"))
   expect_identical(sort(unique(mdbothsub$params$param)), c("Ti", "V"))
+  
+  # dataset subsets
+  md2 <- md %>% rename_datasets(ds2 = "default")
+  mddatasetsub <- subset(rbind(md, md2), datasets = "ds2")
+  expect_identical(distinct_datasets(mddatasetsub), "ds2")
 })
 
 test_that("select* methods work", {

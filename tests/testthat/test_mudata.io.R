@@ -30,7 +30,6 @@ expect_equal_mudata <- function(md1, md2) {
   }
 }
 
-# will not work until inside test_check
 test_that("mudata_expect_equal works", {
   expect_silent(expect_equal_mudata(kentvillegreenwood, kentvillegreenwood))
   
@@ -71,6 +70,46 @@ test_that("write zip does not affect working directory", {
 #   unlink(outfile)
 #   expect_true(setequal(tfiles, list.files(tempdir())))
 # })
+
+test_that("read_mudata throws an error when file/directory doesn't exist", {
+  expect_error(read_mudata("NOT_A_FILE"), "Don't know which format to read file 'NOT_A_FILE'")
+})
+
+test_that("write_mudata_dir fails when asked to write to a file", {
+  tf <- tempfile()
+  file.create(tf)
+  expect_error(write_mudata_dir(kentvillegreenwood, tf), "Not a directory:")
+  unlink(tf)
+})
+
+test_that("possibly not valid JSON objects are generate correct warnings/errors", {
+  tf <- tempfile()
+  write_mudata_json(kentvillegreenwood, tf)
+  
+  json <- jsonlite::read_json(tf)
+  json$locations <- 6
+  tf2 <- tempfile()
+  jsonlite::write_json(json, tf2)
+  expect_error(read_mudata_json(tf2), "JSON objects of incorrect type: locations")
+  unlink(tf2)
+  
+  json <- jsonlite::read_json(tf)
+  json$columns <- NULL
+  tf2 <- tempfile()
+  jsonlite::write_json(json, tf2)
+  expect_error(read_mudata_json(tf2), "cannot read JSON to mudata without a columns table")
+  
+  unlink(tf)
+})
+
+test_that("recursive reading is apparent to the user", {
+  tf <- tempfile()
+  dir.create(tf)
+  tf2 <- file.path(tf, "internal_directory")
+  write_mudata_dir(kentvillegreenwood, tf2)
+  expect_message(read_mudata_dir(tf), "Reading from")
+  unlink(tf, recursive = TRUE)
+})
 
 test_that("columns table is updated properly", {
   kg2 <- kentvillegreenwood

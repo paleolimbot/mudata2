@@ -192,7 +192,7 @@ select_params <- function(.data, ...) {
 
 #' @rdname selecters
 #' @export
-select_params <- function(.data, ..., .factor = FALSE) {
+select_params.default <- function(.data, ..., .factor = FALSE) {
   # quo-ify params
   params <- quos(...)
   # use tidyselect to get location names
@@ -320,7 +320,7 @@ filter_params <- function(.data, ...) {
 
 #' @rdname filterers
 #' @export
-filter_params <- function(.data, ...) {
+filter_params.default <- function(.data, ...) {
   filter_args <- quos(...)
   if(length(filter_args) == 0) return(.data)
   

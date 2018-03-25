@@ -144,6 +144,24 @@ test_that("long_pairs works with sqlite sources", {
   expect_identical(pairs_sqlite, pairs_local)
 })
 
+test_that("subsetting, filtering, combining functions fail with a suitable error message", {
+  kg2 <- mudata(data = sources$data, locations = sources$locations,
+                params = sources$params, datasets = sources$datasets,
+                columns = sources$columns)
+  
+  for(f in list("select_locations", "select_params", "select_datasets",
+                "filter_locations", "filter_params", "filter_datasets", "filter_data",
+                "rename_locations", "rename_params", "rename_datasets", "rename_columns")) {
+    fn <- match.fun(f)
+    expect_error(
+      kg2 %>% fn(),
+      "subsetting of mudata_sql objects is not implemented",
+      info = sprintf("Function: %s", f)
+    )
+    
+  }
+})
+
 # clean temporary database
 unlink(sql_file)
 rm(kg_sql); gc() # disconnect sqlite database

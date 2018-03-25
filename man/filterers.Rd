@@ -8,7 +8,7 @@
 \alias{filter_locations}
 \alias{filter_locations.default}
 \alias{filter_params}
-\alias{filter_params}
+\alias{filter_params.default}
 \title{Subset a mudata object by complex expression}
 \usage{
 filter_datasets(.data, ...)
@@ -25,7 +25,7 @@ filter_locations(.data, ...)
 
 filter_params(.data, ...)
 
-filter_params(.data, ...)
+\method{filter_params}{default}(.data, ...)
 }
 \arguments{
 \item{.data}{A \link{mudata} object}

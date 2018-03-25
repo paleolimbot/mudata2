@@ -6,7 +6,7 @@
 \alias{select_locations}
 \alias{select_locations.default}
 \alias{select_params}
-\alias{select_params}
+\alias{select_params.default}
 \title{Subset a mudata object by identifier}
 \usage{
 select_datasets(.data, ...)
@@ -17,9 +17,9 @@ select_locations(.data, ...)
 
 \method{select_locations}{default}(.data, ..., .factor = FALSE)
 
-select_params(.data, ..., .factor = FALSE)
+select_params(.data, ...)
 
-select_params(.data, ..., .factor = FALSE)
+\method{select_params}{default}(.data, ..., .factor = FALSE)
 }
 \arguments{
 \item{.data}{A mudata object}

@@ -5,6 +5,7 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}
+library(mudata2)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -31,6 +32,20 @@ devtools::install_github("paleolimbot/mudata")
 
 The mudata format is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term "mudata" refers to a (mostly) universal data structure; the term "multi-parameter spatiotemporal data" is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
 
+A few examples from this package can be found in the `ns_climate`, `second_lake_temp`, and `alta_lake` datasets:
+
+```{r}
+ns_climate
+```
+
+```{r}
+second_lake_temp
+```
+
+```{r}
+alta_lake
+```
+
 ## Why do I need it?
 
 There are plenty of ways to store "multi-parameter spatiotemporal data", but few of them are good at keeping metadata like what method was used to measure a parameter, the latitude and longitude of a sample location, or the level of uncertainty of a parameter measurement. These metadata are rarely used directly in analyses, but are invaluable to correctly interpret the results (and to correctly choose the analysis).
@@ -51,4 +66,4 @@ For more examples of mudata usage, see the package vignettes: `vignette("mudata"
 
 ## Why mudata*2*?
 
-The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the journal article describing the format went through peer review. This led to important changes that couldn't be backward-compabible (but don't worry, all those files I sent you before September 2017 can still be read no problem).
+The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the journal article describing the format went through peer review. This led to important changes that couldn't be backward-compabible.

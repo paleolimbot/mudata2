@@ -22,6 +22,68 @@ What is mudata?
 
 The mudata format is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term "mudata" refers to a (mostly) universal data structure; the term "multi-parameter spatiotemporal data" is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
 
+A few examples from this package can be found in the `ns_climate`, `second_lake_temp`, and `alta_lake` datasets:
+
+``` r
+ns_climate
+#> A mudata object aligned along "date"
+#>   distinct_datasets():  "ecclimate_monthly"
+#>   distinct_locations(): "ANNAPOLIS ROYAL 6289", "BADDECK 6297" ... and 13 more
+#>   distinct_params():    "dir_of_max_gust", "extr_max_temp" ... and 9 more
+#>   src_tbls():           "data", "locations" ... and 3 more
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 7
+#>   dataset           location     param    date       value flag  flag_text
+#>   <chr>             <chr>        <chr>    <date>     <dbl> <chr> <chr>    
+#> 1 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-01-01    NA M     Missing  
+#> 2 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-02-01    NA M     Missing  
+#> 3 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-03-01    NA M     Missing  
+#> 4 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-04-01    NA M     Missing  
+#> 5 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-05-01    NA M     Missing  
+#> 6 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-06-01    NA M     Missing
+```
+
+``` r
+second_lake_temp
+#> A mudata object aligned along "datetime", "depth"
+#>   distinct_datasets():  "second_lake_temp"
+#>   distinct_locations(): "Second Lake"
+#>   distinct_params():    "temp"
+#>   src_tbls():           "data", "locations" ... and 3 more
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 6
+#>   dataset          location    param datetime            depth value
+#>   <chr>            <chr>       <chr> <dttm>              <dbl> <dbl>
+#> 1 second_lake_temp Second Lake temp  2013-07-10 07:14:56     0  23.9
+#> 2 second_lake_temp Second Lake temp  2013-07-10 08:14:56     0  23.8
+#> 3 second_lake_temp Second Lake temp  2013-07-10 09:29:56     0  23.7
+#> 4 second_lake_temp Second Lake temp  2013-07-10 09:44:56     0  23.8
+#> 5 second_lake_temp Second Lake temp  2013-07-10 10:14:56     0  23.7
+#> 6 second_lake_temp Second Lake temp  2013-07-10 11:29:56     0  23.9
+```
+
+``` r
+alta_lake
+#> A mudata object aligned along "depth", "age"
+#>   distinct_datasets():  "alta_lake16"
+#>   distinct_locations(): "ALGC2"
+#>   distinct_params():    "As", "C" ... and 12 more
+#>   src_tbls():           "data", "locations" ... and 3 more
+#> 
+#> tbl_data() %>% head():
+#> # A tibble: 6 x 10
+#>   dataset     location param depth   age value stdev units     n zone  
+#>   <chr>       <chr>    <chr> <dbl> <dbl> <dbl> <dbl> <chr> <int> <chr> 
+#> 1 alta_lake16 ALGC2    As    0.250  2015  23.0  NA   ppm       1 Zone 3
+#> 2 alta_lake16 ALGC2    As    0.750  2011  24.3  23.0 ppm       3 Zone 3
+#> 3 alta_lake16 ALGC2    As    1.25   2008  60.0  NA   ppm       1 Zone 3
+#> 4 alta_lake16 ALGC2    As    1.75   2003  60.0  NA   ppm       1 Zone 3
+#> 5 alta_lake16 ALGC2    As    2.50   1998  43.4  NA   ppm       1 Zone 3
+#> 6 alta_lake16 ALGC2    As    3.50   1982  42.0  NA   ppm       1 Zone 3
+```
+
 Why do I need it?
 -----------------
 
@@ -46,4 +108,4 @@ For more examples of mudata usage, see the package vignettes: `vignette("mudata"
 Why mudata*2*?
 --------------
 
-The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the journal article describing the format went through peer review. This led to important changes that couldn't be backward-compabible (but don't worry, all those files I sent you before September 2017 can still be read no problem).
+The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the journal article describing the format went through peer review. This led to important changes that couldn't be backward-compabible.

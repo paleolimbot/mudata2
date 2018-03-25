@@ -27,6 +27,11 @@
 #' autoplot(kentvillegreenwood)
 #' 
 #' @importFrom rlang .data
+#' @importFrom rlang !!!
+#' @importFrom rlang !!
+#' @importFrom rlang enquo
+#' @importFrom rlang quos
+#' @importFrom dplyr n
 #'   
 #' @docType package
 "_PACKAGE"
@@ -34,29 +39,31 @@
 # ---- functions from other packages that are exported ----
 
 #' @export
-#' @importFrom dplyr everything matches starts_with ends_with num_range
-#' @importFrom dplyr contains one_of
+#' @importFrom dplyr everything
 dplyr::everything
 
 #' @export
+#' @importFrom dplyr matches
 dplyr::matches
 
 #' @export
+#' @importFrom dplyr starts_with
 dplyr::starts_with
 
 #' @export
+#' @importFrom dplyr ends_with
 dplyr::ends_with
 
 #' @export
-dplyr::ends_with
-
-#' @export
+#' @importFrom dplyr contains
 dplyr::contains
 
 #' @export
+#' @importFrom dplyr num_range
 dplyr::num_range
 
 #' @export
+#' @importFrom dplyr one_of
 dplyr::one_of
 
 #' @importFrom ggplot2 autoplot

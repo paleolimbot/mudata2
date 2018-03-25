@@ -124,13 +124,13 @@ tbl_data_wide <- function(x, ...) {
 #' @rdname tbl_data
 #' @export
 tbl_data_wide.default <- function(x, key = "param", value = "value", ...) {
-  key_quo <- rlang::enquo(key)
-  value_quo <- rlang::enquo(value)
+  key_quo <- enquo(key)
+  value_quo <- enquo(value)
   x %>%
     tbl_data() %>%
     dplyr::select(one_of(c("dataset", "location", "param", x_columns(x))), 
-                  rlang::UQ(key_quo), rlang::UQ(value_quo)) %>%
-    tidyr::spread(key = rlang::UQ(key_quo), value = rlang::UQ(value_quo), ...)
+                  !!key_quo, !!value_quo) %>%
+    tidyr::spread(key = !!key_quo, value = !!value_quo, ...)
 }
 
 #' @rdname tbl_data

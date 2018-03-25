@@ -172,7 +172,7 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
                            function(col_name) {
                              .data %>%
                                dplyr::ungroup() %>%
-                               dplyr::select(rlang::UQ(col_name)) %>%
+                               dplyr::select(!!col_name) %>%
                                dplyr::distinct() %>%
                                dplyr::collect() %>%
                                dplyr::mutate(count = 1:n()) %>%
@@ -415,7 +415,7 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   ))
 }
 
-#' @importFrom dplyr n
+
 create_facet_df <- function(.data, facets, max_facets) {
   
   # get all distinct combos of facet vars

@@ -67,10 +67,10 @@ rbind.mudata <- function(..., validate = TRUE) {
 subset.mudata <- function(x, ..., datasets = NULL, params = NULL, 
                           locations = NULL) {
   # enquos ...
-  filter_args <- rlang::quos(...)
+  filter_args <- quos(...)
   
   # filter data
-  new_x <- filter_data(x, rlang::UQS(filter_args))
+  new_x <- filter_data(x, !!!filter_args)
   if(!is.null(datasets)) {
     new_x <- filter_data(new_x, .data$dataset %in% datasets)
   }
@@ -136,9 +136,9 @@ select_datasets <- function(.data, ...) {
 #' @export
 select_datasets.default <- function(.data, ..., .factor = FALSE) {
   # quo-ify datasets
-  datasets <- rlang::quos(...)
+  datasets <- quos(...)
   # use tidyselect to get dataset names
-  datasets <- tidyselect::vars_select(.tidyselect_vars(.data, "dataset"), rlang::UQS(datasets))
+  datasets <- tidyselect::vars_select(.tidyselect_vars(.data, "dataset"), !!!datasets)
   new_datasets <- names(datasets)
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$dataset %in% datasets)
@@ -165,9 +165,9 @@ select_locations <- function(.data, ...) {
 #' @export
 select_locations.default <- function(.data, ..., .factor = FALSE) {
   # quo-ify locations
-  locations <- rlang::quos(...)
+  locations <- quos(...)
   # use tidyselect to get location names
-  locations <- tidyselect::vars_select(.tidyselect_vars(.data, "location"), rlang::UQS(locations))
+  locations <- tidyselect::vars_select(.tidyselect_vars(.data, "location"), !!!locations)
   new_locations <- names(locations)
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$location %in% locations)
@@ -194,9 +194,9 @@ select_params <- function(.data, ...) {
 #' @export
 select_params <- function(.data, ..., .factor = FALSE) {
   # quo-ify params
-  params <- rlang::quos(...)
+  params <- quos(...)
   # use tidyselect to get location names
-  params <- tidyselect::vars_select(.tidyselect_vars(.data, "param"), rlang::UQS(params))
+  params <- tidyselect::vars_select(.tidyselect_vars(.data, "param"), !!!params)
   new_params <- names(params)
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$param %in% params)
@@ -252,11 +252,11 @@ filter_datasets <- function(.data, ...) {
 #' @rdname filterers
 #' @export
 filter_datasets.default <- function(.data, ...) {
-  filter_args <- rlang::quos(...)
+  filter_args <- quos(...)
   if(length(filter_args) == 0) return(.data)
   
   datasets <- .data$datasets %>%
-    dplyr::filter(rlang::UQS(filter_args)) %>%
+    dplyr::filter(!!!filter_args) %>%
     dplyr::distinct(.data$dataset) %>%
     dplyr::collect() %>%
     dplyr::pull("dataset")
@@ -272,11 +272,11 @@ filter_data <- function(.data, ...) {
 #' @rdname filterers
 #' @export
 filter_data.default <- function(.data, ...) {
-  filter_args <- rlang::quos(...)
+  filter_args <- quos(...)
   if(length(filter_args) == 0) return(.data)
   
   # lazily filter data
-  dta <- dplyr::filter(.data$data, rlang::UQS(filter_args))
+  dta <- dplyr::filter(.data$data, !!!filter_args)
   
   # redefine params, locations, datasets to reflect subsetted data
   params <- dplyr::distinct(dta, .data$param)$param
@@ -302,11 +302,11 @@ filter_locations <- function(.data, ...) {
 #' @rdname filterers
 #' @export
 filter_locations.default <- function(.data, ...) {
-  filter_args <- rlang::quos(...)
+  filter_args <- quos(...)
   if(length(filter_args) == 0) return(.data)
   
   locations <- .data$locations %>%
-    dplyr::filter(rlang::UQS(filter_args)) %>%
+    dplyr::filter(!!!filter_args) %>%
     dplyr::mutate(.id = paste(.data$dataset, .data$location, sep = "/////")) %>%
     dplyr::pull(".id")
   filter_data(.data, paste(.data$dataset, .data$location, sep = "/////") %in% locations)
@@ -321,11 +321,11 @@ filter_params <- function(.data, ...) {
 #' @rdname filterers
 #' @export
 filter_params <- function(.data, ...) {
-  filter_args <- rlang::quos(...)
+  filter_args <- quos(...)
   if(length(filter_args) == 0) return(.data)
   
   params <- .data$params %>%
-    dplyr::filter(rlang::UQS(filter_args)) %>%
+    dplyr::filter(!!!filter_args) %>%
     dplyr::mutate(.id = paste(.data$dataset, .data$param, sep = "/////")) %>%
     dplyr::pull(".id")
   filter_data(.data, paste(.data$dataset, .data$param, sep = "/////") %in% params)

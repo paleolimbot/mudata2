@@ -42,7 +42,7 @@ test_that("parallel gather works wih tidyeval", {
   pm2 <- pocmajsum %>% dplyr::select(core, depth, Ca, Ti, V, dplyr::ends_with("sd"))
   values <- c("Ca", "Ti", "V")
   sds <- c("Ca_sd", "Ti_sd", "V_sd")
-  expect_identical(parallel_gather(pm2, key = "param", value = rlang::UQ(values), sd = rlang::UQ(sds)),
+  expect_identical(parallel_gather(pm2, key = "param", value = !!values, sd = !!sds),
                    parallel_gather(pm2, key = "param", 
                                    value = c(Ca, Ti, V), sd = c(Ca_sd, Ti_sd, V_sd)))
 })

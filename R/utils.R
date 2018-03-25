@@ -43,7 +43,7 @@
 #'
 parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   # enquos arguments
-  lst <- rlang::quos(...)
+  lst <- quos(...)
   
   # check arguments
   if(length(lst) == 0) stop("Must pass at least one value = columns in parallel_gather()")
@@ -53,7 +53,7 @@ parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   
   # use a hack to get column names as character using tidyeval and dplyr
   lst_as_colnames <- lapply(lst, function(name_quo) {
-    tidyselect::vars_select(colnames(x), rlang::UQ(name_quo))
+    tidyselect::vars_select(colnames(x), !!name_quo)
   })
   
   # pass to parallel gather base
@@ -80,8 +80,8 @@ parallel_gather_base <- function(x, key, lst_as_colnames, convert = FALSE, facto
   # each argument
   gathered <- lapply(seq_along(lst_as_colnames), function(i) {
     tidyr::gather(x[c(id_vars, lst_as_colnames[[i]])], 
-                  key = rlang::UQ(key), value = rlang::UQ(names(lst_as_colnames)[i]),
-                  rlang::UQ(lst_as_colnames[[i]]),
+                  key = !!key, value = !!(names(lst_as_colnames)[i]),
+                  !!(lst_as_colnames[[i]]),
                   na.rm = FALSE, convert = convert, factor_key = factor_key)
   })
   

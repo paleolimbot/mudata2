@@ -220,17 +220,17 @@ test_that("json parsing works as intended", {
   expect_warning(parse_json(c("{'invalid_json'='not valid'}", json_test)),
                  "1 parsing failures in parse_json()")
   
-  expect_is(attr(parse_json("{'invalid_json'='not valid'}"), "problems"),
+  expect_is(attr(suppressWarnings(parse_json("{'invalid_json'='not valid'}")), "problems"),
             "data.frame")
   # json parsing failure should just return the invalid string
-  expect_identical(parse_json("{'invalid_json'='not valid'}")[[1]], 
+  expect_identical(suppressWarnings(parse_json("{'invalid_json'='not valid'}"))[[1]], 
                    NULL)
   
   # zero-length parsing
   expect_identical(parse_json(character(0)) %>% unclass(), list())
   
   # expect class
-  expect_is(parse_json("{}"), "json_column")
+  expect_is(parse_json('{}'), "json_column")
 })
 
 test_that("wkt parsing returns an sf::sfc", {
@@ -251,7 +251,7 @@ test_that("wkt parsing works when there are parsing errors/NA values", {
   
   wkt_test_invalid <- c("typo here", "POINT(0 0)", "", "NA", NA, "POINT(1 1)", 
                         "not wkt", "also not wkt", "POINT(2 2)")
-  result_invalid <- parse_wkt(wkt_test_invalid)
+  result_invalid <- suppressWarnings(parse_wkt(wkt_test_invalid))
   expect_is(result_invalid, "sfc")
   expect_length(result_invalid, 9)
   # nas as null

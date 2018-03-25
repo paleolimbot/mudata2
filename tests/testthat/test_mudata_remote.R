@@ -95,8 +95,7 @@ test_that("summary and print methods are sql type safe", {
                 columns = sources$columns)
   
   # print method
-  expect_identical(print(kg2), kg2)
-  expect_output(print(kg2))
+  expect_output(expect_identical(print(kg2), kg2))
   
   # summary method
   expect_is(summary(kg2), "tbl_df")

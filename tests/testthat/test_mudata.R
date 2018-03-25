@@ -161,8 +161,7 @@ test_that("duplicate column metadata are detected", {
 
 test_that("printing of a mudata actually prints things", {
   md <- mudata(pocmaj_data)
-  expect_that(print(md), is_a("mudata"))
-  expect_output(print(md))
+  expect_output(expect_is(print(md), "mudata"))
 })
 
 test_that("mudata summaries are tibbles", {

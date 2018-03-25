@@ -553,7 +553,8 @@ mudata_prepare_column.list <- function(x, format = NA, ...) {
 #' @export 
 mudata_parse_column <- function(x, type_str = NA_character_, ...) {
   # check output class so that parsing doesn't occur if class is already correct
-  if(is.na(type_str) || inherits(x, parse_output_class(type_str))) {
+  # NA_character means "guess"
+  if(inherits(x, parse_output_class(type_str))) {
     x
   } else {
     as_parser(type_str)(x, ...)

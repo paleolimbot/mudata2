@@ -462,3 +462,14 @@ test_that("additional tbls can be included in mudata read/write", {
   
 })
 
+test_that("mudata_read guesses column types when columns table is missing", {
+  tf <- tempfile()
+  write_mudata_dir(ns_climate, tf)
+  unlink(file.path(tf, "columns.csv"))
+  new_md <- read_mudata_dir(tf)
+  expect_is(new_md %>% tbl_data() %>% dplyr::pull(date), "Date")
+  
+  unlink(tf, recursive = TRUE)
+})
+
+

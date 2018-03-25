@@ -6,30 +6,36 @@
 \alias{mudata2-package}
 \title{A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data}
 \description{
-The 'mudata' package for R is a set of tools to create, manipulate, and 
-visualize multi-parameter, spatiotemporal data. Data of this type includes 
-all data where multiple parameters (e.g. wind speed, precipitation, 
-temperature) are measured along common axes (e.g. time, depth) at discrete 
-locations (e.g. climate stations). These data include long-term climate data 
-collected from climate stations, paleolimnological data, ice core data, 
-long-term water quality monitoring data, and ocean core data among many 
+The 'mudata' package for R is a set of tools to create, manipulate, and
+visualize multi-parameter, spatiotemporal data. Data of this type includes
+all data where multiple parameters (e.g. wind speed, precipitation,
+temperature) are measured along common axes (e.g. time, depth) at discrete
+locations (e.g. climate stations). These data include long-term climate data
+collected from climate stations, paleolimnological data, ice core data,
+long-term water quality monitoring data, and ocean core data among many
 others. Data of this type is often voluminous and difficult to
 organize/document given its multidimensional nature. The (mostly) universal
 data (mudata) format is an attempt to organize these data in a common way to
 facilitate their documentation and comparison.
 }
 \details{
-The (mostly) universal data format is a collection of five (or more) tables, 
-one of which contains the data in a parameter-long form (see 
-\link[tidyr]{gather}). The easiest way to visualize a mudata object is to 
-inspect the sample datasets within the package (\link{ns_climate}, 
-\link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake}, and 
+The (mostly) universal data format is a collection of five (or more) tables,
+one of which contains the data in a parameter-long form (see
+\link[tidyr]{gather}). The easiest way to visualize a mudata object is to
+inspect the sample datasets within the package (\link{ns_climate},
+\link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake}, and
 \link{second_lake_temp}).
 }
 \examples{
 print(kentvillegreenwood)
 autoplot(kentvillegreenwood)
 
+}
+\references{
+Dunnington DW and Spooner IS (2018). "Using a linked table-based
+structure to encode self-describing multiparameter spatiotemporal data".
+FACETS. doi:10.1139/facets-2017-0026 
+\url{http://www.facetsjournal.com/doi/10.1139/facets-2017-0026}
 }
 \seealso{
 \link{mudata}, \link{read_mudata}

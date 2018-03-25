@@ -20,7 +20,7 @@ devtools::install_github("paleolimbot/mudata")
 What is mudata?
 ---------------
 
-The mudata format is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term "mudata" refers to a (mostly) universal data structure; the term "multi-parameter spatiotemporal data" is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
+The [mudata format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term "mudata" refers to a (mostly) universal data structure; the term "multi-parameter spatiotemporal data" is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
 
 A few examples from this package can be found in the `ns_climate`, `second_lake_temp`, and `alta_lake` datasets:
 
@@ -108,4 +108,4 @@ For more examples of mudata usage, see the package vignettes: `vignette("mudata"
 Why mudata*2*?
 --------------
 
-The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the journal article describing the format went through peer review. This led to important changes that couldn't be backward-compabible.
+The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the [journal article describing the format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) went through peer review. This led to important changes that couldn't be backward-compabible.

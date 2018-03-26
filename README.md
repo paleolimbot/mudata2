@@ -84,6 +84,8 @@ alta_lake
 #> 6 alta_lake16 ALGC2    As    3.50   1982  42.0  NA   ppm       1 Zone 3
 ```
 
+For examples of using and creating `mudata` objects, see the [mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html) and [mudata_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html) vignettes.
+
 Why do I need it?
 -----------------
 

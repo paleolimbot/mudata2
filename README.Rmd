@@ -46,6 +46,8 @@ second_lake_temp
 alta_lake
 ```
 
+For examples of using and creating `mudata` objects, see the [mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html) and [mudata_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html) vignettes.
+
 ## Why do I need it?
 
 There are plenty of ways to store "multi-parameter spatiotemporal data", but few of them are good at keeping metadata like what method was used to measure a parameter, the latitude and longitude of a sample location, or the level of uncertainty of a parameter measurement. These metadata are rarely used directly in analyses, but are invaluable to correctly interpret the results (and to correctly choose the analysis).

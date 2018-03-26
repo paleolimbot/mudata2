@@ -7,7 +7,8 @@ Maintainer: Dewey Dunnington <dewey@fishandwhistle.net>
 Description: Formatting and structuring multi-parameter spatiotemporal data
   is often a time-consuming task. This package offers functions and data structures 
   designed to easily organize and visualize these data for applications in geology, 
-  paleolimnology, dendrochronology, and paleoclimate.
+  paleolimnology, dendrochronology, and paleoclimate. See Dunnington and Spooner (2018)
+  <doi:10.1139/facets-2017-0026>.
 Imports: ggplot2, dplyr (>= 0.7), jsonlite (>= 1.2), methods, tibble, 
   magrittr, stringr, readr, tidyr, lubridate, hms, rlang, tidyselect
 Depends:

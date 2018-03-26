@@ -79,3 +79,9 @@ datatable <- pocmaj \%>\%
 mudata(datatable)
 
 }
+\references{
+Dunnington DW and Spooner IS (2018). "Using a linked table-based
+structure to encode self-describing multiparameter spatiotemporal data".
+FACETS. doi:10.1139/facets-2017-0026 
+\url{http://www.facetsjournal.com/doi/10.1139/facets-2017-0026}
+}

@@ -21,7 +21,13 @@ The **mudata2** package provides tools to read, write, and document multi-parame
 
 ## Installation
 
-You can install **mudata2** from github with:
+You can install **mudata2** from CRAN with:
+
+```{r cran_installation, eval = FALSE}
+install.packages("mudata2")
+```
+
+Or alternatively, you can the development version from github with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")

@@ -10,7 +10,13 @@ The **mudata2** package provides tools to read, write, and document multi-parame
 Installation
 ------------
 
-You can install **mudata2** from github with:
+You can install **mudata2** from CRAN with:
+
+``` r
+install.packages("mudata2")
+```
+
+Or alternatively, you can the development version from github with:
 
 ``` r
 # install.packages("devtools")
@@ -84,7 +90,7 @@ alta_lake
 #> 6 alta_lake16 ALGC2    As    3.50   1982  42.0  NA   ppm       1 Zone 3
 ```
 
-For examples of using and creating `mudata` objects, see the [mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html) and [mudata_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html) vignettes.
+For examples of using and creating `mudata` objects, see the [mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html) and [mudata\_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html) vignettes.
 
 Why do I need it?
 -----------------

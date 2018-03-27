@@ -116,4 +116,4 @@ For more examples of mudata usage, see the package vignettes: `vignette("mudata"
 Why mudata*2*?
 --------------
 
-The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the [journal article describing the format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) went through peer review. This led to important changes that couldn't be backward-compabible.
+The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the [journal article describing the format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) went through peer review. This led to important changes that couldn't be backward-compatible.

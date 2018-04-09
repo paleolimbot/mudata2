@@ -37,7 +37,15 @@ As an example, I'm going to use a small subset of the sediment chemistry data th
 
 I'll use the **tidyverse** for data wrangling, and the `pocmaj` and `pocmajsum` datasets to illustrate how to get from common data formats to the parameter-long, one-row-per-measurement data needed by the `mudata()` function.
 
-```{r, message = FALSE}
+```{r, include=FALSE}
+# this is to avoid depending on tidyverse
+library(tidyr)
+library(dplyr)
+data("pocmaj")
+data("pocmajsum")
+```
+
+```{r, eval = FALSE}
 library(tidyverse)
 data("pocmaj")
 data("pocmajsum")

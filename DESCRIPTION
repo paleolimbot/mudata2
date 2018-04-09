@@ -14,7 +14,6 @@ Imports: ggplot2, dplyr (>= 0.7), jsonlite (>= 1.2), tibble,
 Depends:
     R (>= 3.2.2)
 Suggests: testthat, RSQLite, dbplyr, sf (>= 0.5.5), covr,
-    tidyverse,
     knitr,
     rmarkdown
 License: GPL-2

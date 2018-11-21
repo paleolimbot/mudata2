@@ -157,7 +157,7 @@ as_parser <- function(type_str) {
   
   # return a partial wrapper using type_obj$args
   function(x) {
-    do.call(parse_fun, c(list(x), type_obj$args))
+    do.call(parse_fun, c(list(quote(x)), type_obj$args))
   }
 }
 

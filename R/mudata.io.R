@@ -559,7 +559,7 @@ mudata_parse_column <- function(x, type_str = NA_character_, ...) {
   if(inherits(x, parse_output_class(type_str))) {
     x
   } else {
-    as_parser(type_str)(x, ...)
+    as_parser(type_str)(as.character(x), ...)
   }
 }
 

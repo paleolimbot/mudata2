@@ -10,7 +10,7 @@ Description: Formatting and structuring multi-parameter spatiotemporal data
   paleolimnology, dendrochronology, and paleoclimate. See Dunnington and Spooner (2018)
   <doi:10.1139/facets-2017-0026>.
 Imports: ggplot2, dplyr (>= 0.7), jsonlite (>= 1.2), tibble, 
-  magrittr, stringr, readr, tidyr, lubridate, rlang, tidyselect
+  magrittr, stringr, readr, tidyr, lubridate, rlang, tidyselect, withr, fs
 Depends:
     R (>= 3.2.2)
 Suggests: testthat, RSQLite, dbplyr, sf (>= 0.5.5), covr,

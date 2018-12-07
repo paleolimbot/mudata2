@@ -206,7 +206,7 @@ read_mudata_dir <- function(filename, validate = TRUE, ...) {
   # retreive x_columns
   x_columns <- NULL
   if(!is.null(meta) && ("x_columns" %in% colnames(meta))) {
-    x_cols_json <- try(jsonlite::fromJSON(meta$x_columns))
+    x_cols_json <- try(jsonlite::fromJSON(meta$x_columns, simplifyVector = FALSE))
     if(is.vector(x_cols_json)) {
       x_columns <- as.character(x_cols_json)
     }

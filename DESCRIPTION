@@ -1,6 +1,6 @@
 Package: mudata2
 Title: Interchange Tools for Multi-Parameter Spatiotemporal Data
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: person("Dewey", "Dunnington", role = c("aut", "cre"),
 				email = "dewey@fishandwhistle.net")
 Maintainer: Dewey Dunnington <dewey@fishandwhistle.net>

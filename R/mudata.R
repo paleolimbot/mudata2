@@ -85,8 +85,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   } else {
     # x_columns should be able to be character(0), for the case where there is no axis other than
     # dataset, location, and param
-    # if(length(x_columns) == 0) stop("x_columns must be a character vector of length > 0")
-    if(!is.character(x_columns)) stop("x_columns must be a character vector of length > 0")
+    x_columns <- as.character(x_columns)
     .checkcols(data, 'data', x_columns)
   }
   
@@ -477,8 +476,7 @@ guess_x_columns <- function(df, quiet = FALSE) {
   #if(length(cols) == 0) stop("Could not guess x columns from names: ",
   #                           paste(colnames(df), collapse = ", "))
   
-  if(!quiet) message("Guessing x columns: ",
-                     paste(cols, collapse = ", "))
+  if(!quiet) message("Guessing x columns: ", paste(cols, collapse = ", "))
   
   # return cols
   cols

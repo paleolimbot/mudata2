@@ -511,4 +511,16 @@ test_that("mudata_read guesses column types when columns table is missing", {
   unlink(tf, recursive = TRUE)
 })
 
-
+test_that("when zero x_columns exist on purpose, no message occurs on read", {
+  md_zero <- mudata(data.frame(param = c("p1", "p2"), value = c(1, 2)), x_columns = character(0))
+  
+  tf_json <- tempfile()
+  write_mudata_json(md_zero, tf_json)
+  expect_silent(read_mudata_json(tf_json))
+  unlink(tf_json)
+  
+  tf_dir <- tempfile()
+  write_mudata_dir(md_zero, tf_dir)
+  expect_silent(read_mudata_dir(tf_dir))
+  unlink(tf_dir, recursive = TRUE)
+})

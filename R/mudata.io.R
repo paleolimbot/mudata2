@@ -200,8 +200,7 @@ read_mudata_dir <- function(filename, validate = TRUE, ...) {
   csv_files <- list.files(mudir, pattern = "\\.csv$", full.names = TRUE)
   table_names <- gsub("\\.csv$", "", basename(csv_files))
   obj <- lapply(stats::setNames(csv_files, table_names), function(csv_name) {
-    readr::read_csv(csv_name, col_names = TRUE, 
-                    col_types = readr::cols(.default = readr::col_character()), ...)
+    readr::read_csv(csv_name, col_names = TRUE, col_types = readr::cols(.default = readr::col_character()), ...)
   })
                 
   
@@ -213,8 +212,8 @@ read_mudata_dir <- function(filename, validate = TRUE, ...) {
   x_columns <- NULL
   if(!is.null(meta) && ("x_columns" %in% colnames(meta))) {
     x_cols_json <- try(jsonlite::fromJSON(meta$x_columns))
-    if(is.character(x_cols_json)) {
-      x_columns <- x_cols_json
+    if(is.vector(x_cols_json)) {
+      x_columns <- as.character(x_cols_json)
     }
   }
   

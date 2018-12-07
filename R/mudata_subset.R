@@ -283,14 +283,22 @@ filter_data.default <- function(.data, ...) {
   locations <- dplyr::distinct(dta, .data$location)$location
   datasets <- dplyr::distinct(dta, .data$dataset)$dataset
   
-  pm <- dplyr::filter(.data$params, .data$param %in% params)
-  lc <- dplyr::filter(.data$locations, .data$location %in% locations)
-  cl <- dplyr::filter(.data$columns, .data$dataset %in% datasets)
+  pm <- dplyr::filter(.data$params, .data$param %in% params, .data$dataset %in% datasets)
+  lc <- dplyr::filter(.data$locations, .data$location %in% locations, .data$dataset %in% datasets)
+  cl <- dplyr::filter(.data$columns, .data$dataset %in% datasets, .data$dataset %in% datasets)
   ds <- dplyr::filter(.data$datasets, .data$dataset %in% datasets)
   
   # keep class of original
-  new_mudata(list(data=dta, locations=lc, params=pm, datasets=ds, 
-                  columns=cl), x_columns = x_columns(.data))
+  new_mudata(
+    list(
+      data=dta,
+      locations=lc, 
+      params=pm,
+      datasets=ds, 
+      columns=cl
+    ), 
+    x_columns = x_columns(.data)
+  )
 }
 
 #' @rdname filterers

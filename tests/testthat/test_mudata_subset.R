@@ -157,3 +157,11 @@ test_that("maintaining order using .factor = TRUE works", {
   expect_is(kgds$datasets$dataset, "factor")
   expect_is(kgds$columns$dataset, "factor")
 })
+
+test_that("param table gets filtered properly when there are multiple datasets", {
+  ll2 <- long_lake %>% tbl_data() %>% dplyr::mutate(dataset = location) %>% mudata(x_columns = "depth")
+  expect_equal(
+    ll2 %>% select_datasets("LL GC10") %>% tbl_params() %>% dplyr::distinct(dataset) %>% dplyr::pull(),
+    "LL GC10"
+  )
+})

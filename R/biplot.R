@@ -308,7 +308,7 @@ unique_combinations <- function(vect) {
   }
   
   # use utils::combn() to generate combinations
-  utils::combn(as.character(vect), m = 2, simplify = TRUE) %>% 
-    t() %>% tibble::as_tibble() %>% dplyr::select(.name_x = 1, .name_y = 2)
+  comb_matrix <- utils::combn(as.character(vect), m = 2, simplify = TRUE)
+  tibble::tibble(.name_x = comb_matrix[1, , drop = TRUE], .name_y = comb_matrix[2, , drop = TRUE])
 }
 

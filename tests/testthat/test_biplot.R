@@ -148,7 +148,8 @@ test_that("long_pairs handles zero-row combinations gracefully", {
     dplyr::mutate(depth2 = ifelse(param == "Ca", 6:12, depth)) %>%
     dplyr::mutate(depth3 = ifelse(param == "V", 12:17, depth2))
   
-  one_pair <- long_pairs(pocmaj_data2, id_vars = c("location", "depth2"), name_var = "param")
+  one_pair <- long_pairs(pocmaj_data2, id_vars = c("location", "depth2"), name_var = "param") %>%
+    dplyr::mutate(.name_x = as.character(.name_x), .name_y = as.character(.name_y))
   expect_equal(nrow(dplyr::count(one_pair, .name_x, .name_y)), 1)
   zero_pairs <- long_pairs(pocmaj_data2, id_vars = c("location", "depth3"), name_var = "param")
   expect_equal(nrow(zero_pairs), 0)

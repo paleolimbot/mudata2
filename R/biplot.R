@@ -130,8 +130,8 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   name_combinations$.data <- lapply(seq_len(nrow(name_combinations)), function(i) {
     combination <- name_combinations[i,]
     # filter data to get data_x and data_y
-    data_x <- dplyr::ungroup(data) %>% dplyr::filter(.name == combination$.name_x) %>% dplyr::collect()
-    data_y <- dplyr::ungroup(data) %>% dplyr::filter(.name == combination$.name_y) %>% dplyr::collect()
+    data_x <- dplyr::ungroup(data) %>% dplyr::filter(.name == !!combination$.name_x) %>% dplyr::collect()
+    data_y <- dplyr::ungroup(data) %>% dplyr::filter(.name == !!combination$.name_y) %>% dplyr::collect()
     # join using join_vars
     data_both <- dplyr::inner_join(data_x, data_y,
                                    by = id_vars, suffix = c("_x", "_y"))

@@ -19,8 +19,8 @@ install.packages("mudata2")
 Or alternatively, you can the development version from github with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("paleolimbot/mudata")
+# install.packages("remotes")
+remotes::install_github("paleolimbot/mudata")
 ```
 
 What is mudata?
@@ -40,14 +40,14 @@ ns_climate
 #> 
 #> tbl_data() %>% head():
 #> # A tibble: 6 x 7
-#>   dataset           location     param    date       value flag  flag_text
-#>   <chr>             <chr>        <chr>    <date>     <dbl> <chr> <chr>    
-#> 1 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-01-01    NA M     Missing  
-#> 2 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-02-01    NA M     Missing  
-#> 3 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-03-01    NA M     Missing  
-#> 4 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-04-01    NA M     Missing  
-#> 5 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-05-01    NA M     Missing  
-#> 6 ecclimate_monthly SABLE ISLAN… mean_ma… 1897-06-01    NA M     Missing
+#>   dataset        location       param      date       value flag  flag_text
+#>   <chr>          <chr>          <chr>      <date>     <dbl> <chr> <chr>    
+#> 1 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-01-01    NA M     Missing  
+#> 2 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-02-01    NA M     Missing  
+#> 3 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-03-01    NA M     Missing  
+#> 4 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-04-01    NA M     Missing  
+#> 5 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-05-01    NA M     Missing  
+#> 6 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-06-01    NA M     Missing
 ```
 
 ``` r
@@ -82,12 +82,12 @@ alta_lake
 #> # A tibble: 6 x 10
 #>   dataset     location param depth   age value stdev units     n zone  
 #>   <chr>       <chr>    <chr> <dbl> <dbl> <dbl> <dbl> <chr> <int> <chr> 
-#> 1 alta_lake16 ALGC2    As    0.250  2015  23.0  NA   ppm       1 Zone 3
-#> 2 alta_lake16 ALGC2    As    0.750  2011  24.3  23.0 ppm       3 Zone 3
-#> 3 alta_lake16 ALGC2    As    1.25   2008  60.0  NA   ppm       1 Zone 3
-#> 4 alta_lake16 ALGC2    As    1.75   2003  60.0  NA   ppm       1 Zone 3
-#> 5 alta_lake16 ALGC2    As    2.50   1998  43.4  NA   ppm       1 Zone 3
-#> 6 alta_lake16 ALGC2    As    3.50   1982  42.0  NA   ppm       1 Zone 3
+#> 1 alta_lake16 ALGC2    As     0.25 2015.  23    NA   ppm       1 Zone 3
+#> 2 alta_lake16 ALGC2    As     0.75 2011.  24.3  23.0 ppm       3 Zone 3
+#> 3 alta_lake16 ALGC2    As     1.25 2008.  60    NA   ppm       1 Zone 3
+#> 4 alta_lake16 ALGC2    As     1.75 2003.  60    NA   ppm       1 Zone 3
+#> 5 alta_lake16 ALGC2    As     2.5  1998.  43.4  NA   ppm       1 Zone 3
+#> 6 alta_lake16 ALGC2    As     3.5  1982.  42    NA   ppm       1 Zone 3
 ```
 
 For examples of using and creating `mudata` objects, see the [mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html) and [mudata\_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html) vignettes.
@@ -112,8 +112,3 @@ More information
 ----------------
 
 For more examples of mudata usage, see the package vignettes: `vignette("mudata", package = "mudata2")`, and `vignette("mudata_create", package = "mudata2")`
-
-Why mudata*2*?
---------------
-
-The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the [journal article describing the format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) went through peer review. This led to important changes that couldn't be backward-compatible.

@@ -30,8 +30,8 @@ install.packages("mudata2")
 Or alternatively, you can the development version from github with:
 
 ```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("paleolimbot/mudata")
+# install.packages("remotes")
+remotes::install_github("paleolimbot/mudata")
 ```
 
 ## What is mudata?
@@ -71,7 +71,3 @@ We have used the mudata format in the following situations:
 ## More information
 
 For more examples of mudata usage, see the package vignettes: `vignette("mudata", package = "mudata2")`, and `vignette("mudata_create", package = "mudata2")`
-
-## Why mudata*2*?
-
-The first mudata went on CRAN before I learned about [unit testing](https://github.com/r-lib/testthat), before I learned about the [tidyverse](https://www.tidyverse.org/), and before the [journal article describing the format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) went through peer review. This led to important changes that couldn't be backward-compatible.

@@ -386,11 +386,10 @@ type_strs_from_columns <- function(columns_tbl) {
   
   # create list of type_str named lists
   type_str_tbl <- type_str_tbl %>%
-    tidyr::nest(c("column", "type"), .key = "types")
-  type_strs <- type_str_tbl$types %>%
-    lapply(tibble::deframe) %>%
-    stats::setNames(type_str_tbl$table)
-  type_strs
+    dplyr::group_by_at("table") %>% 
+    tidyr::nest()
+  type_str_tbl$data <- lapply(type_str_tbl$data, tibble::deframe)
+  tibble::deframe(type_str_tbl)
 }
 
 #' Update the columns table

@@ -69,7 +69,7 @@ These functions are designed to make sure that the read/write operations are
 as lossless as possible. Some exceptions to this are if date/time columns are
 not in UTC (in which case they will be converted to UTC before writing), and
 if table names have characters that are not filesystem safe (allowed
-characters are \link{A-Za-z0-9_.-} and others will be stripped).
+characters are \code{[A-Za-z0-9_.-]} and others will be stripped).
 }
 \examples{
 # read/write to directory

@@ -13,7 +13,7 @@
 #' as lossless as possible. Some exceptions to this are if date/time columns are
 #' not in UTC (in which case they will be converted to UTC before writing), and
 #' if table names have characters that are not filesystem safe (allowed
-#' characters are [A-Za-z0-9_.-] and others will be stripped).
+#' characters are `[A-Za-z0-9_.-]` and others will be stripped).
 #' 
 #' @param md A mudata object
 #' @param filename File to read/write (can also be a directory)

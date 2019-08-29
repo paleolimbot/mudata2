@@ -15,11 +15,11 @@
 A mudata object
 }
 \description{
-This implmentation of \link{rbind} combines component tables using \link[dplyr]{bind_rows}
-and \link[dplyr]{distinct}. When combined object use different datasets, or when subsets of
+This implmentation of \link{rbind} combines component tables using \link[dplyr:bind_rows]{bind_rows}
+and \link[dplyr:distinct]{distinct}. When combined object use different datasets, or when subsets of
 the same object are recombined, this function works well. When this is not the case, it
-may be necessary to modify the tables such that when they are passed to \link[dplyr]{bind_rows}
-and \link[dplyr]{distinct}, no duplicate information exists. This should be picked up by
+may be necessary to modify the tables such that when they are passed to \link[dplyr:bind_rows]{bind_rows}
+and \link[dplyr:distinct]{distinct}, no duplicate information exists. This should be picked up by
 \link{validate_mudata}.
 }
 \examples{

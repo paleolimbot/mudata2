@@ -5,7 +5,8 @@
 \alias{rename_cols_base.default}
 \title{Rename a column in an object}
 \usage{
-rename_cols_base(.data, ..., warn_missing = TRUE, warn_duplicated = TRUE)
+rename_cols_base(.data, ..., warn_missing = TRUE,
+  warn_duplicated = TRUE)
 
 \method{rename_cols_base}{default}(.data, ..., warn_missing = TRUE,
   warn_duplicated = TRUE)
@@ -17,7 +18,7 @@ rename_cols_base(.data, ..., warn_missing = TRUE, warn_duplicated = TRUE)
 
 \item{warn_missing}{Print a message if any old names are not actually present in x}
 
-\item{warn_duplicated}{Print a message if any name appears more than once in x 
+\item{warn_duplicated}{Print a message if any name appears more than once in x
 after the operation.}
 }
 \value{

@@ -27,7 +27,7 @@ mutate_tbl(x, ...)
 \arguments{
 \item{x}{A mudata object}
 
-\item{...}{Passed to \link[dplyr]{mutate}}
+\item{...}{Passed to \link[dplyr:mutate]{mutate}}
 
 \item{tbl}{The table name to modify}
 }

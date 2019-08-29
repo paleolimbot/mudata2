@@ -1,19 +1,19 @@
 
 #' Melt multiple sets of columns in parallel
 #'
-#' Essentially this is a wrapper around \link[tidyr]{gather} that
-#' is able to \link[dplyr]{bind_cols} with several gather operations. This is useful when a wide
+#' Essentially this is a wrapper around [gather][tidyr::gather] that
+#' is able to [bind_cols][dplyr::bind_cols] with several gather operations. This is useful when a wide
 #' data frame contains uncertainty or flag information in paired columns.
 #'
 #' @param x A data.frame
 #' @param key Column name to use to store variables, which are the column names
 #'   of the first gather operation.
-#' @param ... Named arguments in the form \code{new_col_name = c(old, col, names)}. All
+#' @param ... Named arguments in the form `new_col_name = c(old, col, names)`. All
 #'   named arguments must have the same length (i.e., gather the same number of columns). 
-#' @param convert Convert types (see \link[tidyr]{gather})
+#' @param convert Convert types (see [gather][tidyr::gather])
 #' @param factor_key Control whether the key column is a factor or character vector.
 #'
-#' @seealso \link[tidyr]{gather}
+#' @seealso [gather][tidyr::gather]
 #' @return A gathered data frame.
 #' @export
 #'

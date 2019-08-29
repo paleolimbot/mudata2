@@ -30,8 +30,8 @@ read_mudata_dir(filename, validate = TRUE, ...)
 write_mudata_json(md, filename, overwrite = FALSE, validate = TRUE,
   update_columns = TRUE, pretty = TRUE, ...)
 
-to_mudata_json(md, validate = TRUE, update_columns = TRUE, pretty = FALSE,
-  ...)
+to_mudata_json(md, validate = TRUE, update_columns = TRUE,
+  pretty = FALSE, ...)
 
 read_mudata_json(filename, validate = TRUE, ...)
 
@@ -57,8 +57,8 @@ internal R types of columns (reccommended).}
 \item{txt}{JSON text from which to read a mudata object.}
 }
 \description{
-These functions will read and write mudata objects to disk using a directory 
-(which contains one .csv file for each table in the object), a ZIP archive 
+These functions will read and write mudata objects to disk using a directory
+(which contains one .csv file for each table in the object), a ZIP archive
 (which is a zipped version of the directory format), or a JSON file. The
 base read/write functions attempt to guess which of these types to use
 based on the file extension: use the specific read/write function to
@@ -69,7 +69,7 @@ These functions are designed to make sure that the read/write operations are
 as lossless as possible. Some exceptions to this are if date/time columns are
 not in UTC (in which case they will be converted to UTC before writing), and
 if table names have characters that are not filesystem safe (allowed
-characters are [A-Za-z0-9_.-] and others will be stripped).
+characters are \link{A-Za-z0-9_.-} and others will be stripped).
 }
 \examples{
 # read/write to directory

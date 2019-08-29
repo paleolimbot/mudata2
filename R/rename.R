@@ -3,13 +3,13 @@
 #' 
 #' These functions rename locations, datasets, params, and columns, making sure
 #' internal consistency is maintained. These functions use dplyr syntax for renaming
-#' (i.e. the \link[dplyr]{rename} function). This syntax can also be used while
-#' subsetting using \link{select_locations} and family.
+#' (i.e. the [rename][dplyr::rename] function). This syntax can also be used while
+#' subsetting using [select_locations] and family.
 #'
 #' @param .data A mudata object
-#' @param ... Variables to rename in the form \code{new_var = old_var}
+#' @param ... Variables to rename in the form `new_var = old_var`
 #' 
-#' @seealso \link[dplyr]{rename}, \link{select_locations}
+#' @seealso [rename][dplyr::rename], [select_locations]
 #' 
 #' @return A modified mudata object
 #' @export
@@ -132,7 +132,7 @@ rename_columns.default <- function(.data, ...) {
 #' Rename columns in a data frame or list
 #' 
 #' @param .data An object that has columns that can be renamed
-#' @param ... Key/value pairs to replace in the form \code{oldval="newval"}
+#' @param ... Key/value pairs to replace in the form `oldval="newval"`
 #' @param warn_missing Print a message if any old names are not actually present in x
 #' @param warn_duplicated Print a message if any name appears more than once in x 
 #'   after the operation.
@@ -157,9 +157,9 @@ rename_cols_base.default <- function(.data, ..., warn_missing = TRUE, warn_dupli
 #' is useful when performing rename operations when values are held in character vectors.
 #'
 #' @param x Vector of values to replace
-#' @param ... Key/value pairs in the form \code{oldvalue="newvalue"}
+#' @param ... Key/value pairs in the form `oldvalue="newvalue"`
 #' @param default_value A vector of values to use as the default should the value not
-#'   be found in \code{...}
+#'   be found in `...`
 #' @param warn_missing Print a message if any old names are not actually present in x
 #' @param warn_duplicated Print a message if any name appears more than once in x 
 #'   after the operation.
@@ -221,15 +221,15 @@ rename_values_base <- function(x, ..., default_value = x, warn_missing = TRUE,
 #' Provides a convenient way to rename datasets, params, locations, and columns
 #' such that their usage with a mudata object remains consistent.
 #'
-#' @param md A \link{mudata} object
-#' @param .data A \link{mudata} object
-#' @param ... Key/value pairs in the form \code{"oldvalue"="newvalue"}
+#' @param md A [mudata] object
+#' @param .data A [mudata] object
+#' @param ... Key/value pairs in the form `"oldvalue"="newvalue"`
 #' @param apply_to The tables which the rename operation should consider
 #' @param warn_missing Print a message if any old names are not actually present
 #' @param warn_duplicated Print a message if any name appears more than once in x 
 #'   after the operation.
 #'
-#' @return A modified \link{mudata} object.
+#' @return A modified [mudata] object.
 #' @keywords internal
 #' 
 rename_datasets_base <- function(md, ..., apply_to=c("data", "locations", "params", "datasets", "columns"),

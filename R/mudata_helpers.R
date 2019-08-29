@@ -97,7 +97,7 @@ src_tbls.mudata <- function(x) {
 #'
 #' @param x,src A mudata object
 #' @param which Which tbl to extract
-#' @param key,value Passed to \link[tidyr]{spread}
+#' @param key,value Passed to [spread][tidyr::spread]
 #' @param ... Passed to other methods
 #'
 #' @return The appropriate component
@@ -354,7 +354,7 @@ update_columns.default <- function(x, columns, tables, datasets, ...) {
 #'
 #' @param x A mudata object
 #' @param tbl The table name to modify
-#' @param ... Passed to \link[dplyr]{mutate}
+#' @param ... Passed to [mutate][dplyr::mutate]
 #'
 #' @return A modified mudata object
 #' @export

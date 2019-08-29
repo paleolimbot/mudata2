@@ -17,7 +17,7 @@ be found in \code{...}}
 
 \item{warn_missing}{Print a message if any old names are not actually present in x}
 
-\item{warn_duplicated}{Print a message if any name appears more than once in x 
+\item{warn_duplicated}{Print a message if any name appears more than once in x
 after the operation.}
 }
 \value{

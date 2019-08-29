@@ -38,7 +38,7 @@ A modified mudata object
 \description{
 These functions rename locations, datasets, params, and columns, making sure
 internal consistency is maintained. These functions use dplyr syntax for renaming
-(i.e. the \link[dplyr]{rename} function). This syntax can also be used while
+(i.e. the \link[dplyr:rename]{rename} function). This syntax can also be used while
 subsetting using \link{select_locations} and family.
 }
 \examples{
@@ -49,5 +49,5 @@ rename_columns(kentvillegreenwood, lon = longitude, lat = latitude)
 
 }
 \seealso{
-\link[dplyr]{rename}, \link{select_locations}
+\link[dplyr:rename]{rename}, \link{select_locations}
 }

@@ -1,8 +1,8 @@
 
 #' Generate type descriptors
 #'
-#' These functions generate type descriptors for use in the \link{mudata}
-#' columns table. They are used in \link{mudata_parse_column} to deserialize
+#' These functions generate type descriptors for use in the [mudata]
+#' columns table. They are used in [mudata_parse_column] to deserialize
 #' a vector read from csv or json.
 #'
 #' @param x An object
@@ -107,8 +107,8 @@ generate_type_str <- function(x, default = "guess") {
 
 #' Describe column types for use in the columns table
 #' 
-#' Type descriptions are basically calls to \code{readr::col_*} or 
-#' \code{readr::parse_*}, and can 
+#' Type descriptions are basically calls to `readr::col_*` or 
+#' `readr::parse_*`, and can 
 #' contain arguments for the sake of completeness (but this shouldn't normally be necessary).
 #'
 #' @param type_str A type string, one of date, datetime, logical, double, character, guess,

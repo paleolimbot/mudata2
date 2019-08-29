@@ -9,7 +9,7 @@
 second_lake_temp
 }
 \description{
-Temperatures at multiple depths in the water column for a season at Second Lake, Lower Sackville, 
+Temperatures at multiple depths in the water column for a season at Second Lake, Lower Sackville,
 Nova Scotia, Canada.
 }
 \examples{
@@ -22,8 +22,8 @@ autoplot(second_lake_temp, x = "datetime", y = "value",
 
 }
 \references{
-Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic 
-impact between First and Second Lake, Lower Sackville, Nova Scotia. 
+Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic
+impact between First and Second Lake, Lower Sackville, Nova Scotia.
 B.Sc.H. Thesis, Acadia University
 }
 \keyword{datasets}

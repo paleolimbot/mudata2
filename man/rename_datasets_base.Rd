@@ -31,7 +31,7 @@ rename_locations_base(md, ..., apply_to = c("data", "locations"),
 
 \item{.data}{A \link{mudata} object}
 
-\item{warn_duplicated}{Print a message if any name appears more than once in x 
+\item{warn_duplicated}{Print a message if any name appears more than once in x
 after the operation.}
 }
 \value{

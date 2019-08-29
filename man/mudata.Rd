@@ -9,7 +9,7 @@ mudata(data, locations = NULL, params = NULL, datasets = NULL,
   dataset_id = "default", location_id = "default", validate = TRUE)
 }
 \arguments{
-\item{data}{A data.frame/\link[tibble]{tibble} containing columns "param" and
+\item{data}{A data.frame/\link[tibble:tibble]{tibble} containing columns "param" and
 "value" (at least), but more typically columns "location", "param",
 "datetime" (or "date", depending on the type of data), and "value".}
 
@@ -46,8 +46,8 @@ mudata object}
 }
 \value{
 An object of class "mudata", which is a \link{list} with components
-  data, locations, params, datasets, columns, and any other tables provided
-  in \code{more_tbls}. All list components must be tbls.
+data, locations, params, datasets, columns, and any other tables provided
+in \code{more_tbls}. All list components must be tbls.
 }
 \description{
 Create a mudata object, which is a collection of five tables: data,
@@ -82,6 +82,6 @@ mudata(datatable)
 \references{
 Dunnington DW and Spooner IS (2018). "Using a linked table-based
 structure to encode self-describing multiparameter spatiotemporal data".
-FACETS. doi:10.1139/facets-2017-0026 
+FACETS. doi:10.1139/facets-2017-0026
 \url{http://www.facetsjournal.com/doi/10.1139/facets-2017-0026}
 }

@@ -24,9 +24,9 @@ select_params(.data, ...)
 \arguments{
 \item{.data}{A mudata object}
 
-\item{...}{Quoted names, bare names, or helpers like \link[dplyr]{starts_with},
-\link[dplyr]{contains}, \link[dplyr]{ends_with}, \link[dplyr]{one_of},
-or \link[dplyr]{matches}.}
+\item{...}{Quoted names, bare names, or helpers like \link[dplyr:starts_with]{starts_with},
+\link[dplyr:contains]{contains}, \link[dplyr:ends_with]{ends_with}, \link[dplyr:one_of]{one_of},
+or \link[dplyr:matches]{matches}.}
 
 \item{.factor}{If TRUE, the new object will keep the order specified by converting
 columns to factors. This may be useful for specifying order when using
@@ -63,6 +63,6 @@ long_lake \%>\%
 
 }
 \seealso{
-\link[dplyr]{select}, \link{rename_locations}, \link{distinct_locations}, 
+\link[dplyr:select]{select}, \link{rename_locations}, \link{distinct_locations},
 \link{filter_locations}
 }

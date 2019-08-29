@@ -15,7 +15,7 @@ of the first gather operation.}
 \item{...}{Named arguments in the form \code{new_col_name = c(old, col, names)}. All
 named arguments must have the same length (i.e., gather the same number of columns).}
 
-\item{convert}{Convert types (see \link[tidyr]{gather})}
+\item{convert}{Convert types (see \link[tidyr:gather]{gather})}
 
 \item{factor_key}{Control whether the key column is a factor or character vector.}
 }
@@ -23,8 +23,8 @@ named arguments must have the same length (i.e., gather the same number of colum
 A gathered data frame.
 }
 \description{
-Essentially this is a wrapper around \link[tidyr]{gather} that
-is able to \link[dplyr]{bind_cols} with several gather operations. This is useful when a wide
+Essentially this is a wrapper around \link[tidyr:gather]{gather} that
+is able to \link[dplyr:bind_cols]{bind_cols} with several gather operations. This is useful when a wide
 data frame contains uncertainty or flag information in paired columns.
 }
 \examples{
@@ -53,5 +53,5 @@ bind_cols(
 
 }
 \seealso{
-\link[tidyr]{gather}
+\link[tidyr:gather]{gather}
 }

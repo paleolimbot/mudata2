@@ -24,7 +24,7 @@
 }
 \description{
 Produces a quick graphical summary of a mudata object. The \code{autoplot()}
-function is based on ggplot2's \link[ggplot2]{qplot}, and is the preferred
+function is based on ggplot2's \link[ggplot2:qplot]{qplot}, and is the preferred
 (and most flexible) plotting method. The \code{plot()} function uses
 base R graphics and produces quick summary plot, but is unlikely to be
 useful in any other context. Note that all column names must be quoted

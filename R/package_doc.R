@@ -15,17 +15,17 @@
 #'
 #' The (mostly) universal data format is a collection of five (or more) tables,
 #' one of which contains the data in a parameter-long form (see
-#' \link[tidyr]{gather}). The easiest way to visualize a mudata object is to
-#' inspect the sample datasets within the package (\link{ns_climate},
-#' \link{kentvillegreenwood}, \link{alta_lake}, \link{long_lake}, and
-#' \link{second_lake_temp}).
+#' [gather][tidyr::gather]). The easiest way to visualize a mudata object is to
+#' inspect the sample datasets within the package ([ns_climate],
+#' [kentvillegreenwood], [alta_lake], [long_lake], and
+#' [second_lake_temp]).
 #'
-#' @seealso \link{mudata}, \link{read_mudata}
+#' @seealso [mudata], [read_mudata]
 #'
 #' @references Dunnington DW and Spooner IS (2018). "Using a linked table-based
 #' structure to encode self-describing multiparameter spatiotemporal data".
 #' FACETS. doi:10.1139/facets-2017-0026 
-#' \url{http://www.facetsjournal.com/doi/10.1139/facets-2017-0026}
+#' <http://www.facetsjournal.com/doi/10.1139/facets-2017-0026>
 #'
 #' @examples
 #' print(kentvillegreenwood)

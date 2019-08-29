@@ -20,8 +20,8 @@ time, integer, wkt, or json.}
 A parsed version of the type_str, a column specification or parsing function
 }
 \description{
-Type descriptions are basically calls to \code{readr::col_*} or 
-\code{readr::parse_*}, and can 
+Type descriptions are basically calls to \code{readr::col_*} or
+\code{readr::parse_*}, and can
 contain arguments for the sake of completeness (but this shouldn't normally be necessary).
 }
 \examples{

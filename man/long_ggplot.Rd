@@ -12,18 +12,19 @@ long_plot(.data, id_vars = NULL, measure_var = "value", x = NULL,
   y = NULL, facets = NULL, geom = "path", error_var = NULL, ...,
   max_facets = 9, facet_args = list(), scales = list())
 
-long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
-  y = NULL, facets = NULL, geom = "path", error_var = NULL, ...)
+long_plot_base(.data, id_vars = NULL, measure_var = "value",
+  x = NULL, y = NULL, facets = NULL, geom = "path",
+  error_var = NULL, ...)
 }
 \arguments{
 \item{.data}{A \code{data.frame}}
 
-\item{...}{Additional aesthetic mappings, passed on to 
-(or treated similarly to) \link[ggplot2]{aes_string}}
+\item{...}{Additional aesthetic mappings, passed on to
+(or treated similarly to) \link[ggplot2:aes_string]{aes_string}}
 
 \item{max_facets}{Constrain the maximum number of facets, where available}
 
-\item{facet_args}{Passed on to \link[ggplot2]{facet_wrap}}
+\item{facet_args}{Passed on to \link[ggplot2:facet_wrap]{facet_wrap}}
 
 \item{id_vars}{Columns that identify unique rows}
 
@@ -33,7 +34,7 @@ long_plot_base(.data, id_vars = NULL, measure_var = "value", x = NULL,
 
 \item{y}{Column to be used on the y-axis}
 
-\item{facets}{Column(s) to be used as facetting variable (using \link[ggplot2]{facet_wrap})}
+\item{facets}{Column(s) to be used as facetting variable (using \link[ggplot2:facet_wrap]{facet_wrap})}
 
 \item{geom}{Can be any combination of point, path, or line.}
 

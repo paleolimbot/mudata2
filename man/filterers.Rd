@@ -30,7 +30,7 @@ filter_params(.data, ...)
 \arguments{
 \item{.data}{A \link{mudata} object}
 
-\item{...}{Objects passed to \link[dplyr]{filter} on the appropriate table}
+\item{...}{Objects passed to \link[dplyr:filter]{filter} on the appropriate table}
 }
 \value{
 A subsetted mudata object
@@ -57,5 +57,5 @@ ns_climate \%>\%
 
 }
 \seealso{
-\link[dplyr]{filter}, \link{select_locations}
+\link[dplyr:filter]{filter}, \link{select_locations}
 }

@@ -10,14 +10,15 @@
 long_pairs(x, id_vars, name_var, names_x = NULL, names_y = NULL,
   validate = TRUE, max_names = 5)
 
-long_biplot(x, id_vars, name_var, measure_var = "value", names_x = NULL,
-  na.rm = FALSE, max_names = 5, ...)
+long_biplot(x, id_vars, name_var, measure_var = "value",
+  names_x = NULL, na.rm = FALSE, max_names = 5, ...)
 
 autobiplot(x, ...)
 
-\method{autobiplot}{data.frame}(x, id_vars, name_var, measure_var = "value",
-  names_x = NULL, names_y = NULL, error_var = NULL, na.rm = TRUE,
-  validate = TRUE, max_names = 5, labeller = ggplot2::label_value, ...)
+\method{autobiplot}{data.frame}(x, id_vars, name_var,
+  measure_var = "value", names_x = NULL, names_y = NULL,
+  error_var = NULL, na.rm = TRUE, validate = TRUE, max_names = 5,
+  labeller = ggplot2::label_value, ...)
 }
 \arguments{
 \item{x}{the object to biplot}
@@ -48,7 +49,7 @@ max_names (or FALSE to use all names)}
 to use plotmath-style labels)}
 }
 \description{
-Use either the ggplot framework (autobiplot) or base plotting to biplot a 
+Use either the ggplot framework (autobiplot) or base plotting to biplot a
 parameter-long data frame, like that of the data table in a \link{mudata} object.
 }
 \examples{

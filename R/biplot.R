@@ -2,23 +2,23 @@
 #' Biplot a parameter-long data frame
 #' 
 #' Use either the ggplot framework (autobiplot) or base plotting to biplot a 
-#' parameter-long data frame, like that of the data table in a \link{mudata} object.
+#' parameter-long data frame, like that of the data table in a [mudata] object.
 #' 
 #' @param x the object to biplot
 #' @param id_vars the columns that identify a single row in x
 #' @param name_var The column where names_x and names_y are to be found
 #' @param names_x The names to be included in the x axes, or all the names to be included
 #' @param names_y The names to be included on the y axes, or NULL for all possible combinations
-#'   of \code{namesx}.
+#'   of `namesx`.
 #' @param measure_var The column containing the values to plot
 #' @param error_var The column containing values for error bars (plus or minus error_var).
-#' @param labeller The labeller to use to label facets (may want to use \code{label_parsed}
+#' @param labeller The labeller to use to label facets (may want to use `label_parsed`
 #'   to use plotmath-style labels)
 #' @param validate Ensure id_vars identify unique rows
 #' @param max_names When guessing which parameters to biplot/pair, use only the first
 #'   max_names (or FALSE to use all names)
 #' @param na.rm Should NA values in measure_var be removed?
-#' @param ... passed to \code{aes_string()}
+#' @param ... passed to `aes_string()`
 #' 
 #' @importFrom stats biplot
 #' @export
@@ -267,14 +267,14 @@ autobiplot.data.frame <- function(x, id_vars, name_var, measure_var = "value", n
 
 #' Biplot a mudata object
 #' 
-#' Uses \link{autobiplot} and \link{long_biplot} to produce parameter vs.
-#' parameter plots contained in a \link{mudata} object.
+#' Uses [autobiplot] and [long_biplot] to produce parameter vs.
+#' parameter plots contained in a [mudata] object.
 #' 
 #' @param x A mudata object
 #' @param ... passed to plotting methods
 #'   
-#' @return A \link[ggplot2]{ggplot} object (autobiplot) or the result of
-#'   \link[graphics]{plot.default}.
+#' @return A [ggplot][ggplot2::ggplot] object (autobiplot) or the result of
+#'   [plot.default][graphics::plot.default].
 #' @export
 #' 
 #' @examples 

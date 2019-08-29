@@ -1,15 +1,15 @@
 
 #' Combine mudata objects
 #' 
-#' This implmentation of \link{rbind} combines component tables using \link[dplyr]{bind_rows}
-#' and \link[dplyr]{distinct}. When combined object use different datasets, or when subsets of
+#' This implmentation of [rbind] combines component tables using [bind_rows][dplyr::bind_rows]
+#' and [distinct][dplyr::distinct]. When combined object use different datasets, or when subsets of
 #' the same object are recombined, this function works well. When this is not the case, it
-#' may be necessary to modify the tables such that when they are passed to \link[dplyr]{bind_rows}
-#' and \link[dplyr]{distinct}, no duplicate information exists. This should be picked up by
-#' \link{validate_mudata}.
+#' may be necessary to modify the tables such that when they are passed to [bind_rows][dplyr::bind_rows]
+#' and [distinct][dplyr::distinct], no duplicate information exists. This should be picked up by
+#' [validate_mudata].
 #'
-#' @param ... \link{mudata} objects to combine
-#' @param validate Flag to validate the final object using \link{validate_mudata}.
+#' @param ... [mudata] objects to combine
+#' @param validate Flag to validate the final object using [validate_mudata].
 #'
 #' @return A mudata object
 #' @export
@@ -39,24 +39,24 @@ rbind.mudata <- function(..., validate = TRUE) {
 
 #' Subset a MuData object
 #' 
-#' This object uses standard evalutation to subset a \link{mudata} object using
+#' This object uses standard evalutation to subset a [mudata] object using
 #' character vectors of datasets, params, and locations. The result is subsetted such
 #' that all rows in the data table are documented in the other tables (provided)
-#' they were to begin with. It is preferred to use \link{select_locations},
-#' \link{select_params}, and \link{select_datasets} to subset a mudata object,
-#' or \link{filter_data}, \link{filter_locations}, \link{filter_params}, 
-#' and \link{filter_datasets} to subset by row while maintaining internal
+#' they were to begin with. It is preferred to use [select_locations],
+#' [select_params], and [select_datasets] to subset a mudata object,
+#' or [filter_data], [filter_locations], [filter_params], 
+#' and [filter_datasets] to subset by row while maintaining internal
 #' consistency.
 #'
 #' @param x The object to subset
 #' @param datasets Vector of datasets to include
 #' @param params  Vector of parameters to include
 #' @param locations Vector of locations to include
-#' @param ... Used to \link[dplyr]{filter} the data table
+#' @param ... Used to [filter][dplyr::filter] the data table
 #' 
 #' @seealso 
-#' \link{select_locations}, \link{select_params}, \link{select_datasets}, \link{filter_data}, 
-#' \link{filter_locations}, \link{filter_params}, and \link{filter_datasets}
+#' [select_locations], [select_params], [select_datasets], [filter_data], 
+#' [filter_locations], [filter_params], and [filter_datasets]
 #'
 #' @return A subsetted mudata object
 #' @export
@@ -92,16 +92,16 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 #' be renamed using keyword arguments, identical to dplyr selection syntax.
 #'
 #' @param .data A mudata object
-#' @param ... Quoted names, bare names, or helpers like \link[dplyr]{starts_with},
-#'   \link[dplyr]{contains}, \link[dplyr]{ends_with}, \link[dplyr]{one_of},
-#'   or \link[dplyr]{matches}.
+#' @param ... Quoted names, bare names, or helpers like [starts_with][dplyr::starts_with],
+#'   [contains][dplyr::contains], [ends_with][dplyr::ends_with], [one_of][dplyr::one_of],
+#'   or [matches][dplyr::matches].
 #' @param .factor If TRUE, the new object will keep the order specified by converting
 #'   columns to factors. This may be useful for specifying order when using
-#'   \link{autoplot.mudata}.
+#'   [autoplot.mudata].
 #'
 #' @seealso
-#' \link[dplyr]{select}, \link{rename_locations}, \link{distinct_locations}, 
-#' \link{filter_locations}
+#' [select][dplyr::select], [rename_locations], [distinct_locations], 
+#' [filter_locations]
 #'
 #' @rdname selecters
 #' @return A subsetted mudata object.
@@ -216,16 +216,16 @@ select_params.default <- function(.data, ..., .factor = FALSE) {
 
 #' Subset a mudata object by complex expression
 #' 
-#' These methods allow more complex selection criteria than \link{select_datasets} and
+#' These methods allow more complex selection criteria than [select_datasets] and
 #' family, which only use the identifier values. These methods first subset
 #' the required table using the provided expression, then subset other tables
 #' to ensure internal consistency.
 #'
-#' @param .data A \link{mudata} object
-#' @param ... Objects passed to \link[dplyr]{filter} on the appropriate table
+#' @param .data A [mudata] object
+#' @param ... Objects passed to [filter][dplyr::filter] on the appropriate table
 #' 
 #' @seealso
-#' \link[dplyr]{filter}, \link{select_locations}
+#' [filter][dplyr::filter], [select_locations]
 #'
 #' @rdname filterers
 #' @return A subsetted mudata object

@@ -5,11 +5,11 @@
 #' locations, params, datasets, and columns. You are only required to provide
 #' the data table, which must contain columns "param" and "value", but will more
 #' typically contain columns "location", "param", "datetime" (or "date"), and
-#' "value". See \link{ns_climate}, \link{kentvillegreenwood}, \link{alta_lake},
-#' \link{long_lake}, and \link{second_lake_temp} for examples of data in this
+#' "value". See [ns_climate], [kentvillegreenwood], [alta_lake],
+#' [long_lake], and [second_lake_temp] for examples of data in this
 #' format.
 #' 
-#' @param data A data.frame/\link[tibble]{tibble} containing columns "param" and
+#' @param data A data.frame/[tibble][tibble::tibble] containing columns "param" and
 #'   "value" (at least), but more typically columns "location", "param",
 #'   "datetime" (or "date", depending on the type of data), and "value".
 #' @param locations The locations table, which is a data frame containing the
@@ -32,18 +32,18 @@
 #'   mudata object
 #' @param dataset_id The dataset to use if a "dataset" column is omitted.
 #' @param location_id The location if a "location" column is omitted.
-#' @param validate Pass \code{FALSE} to skip validation of input tables using
-#'   \link{validate_mudata}.
+#' @param validate Pass `FALSE` to skip validation of input tables using
+#'   [validate_mudata].
 #'   
-#' @return An object of class "mudata", which is a \link{list} with components
+#' @return An object of class "mudata", which is a [list] with components
 #'   data, locations, params, datasets, columns, and any other tables provided
-#'   in \code{more_tbls}. All list components must be tbls.
+#'   in `more_tbls`. All list components must be tbls.
 #' @export
 #' 
 #' @references Dunnington DW and Spooner IS (2018). "Using a linked table-based
 #' structure to encode self-describing multiparameter spatiotemporal data".
 #' FACETS. doi:10.1139/facets-2017-0026 
-#' \url{http://www.facetsjournal.com/doi/10.1139/facets-2017-0026}
+#' <http://www.facetsjournal.com/doi/10.1139/facets-2017-0026>
 #' 
 #' @examples
 #' # use the data table from kentvillegreenwood as a template
@@ -184,15 +184,15 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
 
 #' Validate, create a mudata object
 #' 
-#' Validates a mudata object by calling \link{stop} when an error is found;
-#' creates a mudata object from a \link{list}. Validation is generally performed
-#' when objects are created using \link{mudata}, or when objects are read/writen
-#' using \link{read_mudata} and \link{write_mudata}.
+#' Validates a mudata object by calling [stop] when an error is found;
+#' creates a mudata object from a [list]. Validation is generally performed
+#' when objects are created using [mudata], or when objects are read/writen
+#' using [read_mudata] and [write_mudata].
 #'
 #' @param md An object of class 'mudata'
 #' @param check_unique Check if columns identify unique values in the appropriate tables
 #' @param check_references Check the referential integrity of the mudata object
-#' @param x_columns The x_columns attribute (see \link{mudata}).
+#' @param x_columns The x_columns attribute (see [mudata]).
 #' @param action The function to be called when errors are detected in validate_mudata
 #'
 #' @export
@@ -335,7 +335,7 @@ is.mudata <- function(x) {
 #' @param x An object
 #' @param ... Passed to other methods
 #'
-#' @return A \link{mudata} object or an error
+#' @return A [mudata] object or an error
 #' @export
 #' 
 as_mudata <- function(x, ...) UseMethod("as_mudata")
@@ -527,12 +527,12 @@ mudata_sql <- function(db, data = "data", locations = NA, params = NA,
 
 #' Collect all mudata components
 #' 
-#' Objects created by \link{mudata} are generally assumed to be local data frames,
+#' Objects created by [mudata] are generally assumed to be local data frames,
 #' but some methods may function on database tbls (especially in the future). 
-#' This function applies \link[dplyr]{collect} to all component tables.
+#' This function applies [collect][dplyr::collect] to all component tables.
 #'
 #' @param x A mudata object
-#' @param ... Passed to \link[dplyr]{collect}
+#' @param ... Passed to [collect][dplyr::collect]
 #'
 #' @return A mudata object with all components as local data frames.
 #' @export

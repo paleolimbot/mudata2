@@ -10,7 +10,7 @@
 \arguments{
 \item{x}{The object to subset}
 
-\item{...}{Used to \link[dplyr]{filter} the data table}
+\item{...}{Used to \link[dplyr:filter]{filter} the data table}
 
 \item{datasets}{Vector of datasets to include}
 
@@ -27,7 +27,7 @@ character vectors of datasets, params, and locations. The result is subsetted su
 that all rows in the data table are documented in the other tables (provided)
 they were to begin with. It is preferred to use \link{select_locations},
 \link{select_params}, and \link{select_datasets} to subset a mudata object,
-or \link{filter_data}, \link{filter_locations}, \link{filter_params}, 
+or \link{filter_data}, \link{filter_locations}, \link{filter_params},
 and \link{filter_datasets} to subset by row while maintaining internal
 consistency.
 }
@@ -36,6 +36,6 @@ subset(kentvillegreenwood, params = c("mintemp", "maxtemp"))
 
 }
 \seealso{
-\link{select_locations}, \link{select_params}, \link{select_datasets}, \link{filter_data}, 
+\link{select_locations}, \link{select_params}, \link{select_datasets}, \link{filter_data},
 \link{filter_locations}, \link{filter_params}, and \link{filter_datasets}
 }

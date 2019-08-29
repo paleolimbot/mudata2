@@ -19,8 +19,8 @@ autoplot(alta_lake, y = "age")
 
 }
 \references{
-Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of 
-development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330. 
+Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of
+development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330.
 doi: 10.1007/s10933-016-9919-x
 }
 \keyword{datasets}

@@ -15,8 +15,8 @@
 \item{...}{passed to plotting methods}
 }
 \value{
-A \link[ggplot2]{ggplot} object (autobiplot) or the result of
-  \link[graphics]{plot.default}.
+A \link[ggplot2:ggplot]{ggplot} object (autobiplot) or the result of
+\link[graphics:plot.default]{plot.default}.
 }
 \description{
 Uses \link{autobiplot} and \link{long_biplot} to produce parameter vs.

@@ -12,7 +12,6 @@
 \alias{tbl_datasets}
 \alias{tbl_datasets.default}
 \alias{tbl_columns}
-\alias{tbl_columns}
 \alias{tbl.mudata}
 \alias{x_columns}
 \alias{x_columns.default}
@@ -53,7 +52,7 @@ x_columns(x)
 
 \item{...}{Passed to other methods}
 
-\item{key, value}{Passed to \link[tidyr]{spread}}
+\item{key, value}{Passed to \link[tidyr:spread]{spread}}
 
 \item{which}{Which tbl to extract}
 }

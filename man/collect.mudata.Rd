@@ -9,13 +9,13 @@
 \arguments{
 \item{x}{A mudata object}
 
-\item{...}{Passed to \link[dplyr]{collect}}
+\item{...}{Passed to \link[dplyr:collect]{collect}}
 }
 \value{
 A mudata object with all components as local data frames.
 }
 \description{
 Objects created by \link{mudata} are generally assumed to be local data frames,
-but some methods may function on database tbls (especially in the future). 
-This function applies \link[dplyr]{collect} to all component tables.
+but some methods may function on database tbls (especially in the future).
+This function applies \link[dplyr:collect]{collect} to all component tables.
 }

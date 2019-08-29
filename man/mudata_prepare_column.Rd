@@ -52,10 +52,10 @@ mudata_parse_tbl(x, type_str = NA_character_, ...)
 An atomic vector
 }
 \description{
-This set of generics is similar to \link[readr]{output_column} in that it
+This set of generics is similar to \link[readr:output_column]{output_column} in that it
 converts columns to a form suitable to writing.
-\code{mudata_prepare_column} in combination with is 
-intended to be opposites with \code{mudata_parse_column} except for 
+\code{mudata_prepare_column} in combination with is
+intended to be opposites with \code{mudata_parse_column} except for
 date/time vectors that are not in UTC (mudata_parse_column assumes UTC,
 and mudata_prepare_column always converts to UTC with a message).
 }
@@ -64,6 +64,6 @@ Type strings are currently internal, and are in the columns table in the
 "type" column. They are usually one of "character", "date", "datetime", "double",
 "integer", "json", and "wkt". They can also contain simple arguments, like
 "wkt(epsg=4326)" (actually, "wkt" is the only type string that should have arguments).
-You should generally not mess with these (in fact, the "type" column in the coluns 
+You should generally not mess with these (in fact, the "type" column in the coluns
 table is overwritten right before read by default, so it is hard to mess this up).
 }

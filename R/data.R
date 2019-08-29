@@ -4,7 +4,7 @@
 #' Bulk geochemistry of a gravity core from Alta Lake, Whistler, British Columbia,
 #' Canada.
 #' 
-#' @format A \link{mudata} object
+#' @format A [mudata] object
 #' 
 #' @references
 #' Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of 
@@ -23,7 +23,7 @@
 #' Bulk geochemistry of a gravity core from Long Lake, Cumberland Marshes Region, 
 #' Nova Scotia-New Brunswick Border Region, Canada.
 #' 
-#' @format A \link{mudata} object
+#' @format A [mudata] object
 #' 
 #' @references
 #' Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal 
@@ -41,24 +41,24 @@
 #'
 #' A small example data.frame used to test structure methods.
 #'
-#' @format A \code{data.frame} containing multi-qualifier concentration data
+#' @format A `data.frame` containing multi-qualifier concentration data
 "pocmaj"
 
 #'  Pre-summarised Sample Data
 #'
 #' A small example data.frame of pre-summarised data; a summarised
-#' version of the \link{pocmaj} dataset.
+#' version of the [pocmaj] dataset.
 #'
-#' @format A \code{data.frame} containing multi-qualifier data
+#' @format A `data.frame` containing multi-qualifier data
 "pocmajsum"
 
 #' Kentville/Greenwood Climate Data
 #'
 #' Climate data for Kentville and Greenwood (Nova Scotia) for July and August of 1999.
 #'
-#' @format A \link{mudata} object
+#' @format A [mudata] object
 #' 
-#' @source Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
+#' @source Environment Canada via the 'rclimateca' package. <http://climate.weather.gc.ca/>
 #' 
 #' @examples
 #' autoplot(kentvillegreenwood)
@@ -69,9 +69,9 @@
 #'
 #' Monthly climate data for locations in Nova Scotia with records longer than 80 years.
 #'
-#' @format A \link{mudata} object
+#' @format A [mudata] object
 #' 
-#' @source Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
+#' @source Environment Canada via the 'rclimateca' package. <http://climate.weather.gc.ca/>
 #' 
 #' @examples
 #' print(ns_climate)
@@ -94,7 +94,7 @@
 #' Temperatures at multiple depths in the water column for a season at Second Lake, Lower Sackville, 
 #' Nova Scotia, Canada.
 #' 
-#' @format A \link{mudata} object
+#' @format A [mudata] object
 #' 
 #' @references
 #' Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic 

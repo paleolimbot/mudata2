@@ -6,22 +6,22 @@
 #' is optimised to plot data with a time axis data either horizontally
 #' (time on the x axis) or vertically (time on the y axis). Facets are intended
 #' to be by parameter, which is guessed based on the right-most discrete variable named
-#' in id_vars. In the context of a \link{mudata} object, this function almost always
+#' in id_vars. In the context of a [mudata] object, this function almost always
 #' guesses the axes correctly, but these choices can be overridden.
 #'
-#' @param .data A \code{data.frame}
+#' @param .data A `data.frame`
 #' @param id_vars Columns that identify unique rows
 #' @param measure_var Column that contains values to be plotted
 #' @param x Column to be used on the x-axis
 #' @param y Column to be used on the y-axis
-#' @param facets Column(s) to be used as facetting variable (using \link[ggplot2]{facet_wrap})
+#' @param facets Column(s) to be used as facetting variable (using [facet_wrap][ggplot2::facet_wrap])
 #' @param geom Can be any combination of point, path, or line.
 #' @param error_var The column to be used for plus/minus error bars
-#' @param facet_args Passed on to \link[ggplot2]{facet_wrap}
+#' @param facet_args Passed on to [facet_wrap][ggplot2::facet_wrap]
 #' @param max_facets Constrain the maximum number of facets, where available
 #' @param scales Customize aesthetic mapping in long_plot()
 #' @param ... Additional aesthetic mappings, passed on to 
-#'   (or treated similarly to) \link[ggplot2]{aes_string}
+#'   (or treated similarly to) [aes_string][ggplot2::aes_string]
 #'
 #' @export
 #'
@@ -503,22 +503,22 @@ guess_id_vars <- function(vars, measure_var) {
 
 #' Autoplot a mudata object
 #' 
-#' Produces a quick graphical summary of a mudata object. The \code{autoplot()}
-#' function is based on ggplot2's \link[ggplot2]{qplot}, and is the preferred
-#' (and most flexible) plotting method. The \code{plot()} function uses
+#' Produces a quick graphical summary of a mudata object. The `autoplot()`
+#' function is based on ggplot2's [qplot][ggplot2::qplot], and is the preferred
+#' (and most flexible) plotting method. The `plot()` function uses
 #' base R graphics and produces quick summary plot, but is unlikely to be
 #' useful in any other context. Note that all column names must be quoted
-#' (i.e., \code{aesthetic = "col_name"} not \code{aesthetic = col_name}).
+#' (i.e., `aesthetic = "col_name"` not `aesthetic = col_name`).
 #'
-#' @param x,object A \link{mudata} object
+#' @param x,object A [mudata] object
 #' @param facets Column to be used as facet column
 #' @param col Column to be used as colour aesthetic
 #' @param pch Column to be used as shape aesthetic
-#' @param ... Passed on to \link{long_plot} or \link{long_ggplot}
+#' @param ... Passed on to [long_plot] or [long_ggplot]
 #'
 #' @export
 #' 
-#' @seealso \link{long_ggplot}
+#' @seealso [long_ggplot]
 #' 
 #' @examples 
 #' # plot using base plot

@@ -457,9 +457,12 @@
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">pocmajwide &lt;-<span class="st"> </span>pocmajsum <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">location =</span> core)</a></code></pre></div>
 <p>Then (also as above), we need to <code>gather()</code> the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called <code>parallel_melt()</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">pocmajlong &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parallel_gather.html">parallel_gather</a></span>(pocmajwide, <span class="dt">key =</span> <span class="st">"param"</span>,</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">                              <span class="dt">value =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Ca, Ti, V), </a>
-<a class="sourceLine" id="cb13-3" data-line-number="3">                              <span class="dt">sd =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Ca_sd, Ti_sd, V_sd))</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">pocmajlong &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parallel_gather.html">parallel_gather</a></span>(</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">  pocmajwide, </a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">  <span class="dt">key =</span> <span class="st">"param"</span>,</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">  <span class="dt">value =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Ca, Ti, V), </a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">  <span class="dt">sd =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(Ca_sd, Ti_sd, V_sd)</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">location</th>
@@ -568,11 +571,15 @@
 ## 2 default POC-2</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># location table with metadata</span></a>
 <a class="sourceLine" id="cb24-2" data-line-number="2">md <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(<span class="st">"MAJ-1"</span>, <span class="dt">latitude =</span> <span class="fl">-64.298</span>, <span class="dt">longitude =</span> <span class="fl">44.819</span>,</a>
-<a class="sourceLine" id="cb24-4" data-line-number="4">                   <span class="dt">lake =</span> <span class="st">"Lake Major"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(<span class="st">"POC-2"</span>, <span class="dt">latitude =</span> <span class="fl">-65.985</span>, <span class="dt">longitude =</span> <span class="fl">44.913</span>,</a>
-<a class="sourceLine" id="cb24-6" data-line-number="6">                   <span class="dt">lake =</span> <span class="st">"Pockwock Lake"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_locations</a></span>()</a></code></pre></div>
+<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4">    <span class="st">"MAJ-1"</span>, </a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">    <span class="dt">latitude =</span> <span class="fl">-64.298</span>, <span class="dt">longitude =</span> <span class="fl">44.819</span>, <span class="dt">lake =</span> <span class="st">"Lake Major"</span></a>
+<a class="sourceLine" id="cb24-6" data-line-number="6">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(</a>
+<a class="sourceLine" id="cb24-8" data-line-number="8">    <span class="st">"POC-2"</span>,</a>
+<a class="sourceLine" id="cb24-9" data-line-number="9">    <span class="dt">latitude =</span> <span class="fl">-65.985</span>, <span class="dt">longitude =</span> <span class="fl">44.913</span>, <span class="dt">lake =</span> <span class="st">"Pockwock Lake"</span></a>
+<a class="sourceLine" id="cb24-10" data-line-number="10">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb24-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_locations</a></span>()</a></code></pre></div>
 <pre><code>## # A tibble: 2 x 5
 ##   dataset location latitude longitude lake         
 ##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;        
@@ -588,20 +595,24 @@
 ## 1 default</code></pre>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># datasets table with metadata</span></a>
 <a class="sourceLine" id="cb28-2" data-line-number="2">md <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_datasets</a></span>(<span class="dt">source =</span> <span class="st">"R package mudata2, version 1.0.0"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_datasets</a></span>(<span class="dt">source =</span> <span class="st">"R package mudata2"</span>) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb28-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_datasets</a></span>()</a></code></pre></div>
 <pre><code>## # A tibble: 1 x 2
-##   dataset source                          
-##   &lt;chr&gt;   &lt;chr&gt;                           
-## 1 default R package mudata2, version 1.0.0</code></pre>
+##   dataset source           
+##   &lt;chr&gt;   &lt;chr&gt;            
+## 1 default R package mudata2</code></pre>
 <p>All together, the param/location/dataset documentation looks like this:</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">md_doc &lt;-<span class="st"> </span>md <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb30-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_params</a></span>(<span class="dt">method =</span> <span class="st">"Portable XRF Spectrometer (Olympus X-50)"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(<span class="st">"MAJ-1"</span>, <span class="dt">latitude =</span> <span class="fl">-63.486</span>, <span class="dt">longitude =</span> <span class="fl">44.732</span>,</a>
-<a class="sourceLine" id="cb30-4" data-line-number="4">                   <span class="dt">lake =</span> <span class="st">"Lake Major"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(<span class="st">"POC-2"</span>, <span class="dt">latitude =</span> <span class="fl">-63.839</span>, <span class="dt">longitude =</span> <span class="fl">44.794</span>,</a>
-<a class="sourceLine" id="cb30-6" data-line-number="6">                   <span class="dt">lake =</span> <span class="st">"Pockwock Lake"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_datasets</a></span>(<span class="dt">source =</span> <span class="st">"R package mudata2, version 1.0.0"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4">    <span class="st">"MAJ-1"</span>, </a>
+<a class="sourceLine" id="cb30-5" data-line-number="5">    <span class="dt">latitude =</span> <span class="fl">-63.486</span>, <span class="dt">longitude =</span> <span class="fl">44.732</span>, <span class="dt">lake =</span> <span class="st">"Lake Major"</span></a>
+<a class="sourceLine" id="cb30-6" data-line-number="6">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(</a>
+<a class="sourceLine" id="cb30-8" data-line-number="8">    <span class="st">"POC-2"</span>,</a>
+<a class="sourceLine" id="cb30-9" data-line-number="9">    <span class="dt">latitude =</span> <span class="fl">-63.839</span>, <span class="dt">longitude =</span> <span class="fl">44.794</span>, <span class="dt">lake =</span> <span class="st">"Pockwock Lake"</span></a>
+<a class="sourceLine" id="cb30-10" data-line-number="10">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb30-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_datasets</a></span>(<span class="dt">source =</span> <span class="st">"R package mudata2"</span>)</a></code></pre></div>
 </div>
 <div id="adding-column-metadata" class="section level2">
 <h2 class="hasAnchor">
@@ -660,14 +671,18 @@
 <p>You’ll notice there’s a <code>type</code> column that is also automatically generated, which I suggest that you don’t mess with (it will get overwritten by default before you write the object to disk). If something is the wrong type, you should use the <code>mudate_*()</code> family of functions to fix the column type, then run <code><a href="../reference/update_columns_table.html">update_columns_table()</a></code> again. From the top, the documentation looks like this:</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">md_doc &lt;-<span class="st"> </span>md <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb36-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_params</a></span>(<span class="dt">method =</span> <span class="st">"Portable XRF Spectrometer (Olympus X-50)"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(<span class="st">"MAJ-1"</span>, <span class="dt">latitude =</span> <span class="fl">-63.486</span>, <span class="dt">longitude =</span> <span class="fl">44.732</span>,</a>
-<a class="sourceLine" id="cb36-4" data-line-number="4">                   <span class="dt">lake =</span> <span class="st">"Lake Major"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb36-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(<span class="st">"POC-2"</span>, <span class="dt">latitude =</span> <span class="fl">-63.839</span>, <span class="dt">longitude =</span> <span class="fl">44.794</span>,</a>
-<a class="sourceLine" id="cb36-6" data-line-number="6">                   <span class="dt">lake =</span> <span class="st">"Pockwock Lake"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb36-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_datasets</a></span>(<span class="dt">source =</span> <span class="st">"R package mudata2, version 1.0.0"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb36-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="../reference/update_columns_table.html">update_columns_table</a></span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb36-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_columns</a></span>(<span class="st">"depth"</span>, <span class="dt">description =</span> <span class="st">"Depth in sediment core (cm)"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb36-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_columns</a></span>(<span class="st">"sd"</span>, <span class="dt">description =</span> <span class="st">"Standard deviation uncertainty of n=3 values"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">    <span class="st">"MAJ-1"</span>, </a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">    <span class="dt">latitude =</span> <span class="fl">-63.486</span>, <span class="dt">longitude =</span> <span class="fl">44.732</span>, <span class="dt">lake =</span> <span class="st">"Lake Major"</span></a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_locations</a></span>(</a>
+<a class="sourceLine" id="cb36-8" data-line-number="8">    <span class="st">"POC-2"</span>,</a>
+<a class="sourceLine" id="cb36-9" data-line-number="9">    <span class="dt">latitude =</span> <span class="fl">-63.839</span>, <span class="dt">longitude =</span> <span class="fl">44.794</span>, <span class="dt">lake =</span> <span class="st">"Pockwock Lake"</span></a>
+<a class="sourceLine" id="cb36-10" data-line-number="10">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_datasets</a></span>(<span class="dt">source =</span> <span class="st">"R package mudata2"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="../reference/update_columns_table.html">update_columns_table</a></span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_columns</a></span>(<span class="st">"depth"</span>, <span class="dt">description =</span> <span class="st">"Depth in sediment core (cm)"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="../reference/update_datasets.html">update_columns</a></span>(<span class="st">"sd"</span>, <span class="dt">description =</span> <span class="st">"Standard deviation uncertainty of n=3 values"</span>)</a></code></pre></div>
 </div>
 <div id="writing-mudata-objects" class="section level2">
 <h2 class="hasAnchor">
@@ -691,7 +706,7 @@
 <div id="more-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#more-information" class="anchor"></a>More information</h2>
-<p>That is most of what there is to creating mudata objects. For more reading, I suggest looking at the documentation for <code><a href="../reference/mudata.html">?mudata</a></code>, <code><a href="../reference/update_datasets.html">?update_locations</a></code>, <code><a href="../reference/mudata_prepare_column.html">?mudata_prepare_column</a></code>, and <code><a href="../reference/write_mudata.html">?read_mudata</a></code>.</p>
+<p>That is most of what there is to creating mudata objects. For more reading, I suggest looking at the documentation for <code><a href="../reference/mudata.html">mudata()</a></code>, <code><a href="../reference/update_datasets.html">update_locations()</a></code>, <code><a href="../reference/mudata_prepare_column.html">mudata_prepare_column()</a></code>, and <code><a href="../reference/write_mudata.html">read_mudata()</a></code>.</p>
 </div>
   </div>
 

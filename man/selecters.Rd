@@ -30,7 +30,7 @@ or \link[dplyr:matches]{matches}.}
 
 \item{.factor}{If TRUE, the new object will keep the order specified by converting
 columns to factors. This may be useful for specifying order when using
-\link{autoplot.mudata}.}
+ggplot2.}
 }
 \value{
 A subsetted mudata object.

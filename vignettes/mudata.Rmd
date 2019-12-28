@@ -12,7 +12,7 @@ vignette: >
 The **mudata2** package is designed to be used as little as possible. That is, if you need use data that is currently in mudata format, the functions in this package are designed to let you spend as little time as possible reading, subsetting, and inspecting your data. The steps are generally as follows:
 
 - Read in the data using `read_mudata()`
-- See what it contains using `summary()`, `print()`, `autoplot()`, `distinct_locations()`, and `distinct_params()`
+- See what it contains using `summary()`, `print()`, `distinct_locations()`, and `distinct_params()`
 - Inspect the metadata using `tbl_locations()` and `tbl_params()`
 - Pick your parameters using `select_params()` or `filter_params()`
 - Pick your locations using `select_locations()` or `filter_locations()`
@@ -52,7 +52,7 @@ read_mudata("ns_climate.mudata.json")
 
 ## Inspecting an object
 
-The three main ways to quickly inspect a mudata object are `print()`, `summary()`, and `autoplot()`. The `print()` function is what you get when you type the name of the object at the prompt, and gives a short summary of the object. The output suggests a couple of other ways to inspect the object, including `distinct_locations()`, which returns a character vector of location identifiers, and `distinct_params()`, which returns a character vector of parameter identifiers.
+The three main ways to quickly inspect a mudata object are `print()` and `summary()`. The `print()` function is what you get when you type the name of the object at the prompt, and gives a short summary of the object. The output suggests a couple of other ways to inspect the object, including `distinct_locations()`, which returns a character vector of location identifiers, and `distinct_params()`, which returns a character vector of parameter identifiers.
 
 ```{r}
 print(ns_climate)
@@ -62,12 +62,6 @@ The `summary()` function provides some numeric summaries by dataset, location, a
 
 ```{r}
 summary(ns_climate)
-```
-
-Finally, the `autoplot()` function provides an attempt at the best way to plot the object. The smaller the subset, the more useful the plot, but it produces reasonable results for large objects as well. This function produces **ggplot2** objects, which can be modified as such (e.g., ` + scale_y_reverse()`, etc.).
-
-```{r autoplot, warning = FALSE, fig.width=7, fig.height=5}
-autoplot(ns_climate)
 ```
 
 ## Inspecting metadata

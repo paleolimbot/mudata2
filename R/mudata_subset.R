@@ -97,7 +97,7 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 #'   or [matches][dplyr::matches].
 #' @param .factor If TRUE, the new object will keep the order specified by converting
 #'   columns to factors. This may be useful for specifying order when using
-#'   [autoplot.mudata].
+#'   ggplot2.
 #'
 #' @seealso
 #' [select][dplyr::select], [rename_locations], [distinct_locations], 

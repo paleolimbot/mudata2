@@ -10,7 +10,6 @@
 \alias{contains}
 \alias{num_range}
 \alias{one_of}
-\alias{autoplot}
 \alias{src_tbls}
 \alias{\%>\%}
 \title{Objects exported from other packages}
@@ -21,8 +20,6 @@ below to see their documentation.
 
 \describe{
   \item{dplyr}{\code{\link[dplyr]{contains}}, \code{\link[dplyr]{ends_with}}, \code{\link[dplyr]{everything}}, \code{\link[dplyr]{matches}}, \code{\link[dplyr]{num_range}}, \code{\link[dplyr]{one_of}}, \code{\link[dplyr]{src_tbls}}, \code{\link[dplyr]{starts_with}}}
-
-  \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
 
   \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
 }}

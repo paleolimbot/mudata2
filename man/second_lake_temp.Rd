@@ -13,17 +13,12 @@ Temperatures at multiple depths in the water column for a season at Second Lake,
 Nova Scotia, Canada.
 }
 \examples{
-library(ggplot2)
-autoplot(second_lake_temp, y = "depth", x = "datetime", 
-         col = "value", geom = "point") + 
-  scale_y_reverse()
-autoplot(second_lake_temp, x = "datetime", y = "value", 
-         facets = c("param", "depth"))
+print(second_lake_temp)
 
 }
 \references{
 Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic
 impact between First and Second Lake, Lower Sackville, Nova Scotia.
-B.Sc.H. Thesis, Acadia University
+B.Sc.H. Thesis, Acadia University. \url{http://scholar.acadiau.ca/islandora/object/theses:1148}
 }
 \keyword{datasets}

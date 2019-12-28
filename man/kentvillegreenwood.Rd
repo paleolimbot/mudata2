@@ -15,7 +15,7 @@ kentvillegreenwood
 Climate data for Kentville and Greenwood (Nova Scotia) for July and August of 1999.
 }
 \examples{
-autoplot(kentvillegreenwood)
+print(kentvillegreenwood)
 
 }
 \keyword{datasets}

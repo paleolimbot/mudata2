@@ -13,13 +13,12 @@ Bulk geochemistry of a gravity core from Long Lake, Cumberland Marshes Region,
 Nova Scotia-New Brunswick Border Region, Canada.
 }
 \examples{
-library(ggplot2)
-autoplot(long_lake, y = "depth") + scale_y_reverse()
+print(long_lake)
 
 }
 \references{
 Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal
 sequestration and release in the Cumberland Basin Marshes, Atlantic Canada. FACETS 2:440-460.
-doi: 10.1139/facets-2017-0004
+\href{https://doi.org/10.1139/facets-2017-0004}{doi:10.1139/facets-2017-0004}
 }
 \keyword{datasets}

@@ -6,7 +6,7 @@
 \title{Nova Scotia Long-Term Climate Data}
 \format{A \link{mudata} object}
 \source{
-Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
+Environment Canada: \url{http://climate.weather.gc.ca/}
 }
 \usage{
 ns_climate
@@ -16,17 +16,6 @@ Monthly climate data for locations in Nova Scotia with records longer than 80 ye
 }
 \examples{
 print(ns_climate)
-autoplot(ns_climate) # quite a messy plot, lots of data
-
-# a more focused plot comparing three locations
-library(lubridate)
-ns_climate \%>\% 
-  select_locations(sable_island = starts_with("SABLE"),
-                   nappan = starts_with("NAPPAN"), 
-                   baddeck = starts_with("BADDECK")) \%>\% 
-  select_params(ends_with("temp")) \%>\%
-  filter_data(month(date) == 6) \%>\% 
-  autoplot()
 
 }
 \keyword{datasets}

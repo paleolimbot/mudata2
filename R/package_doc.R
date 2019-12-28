@@ -24,12 +24,10 @@
 #'
 #' @references Dunnington DW and Spooner IS (2018). "Using a linked table-based
 #' structure to encode self-describing multiparameter spatiotemporal data".
-#' FACETS. doi:10.1139/facets-2017-0026 
-#' <http://www.facetsjournal.com/doi/10.1139/facets-2017-0026>
+#' FACETS. [doi:10.1139/facets-2017-0026](https://doi.org/10.1139/facets-2017-0026)
 #'
 #' @examples
 #' print(kentvillegreenwood)
-#' autoplot(kentvillegreenwood)
 #'
 #' @importFrom rlang .data
 #' @importFrom rlang !!!
@@ -72,11 +70,7 @@ dplyr::num_range
 #' @importFrom dplyr one_of
 dplyr::one_of
 
-#' @importFrom ggplot2 autoplot
-#' @export
-ggplot2::autoplot
-
-#' @importFrom ggplot2 autoplot
+#' @importFrom dplyr src_tbls
 #' @export
 dplyr::src_tbls
 

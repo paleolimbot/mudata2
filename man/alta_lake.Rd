@@ -13,14 +13,12 @@ Bulk geochemistry of a gravity core from Alta Lake, Whistler, British Columbia,
 Canada.
 }
 \examples{
-library(ggplot2)
-autoplot(alta_lake, y = "depth") + scale_y_reverse()
-autoplot(alta_lake, y = "age")
+print(alta_lake)
 
 }
 \references{
 Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of
 development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330.
-doi: 10.1007/s10933-016-9919-x
+\href{https://doi.org/10.1007/s10933-016-9919-x}{doi:10.1007/s10933-016-9919-x}
 }
 \keyword{datasets}

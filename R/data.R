@@ -9,12 +9,10 @@
 #' @references
 #' Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of 
 #' development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330. 
-#' doi: 10.1007/s10933-016-9919-x
+#' [doi:10.1007/s10933-016-9919-x](https://doi.org/10.1007/s10933-016-9919-x)
 #' 
 #' @examples
-#' library(ggplot2)
-#' autoplot(alta_lake, y = "depth") + scale_y_reverse()
-#' autoplot(alta_lake, y = "age")
+#' print(alta_lake)
 #' 
 "alta_lake"
 
@@ -28,12 +26,11 @@
 #' @references
 #' Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal 
 #' sequestration and release in the Cumberland Basin Marshes, Atlantic Canada. FACETS 2:440-460. 
-#' doi: 10.1139/facets-2017-0004
+#' [doi:10.1139/facets-2017-0004](https://doi.org/10.1139/facets-2017-0004)
 
 #' 
 #' @examples
-#' library(ggplot2)
-#' autoplot(long_lake, y = "depth") + scale_y_reverse()
+#' print(long_lake)
 #' 
 "long_lake"
 
@@ -61,7 +58,7 @@
 #' @source Environment Canada via the 'rclimateca' package. <http://climate.weather.gc.ca/>
 #' 
 #' @examples
-#' autoplot(kentvillegreenwood)
+#' print(kentvillegreenwood)
 #' 
 "kentvillegreenwood"
 
@@ -71,21 +68,10 @@
 #'
 #' @format A [mudata] object
 #' 
-#' @source Environment Canada via the 'rclimateca' package. <http://climate.weather.gc.ca/>
+#' @source Environment Canada: <http://climate.weather.gc.ca/>
 #' 
 #' @examples
 #' print(ns_climate)
-#' autoplot(ns_climate) # quite a messy plot, lots of data
-#' 
-#' # a more focused plot comparing three locations
-#' library(lubridate)
-#' ns_climate %>% 
-#'   select_locations(sable_island = starts_with("SABLE"),
-#'                    nappan = starts_with("NAPPAN"), 
-#'                    baddeck = starts_with("BADDECK")) %>% 
-#'   select_params(ends_with("temp")) %>%
-#'   filter_data(month(date) == 6) %>% 
-#'   autoplot()
 #' 
 "ns_climate"
 
@@ -99,14 +85,9 @@
 #' @references
 #' Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic 
 #' impact between First and Second Lake, Lower Sackville, Nova Scotia. 
-#' B.Sc.H. Thesis, Acadia University
+#' B.Sc.H. Thesis, Acadia University. <http://scholar.acadiau.ca/islandora/object/theses:1148>
 #' 
 #' @examples
-#' library(ggplot2)
-#' autoplot(second_lake_temp, y = "depth", x = "datetime", 
-#'          col = "value", geom = "point") + 
-#'   scale_y_reverse()
-#' autoplot(second_lake_temp, x = "datetime", y = "value", 
-#'          facets = c("param", "depth"))
+#' print(second_lake_temp)
 #' 
 "second_lake_temp"

@@ -28,14 +28,12 @@ inspect the sample datasets within the package (\link{ns_climate},
 }
 \examples{
 print(kentvillegreenwood)
-autoplot(kentvillegreenwood)
 
 }
 \references{
 Dunnington DW and Spooner IS (2018). "Using a linked table-based
 structure to encode self-describing multiparameter spatiotemporal data".
-FACETS. doi:10.1139/facets-2017-0026
-\url{http://www.facetsjournal.com/doi/10.1139/facets-2017-0026}
+FACETS. \href{https://doi.org/10.1139/facets-2017-0026}{doi:10.1139/facets-2017-0026}
 }
 \seealso{
 \link{mudata}, \link{read_mudata}

@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![](http://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
-[![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata)
-[![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg)](https://codecov.io/github/paleolimbot/mudata?branch=master)
+[![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata2.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata2)
+[![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata2/master.svg)](https://codecov.io/github/paleolimbot/mudata2?branch=master)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![DOI](https://img.shields.io/static/v1?label=DOI&message=10.1139%2Ffacets-2017-0026&color=blue)](https://doi.org/10.1139/facets-2017-0026)
 <!-- badges: end -->

@@ -456,7 +456,7 @@
 <p>As above, we need to rename the <code>core</code> column to <code>location</code> using the <code>rename()</code> function.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">pocmajwide &lt;-<span class="st"> </span>pocmajsum <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">location =</span> core)</a></code></pre></div>
-<p>Then (also as above), we need to <code>gather()</code> the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called <code>parallel_melt()</code>.</p>
+<p>Then (also as above), we need to <code>gather()</code> the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called <code><a href="../reference/parallel_gather.html">parallel_gather()</a></code>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">pocmajlong &lt;-<span class="st"> </span><span class="kw"><a href="../reference/parallel_gather.html">parallel_gather</a></span>(</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">  pocmajwide, </a>
 <a class="sourceLine" id="cb13-3" data-line-number="3">  <span class="dt">key =</span> <span class="st">"param"</span>,</a>

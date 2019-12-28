@@ -1,5 +1,12 @@
 ---
 title: "Creating mudata objects"
+author: "Dewey Dunnington"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mudata_create}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 As demonstrated in `vignette("mudata", package = "mudata2")`, mudata objects are easy to use and have a quick data-to-analysis time. In contrast, getting data into the format takes a little more time, and requires some familiarity with **dplyr** and **tidyr**. This process is essentially the data cleaning step, except that instead of discarding all the information that you don't need (or won't fit in the output data structure), you can keep almost everything, possibly adding some documentation that didn't previously exist. This is a front-end investment of time that will make subsequent users of the data better informed about how and why the data were collected in the first place.

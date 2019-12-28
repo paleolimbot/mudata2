@@ -34,7 +34,9 @@ Suggests:
     dbplyr,
     sf (>= 0.5.5),
     covr,
-    hms
+    hms,
+    knitr,
+    rmarkdown
 License: GPL-2
 URL: https://github.com/paleolimbot/mudata
 BugReports: https://github.com/paleolimbot/mudata/issues
@@ -42,3 +44,4 @@ LazyData: true
 RoxygenNote: 6.1.1
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr

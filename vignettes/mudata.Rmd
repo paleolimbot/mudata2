@@ -1,12 +1,5 @@
 ---
 title: "Using mudata objects"
-author: "Dewey Dunnington"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{mudata}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 The **mudata2** package is designed to be used as little as possible. That is, if you need use data that is currently in mudata format, the functions in this package are designed to let you spend as little time as possible reading, subsetting, and inspecting your data. The steps are generally as follows:

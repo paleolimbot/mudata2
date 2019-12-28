@@ -5,3 +5,5 @@
 ^\.travis\.yml$
 ^codecov\.yml$
 ^README-.*\.png$
+^vignettes/mudata\.Rmd$
+^vignettes/mudata_create\.Rmd$

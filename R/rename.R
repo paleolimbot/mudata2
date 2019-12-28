@@ -114,7 +114,7 @@ rename_columns.default <- function(.data, ...) {
     renamer <- columns[new_columns != columns]
     # don't allow renaming of required columns
     if(any(renamer %in% c("dataset", "location", "param", "table", "column", "value"))) {
-      stop("Cannot rename required mudata columns")
+      abort("Cannot rename required mudata columns")
     }
     md_out <- rename_cols_base(.data, stats::setNames(names(renamer), renamer))
     # rename x_columns as well

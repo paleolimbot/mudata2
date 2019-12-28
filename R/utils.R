@@ -46,9 +46,12 @@ parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
   lst <- quos(...)
   
   # check arguments
-  if(length(lst) == 0) stop("Must pass at least one value = columns in parallel_gather()")
+  if(length(lst) == 0) {
+    abort("Must pass at least one value = columns in parallel_gather()")
+  }
+  
   if(is.null(names(lst)) || any(names(lst) == "")) {
-    stop("All arguments to parallel_gather() must be named")
+    abort("All arguments to parallel_gather() must be named")
   }
   
   # use a hack to get column names as character using tidyeval and dplyr
@@ -62,15 +65,18 @@ parallel_gather <- function(x, key, ..., convert = FALSE, factor_key = FALSE) {
 
 parallel_gather_base <- function(x, key, lst_as_colnames, convert = FALSE, factor_key = FALSE) {
   # check arguments
-  if(length(lst_as_colnames) == 0) stop("Must pass at least one value = columns in parallel_gather()")
+  if(length(lst_as_colnames) == 0) {
+    abort("Must pass at least one value = columns in parallel_gather()")
+  }
+  
   if(is.null(names(lst_as_colnames)) || any(names(lst_as_colnames) == "")) {
-    stop("All arguments to parallel_gather() must be named")
+    abort("All arguments to parallel_gather() must be named")
   }
   
   # check length (each argument should refer to the same number of columns)
   arg_col_count <- vapply(lst_as_colnames, length, integer(1))
   if(!length(unique(arg_col_count)) == 1) {
-    stop("All named arguments must refer to the same number of columns")
+    abort("All named arguments must refer to the same number of columns")
   }
   
   # id variables are those not mentioned in ...

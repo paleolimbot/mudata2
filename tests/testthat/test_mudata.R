@@ -273,16 +273,16 @@ test_that("more_tbls argument works as expected in the mudata constructor", {
   # no names
   expect_error(
     mudata(kentvillegreenwood$data, more_tbls = list(flags_dict)),
-    "more_tbls must only contain named tbls"
+    "`more_tbls` must only contain named tbls"
   )
   # some names
   expect_error(
     mudata(kentvillegreenwood$data, more_tbls = list(flags_dict = flags_dict, flags_dict)),
-    "more_tbls must only contain named tbls"
+    "`more_tbls` must only contain named tbls"
   )
   # not tbls
   expect_error(
     mudata(kentvillegreenwood$data, more_tbls = list(flags_dict = list('not a tibble'))),
-    "more_tbls must only contain tbls"
+    "`more_tbls` must only contain tbls"
   )
 })

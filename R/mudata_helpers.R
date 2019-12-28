@@ -233,7 +233,8 @@ update_datasets.default <- function(x, datasets, ...) {
   if(any(rows)) {
     .update_rows(x, "datasets", rows, ...)
   } else {
-    stop("Zero rows were found for dataset: ", paste(datasets, collapse = ", "))
+    bad_datasets <- paste0("'", datasets, "'", collapse = ", ")
+    abort(glue::glue("Zero rows were found for dataset {bad_datasets}"))
   }
 }
 
@@ -257,11 +258,9 @@ update_locations.default <- function(x, locations, datasets, ...) {
   if(any(rows)) {
     .update_rows(x, "locations", rows, ...)
   } else {
-    stop("Zero rows were found for locations: ", 
-         paste(locations, collapse = ", "),
-         " (datasets: ", 
-         paste(datasets, collapse = ", "),
-         ")")
+    bad_locations <- paste0("'", locations, "'", collapse = ", ")
+    bad_datasets <- paste0("'", datasets, "'", collapse = ", ")
+    abort(glue::glue("Zero rows were found for locations {bad_locations} (datasets: {bad_datasets})"))
   }
 }
 
@@ -285,11 +284,9 @@ update_params.default <- function(x, params, datasets, ...) {
   if(any(rows)) {
     .update_rows(x, "params", rows, ...)
   } else {
-    stop("Zero rows were found for params: ", 
-         paste(params, collapse = ", "),
-         " (datasets: ", 
-         paste(datasets, collapse = ", "),
-         ")")
+    bad_params <- paste0("'", params, "'", collapse = ", ")
+    bad_datasets <- paste0("'", datasets, "'", collapse = ", ")
+    abort(glue::glue("Zero rows were found for params {bad_params} (datasets: {bad_datasets})"))
   }
 }
 
@@ -320,13 +317,14 @@ update_columns.default <- function(x, columns, tables, datasets, ...) {
   if(any(rows)) {
     .update_rows(x, "columns", rows, ...)
   } else {
-    stop("Zero rows were found for columns: ", 
-         paste(columns, collapse = ", "),
-         " (datasets: ", 
-         paste(datasets, collapse = ", "),
-         "; tables: ",
-         paste(tables, collapse = ", "),
-         ")")
+    bad_columns <- paste0("'", columns, "'", collapse = ", ")
+    bad_datasets <- paste0("'", datasets, "'", collapse = ", ")
+    bad_tables <- paste0("'", tables, "'", collapse = ", ")
+    abort(
+      glue::glue(
+        "Zero rows were found for columns {bad_columns} (datasets: {bad_datasets}; tables: {bad_tables})"
+      )
+    )
   }
 }
 
@@ -334,8 +332,13 @@ update_columns.default <- function(x, columns, tables, datasets, ...) {
   # assign vals, check that it is one row
   vals <- tibble::tibble(...)
   # no rows mean there is nothign to update
-  if(nrow(vals) == 0) return(x)
-  if(nrow(vals) != 1) stop("values to update must all be of length 1")
+  if(nrow(vals) == 0) {
+    return(x)
+  }
+  
+  if(nrow(vals) != 1) {
+    abort("values to update must all be of length 1")
+  }
   
   # bind vals to end of table with dummy dataset, to ensure types are correct
   # and all columns exist

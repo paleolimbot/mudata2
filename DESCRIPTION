@@ -25,6 +25,7 @@ Imports:
     rlang,
     tidyselect,
     withr,
+    glue,
     fs
 Depends:
     R (>= 3.2.0)

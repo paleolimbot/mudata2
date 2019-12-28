@@ -156,13 +156,13 @@ test_that("default types are handled correctly", {
 
 test_that("type_str values greater than length 1 throw an error", {
   expect_error(parse_type_base(c("", "")), 
-               "type_str must be a character vector of length 1")
+               "`type_str` must be a character vector of length 1")
   expect_error(parse_type_base(character(0)), 
-               "type_str must be a character vector of length 1")
+               "`type_str` must be a character vector of length 1")
   expect_error(parse_type_base(NA), 
-               "type_str must be a character vector of length 1")
+               "`type_str` must be a character vector of length 1")
   expect_error(parse_type_base(NULL), 
-               "type_str must be a character vector of length 1")
+               "`type_str` must be a character vector of length 1")
 })
 
 test_that("types that are not in allowed types throw an error", {

@@ -71,10 +71,10 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   # check validity of extra tbls
   more_tbls <- c(list(...), as.list(more_tbls))
   if(length(more_tbls) > 0 && (is.null(names(more_tbls)) || any(names(more_tbls) == ""))) {
-    stop("more_tbls must only contain named tbls")
+    abort("`more_tbls` must only contain named tbls")
   }
   if(!all(vapply(more_tbls, function(x) dplyr::is.tbl(x) || is.data.frame(x), logical(1)))) {
-    stop("more_tbls must only contain tbls")
+    abort("`more_tbls` must only contain tbls")
   }
   
   # check data object
@@ -439,7 +439,9 @@ as_mudata.list <- function(x, ...) {
   # if there is no dataset column, use mutate to create one
   if(!('dataset' %in% colnames(tbl))) {
     # can't add a dataset to a table with zero rows (ambiguous)
-    if(.isempty(tbl)) stop("Can't add a dataset to a table with zero rows!")
+    if(.isempty(tbl)) {
+      abort("Can't add a dataset to a table with zero rows!")
+    }
     tbl <- dplyr::mutate(tbl, dataset = dataset_id)
   }
   tbl
@@ -450,7 +452,9 @@ as_mudata.list <- function(x, ...) {
   # if there is no location column, use mutate to create one
   if(!('location' %in% colnames(tbl))) {
     # can't add a location to a table with zero rows (ambiguous)
-    if(.isempty(tbl)) stop("Can't add a location to a table with zero rows!")
+    if(.isempty(tbl)) {
+      abort("Can't add a location to a table with zero rows!")
+    }
     tbl <- dplyr::mutate(tbl, location = location_id)
   }
   tbl
@@ -459,16 +463,13 @@ as_mudata.list <- function(x, ...) {
 # guesses the "x" column, or the column along which the data are aligned
 guess_x_columns <- function(df, quiet = FALSE) {
   # make sure value is a column
-  if(!("value" %in% colnames(df))) stop("Could not guess x columns: no 'value' column")
+  if(!("value" %in% colnames(df))) {
+    abort("Could not guess x columns: no `value` column")
+  }
   
   # looking for the column name(s) before 'value'
   value <- which(colnames(df) == "value")[1]
   cols <- setdiff(colnames(df)[1:value], c("dataset", "location", "param", "value"))
-  
-  # x_columns should be able to be character(0), for the case where there is no axis other than
-  # dataset, location, and param
-  #if(length(cols) == 0) stop("Could not guess x columns from names: ",
-  #                           paste(colnames(df), collapse = ", "))
   
   if(!quiet) message("Guessing x columns: ", paste(cols, collapse = ", "))
   

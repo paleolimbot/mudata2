@@ -88,7 +88,7 @@ test_that("possibly not valid JSON objects are generate correct warnings/errors"
   json$locations <- 6
   tf2 <- tempfile()
   jsonlite::write_json(json, tf2)
-  expect_error(read_mudata_json(tf2), "JSON objects of incorrect type: locations")
+  expect_error(read_mudata_json(tf2), "JSON objects of incorrect type: 'locations'")
   unlink(tf2)
   
   json <- jsonlite::read_json(tf)
@@ -371,7 +371,7 @@ test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
       } else {
         tzequal <- identical(tz1, tz2)
       }
-      if(all_equal && !identical(val1, val2)) stop("date vectors not identical")
+      if(all_equal && !identical(val1, val2)) abort("date vectors not identical")
       all_equal && tzequal
     } else if(inherits(val1, "factor") || inherits(val2, "factor")) {
       identical(as.character(val1), as.character(val2))
@@ -444,7 +444,7 @@ test_that("write directory function doesn't overwrite without permission", {
   write_mudata_dir(kentvillegreenwood, outfile)
   
   expect_error(write_mudata_dir(kentvillegreenwood, outfile),
-               "Directory .*? exists. Use ovewrite = TRUE to overwrite.")
+               "Directory '.*?' exists. Use `overwrite = TRUE` to overwrite.")
   expect_silent(write_mudata_dir(kentvillegreenwood, outfile, overwrite = TRUE))
   unlink(outfile, recursive = TRUE)  
 })

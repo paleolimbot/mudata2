@@ -144,7 +144,11 @@ write_mudata_dir <- function(md, filename, overwrite = FALSE, validate = TRUE,
   dir.create(filename, showWarnings = FALSE)
   # check that output directory was created
   if(!dir.exists(filename)) {
-    abort(glue::glue("Failed to create directory: '{filename}'"))
+    abort(
+      glue::glue(
+        "Failed to create directory '{filename}'\nCheck that you have sufficient permissions."
+      )
+    )
   }
   
   # treat attributes like a tbl
@@ -157,7 +161,7 @@ write_mudata_dir <- function(md, filename, overwrite = FALSE, validate = TRUE,
   # safe lapply on md_write to write_csv
   result <- lapply(names(md_write), function(tbl_name) {
     fname <- file.path(filename, paste0(gsub("[^A-Za-z0-9_.-]+", "_", tbl_name), ".csv"))
-    try(readr::write_csv(md_write[[tbl_name]], fname, na = ""))
+    try(readr::write_csv(md_write[[tbl_name]], fname, na = ""), silent = TRUE)
   })
   
   # check that write succeeded
@@ -290,6 +294,16 @@ write_mudata_json_common <- function(md, fun, validate = TRUE, update_columns = 
 #' @rdname write_mudata
 #' @export
 read_mudata_json <- function(filename, validate = TRUE, ...) {
+  # check that file exists
+  if(!file.exists(filename)) {
+    abort(glue::glue("File '{filename}' does not exist"))
+  }
+  
+  if(dir.exists(filename)) {
+    abort(glue::glue("'{filename}' is a directory"))
+  }
+  
+  
   read_mudata_json_common(jsonlite::read_json, path = filename, validate = validate, ...)
 }
 
@@ -394,7 +408,10 @@ read_common <- function(obj, mudata_tbls, meta_list, type_strs, validate) {
 
 # common function to read a columns table (type_str_tbl)
 type_strs_from_columns <- function(columns_tbl) {
-  if(is.null(columns_tbl)) return(list())
+  if(is.null(columns_tbl)) {
+    abort("`columns_tbl` is NULL") # nocov
+  }
+  
   if(!all(c("table", "column", "type") %in% colnames(columns_tbl))) {
     # no types specified, quietly return list()
     return(list())
@@ -409,8 +426,10 @@ type_strs_from_columns <- function(columns_tbl) {
   is_unique <- try(.checkunique(type_str_tbl, 'columns', c("table", "column")), silent = TRUE)
   if(inherits(is_unique, "try-error")) {
     # duplicate values = slightly malformed columns table. return list() with a message
+    # nocov start
     message("Possibly malformed columns table: different data types for at least one column among datasets.")
     return(list())
+    # nocov end
   }
   
   # create list of type_str named lists
@@ -509,15 +528,12 @@ mudata_prepare_tbl <- function(x, format = NA, ...) {
 #' @rdname mudata_prepare_column
 #' @export 
 mudata_prepare_tbl.default <- function(x, format = NA, ...) {
-  x
+  x # nocov
 }
 
 #' @rdname mudata_prepare_column
 #' @export 
 mudata_prepare_tbl.tbl <- function(x, format = NA, ...) {
-  # collect foreign data frames
-  x <- dplyr::collect(x)
-  
   # apply mudata_prepare_column, make a tbl
   lapply(x, mudata_prepare_column, format = format, ...) %>%
     tibble::as_tibble()
@@ -526,7 +542,7 @@ mudata_prepare_tbl.tbl <- function(x, format = NA, ...) {
 #' @rdname mudata_prepare_column
 #' @export 
 mudata_prepare_tbl.data.frame <- function(x, format = NA, ...) {
-  mudata_prepare_tbl.tbl(x, format = format, ...)
+  mudata_prepare_tbl.tbl(x, format = format, ...) # nocov
 }
 
 # default is to just return the object unchanged

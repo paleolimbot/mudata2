@@ -40,15 +40,8 @@ test_that("x_columns are correctly assigned/identified", {
   pocmaj_nodepth <- pocmaj_data %>% 
     dplyr::filter(depth == 0) %>%
     dplyr::select(-depth)
-  expect_identical(x_columns(mudata(pocmaj_nodepth)), character(0))
   
-  # when zero x_columns are passed (or guessed), previouslly there should have been an error
-  # pocmajinv <- pocmaj_data %>% dplyr::select(-depth)
-  # expect_error(mudata(pocmajinv), "Could not guess x columns from names: location, param, value")
-  # expect_error(mudata(pocmaj_data, x_columns = character(0)),
-  #              "x_columns must be a character vector of length > 0")
-  # expect_error(mudata(pocmaj_data, x_columns = "not_in_pocmaj_data"),
-  #              "Table 'data' is missing columns 'not_in_pocmaj_data'")
+  expect_identical(x_columns(mudata(pocmaj_nodepth)), character(0))
 })
 
 test_that("passing invalid inputs throws an error", {
@@ -174,9 +167,68 @@ test_that("duplicate column metadata are detected", {
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate columns in columns table")
 })
 
+test_that("odd objects are detected in new/validate functions", {
+  expect_error(new_mudata(character()), "not a list")
+  expect_error(
+    new_mudata(list(tbl1 = structure(list(), class = "tbl_sql"))), 
+    "Can't create a mudata object"
+  )
+  
+  expect_error(validate_mudata(character()), "not a 'mudata'")
+  expect_error(validate_mudata(structure(character(), class = "mudata")), "not a list")
+  expect_error(validate_mudata(structure(list(), class = "mudata")), "not a named list")
+  expect_error(validate_mudata(structure(list(a = 1, 2), class = "mudata")), "must be named")
+  expect_error(
+    validate_mudata(structure(list(a = 1, a = 2), class = "mudata")), 
+    "missing from md:"
+  )
+  
+  kg2 <- kentvillegreenwood
+  kg2$data <- character()
+  expect_error(validate_mudata(kg2), "not a tbl or data\\.frame: 'data'")
+  
+  kg2 <- kentvillegreenwood
+  attr(kg2, "x_columns") <- NULL
+  expect_error(validate_mudata(kg2), "missing attribute 'x_columns'")
+  attr(kg2, "x_columns") <- 4
+  expect_error(validate_mudata(kg2), "not a character vector")
+})
+
+test_that("validate checks correctly for internal consistency", {
+  kg2 <- kentvillegreenwood
+  kg2$data <- kg2$data[kg2$data$location != "GREENWOOD A", ]
+  expect_error(validate_mudata(kg2), "Locations not included in location table")
+  
+  kg2 <- kentvillegreenwood
+  kg2$data <- kg2$data[kg2$data$param != "maxtemp", ]
+  expect_error(validate_mudata(kg2), "Params not included in params table")
+  
+  kg2 <- kentvillegreenwood
+  kg2$datasets$dataset <- "new ds name"
+  expect_error(validate_mudata(kg2), "Datasets not included in datasets table")
+  
+  kg2 <- kentvillegreenwood
+  kg2$locations <- kg2$locations[numeric(0), ]
+  expect_error(validate_mudata(kg2), "Locations not included in data table")
+  
+  kg2 <- kentvillegreenwood
+  kg2$params <- kg2$params[numeric(0), ]
+  expect_error(validate_mudata(kg2), "Params not included in data table")
+  
+  kg2 <- kentvillegreenwood
+  kg2$datasets <- kg2$datasets[numeric(0), ]
+  expect_error(validate_mudata(kg2), "Datasets not included in data table")
+})
+
 test_that("printing of a mudata actually prints things", {
   md <- mudata(pocmaj_data)
   expect_output(expect_is(print(md), "mudata"))
+})
+
+test_that("zero-length vectors can be printed", {
+  md_zero <- mudata(pocmaj_data, x_columns = "depth") %>% 
+    select_datasets()
+  expect_output(print(md_zero), "<none>")
 })
 
 test_that("mudata summaries are tibbles", {

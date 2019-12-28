@@ -331,9 +331,10 @@ update_columns.default <- function(x, columns, tables, datasets, ...) {
 .update_rows <- function(x, tbl, rows, ...) {
   # assign vals, check that it is one row
   vals <- tibble::tibble(...)
-  # no rows mean there is nothign to update
+  # no rows mean there is nothing to update
+  # this gets handled by wrapper functions
   if(nrow(vals) == 0) {
-    return(x)
+    return(x) # nocov
   }
   
   if(nrow(vals) != 1) {

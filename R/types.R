@@ -209,8 +209,8 @@ parse_json <- function(x, na = c("NA", ""), ...) {
 parse_wkt <- function(x, na = c("NA", ""), crs = sf::NA_crs_, ...) {
   # check if sf is installed, if not, return character vector with a warning
   if(!requireNamespace("sf", quietly = TRUE)) {
-    warning("Package 'sf' required to read wkt columns. Keeping column as is.")
-    return(x)
+    rlang::warn("Package 'sf' required to read wkt columns. Keeping column as is.") # nocov
+    return(x) # nocov
   }
   
   # make x a character vector
@@ -232,9 +232,8 @@ parse_wkt_lapply <- function(x, na = c("NA", ""), crs = sf::NA_crs_, ...) {
   x <- as.character(x)
   
   # use st_as_sfc to parse WKT from non-NA values
+  # NAs are handled by parse_lapply
   col <- parse_lapply(x, function(element) {
-    # remove NA values before parsing
-    if(is.na(element) | (element %in% na)) return(NULL)
     sf::st_as_sfc(element, na = na, ...)[[1]]
   })
   
@@ -256,7 +255,9 @@ parse_lapply <- function(x, fun, na = c("NA", ""), ...) {
   # safely lapply
   col <- lapply(x, function(element) {
     # NAs become NULL
-    if(is.na(element) || (element %in% na)) return(NULL) # literal NULL
+    if(is.na(element) || (element %in% na)) {
+      return(NULL) # literal NULL
+    }
     
     # apply fun to elemement
     try(fun(element), silent = TRUE)

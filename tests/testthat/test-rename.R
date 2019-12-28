@@ -4,15 +4,19 @@ context("renaming functions")
 # ---- forward-facing rename functions ----
 
 test_that("rename functions work as expected", {
-  
+  expect_identical(rename_datasets(kentvillegreenwood), kentvillegreenwood)
   expect_identical(
     rename_datasets(kentvillegreenwood, avalley = ecclimate) %>% distinct_datasets(),
     "avalley"
   )
+  
+  expect_identical(rename_locations(kentvillegreenwood), kentvillegreenwood)
   expect_identical(
     rename_locations(kentvillegreenwood, Greenwood = starts_with("GREENWOOD")) %>% distinct_locations(),
     c("Greenwood", "KENTVILLE CDA CS")
   )
+  
+  expect_identical(rename_params(kentvillegreenwood), kentvillegreenwood)
   expect_true(
     all(c("max_temp", "min_temp") %in% 
           (rename_params(kentvillegreenwood, max_temp = maxtemp, min_temp = mintemp) %>% 
@@ -24,6 +28,7 @@ test_that("rename functions work as expected", {
              distinct_params()))
   )
   
+  expect_identical(rename_columns(kentvillegreenwood), kentvillegreenwood)
   col_rename <- rename_columns(kentvillegreenwood, lon = longitude, lat = latitude) %>% 
     tbl_locations()
   expect_true(all(c("lat", "lon") %in% colnames(col_rename)))

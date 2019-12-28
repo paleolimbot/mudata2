@@ -171,7 +171,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
   
   # validate object
   if(identical(validate, TRUE)) {
-    validate <- stop
+    validate <- abort
   }
   if(!identical(validate, FALSE)) {
     validate_mudata(md, action = validate)
@@ -183,7 +183,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
 
 #' Validate, create a mudata object
 #' 
-#' Validates a mudata object by calling [stop] when an error is found;
+#' Validates a mudata object by calling [rlang::abort] when an error is found;
 #' creates a mudata object from a [list]. Validation is generally performed
 #' when objects are created using [mudata], or when objects are read/writen
 #' using [read_mudata] and [write_mudata].
@@ -219,7 +219,7 @@ new_mudata <- function(md, x_columns) {
 #' @rdname new_mudata
 #' @export
 validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
-                            action = stop) {
+                            action = abort) {
   # check that it is a mudata object
   if(!inherits(md, "mudata")) action("Object is not a 'mudata' object")
   
@@ -229,21 +229,28 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
   if(any(names(md) == "")) action("All members of md must be named")
   
   # check names
-  missing_names <- setdiff(c("data", "locations", "params", "datasets", "columns"),
-                           names(md))
-  if(length(missing_names) > 0) action("The following tables were missing from md: ",
-                                     paste(missing_names, collapse = " "))
+  missing_names <- setdiff(
+    c("data", "locations", "params", "datasets", "columns"),
+    names(md)
+  )
+  
+  if(length(missing_names) > 0) {
+    missing_names_list <- paste0("'", missing_names, "'", collapse = ", ")
+    action(glue::glue("The following tables were missing from md: {missing_names_list}"))
+  }
   
   # check types (all members of md must be tbls)
   wrong_type_names <- !vapply(md, function(x) dplyr::is.tbl(x) || is.data.frame(x), 
                               logical(1))
-  if(any(wrong_type_names)) action("The following tables were not a tbl or data.frame: ",
-                                   paste(names(md)[wrong_type_names], collapse = " "))
+  if(any(wrong_type_names)) {
+    wrong_type_list <- paste0("'", names(md)[wrong_type_names], "'", collapse = " ")
+    action(glue::glue("The following tables were not a tbl or data.frame: {wrong_type_list}"))
+  }
   
   # check attributes
   x_columns <- attr(md, "x_columns")
-  if(is.null(x_columns)) action("md is missing attribute x_columns")
-  if(!is.character(x_columns)) action("attr(md, 'x_columns') is not a character vector")
+  if(is.null(x_columns)) action("md is missing attribute 'x_columns'")
+  if(!is.character(x_columns)) action("`attr(md, 'x_columns')` is not a character vector")
   
   # check columns/classes
   .checkcols(md$locations, 'locations', c('dataset', 'location'), action = action)
@@ -278,25 +285,41 @@ validate_mudata <- function(md, check_unique = TRUE, check_references = TRUE,
     
     # ensure locations in data are in the locations table
     noinflocs <- setdiff(table_locs, locations)
-    if(length(noinflocs) > 0) action("Locations not included in location table: ", 
-                                     paste(noinflocs, collapse=' '))
+    if(length(noinflocs) > 0) {
+      noinflocs_list <- paste0("'", noinflocs, "'", collapse=", ")
+      action(glue::glue("Locations not included in location table: {noinflocs_list}"))
+    }
+    
     noinfparams <- setdiff(table_params, params)
-    if(length(noinfparams) > 0) action("Params not included in param table: ", 
-                                       paste(noinfparams, collapse=' '))
+    if(length(noinfparams) > 0) {
+      noinfparams_list <- paste0("'", noinfparams, "'", collapse=", ")
+      action(glue::glue("Params not included in params table: {noinfparams_list}"))
+    }
+    
     noinfds <- setdiff(table_datasets, datasets)
-    if(length(noinfds) > 0) action("Datasets not included in dataset table: ", 
-                                   paste(noinfds, collapse=' '))
+    if(length(noinfds) > 0) {
+      noinfds_list <- paste0("'", noinfds, "'", collapse=", ")
+      action(glue::glue("Datasets not included in datasets table: {noinfds_list}"))
+    }
     
     # ensure there are no extraneous information in information tables
     noinflocs <- setdiff(locations, table_locs)
-    if(length(noinflocs) > 0) action("Locations ", paste(noinflocs, collapse=' '), 
-                                     " not included in data")
+    if(length(noinflocs) > 0) {
+      noinflocs_list <- paste0("'", noinflocs, "'", collapse=", ")
+      action(glue::glue("Locations not included in data table: {noinflocs_list}"))
+    }
+    
     noinfparams <- setdiff(params, table_params)
-    if(length(noinfparams) > 0) action("Parameters ", paste(noinfparams, collapse=' '), 
-                                       " not included in data")
+    if(length(noinfparams) > 0) {
+      noinfparams_list <- paste0("'", noinfparams, "'", collapse=", ")
+      action(glue::glue("Params not included in data table: {noinfparams_list}"))
+    }
+    
     noinfds <- setdiff(datasets, table_datasets)
-    if(length(noinfds) > 0) action("Datasets ", paste(noinfds, collapse=' '), 
-                                   " not included in data")
+    if(length(noinfds) > 0) {
+      noinfds_list <- paste0("'", noinfds, "'", collapse=", ")
+      action(glue::glue("Datasets not included in data table: {noinfds_list}"))
+    }
   }
   
   if(check_unique) {
@@ -373,7 +396,7 @@ as_mudata.list <- function(x, ...) {
          ...)
 }
 
-.checkunique <- function(tbl, context, ..., action = stop) {
+.checkunique <- function(tbl, context, ..., action = abort) {
   # empty tables can be considered unique
   if(.isempty(tbl)) return()
   
@@ -405,7 +428,7 @@ as_mudata.list <- function(x, ...) {
   nrow(tbl) == 0
 }
 
-.checktypes <- function(df, name, cols, types, action = stop) {
+.checktypes <- function(df, name, cols, types, action = abort) {
   df_head <- utils::head(df)
   wrong_type_cols <- !vapply(cols, 
                              function(col_name) any(class(df_head[[col_name]]) %in% types), 
@@ -418,7 +441,7 @@ as_mudata.list <- function(x, ...) {
 }
 
 # ensures all columns in required_cols are in df, and that df has colnames to begin with
-.checkcols <- function(df, name, required_cols, action = stop) {
+.checkcols <- function(df, name, required_cols, action = abort) {
   if(!inherits(df, "data.frame") && !inherits(df, "tbl")) {
     action(sprintf("Table '%s' is not a data.frame", name))
   }
@@ -452,7 +475,7 @@ as_mudata.list <- function(x, ...) {
   if(!('location' %in% colnames(tbl))) {
     # can't add a location to a table with zero rows (ambiguous)
     if(.isempty(tbl)) {
-      abort("Can't add a location to a table with zero rows!")
+      abort("Can't add a location to a table with zero rows!") # nocov
     }
     tbl <- dplyr::mutate(tbl, location = location_id)
   }
@@ -463,7 +486,7 @@ as_mudata.list <- function(x, ...) {
 guess_x_columns <- function(df, quiet = FALSE) {
   # make sure value is a column
   if(!("value" %in% colnames(df))) {
-    abort("Could not guess x columns: no `value` column")
+    abort("Could not guess x columns: no `value` column") # nocov
   }
   
   # looking for the column name(s) before 'value'
@@ -527,13 +550,6 @@ summary.mudata <- function(object, ...) {
                        sd_value = stats::sd(value, na.rm = TRUE), 
                        n = n(), 
                        n_NA = sum(is.na(value)))
-  } else if(is.numeric(data_head$value) && inherits(data, "tbl_sql")) {
-    df <- data %>%
-      dplyr::group_by_at(dplyr::vars("param", "location", "dataset")) %>%
-      dplyr::summarise(mean_value = mean(value), 
-                       sd_value = sd(value), 
-                       n = n(), 
-                       n_NA = sum(is.na(value)))
   } else {
     df <- data %>%
       dplyr::group_by_at(dplyr::vars("param", "location", "dataset")) %>%
@@ -551,7 +567,9 @@ format_vector <- function(x, width = NULL, quote = '"', prefix = "") {
   effective_width <- width - nchar(prefix)
   
   # if zero length, use <none>
-  if(length(x) == 0) return(paste0(prefix, "<none>"))
+  if(length(x) == 0) {
+    return(paste0(prefix, "<none>"))
+  }
   
   # try to fit as many possible values into to one line as possible
   out_len <- length(x)
@@ -577,6 +595,6 @@ format_vector <- function(x, width = NULL, quote = '"', prefix = "") {
   
   # no values will fit within width
   # (should never happen)
-  return(sprintf("%s... %s values", prefix, length(x)))
+  return(sprintf("%s... %s values", prefix, length(x))) # nocov
 }
 

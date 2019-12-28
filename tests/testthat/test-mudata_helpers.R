@@ -90,6 +90,12 @@ test_that("update_datasets() function works as expected", {
     update_datasets(kentvillegreenwood, "not_a_dataset", newkey = "newval"),
     "Zero rows were found for dataset"
   )
+  
+  # check bad values
+  expect_error(
+    update_datasets(kentvillegreenwood, newkey = c("newval1", "newval2")),
+    "values to update must all be of length 1"
+  )
 })
 
 test_that("update_locations() function works as expected", {

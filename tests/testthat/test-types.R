@@ -310,6 +310,10 @@ test_that("objects generate the correct type strings", {
   hard_crs_proj4 <- hard_crs$proj4string
   expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = hard_crs)), 
                sprintf("wkt(crs='%s')", hard_crs_proj4))
+  hard_crs$epsg <- NULL
+  hard_crs_proj4 <- hard_crs$proj4string
+  expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = hard_crs)), 
+               sprintf("wkt(crs='%s')", hard_crs_proj4))
 })
 
 test_that("datetimes with timezones generate the correct strings", {
@@ -347,6 +351,12 @@ test_that("generate_type_str generates expected output", {
                c("double", "integer", "character", "character", "character",
                  "date", "datetime", "json", "wkt", "time"))
   
+})
+
+test_that("generate_type_tbl() can dal with no dataset tbl", {
+  kg2 <- kentvillegreenwood
+  kg2$datasets <- NULL
+  expect_true(all(is.na(generate_type_tbl(kg2)$dataset)))
 })
 
 test_that("generate_type_str works on mudata objects", {

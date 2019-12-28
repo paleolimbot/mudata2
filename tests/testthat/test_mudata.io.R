@@ -251,7 +251,7 @@ test_that("mudata_prepare_column and mudata_parse_column are opposites", {
     c6 = as.POSIXct(c5),
     c7 = structure(list(list(1), list(2), list(3)), class = c("json_column", "list")),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
-    c9 = hms::as.hms(1:3)
+    c9 = hms::as_hms(1:3)
   )
   
   # get type strings, expected output classes
@@ -295,7 +295,7 @@ test_that("mudata_prepare_tbl works as intended", {
     c6 = as.POSIXct(c5),
     c7 = list(list(1), list(2), list(3)),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
-    c9 = hms::as.hms(1:3)
+    c9 = hms::as_hms(1:3)
   )
   
   prepared <- mudata_prepare_tbl(test_df)
@@ -329,7 +329,7 @@ test_that("mudata_prepare_tbl and mudata_parse_tbl are opposites", {
     c6 = lubridate::force_tz(as.POSIXct(c5), "UTC"),
     c7 = list(list(1), list(2), list(3)),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
-    c9 = hms::as.hms(1:3)
+    c9 = hms::as_hms(1:3)
   )
   
   # create prepared versions

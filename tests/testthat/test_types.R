@@ -334,7 +334,7 @@ test_that("generate_type_str generates expected output", {
     c6 = as.POSIXct(c5),
     c7 = structure(list(list(1), list(2), list(3)), class = c("json_column", "list")),
     c8 = sf::st_as_sfc(c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")),
-    c9 = hms::as.hms(1:3)
+    c9 = hms::as_hms(1:3)
   )
   
   type_table <- generate_type_tbl(test_df)

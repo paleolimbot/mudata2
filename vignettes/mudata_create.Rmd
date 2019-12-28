@@ -112,7 +112,7 @@ pocmajwide <- pocmajsum %>%
   rename(location = core)
 ```
 
-Then (also as above), we need to `gather()` the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
+Then (also as above), we need to `gather()` the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_gather()`.
 
 ```{r}
 pocmajlong <- parallel_gather(

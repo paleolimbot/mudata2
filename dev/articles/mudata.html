@@ -99,7 +99,7 @@
 <ul>
 <li>Read in the data using <code><a href="../reference/write_mudata.html">read_mudata()</a></code>
 </li>
-<li>See what it contains using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, <code><a href="https://rdrr.io/r/base/print.html">print()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code>, <code><a href="../reference/distinct_params.html">distinct_locations()</a></code>, and <code><a href="../reference/distinct_params.html">distinct_params()</a></code>
+<li>See what it contains using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, <code><a href="https://rdrr.io/r/base/print.html">print()</a></code>, <code><a href="../reference/distinct_params.html">distinct_locations()</a></code>, and <code><a href="../reference/distinct_params.html">distinct_params()</a></code>
 </li>
 <li>Inspect the metadata using <code><a href="../reference/tbl_data.html">tbl_locations()</a></code> and <code><a href="../reference/tbl_data.html">tbl_params()</a></code>
 </li>
@@ -151,7 +151,7 @@
 <div id="inspecting-an-object" class="section level2">
 <h2 class="hasAnchor">
 <a href="#inspecting-an-object" class="anchor"></a>Inspecting an object</h2>
-<p>The three main ways to quickly inspect a mudata object are <code><a href="https://rdrr.io/r/base/print.html">print()</a></code>, <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, and <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code>. The <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> function is what you get when you type the name of the object at the prompt, and gives a short summary of the object. The output suggests a couple of other ways to inspect the object, including <code><a href="../reference/distinct_params.html">distinct_locations()</a></code>, which returns a character vector of location identifiers, and <code><a href="../reference/distinct_params.html">distinct_params()</a></code>, which returns a character vector of parameter identifiers.</p>
+<p>The three main ways to quickly inspect a mudata object are <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> and <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>. The <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> function is what you get when you type the name of the object at the prompt, and gives a short summary of the object. The output suggests a couple of other ways to inspect the object, including <code><a href="../reference/distinct_params.html">distinct_locations()</a></code>, which returns a character vector of location identifiers, and <code><a href="../reference/distinct_params.html">distinct_params()</a></code>, which returns a character vector of parameter identifiers.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(ns_climate)</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
@@ -185,18 +185,13 @@
 ##  9 extr_max_temp MOUNT UNIACKE 6… ecclimate_mon…       19.7     8.21   972    30
 ## 10 extr_max_temp NAPPAN CDA 6414  ecclimate_mon…       19.3     8.04  1121    19
 ## # … with 127 more rows</code></pre>
-<p>Finally, the <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot()</a></code> function provides an attempt at the best way to plot the object. The smaller the subset, the more useful the plot, but it produces reasonable results for large objects as well. This function produces <strong>ggplot2</strong> objects, which can be modified as such (e.g., <code>+ scale_y_reverse()</code>, etc.).</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html">autoplot</a></span>(ns_climate)</a></code></pre></div>
-<pre><code>## Using x = "date", y = "value"</code></pre>
-<pre><code>## Using first 9 facets of 11. Use max_facets = FALSE to plot all facets</code></pre>
-<p><img src="mudata_files/figure-html/autoplot-1.png" width="672"></p>
 </div>
 <div id="inspecting-metadata" class="section level2">
 <h2 class="hasAnchor">
 <a href="#inspecting-metadata" class="anchor"></a>Inspecting metadata</h2>
 <p>You can have a look at the embedded documentation using <code><a href="../reference/tbl_data.html">tbl_params()</a></code>, and <code><a href="../reference/tbl_data.html">tbl_locations()</a></code>, which contain any additional information about parameters and locations for which data are available. The identifiers (i.e., <code>param</code> and <code>location</code> columns) of these can be used to subset the object using <code>select_*()</code> functions; the tables themselves can be used to subset the object using the <code>filter_*()</code> functions.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co"># extract the parameters table</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_params</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># extract the parameters table</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_params</a></span>()</a></code></pre></div>
 <pre><code>## # A tibble: 11 x 4
 ##    dataset           param              label                      unit    
 ##    &lt;chr&gt;             &lt;chr&gt;              &lt;chr&gt;                      &lt;chr&gt;   
@@ -211,8 +206,8 @@
 ##  9 ecclimate_monthly snow_grnd_last_day Snow Grnd Last Day (cm)    cm      
 ## 10 ecclimate_monthly dir_of_max_gust    Dir of Max Gust (10's deg) 10's deg
 ## 11 ecclimate_monthly spd_of_max_gust    Spd of Max Gust (km/h)     km/h</code></pre>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="co"># exract the locations table</span></a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_locations</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># exract the locations table</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_locations</a></span>()</a></code></pre></div>
 <pre><code>## # A tibble: 15 x 19
 ##    dataset location name  province climate_id station_id wmo_id tc_id latitude
 ##    &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           &lt;int&gt;  &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;
@@ -240,14 +235,14 @@
 <h2 class="hasAnchor">
 <a href="#subsetting-an-object" class="anchor"></a>Subsetting an object</h2>
 <p>You can subset mudata objects using <code><a href="../reference/selecters.html">select_params()</a></code> and <code><a href="../reference/selecters.html">select_locations()</a></code>, which use <strong>dplyr</strong>-like selection syntax to quickly subset mudata objects using the identifiers from <code><a href="../reference/distinct_params.html">distinct_locations()</a></code> and <code><a href="../reference/distinct_params.html">distinct_params()</a></code> (respectively).</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co"># find out which parameters are available</span></a>
-<a class="sourceLine" id="cb16-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/distinct_params.html">distinct_params</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># find out which parameters are available</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/distinct_params.html">distinct_params</a></span>()</a></code></pre></div>
 <pre><code>##  [1] "dir_of_max_gust"    "extr_max_temp"      "extr_min_temp"     
 ##  [4] "mean_max_temp"      "mean_min_temp"      "mean_temp"         
 ##  [7] "snow_grnd_last_day" "spd_of_max_gust"    "total_precip"      
 ## [10] "total_rain"         "total_snow"</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># subset by parameter</span></a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(mean_temp, total_precip)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="co"># subset by parameter</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(mean_temp, total_precip)</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
 ##   distinct_locations(): "ANNAPOLIS ROYAL 6289", "BADDECK 6297" ... and 13 more
@@ -265,7 +260,7 @@
 ## 5 ecclimate_monthly SABLE ISLAND 6454 mean_temp 1897-05-01    NA M     Missing  
 ## 6 ecclimate_monthly SABLE ISLAND 6454 mean_temp 1897-06-01    NA M     Missing</code></pre>
 <p>You can also use the <strong>dplyr</strong> select helpers to select related params/locations…</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">contains</a></span>(<span class="st">"temp"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">contains</a></span>(<span class="st">"temp"</span>))</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
 ##   distinct_locations(): "ANNAPOLIS ROYAL 6289", "BADDECK 6297" ... and 13 more
@@ -283,7 +278,7 @@
 ## 5 ecclimate_month… SABLE ISLAND 64… mean_max_t… 1897-05-01    NA M     Missing  
 ## 6 ecclimate_month… SABLE ISLAND 64… mean_max_t… 1897-06-01    NA M     Missing</code></pre>
 <p>…and rename params/locations on the fly.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/selecters.html">select_locations</a></span>(<span class="dt">Kentville =</span> <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"KENT"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/selecters.html">select_locations</a></span>(<span class="dt">Kentville =</span> <span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"KENT"</span>))</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
 ##   distinct_locations(): "Kentville"
@@ -301,9 +296,9 @@
 ## 5 ecclimate_monthly Kentville mean_max_temp 1913-05-01  12.5 &lt;NA&gt;  &lt;NA&gt;     
 ## 6 ecclimate_monthly Kentville mean_max_temp 1913-06-01  19.9 &lt;NA&gt;  &lt;NA&gt;</code></pre>
 <p>To select params/locations based on the <code><a href="../reference/tbl_data.html">tbl_params()</a></code> and <code><a href="../reference/tbl_data.html">tbl_locations()</a></code> tables, you can use the <code>filter_*()</code> functions (note that <code>last_year</code> is a column in <code><a href="../reference/tbl_data.html">tbl_locations()</a></code>, and <code>unit</code> is a column in <code><a href="../reference/tbl_data.html">tbl_params()</a></code>):</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="co"># only use locations whose last data point was after 2000</span></a>
-<a class="sourceLine" id="cb24-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_locations</a></span>(last_year <span class="op">&gt;</span><span class="st"> </span><span class="dv">2000</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co"># only use locations whose last data point was after 2000</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_locations</a></span>(last_year <span class="op">&gt;</span><span class="st"> </span><span class="dv">2000</span>)</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
 ##   distinct_locations(): "ANNAPOLIS ROYAL 6289", "COLLEGEVILLE 6329" ... and 7 more
@@ -320,9 +315,9 @@
 ## 4 ecclimate_month… SABLE ISLAND 64… mean_max_t… 1897-04-01    NA M     Missing  
 ## 5 ecclimate_month… SABLE ISLAND 64… mean_max_t… 1897-05-01    NA M     Missing  
 ## 6 ecclimate_month… SABLE ISLAND 64… mean_max_t… 1897-06-01    NA M     Missing</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co"># use only params measured in mm</span></a>
-<a class="sourceLine" id="cb26-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_params</a></span>(unit <span class="op">==</span><span class="st"> "mm"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co"># use only params measured in mm</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_params</a></span>(unit <span class="op">==</span><span class="st"> "mm"</span>)</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
 ##   distinct_locations(): "ANNAPOLIS ROYAL 6289", "BADDECK 6297" ... and 13 more
@@ -340,15 +335,15 @@
 ## 5 ecclimate_monthly SABLE ISLAND 6454 total_ra… 1891-05-01  44.7 &lt;NA&gt;  &lt;NA&gt;     
 ## 6 ecclimate_monthly SABLE ISLAND 6454 total_ra… 1891-06-01 106.  &lt;NA&gt;  &lt;NA&gt;</code></pre>
 <p>Similarly, we can subset parameters, locations, and the data table all at once using <code><a href="../reference/filterers.html">filter_data()</a></code>.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(lubridate)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(lubridate)</a></code></pre></div>
 <pre><code>## 
 ## Attaching package: 'lubridate'</code></pre>
 <pre><code>## The following object is masked from 'package:base':
 ## 
 ##     date</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># extract only June temperature from the data table</span></a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb31-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_data</a></span>(<span class="kw"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span>(date) <span class="op">==</span><span class="st"> </span><span class="dv">6</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co"># extract only June temperature from the data table</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_data</a></span>(<span class="kw"><a href="http://lubridate.tidyverse.org/reference/month.html">month</a></span>(date) <span class="op">==</span><span class="st"> </span><span class="dv">6</span>)</a></code></pre></div>
 <pre><code>## A mudata object aligned along "date"
 ##   distinct_datasets():  "ecclimate_monthly"
 ##   distinct_locations(): "ANNAPOLIS ROYAL 6289", "BADDECK 6297" ... and 13 more
@@ -370,7 +365,7 @@
 <h2 class="hasAnchor">
 <a href="#extracting-data" class="anchor"></a>Extracting data</h2>
 <p>The data is stored in the data table (i.e., <code><a href="../reference/tbl_data.html">tbl_data()</a></code>) in parameter-long form (that is, one row per measurement rather than one row per observation). This has advantages in that information about each measurement can be stored next to the value (e.g., standard deviation, notes, etc.), however it is rarely the form required for analysis. To extract data in parameter-long form, you can use <code><a href="../reference/tbl_data.html">tbl_data()</a></code>:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data</a></span>()</a></code></pre></div>
 <pre><code>## # A tibble: 115,541 x 7
 ##    dataset          location        param       date       value flag  flag_text
 ##    &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt;       &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    
@@ -386,7 +381,7 @@
 ## 10 ecclimate_month… SABLE ISLAND 6… mean_max_t… 1897-10-01  12.2 &lt;NA&gt;  &lt;NA&gt;     
 ## # … with 115,531 more rows</code></pre>
 <p>To extract data in a more standard parameter-wide form, you can use <code><a href="../reference/tbl_data.html">tbl_data_wide()</a></code>:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data_wide</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data_wide</a></span>()</a></code></pre></div>
 <pre><code>## # A tibble: 14,311 x 14
 ##    dataset location date       dir_of_max_gust extr_max_temp extr_min_temp
 ##    &lt;chr&gt;   &lt;chr&gt;    &lt;date&gt;               &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
@@ -405,10 +400,10 @@
 ## #   spd_of_max_gust &lt;dbl&gt;, total_precip &lt;dbl&gt;, total_rain &lt;dbl&gt;,
 ## #   total_snow &lt;dbl&gt;</code></pre>
 <p>The <code><a href="../reference/tbl_data.html">tbl_data_wide()</a></code> function isn’t limited to parameter-wide data - data can be anything-wide (Edzer Pebesma has a <a href="https://www.jstatsoft.org/article/view/v051i07/">great discussion on this</a>). Using <code><a href="../reference/tbl_data.html">tbl_data_wide()</a></code> is identical to using <code><a href="../reference/tbl_data.html">tbl_data()</a></code> and <code><a href="https://tidyr.tidyverse.org/reference/spread.html">tidyr::spread()</a></code>, with context-specific defaults.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb37-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(mean_temp) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb37-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_data</a></span>(<span class="kw"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span>(date) <span class="op">==</span><span class="st"> </span><span class="dv">1960</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb37-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data_wide</a></span>(<span class="dt">key =</span> location)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">ns_climate <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(mean_temp) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb34-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_data</a></span>(<span class="kw"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span>(date) <span class="op">==</span><span class="st"> </span><span class="dv">1960</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb34-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data_wide</a></span>(<span class="dt">key =</span> location)</a></code></pre></div>
 <pre><code>## # A tibble: 12 x 16
 ##    dataset param date       `BADDECK 6297` `COLLEGEVILLE 6… `DIGBY 6338`
 ##    &lt;chr&gt;   &lt;chr&gt; &lt;date&gt;              &lt;dbl&gt;            &lt;dbl&gt;        &lt;dbl&gt;
@@ -434,19 +429,19 @@
 <h2 class="hasAnchor">
 <a href="#putting-it-all-together" class="anchor"></a>Putting it all together</h2>
 <p>Using the pipe (<code><a href="https://rdrr.io/pkg/magrittr/man/pipe.html">%&gt;%</a></code>), we can string all the steps together concisely:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">temp_<span class="dv">1960</span> &lt;-<span class="st"> </span>ns_climate <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="st">  </span><span class="co"># pick parameters</span></a>
-<a class="sourceLine" id="cb39-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">contains</a></span>(<span class="st">"temp"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb39-4" data-line-number="4"><span class="st">  </span><span class="co"># pick locations</span></a>
-<a class="sourceLine" id="cb39-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/selecters.html">select_locations</a></span>(<span class="st">`</span><span class="dt">Sable Island</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"SABLE"</span>),</a>
-<a class="sourceLine" id="cb39-6" data-line-number="6">                   <span class="st">`</span><span class="dt">Kentville</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"KENT"</span>),</a>
-<a class="sourceLine" id="cb39-7" data-line-number="7">                   <span class="st">`</span><span class="dt">Badeck</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"BADD"</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb39-8" data-line-number="8"><span class="st">  </span><span class="co"># filter data table</span></a>
-<a class="sourceLine" id="cb39-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_data</a></span>(<span class="kw"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span>(date) <span class="op">==</span><span class="st"> </span><span class="dv">1960</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb39-10" data-line-number="10"><span class="st">  </span><span class="co"># extract data in wide format</span></a>
-<a class="sourceLine" id="cb39-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data_wide</a></span>()</a>
-<a class="sourceLine" id="cb39-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb39-13" data-line-number="13">temp_<span class="dv">1960</span></a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">temp_<span class="dv">1960</span> &lt;-<span class="st"> </span>ns_climate <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"><span class="st">  </span><span class="co"># pick parameters</span></a>
+<a class="sourceLine" id="cb36-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="../reference/selecters.html">select_params</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">contains</a></span>(<span class="st">"temp"</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-4" data-line-number="4"><span class="st">  </span><span class="co"># pick locations</span></a>
+<a class="sourceLine" id="cb36-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="../reference/selecters.html">select_locations</a></span>(<span class="st">`</span><span class="dt">Sable Island</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"SABLE"</span>),</a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">                   <span class="st">`</span><span class="dt">Kentville</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"KENT"</span>),</a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">                   <span class="st">`</span><span class="dt">Badeck</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/tidyselect/man/select_helpers.html">starts_with</a></span>(<span class="st">"BADD"</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-8" data-line-number="8"><span class="st">  </span><span class="co"># filter data table</span></a>
+<a class="sourceLine" id="cb36-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="../reference/filterers.html">filter_data</a></span>(<span class="kw"><a href="http://lubridate.tidyverse.org/reference/year.html">year</a></span>(date) <span class="op">==</span><span class="st"> </span><span class="dv">1960</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb36-10" data-line-number="10"><span class="st">  </span><span class="co"># extract data in wide format</span></a>
+<a class="sourceLine" id="cb36-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data_wide</a></span>()</a>
+<a class="sourceLine" id="cb36-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb36-13" data-line-number="13">temp_<span class="dv">1960</span></a></code></pre></div>
 <pre><code>## # A tibble: 36 x 8
 ##    dataset location date       extr_max_temp extr_min_temp mean_max_temp
 ##    &lt;chr&gt;   &lt;chr&gt;    &lt;date&gt;             &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
@@ -463,14 +458,14 @@
 ## # … with 26 more rows, and 2 more variables: mean_min_temp &lt;dbl&gt;,
 ## #   mean_temp &lt;dbl&gt;</code></pre>
 <p>We can then use this data with <strong>ggplot2</strong> to lead us to the conclusion that three locations in the same province had more or less the same monthly temperature characteristics in 1960.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(temp_<span class="dv">1960</span>, </a>
-<a class="sourceLine" id="cb41-3" data-line-number="3">       <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> date, <span class="dt">y =</span> mean_temp, </a>
-<a class="sourceLine" id="cb41-4" data-line-number="4">           <span class="dt">ymin =</span> extr_min_temp, </a>
-<a class="sourceLine" id="cb41-5" data-line-number="5">           <span class="dt">ymax =</span> extr_max_temp,</a>
-<a class="sourceLine" id="cb41-6" data-line-number="6">           <span class="dt">col =</span> location, <span class="dt">fill =</span> location)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb41-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="dt">alpha =</span> <span class="fl">0.2</span>, <span class="dt">col =</span> <span class="ot">NA</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb41-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>()</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(temp_<span class="dv">1960</span>, </a>
+<a class="sourceLine" id="cb38-3" data-line-number="3">       <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> date, <span class="dt">y =</span> mean_temp, </a>
+<a class="sourceLine" id="cb38-4" data-line-number="4">           <span class="dt">ymin =</span> extr_min_temp, </a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">           <span class="dt">ymax =</span> extr_max_temp,</a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">           <span class="dt">col =</span> location, <span class="dt">fill =</span> location)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="dt">alpha =</span> <span class="fl">0.2</span>, <span class="dt">col =</span> <span class="ot">NA</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>()</a></code></pre></div>
 <p><img src="mudata_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
 </div>
   </div>

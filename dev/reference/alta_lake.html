@@ -141,11 +141,25 @@ Canada.</p>
 
     <p>Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of
 development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330.
-doi: 10.1007/s10933-016-9919-x</p>
+<a href='https://doi.org/10.1007/s10933-016-9919-x'>doi:10.1007/s10933-016-9919-x</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>ggplot2</span>)
-<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/autoplot.html'>autoplot</a></span>(<span class='no'>alta_lake</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"depth"</span>) + <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_reverse</a></span>()</div><div class='output co'>#&gt; <span class='message'>Using x = "value"</span></div><div class='output co'>#&gt; <span class='message'>Using first 9 facets of 14. Use max_facets = FALSE to plot all facets</span></div><div class='img'><img src='alta_lake-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/autoplot.html'>autoplot</a></span>(<span class='no'>alta_lake</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"age"</span>)</div><div class='output co'>#&gt; <span class='message'>Using x = "value"</span></div><div class='output co'>#&gt; <span class='message'>Using first 9 facets of 14. Use max_facets = FALSE to plot all facets</span></div><div class='img'><img src='alta_lake-2.png' alt='' width='700' height='433' /></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>alta_lake</span>)</div><div class='output co'>#&gt; A mudata object aligned along "depth", "age"
+#&gt;   distinct_datasets():  "alta_lake16"
+#&gt;   distinct_locations(): "ALGC2"
+#&gt;   distinct_params():    "As", "C", "C/N" ... and 11 more
+#&gt;   src_tbls():           "data", "locations" ... and 3 more
+#&gt; 
+#&gt; tbl_data() %&gt;% head():
+#&gt; # A tibble: 6 x 10
+#&gt;   dataset     location param depth   age value stdev units     n zone  
+#&gt;   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt; 
+#&gt; 1 alta_lake16 ALGC2    As     0.25 2015.  23    NA   ppm       1 Zone 3
+#&gt; 2 alta_lake16 ALGC2    As     0.75 2011.  24.3  23.0 ppm       3 Zone 3
+#&gt; 3 alta_lake16 ALGC2    As     1.25 2008.  60    NA   ppm       1 Zone 3
+#&gt; 4 alta_lake16 ALGC2    As     1.75 2003.  60    NA   ppm       1 Zone 3
+#&gt; 5 alta_lake16 ALGC2    As     2.5  1998.  43.4  NA   ppm       1 Zone 3
+#&gt; 6 alta_lake16 ALGC2    As     3.5  1982.  42    NA   ppm       1 Zone 3</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

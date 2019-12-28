@@ -249,8 +249,14 @@ FACETS. doi:10.1139/facets-2017-0026
 #&gt; 6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'>
 <span class='co'># create a mudata object starting from a parameter-wide data frame</span>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tidyr</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)
-
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:lubridate’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    intersect, setdiff, union</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'>
 <span class='co'># gather columns and summarise replicates</span>
 <span class='no'>datatable</span> <span class='kw'>&lt;-</span> <span class='no'>pocmaj</span> <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://tidyr.tidyverse.org/reference/gather.html'>gather</a></span>(<span class='no'>Ca</span>, <span class='no'>Ti</span>, <span class='no'>V</span>, <span class='kw'>key</span> <span class='kw'>=</span> <span class='st'>"param"</span>, <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"param_value"</span>) <span class='kw'>%&gt;%</span>

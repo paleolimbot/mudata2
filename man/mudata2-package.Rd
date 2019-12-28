@@ -41,6 +41,6 @@ FACETS. doi:10.1139/facets-2017-0026
 \link{mudata}, \link{read_mudata}
 }
 \author{
-\strong{Maintainer}: Dewey Dunnington \email{dewey@fishandwhistle.net} (0000-0002-9415-4582)
+\strong{Maintainer}: Dewey Dunnington \email{dewey@fishandwhistle.net} (\href{https://orcid.org/0000-0002-9415-4582}{ORCID})
 
 }

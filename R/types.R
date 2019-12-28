@@ -56,7 +56,7 @@ generate_type_tbl.mudata <- function(x, default = "guess") {
 # generate a type table for a data.frame
 #' @rdname generate_type_tbl
 generate_type_tbl.tbl <- function(x, default = "guess") {
-  df <- x %>% utils::head() %>% dplyr::collect()
+  df <- x %>% utils::head()
   vapply(df, generate_type_str, default = default, FUN.VALUE = character(1)) %>%
     tibble::enframe(name = "column", value = "type")
 }

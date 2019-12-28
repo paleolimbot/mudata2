@@ -7,18 +7,43 @@
 \alias{autobiplot.data.frame}
 \title{Biplot a parameter-long data frame}
 \usage{
-long_pairs(x, id_vars, name_var, names_x = NULL, names_y = NULL,
-  validate = TRUE, max_names = 5)
+long_pairs(
+  x,
+  id_vars,
+  name_var,
+  names_x = NULL,
+  names_y = NULL,
+  validate = TRUE,
+  max_names = 5
+)
 
-long_biplot(x, id_vars, name_var, measure_var = "value",
-  names_x = NULL, na.rm = FALSE, max_names = 5, ...)
+long_biplot(
+  x,
+  id_vars,
+  name_var,
+  measure_var = "value",
+  names_x = NULL,
+  na.rm = FALSE,
+  max_names = 5,
+  ...
+)
 
 autobiplot(x, ...)
 
-\method{autobiplot}{data.frame}(x, id_vars, name_var,
-  measure_var = "value", names_x = NULL, names_y = NULL,
-  error_var = NULL, na.rm = TRUE, validate = TRUE, max_names = 5,
-  labeller = ggplot2::label_value, ...)
+\method{autobiplot}{data.frame}(
+  x,
+  id_vars,
+  name_var,
+  measure_var = "value",
+  names_x = NULL,
+  names_y = NULL,
+  error_var = NULL,
+  na.rm = TRUE,
+  validate = TRUE,
+  max_names = 5,
+  labeller = ggplot2::label_value,
+  ...
+)
 }
 \arguments{
 \item{x}{the object to biplot}

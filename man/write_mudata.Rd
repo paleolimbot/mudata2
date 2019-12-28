@@ -17,21 +17,39 @@ write_mudata(md, filename, ...)
 
 read_mudata(filename, ...)
 
-write_mudata_zip(md, filename, overwrite = FALSE, validate = TRUE,
-  update_columns = TRUE, ...)
+write_mudata_zip(
+  md,
+  filename,
+  overwrite = FALSE,
+  validate = TRUE,
+  update_columns = TRUE,
+  ...
+)
 
 read_mudata_zip(filename, validate = TRUE, ...)
 
-write_mudata_dir(md, filename, overwrite = FALSE, validate = TRUE,
-  update_columns = TRUE, ...)
+write_mudata_dir(
+  md,
+  filename,
+  overwrite = FALSE,
+  validate = TRUE,
+  update_columns = TRUE,
+  ...
+)
 
 read_mudata_dir(filename, validate = TRUE, ...)
 
-write_mudata_json(md, filename, overwrite = FALSE, validate = TRUE,
-  update_columns = TRUE, pretty = TRUE, ...)
+write_mudata_json(
+  md,
+  filename,
+  overwrite = FALSE,
+  validate = TRUE,
+  update_columns = TRUE,
+  pretty = TRUE,
+  ...
+)
 
-to_mudata_json(md, validate = TRUE, update_columns = TRUE,
-  pretty = FALSE, ...)
+to_mudata_json(md, validate = TRUE, update_columns = TRUE, pretty = FALSE, ...)
 
 read_mudata_json(filename, validate = TRUE, ...)
 
@@ -69,7 +87,7 @@ These functions are designed to make sure that the read/write operations are
 as lossless as possible. Some exceptions to this are if date/time columns are
 not in UTC (in which case they will be converted to UTC before writing), and
 if table names have characters that are not filesystem safe (allowed
-characters are \code{[A-Za-z0-9_.-]} and others will be stripped).
+characters are \verb{[A-Za-z0-9_.-]} and others will be stripped).
 }
 \examples{
 # read/write to directory

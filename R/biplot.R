@@ -64,8 +64,7 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   
   # make a list of parameter names
   all_params <- dplyr::ungroup(data) %>%
-    dplyr::distinct(.name) %>% 
-    dplyr::collect() %>% 
+    dplyr::distinct(.name) %>%
     dplyr::pull(.name) %>%
     as.character()
   
@@ -130,8 +129,8 @@ long_pairs <- function(x, id_vars, name_var, names_x = NULL,
   name_combinations$.data <- lapply(seq_len(nrow(name_combinations)), function(i) {
     combination <- name_combinations[i,]
     # filter data to get data_x and data_y
-    data_x <- dplyr::ungroup(data) %>% dplyr::filter(.name == !!combination$.name_x) %>% dplyr::collect()
-    data_y <- dplyr::ungroup(data) %>% dplyr::filter(.name == !!combination$.name_y) %>% dplyr::collect()
+    data_x <- dplyr::ungroup(data) %>% dplyr::filter(.name == !!combination$.name_x)
+    data_y <- dplyr::ungroup(data) %>% dplyr::filter(.name == !!combination$.name_y)
     # join using join_vars
     data_both <- dplyr::inner_join(data_x, data_y,
                                    by = id_vars, suffix = c("_x", "_y"))
@@ -178,9 +177,6 @@ long_biplot <- function(x, id_vars, name_var, measure_var = "value",
     x <- x %>%
       dplyr::filter(!is.na(.value))
   }
-  
-  # collect data
-  x <- dplyr::collect(x)
   
   # check for no data
   if(.isempty(x)) {

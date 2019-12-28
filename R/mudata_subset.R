@@ -258,7 +258,6 @@ filter_datasets.default <- function(.data, ...) {
   datasets <- .data$datasets %>%
     dplyr::filter(!!!filter_args) %>%
     dplyr::distinct(.data$dataset) %>%
-    dplyr::collect() %>%
     dplyr::pull("dataset")
   filter_data(.data, .data$dataset %in% datasets)
 }

@@ -4,8 +4,7 @@
 \alias{subset.mudata}
 \title{Subset a MuData object}
 \usage{
-\method{subset}{mudata}(x, ..., datasets = NULL, params = NULL,
-  locations = NULL)
+\method{subset}{mudata}(x, ..., datasets = NULL, params = NULL, locations = NULL)
 }
 \arguments{
 \item{x}{The object to subset}

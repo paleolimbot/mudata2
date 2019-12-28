@@ -7,18 +7,34 @@
 \alias{rename_cols_base.mudata}
 \title{Rename datasets, params, locations, and columns}
 \usage{
-rename_datasets_base(md, ..., apply_to = c("data", "locations", "params",
-  "datasets", "columns"), warn_missing = TRUE)
+rename_datasets_base(
+  md,
+  ...,
+  apply_to = c("data", "locations", "params", "datasets", "columns"),
+  warn_missing = TRUE
+)
 
-rename_params_base(md, ..., apply_to = c("data", "params"),
-  warn_missing = TRUE)
+rename_params_base(
+  md,
+  ...,
+  apply_to = c("data", "params"),
+  warn_missing = TRUE
+)
 
-rename_locations_base(md, ..., apply_to = c("data", "locations"),
-  warn_missing = TRUE)
+rename_locations_base(
+  md,
+  ...,
+  apply_to = c("data", "locations"),
+  warn_missing = TRUE
+)
 
-\method{rename_cols_base}{mudata}(.data, ..., apply_to = c("datasets",
-  "locations", "params", "data", "columns"), warn_missing = FALSE,
-  warn_duplicated = TRUE)
+\method{rename_cols_base}{mudata}(
+  .data,
+  ...,
+  apply_to = c("datasets", "locations", "params", "data", "columns"),
+  warn_missing = FALSE,
+  warn_duplicated = TRUE
+)
 }
 \arguments{
 \item{md}{A \link{mudata} object}

@@ -7,8 +7,12 @@
 \usage{
 new_mudata(md, x_columns)
 
-validate_mudata(md, check_unique = TRUE, check_references = TRUE,
-  action = stop)
+validate_mudata(
+  md,
+  check_unique = TRUE,
+  check_references = TRUE,
+  action = stop
+)
 }
 \arguments{
 \item{md}{An object of class 'mudata'}

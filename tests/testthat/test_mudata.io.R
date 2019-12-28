@@ -3,8 +3,6 @@ context("mudata read/write")
 
 # expect identical mudata function
 expect_equal_mudata <- function(md1, md2) {
-  md1 <- dplyr::collect(md1)
-  md2 <- dplyr::collect(md2)
   
   # expect names equal
   expect_true(setequal(names(md1), names(md2)))

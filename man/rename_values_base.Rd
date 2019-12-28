@@ -4,8 +4,13 @@
 \alias{rename_values_base}
 \title{Replace/rename values in a vector}
 \usage{
-rename_values_base(x, ..., default_value = x, warn_missing = TRUE,
-  warn_duplicated = TRUE)
+rename_values_base(
+  x,
+  ...,
+  default_value = x,
+  warn_missing = TRUE,
+  warn_duplicated = TRUE
+)
 }
 \arguments{
 \item{x}{Vector of values to replace}

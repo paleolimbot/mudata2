@@ -77,7 +77,6 @@ long_ggplot <- function(.data, ..., max_facets = 9, facet_args = list()) {
     .facet_number <- NULL; rm(.facet_number)
     .data <- .data %>%
       dplyr::ungroup() %>%
-      dplyr::collect() %>%
       dplyr::left_join(facet_df, by = args$mapping$facets) %>%
       dplyr::filter(!is.na(.facet_number))
     
@@ -111,9 +110,6 @@ long_ggplot <- function(.data, ..., max_facets = 9, facet_args = list()) {
   } else {
     plot_error <- NULL
   }
-  
-  # collect data
-  .data <- dplyr::collect(.data)
   
   # return plot
   ggplot2::ggplot(data = .data, mapping = plot_mapping, environment = parent.frame()) +
@@ -174,7 +170,6 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
                                dplyr::ungroup() %>%
                                dplyr::select(!!col_name) %>%
                                dplyr::distinct() %>%
-                               dplyr::collect() %>%
                                dplyr::mutate(count = 1:n()) %>%
                                tibble::deframe()
                            })
@@ -212,14 +207,12 @@ long_plot <- function(.data, id_vars = NULL, measure_var = "value", x = NULL, y 
     # create data by collecting and left_joining facet info
     .data <- .data %>%
       dplyr::ungroup() %>%
-      dplyr::collect() %>%
       dplyr::left_join(facet_df, by = args$mapping$facets) %>%
       dplyr::filter(!is.na(.facet_number))
   } else {
-    # collect and make dummy facet number/label columns
+    # make dummy facet number/label columns
     facet_df <- .data %>%
       dplyr::ungroup() %>%
-      dplyr::collect() %>%
       dplyr::mutate(.facet_number = NA_real_, .facet_label = NA_character_)
   }
   
@@ -331,7 +324,7 @@ long_plot_base <- function(.data, id_vars = NULL, measure_var = "value", x = NUL
   }
   
   # use head(.data) instead of full .data object to check id_var types
-  .data_head <- .data %>% utils::head() %>% dplyr::collect()
+  .data_head <- .data %>% utils::head()
   
   # find which id_vars are numeric
   numeric_id_vars <- intersect(id_vars, colnames(.data)[vapply(.data_head, is.numericish, logical(1))])
@@ -423,7 +416,6 @@ create_facet_df <- function(.data, facets, max_facets) {
     dplyr::ungroup() %>%
     dplyr::select(dplyr::one_of(facets)) %>%
     dplyr::distinct() %>%
-    dplyr::collect() %>%
     # sort by all facetting variables
     dplyr::group_by_all() %>%
     dplyr::arrange(.by_group = TRUE) %>%

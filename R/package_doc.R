@@ -36,6 +36,7 @@
 #' @importFrom rlang !!
 #' @importFrom rlang enquo
 #' @importFrom rlang quos
+#' @importFrom rlang abort
 #' @importFrom dplyr n
 #'
 #' @docType package

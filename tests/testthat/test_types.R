@@ -349,30 +349,6 @@ test_that("generate_type_str generates expected output", {
   
 })
 
-test_that("generate_type_str works with sqlite sources", {
-  # create sqlite database with kentville greenwood dataset
-  sql_file <- tempfile()[1]
-  kg_sql <- dplyr::src_sqlite(sql_file, create = TRUE)
-  sources <- sapply(c("data", "locations", "params", "datasets", "columns"),
-                    function(table) {
-                      dplyr::copy_to(kg_sql, kentvillegreenwood[[table]], table)
-                    }, simplify = FALSE)
-  # create remote dataset
-  kv_sqlite <- mudata(data = sources$data, locations = sources$locations,
-                      params = sources$params, datasets = sources$datasets,
-                      columns = sources$columns)
-  
-  # generate type table (data table isn't identical because of  in
-  # local but not sqlite)
-  expect_identical(generate_type_tbl(kv_sqlite$locations),
-                   generate_type_tbl(kentvillegreenwood$locations))
-  
-  # clean temporary database
-  unlink(sql_file)
-  rm(kg_sql); gc() # disconnect sqlite database
-  
-})
-
 test_that("generate_type_str works on mudata objects", {
   # inspect type table for kentvillegreenwood
   types_kg <- generate_type_tbl(kentvillegreenwood)

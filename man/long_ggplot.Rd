@@ -8,13 +8,32 @@
 \usage{
 long_ggplot(.data, ..., max_facets = 9, facet_args = list())
 
-long_plot(.data, id_vars = NULL, measure_var = "value", x = NULL,
-  y = NULL, facets = NULL, geom = "path", error_var = NULL, ...,
-  max_facets = 9, facet_args = list(), scales = list())
+long_plot(
+  .data,
+  id_vars = NULL,
+  measure_var = "value",
+  x = NULL,
+  y = NULL,
+  facets = NULL,
+  geom = "path",
+  error_var = NULL,
+  ...,
+  max_facets = 9,
+  facet_args = list(),
+  scales = list()
+)
 
-long_plot_base(.data, id_vars = NULL, measure_var = "value",
-  x = NULL, y = NULL, facets = NULL, geom = "path",
-  error_var = NULL, ...)
+long_plot_base(
+  .data,
+  id_vars = NULL,
+  measure_var = "value",
+  x = NULL,
+  y = NULL,
+  facets = NULL,
+  geom = "path",
+  error_var = NULL,
+  ...
+)
 }
 \arguments{
 \item{.data}{A \code{data.frame}}

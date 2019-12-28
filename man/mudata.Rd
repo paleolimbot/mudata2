@@ -4,9 +4,19 @@
 \alias{mudata}
 \title{Create a mudata object}
 \usage{
-mudata(data, locations = NULL, params = NULL, datasets = NULL,
-  columns = NULL, x_columns = NULL, ..., more_tbls = NULL,
-  dataset_id = "default", location_id = "default", validate = TRUE)
+mudata(
+  data,
+  locations = NULL,
+  params = NULL,
+  datasets = NULL,
+  columns = NULL,
+  x_columns = NULL,
+  ...,
+  more_tbls = NULL,
+  dataset_id = "default",
+  location_id = "default",
+  validate = TRUE
+)
 }
 \arguments{
 \item{data}{A data.frame/\link[tibble:tibble]{tibble} containing columns "param" and

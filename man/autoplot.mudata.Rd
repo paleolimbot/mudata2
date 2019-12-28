@@ -5,11 +5,9 @@
 \alias{plot.mudata}
 \title{Autoplot a mudata object}
 \usage{
-\method{autoplot}{mudata}(object, facets = "param", col = "location",
-  pch = "dataset", ...)
+\method{autoplot}{mudata}(object, facets = "param", col = "location", pch = "dataset", ...)
 
-\method{plot}{mudata}(x, facets = "param", col = "location",
-  pch = "dataset", ...)
+\method{plot}{mudata}(x, facets = "param", col = "location", pch = "dataset", ...)
 }
 \arguments{
 \item{facets}{Column to be used as facet column}

@@ -20,7 +20,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr]{everything}}, \code{\link[dplyr]{matches}}, \code{\link[dplyr]{starts_with}}, \code{\link[dplyr]{ends_with}}, \code{\link[dplyr]{contains}}, \code{\link[dplyr]{num_range}}, \code{\link[dplyr]{one_of}}, \code{\link[dplyr]{src_tbls}}}
+  \item{dplyr}{\code{\link[dplyr]{contains}}, \code{\link[dplyr]{ends_with}}, \code{\link[dplyr]{everything}}, \code{\link[dplyr]{matches}}, \code{\link[dplyr]{num_range}}, \code{\link[dplyr]{one_of}}, \code{\link[dplyr]{src_tbls}}, \code{\link[dplyr]{starts_with}}}
 
   \item{ggplot2}{\code{\link[ggplot2]{autoplot}}}
 

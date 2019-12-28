@@ -519,43 +519,52 @@ test_that("when zero x_columns exist on purpose, no message occurs on read", {
   expect_silent(read_mudata_json(tf_json))
   unlink(tf_json)
   
-  # TODO: This passes on travis and locally, but fails on CRAN
-  # it's a fairly unimportant test, as zero x_columns are easy to guess
-  # tf_dir <- tempfile()
-  # write_mudata_dir(md_zero, tf_dir)
-  # expect_silent(read_mudata_dir(tf_dir))
-  # unlink(tf_dir, recursive = TRUE)
+  # this test fails on CRAN but should be tested locally
+  # and on travis
+  skip_on_cran()
+  tf_dir <- tempfile()
+  write_mudata_dir(md_zero, tf_dir)
+  expect_silent(read_mudata_dir(tf_dir))
+  unlink(tf_dir, recursive = TRUE)
 })
 
+
+# this test requires rmarkdown and pandoc, but we don't really need
+# pandoc in the system requirements, so this test should be skipped on
+# CRAN (and the dependency on rmarkdown is masked to avoid a check note)
 test_that("read/write functions work inside RMarkdown", {
-  
-  tdir <- tempfile()
-  dir.create(tdir)
-  tf <- file.path(tdir, "temp.Rmd")
-  
-  writeLines(
-    c(
-      "---",
-      "output: md_document",
-      "---",
-      "",
-      "```{r}",
-      "library(mudata2)",
-      "getwd()",
-      "write_mudata_dir(kentvillegreenwood, 'kg_dir')",
-      "write_mudata_json(kentvillegreenwood, 'kg.json')",
-      "write_mudata_zip(kentvillegreenwood, 'kg.zip')",
-      "```",
-      ""
-    ),
-    tf
-  )
-  
-  rmarkdown::render(tf, quiet = TRUE)
-  # cat(paste(readLines(file.path(tdir, "temp.md")), collapse = "\n"))
-  expect_is(mudata2::read_mudata_dir(file.path(tdir, "kg_dir")), "mudata")
-  expect_is(mudata2::read_mudata_json(file.path(tdir, "kg.json")), "mudata")
-  expect_is(mudata2::read_mudata_zip(file.path(tdir, "kg.zip")), "mudata")
-  
-  unlink(tdir, recursive = TRUE)
+
+  skip_on_cran()
+  skip_if_not_installed("rmarkdown")
+  withr::with_package("rmarkdown", {
+    tdir <- tempfile()
+    dir.create(tdir)
+    tf <- file.path(tdir, "temp.Rmd")
+    
+    writeLines(
+      c(
+        "---",
+        "output: md_document",
+        "---",
+        "",
+        "```{r}",
+        "library(mudata2)",
+        "getwd()",
+        "write_mudata_dir(kentvillegreenwood, 'kg_dir')",
+        "write_mudata_json(kentvillegreenwood, 'kg.json')",
+        "write_mudata_zip(kentvillegreenwood, 'kg.zip')",
+        "```",
+        ""
+      ),
+      tf
+    )
+    
+    render(tf, quiet = TRUE)
+    # cat(paste(readLines(file.path(tdir, "temp.md")), collapse = "\n"))
+    expect_is(mudata2::read_mudata_dir(file.path(tdir, "kg_dir")), "mudata")
+    expect_is(mudata2::read_mudata_json(file.path(tdir, "kg.json")), "mudata")
+    expect_is(mudata2::read_mudata_zip(file.path(tdir, "kg.zip")), "mudata")
+    
+    unlink(tdir, recursive = TRUE)
+  })
 })

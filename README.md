@@ -165,3 +165,10 @@ We have used the mudata format in the following situations:
 For more examples of mudata usage, see the package vignettes:
 `vignette("mudata", package = "mudata2")` and `vignette("mudata_create",
 package = "mudata2")`
+
+## References
+
+Dunnington DW and Spooner IS (2018). “Using a linked table-based
+structure to encode self-describing multiparameter spatiotemporal data”.
+FACETS.
+[doi:10.1139/facets-2017-0026](https://doi.org/10.1139/facets-2017-0026)

@@ -1,2 +1,56 @@
 development:
   mode: auto
+reference:
+- title: Create mudata objects
+  desc: Create mudata objects from existing tables
+  contents:
+  - mudata
+  - parallel_gather
+- title: Inspect mudata objects
+  desc: Inspect the contents of mudata objects
+  contents:
+  - starts_with("distinct")
+  - starts_with("unique")
+  - print.mudata
+  - summary.mudata
+- title: Subset and extract componets from mudata objects
+  desc: Filter, subset, and extract components from mudata objects
+  contents:
+  - starts_with("tbl")
+  - starts_with("filter")
+  - starts_with("select")
+  - subset.mudata
+- title: Modify mudata objects
+  desc: Update the contents of a mudata object
+  contents:
+  - starts_with("mutate")
+  - starts_with("rename")
+  - starts_with("update")
+  - rbind.mudata
+- title: Read and write mudata objects
+  desc: Read and write mudata objects from JSON, ZIP, and CSV
+  contents:
+  - starts_with("read")
+  - starts_with("write")
+- title: Example datasets
+  desc: Datasets with which to test and illustrate the mudata format
+  contents:
+  - alta_lake
+  - long_lake
+  - ns_climate
+  - pocmaj
+  - pocmajsum
+  - second_lake_temp
+  - kentvillegreenwood
+- title: Low-level read/write details
+  desc: Nitty-gritty details for reading and writing mudata objects
+  contents:
+  - update_columns_table
+  - mudata_prepare_column
+- title: S3 details for mudata objects
+  desc: Inspect object details for mudata objects
+  contents:
+  - as_mudata
+  - is_mudata
+  - new_mudata
+  - validate_mudata

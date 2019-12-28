@@ -24,5 +24,6 @@ Print a mudata object
 }
 \examples{
 print(kentvillegreenwood)
+summary(kentvillegreenwood)
 
 }

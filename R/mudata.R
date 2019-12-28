@@ -42,8 +42,7 @@
 #' 
 #' @references Dunnington DW and Spooner IS (2018). "Using a linked table-based
 #' structure to encode self-describing multiparameter spatiotemporal data".
-#' FACETS. doi:10.1139/facets-2017-0026 
-#' <http://www.facetsjournal.com/doi/10.1139/facets-2017-0026>
+#' FACETS. [doi:10.1139/facets-2017-0026](https://doi.org/10.1139/facets-2017-0026)
 #' 
 #' @examples
 #' # use the data table from kentvillegreenwood as a template
@@ -488,6 +487,7 @@ guess_x_columns <- function(df, quiet = FALSE) {
 #'
 #' @examples
 #' print(kentvillegreenwood)
+#' summary(kentvillegreenwood)
 #' 
 print.mudata <- function(x, ..., width = NULL) {
 

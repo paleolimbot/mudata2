@@ -206,22 +206,8 @@ subsetting using <a href='selecters.html'>select_locations</a> and family.</p>
 #&gt; 3 ecclimate KENTVILLE CDA CS maxtemp 1999-07-03  26.4 &lt;NA&gt; 
 #&gt; 4 ecclimate KENTVILLE CDA CS maxtemp 1999-07-04  28.6 &lt;NA&gt; 
 #&gt; 5 ecclimate KENTVILLE CDA CS maxtemp 1999-07-05  26   &lt;NA&gt; 
-#&gt; 6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'><span class='fu'>rename_params</span>(<span class='no'>kentvillegreenwood</span>, <span class='kw'>max_temp</span> <span class='kw'>=</span> <span class='no'>maxtemp</span>)</div><div class='output co'>#&gt; A mudata object aligned along "date"
-#&gt;   distinct_datasets():  "ecclimate"
-#&gt;   distinct_locations(): "GREENWOOD A", "KENTVILLE CDA CS"
-#&gt;   distinct_params():    "cooldegdays", "dirofmaxgust" ... and 9 more
-#&gt;   src_tbls():           "data", "locations" ... and 3 more
-#&gt; 
-#&gt; tbl_data() %&gt;% head():
-#&gt; # A tibble: 6 x 6
-#&gt;   dataset   location         param    date       value flags
-#&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;    &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;
-#&gt; 1 ecclimate KENTVILLE CDA CS max_temp 1999-07-01  28.5 &lt;NA&gt; 
-#&gt; 2 ecclimate KENTVILLE CDA CS max_temp 1999-07-02  30.7 &lt;NA&gt; 
-#&gt; 3 ecclimate KENTVILLE CDA CS max_temp 1999-07-03  26.4 &lt;NA&gt; 
-#&gt; 4 ecclimate KENTVILLE CDA CS max_temp 1999-07-04  28.6 &lt;NA&gt; 
-#&gt; 5 ecclimate KENTVILLE CDA CS max_temp 1999-07-05  26   &lt;NA&gt; 
-#&gt; 6 ecclimate KENTVILLE CDA CS max_temp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'><span class='fu'>rename_columns</span>(<span class='no'>kentvillegreenwood</span>, <span class='kw'>lon</span> <span class='kw'>=</span> <span class='no'>longitude</span>, <span class='kw'>lat</span> <span class='kw'>=</span> <span class='no'>latitude</span>)</div><div class='output co'>#&gt; A mudata object aligned along "date"
+#&gt; 6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'><span class='fu'>rename_params</span>(<span class='no'>kentvillegreenwood</span>, <span class='kw'>max_temp</span> <span class='kw'>=</span> <span class='no'>maxtemp</span>)
+<span class='fu'>rename_columns</span>(<span class='no'>kentvillegreenwood</span>, <span class='kw'>lon</span> <span class='kw'>=</span> <span class='no'>longitude</span>, <span class='kw'>lat</span> <span class='kw'>=</span> <span class='no'>latitude</span>)</div><div class='output co'>#&gt; A mudata object aligned along "date"
 #&gt;   distinct_datasets():  "ecclimate"
 #&gt;   distinct_locations(): "GREENWOOD A", "KENTVILLE CDA CS"
 #&gt;   distinct_params():    "cooldegdays", "dirofmaxgust" ... and 9 more

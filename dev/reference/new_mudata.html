@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Validate, create a mudata object — new_mudata" />
-<meta property="og:description" content="Validates a mudata object by calling stop when an error is found;
+<meta property="og:description" content="Validates a mudata object by calling rlang::abort when an error is found;
 creates a mudata object from a list. Validation is generally performed
 when objects are created using mudata, or when objects are read/writen
 using read_mudata and write_mudata." />
@@ -129,7 +129,7 @@ using read_mudata and write_mudata." />
     </div>
 
     <div class="ref-description">
-    <p>Validates a mudata object by calling <a href='https://rdrr.io/r/base/stop.html'>stop</a> when an error is found;
+    <p>Validates a mudata object by calling <a href='https://rlang.r-lib.org/reference/abort.html'>rlang::abort</a> when an error is found;
 creates a mudata object from a <a href='https://rdrr.io/r/base/list.html'>list</a>. Validation is generally performed
 when objects are created using <a href='mudata.html'>mudata</a>, or when objects are read/writen
 using <a href='write_mudata.html'>read_mudata</a> and <a href='write_mudata.html'>write_mudata</a>.</p>
@@ -141,7 +141,7 @@ using <a href='write_mudata.html'>read_mudata</a> and <a href='write_mudata.html
   <span class='no'>md</span>,
   <span class='kw'>check_unique</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>check_references</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>action</span> <span class='kw'>=</span> <span class='no'>stop</span>
+  <span class='kw'>action</span> <span class='kw'>=</span> <span class='no'>abort</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>

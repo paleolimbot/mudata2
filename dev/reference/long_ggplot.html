@@ -143,13 +143,32 @@ guesses the axes correctly, but these choices can be overridden.</p>
 
     <pre class="usage"><span class='fu'>long_ggplot</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>max_facets</span> <span class='kw'>=</span> <span class='fl'>9</span>, <span class='kw'>facet_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>())
 
-<span class='fu'>long_plot</span>(<span class='no'>.data</span>, <span class='kw'>id_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facets</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>geom</span> <span class='kw'>=</span> <span class='st'>"path"</span>, <span class='kw'>error_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>,
-  <span class='kw'>max_facets</span> <span class='kw'>=</span> <span class='fl'>9</span>, <span class='kw'>facet_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), <span class='kw'>scales</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>())
+<span class='fu'>long_plot</span>(
+  <span class='no'>.data</span>,
+  <span class='kw'>id_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
+  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>facets</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>geom</span> <span class='kw'>=</span> <span class='st'>"path"</span>,
+  <span class='kw'>error_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>max_facets</span> <span class='kw'>=</span> <span class='fl'>9</span>,
+  <span class='kw'>facet_args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  <span class='kw'>scales</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>()
+)
 
-<span class='fu'>long_plot_base</span>(<span class='no'>.data</span>, <span class='kw'>id_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>facets</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>geom</span> <span class='kw'>=</span> <span class='st'>"path"</span>,
-  <span class='kw'>error_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>long_plot_base</span>(
+  <span class='no'>.data</span>,
+  <span class='kw'>id_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
+  <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>facets</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>geom</span> <span class='kw'>=</span> <span class='st'>"path"</span>,
+  <span class='kw'>error_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

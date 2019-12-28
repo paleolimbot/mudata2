@@ -131,19 +131,44 @@ parameter-long data frame, like that of the data table in a mudata object." />
 parameter-long data frame, like that of the data table in a <a href='mudata.html'>mudata</a> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>long_pairs</span>(<span class='no'>x</span>, <span class='no'>id_vars</span>, <span class='no'>name_var</span>, <span class='kw'>names_x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>names_y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>validate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>max_names</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+    <pre class="usage"><span class='fu'>long_pairs</span>(
+  <span class='no'>x</span>,
+  <span class='no'>id_vars</span>,
+  <span class='no'>name_var</span>,
+  <span class='kw'>names_x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>names_y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>validate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>max_names</span> <span class='kw'>=</span> <span class='fl'>5</span>
+)
 
-<span class='fu'>long_biplot</span>(<span class='no'>x</span>, <span class='no'>id_vars</span>, <span class='no'>name_var</span>, <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
-  <span class='kw'>names_x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>max_names</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)
+<span class='fu'>long_biplot</span>(
+  <span class='no'>x</span>,
+  <span class='no'>id_vars</span>,
+  <span class='no'>name_var</span>,
+  <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
+  <span class='kw'>names_x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>max_names</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='no'>...</span>
+)
 
 <span class='fu'>autobiplot</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>autobiplot</span>(<span class='no'>x</span>, <span class='no'>id_vars</span>, <span class='no'>name_var</span>,
-  <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>, <span class='kw'>names_x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>names_y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>error_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>validate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>max_names</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>labeller</span> <span class='kw'>=</span> <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='no'><a href='https://ggplot2.tidyverse.org/reference/labellers.html'>label_value</a></span>, <span class='no'>...</span>)</pre>
+<span class='fu'>autobiplot</span>(
+  <span class='no'>x</span>,
+  <span class='no'>id_vars</span>,
+  <span class='no'>name_var</span>,
+  <span class='kw'>measure_var</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
+  <span class='kw'>names_x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>names_y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>error_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>validate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>max_names</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>labeller</span> <span class='kw'>=</span> <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='no'><a href='https://ggplot2.tidyverse.org/reference/labellers.html'>label_value</a></span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

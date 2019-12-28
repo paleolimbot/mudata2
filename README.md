@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![](http://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
+[![](https://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
 [![Travis-CI Build
 Status](https://travis-ci.org/paleolimbot/mudata2.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata2)
 [![Coverage
@@ -36,7 +36,7 @@ remotes::install_github("paleolimbot/mudata")
 ## What is mudata?
 
 The [mudata
-format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) is a
+format](https://www.facetsjournal.com/doi/10.1139/facets-2017-0026) is a
 data table in a specific form, with data dictionaries for locations,
 parameters, and datasets contained in the data table. The term “mudata”
 refers to a (mostly) universal data structure; the term “multi-parameter
@@ -114,11 +114,9 @@ alta_lake
 #> 6 alta_lake16 ALGC2    As     3.5  1982.  42    NA   ppm       1 Zone 3
 ```
 
-For examples of using and creating `mudata` objects, see the
-[mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html)
-and
-[mudata\_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html)
-vignettes.
+For examples of using and creating `mudata` objects, see
+`vignette("mudata", package = "mudata2")` and `vignette("mudata_create",
+package = "mudata2")`.
 
 ## Why do I need it?
 
@@ -165,5 +163,5 @@ We have used the mudata format in the following situations:
 ## More information
 
 For more examples of mudata usage, see the package vignettes:
-`vignette("mudata", package = "mudata2")`, and
-`vignette("mudata_create", package = "mudata2")`
+`vignette("mudata", package = "mudata2")` and `vignette("mudata_create",
+package = "mudata2")`

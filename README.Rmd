@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # mudata2
 
 <!-- badges: start -->
-[![](http://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
+[![](https://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
 [![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata2.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata2)
 [![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata2/master.svg)](https://codecov.io/github/paleolimbot/mudata2?branch=master)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
@@ -42,7 +42,7 @@ remotes::install_github("paleolimbot/mudata")
 
 ## What is mudata?
 
-The [mudata format](http://www.facetsjournal.com/doi/10.1139/facets-2017-0026) is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term "mudata" refers to a (mostly) universal data structure; the term "multi-parameter spatiotemporal data" is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
+The [mudata format](https://www.facetsjournal.com/doi/10.1139/facets-2017-0026) is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term "mudata" refers to a (mostly) universal data structure; the term "multi-parameter spatiotemporal data" is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).
 
 A few examples from this package can be found in the `ns_climate`, `second_lake_temp`, and `alta_lake` datasets:
 
@@ -58,7 +58,7 @@ second_lake_temp
 alta_lake
 ```
 
-For examples of using and creating `mudata` objects, see the [mudata](https://cran.r-project.org/package=mudata2/vignettes/mudata.html) and [mudata_create](https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html) vignettes.
+For examples of using and creating `mudata` objects, see `vignette("mudata", package = "mudata2")` and `vignette("mudata_create", package = "mudata2")`.
 
 ## Why do I need it?
 
@@ -76,4 +76,4 @@ We have used the mudata format in the following situations:
 
 ## More information
 
-For more examples of mudata usage, see the package vignettes: `vignette("mudata", package = "mudata2")`, and `vignette("mudata_create", package = "mudata2")`
+For more examples of mudata usage, see the package vignettes: `vignette("mudata", package = "mudata2")` and `vignette("mudata_create", package = "mudata2")`

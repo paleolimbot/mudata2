@@ -115,9 +115,12 @@ pocmajwide <- pocmajsum %>%
 Then (also as above), we need to `gather()` the data to get it into long form. Because we have paired columns, this is handled by a different function (from the mudata package) called `parallel_melt()`.
 
 ```{r}
-pocmajlong <- parallel_gather(pocmajwide, key = "param",
-                              value = c(Ca, Ti, V), 
-                              sd = c(Ca_sd, Ti_sd, V_sd))
+pocmajlong <- parallel_gather(
+  pocmajwide, 
+  key = "param",
+  value = c(Ca, Ti, V), 
+  sd = c(Ca_sd, Ti_sd, V_sd)
+)
 ```
 
 ```{r, echo=FALSE}
@@ -153,10 +156,14 @@ md %>%
 
 # location table with metadata
 md %>%
-  update_locations("MAJ-1", latitude = -64.298, longitude = 44.819,
-                   lake = "Lake Major") %>%
-  update_locations("POC-2", latitude = -65.985, longitude = 44.913,
-                   lake = "Pockwock Lake") %>%
+  update_locations(
+    "MAJ-1", 
+    latitude = -64.298, longitude = 44.819, lake = "Lake Major"
+  ) %>%
+  update_locations(
+    "POC-2",
+    latitude = -65.985, longitude = 44.913, lake = "Pockwock Lake"
+  ) %>%
   tbl_locations()
 ```
 
@@ -169,7 +176,7 @@ md %>%
 
 # datasets table with metadata
 md %>%
-  update_datasets(source = "R package mudata2, version 1.0.0") %>%
+  update_datasets(source = "R package mudata2") %>%
   tbl_datasets()
 ```
 
@@ -178,11 +185,15 @@ All together, the param/location/dataset documentation looks like this:
 ```{r}
 md_doc <- md %>%
   update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
-  update_locations("MAJ-1", latitude = -63.486, longitude = 44.732,
-                   lake = "Lake Major") %>%
-  update_locations("POC-2", latitude = -63.839, longitude = 44.794,
-                   lake = "Pockwock Lake") %>%
-  update_datasets(source = "R package mudata2, version 1.0.0")
+  update_locations(
+    "MAJ-1", 
+    latitude = -63.486, longitude = 44.732, lake = "Lake Major"
+  ) %>%
+  update_locations(
+    "POC-2",
+    latitude = -63.839, longitude = 44.794, lake = "Pockwock Lake"
+  ) %>%
+  update_datasets(source = "R package mudata2")
 ```
 
 ## Adding column metadata
@@ -214,11 +225,15 @@ You'll notice there's a `type` column that is also automatically generated, whic
 ```{r}
 md_doc <- md %>%
   update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
-  update_locations("MAJ-1", latitude = -63.486, longitude = 44.732,
-                   lake = "Lake Major") %>%
-  update_locations("POC-2", latitude = -63.839, longitude = 44.794,
-                   lake = "Pockwock Lake") %>%
-  update_datasets(source = "R package mudata2, version 1.0.0") %>%
+  update_locations(
+    "MAJ-1", 
+    latitude = -63.486, longitude = 44.732, lake = "Lake Major"
+  ) %>%
+  update_locations(
+    "POC-2",
+    latitude = -63.839, longitude = 44.794, lake = "Pockwock Lake"
+  ) %>%
+  update_datasets(source = "R package mudata2") %>%
   update_columns_table() %>%
   update_columns("depth", description = "Depth in sediment core (cm)") %>%
   update_columns("sd", description = "Standard deviation uncertainty of n=3 values")
@@ -252,4 +267,4 @@ The convention of using ".mudata.*" isn't necessary, but seems like a good idea 
 
 ## More information
 
-That is most of what there is to creating mudata objects. For more reading, I suggest looking at the documentation for `?mudata`, `?update_locations`, `?mudata_prepare_column`, and `?read_mudata`.
+That is most of what there is to creating mudata objects. For more reading, I suggest looking at the documentation for `mudata()`, `update_locations()`, `mudata_prepare_column()`, and `read_mudata()`.

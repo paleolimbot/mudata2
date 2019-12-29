@@ -45,6 +45,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -55,9 +58,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="../articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -95,7 +95,7 @@
 
     
     
-<p>As demonstrated in <code><a href="../articles/mudata.html">vignette("mudata", package = "mudata2")</a></code>, mudata objects are easy to use and have a quick data-to-analysis time. In contrast, getting data into the format takes a little more time, and requires some familiarity with <strong>dplyr</strong> and <strong>tidyr</strong>. This process is essentially the data cleaning step, except that instead of discarding all the information that you don’t need (or won’t fit in the output data structure), you can keep almost everything, possibly adding some documentation that didn’t previously exist. This is a front-end investment of time that will make subsequent users of the data better informed about how and why the data were collected in the first place.</p>
+<p>As demonstrated in <code><a href="../articles/mudata2.html">vignette("mudata2", package = "mudata2")</a></code>, mudata objects are easy to use and have a quick data-to-analysis time. In contrast, getting data into the format takes a little more time, and requires some familiarity with <strong>dplyr</strong> and <strong>tidyr</strong>. This process is essentially the data cleaning step, except that instead of discarding all the information that you don’t need (or won’t fit in the output data structure), you can keep almost everything, possibly adding some documentation that didn’t previously exist. This is a front-end investment of time that will make subsequent users of the data better informed about how and why the data were collected in the first place.</p>
 <p>(Mostly) universal data (mudata) objects are created using the <code><a href="../reference/mudata.html">mudata()</a></code> function, which at minimum takes a data frame/tibble with one row per measurement. As an example, I’ll use the data table from the <code>ns_climate</code> dataset:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mudata2)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">ns_climate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="../reference/tbl_data.html">tbl_data</a></span>()</a></code></pre></div>

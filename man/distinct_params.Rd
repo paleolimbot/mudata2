@@ -9,10 +9,6 @@
 \alias{distinct_datasets.default}
 \alias{distinct_columns}
 \alias{distinct_columns.default}
-\alias{unique_params}
-\alias{unique_locations}
-\alias{unique_datasets}
-\alias{unique_columns}
 \alias{src_tbls.mudata}
 \title{Get distinct params, locations, and datasets from a mudata object}
 \usage{
@@ -31,14 +27,6 @@ distinct_datasets(x, ...)
 distinct_columns(x, ...)
 
 \method{distinct_columns}{default}(x, table = names(x), ...)
-
-unique_params(x, table = "data")
-
-unique_locations(x, table = "data")
-
-unique_datasets(x, table = "data")
-
-unique_columns(x, table = names(x))
 
 \method{src_tbls}{mudata}(x)
 }

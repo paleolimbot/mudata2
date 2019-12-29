@@ -63,30 +63,6 @@ distinct_columns.default <- function(x, table = names(x), ...) {
 }
 
 #' @rdname distinct_params
-#' @export
-unique_params <- function(x, table = "data") {
-  distinct_params(x, table = table)
-}
-
-#' @rdname distinct_params
-#' @export
-unique_locations <- function(x, table = "data") {
-  distinct_locations(x, table = table)
-}
-
-#' @rdname distinct_params
-#' @export
-unique_datasets <- function(x, table = "data") {
-  distinct_datasets(x, table = table)
-}
-
-#' @rdname distinct_params
-#' @export
-unique_columns <- function(x, table = names(x)) {
-  distinct_columns(x, table = table)
-}
-
-#' @rdname distinct_params
 #' @importFrom dplyr src_tbls
 #' @export
 src_tbls.mudata <- function(x) {

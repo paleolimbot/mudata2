@@ -10,7 +10,6 @@ reference:
   desc: Inspect the contents of mudata objects
   contents:
   - starts_with("distinct")
-  - starts_with("unique")
   - print.mudata
   - summary.mudata
 - title: Subset and extract componets from mudata objects

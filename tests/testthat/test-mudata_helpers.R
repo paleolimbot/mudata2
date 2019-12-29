@@ -52,16 +52,6 @@ test_that("tbl_data_wide works as expected", {
   )
 })
 
-test_that("unique_* functions return the correct values", {
-  expect_equal(unique_params(kentvillegreenwood),
-               distinct_params(kentvillegreenwood))
-  expect_equal(unique_locations(kentvillegreenwood),
-               distinct_locations(kentvillegreenwood))
-  expect_equal(unique_datasets(kentvillegreenwood), "ecclimate")
-  expect_equal(unique_columns(kentvillegreenwood, "data"),
-               distinct_columns(kentvillegreenwood, "data"))
-})
-
 test_that("update_datasets() function works as expected", {
   # updating a field
   updated_url <- kentvillegreenwood %>%

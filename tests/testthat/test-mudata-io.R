@@ -517,6 +517,9 @@ test_that("read_ functions throw errors when used on odd files", {
 })
 
 test_that("write functions throw errors when they have insufficient permissions", {
+  # these tests are useful for development but aren't needed for CRAN
+  skip_on_cran()
+  skip_on_os("windows")
   empty_directory <- tempfile()
   dir.create(empty_directory)
   Sys.chmod(empty_directory, mode = "0444")
@@ -542,6 +545,8 @@ test_that("write functions throw errors when they have insufficient permissions"
     ),
     "Permission denied"
   )
+  
+  unlink(empty_directory)
 })
 
 test_that("read/write directory functions work", {

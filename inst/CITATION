@@ -1,0 +1,14 @@
+citHeader("To cite mudata2 in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Using a Linked Table-Based Structure to Encode Self-Describing Multiparameter Spatiotemporal Data",
+  author   = "Dewey W. Dunnington, Ian S. Spooner",
+  journal  = "FACETS",
+  year     = 2018,
+  volume   = 3,
+  number   = 1,
+  pages    = "326-337",
+  doi      = "10.1139/facets-2017-0026",
+  textVersion = "Dunnington DW and Spooner IS (2018). Using a linked table-based structure to encode self-describing multiparameter spatiotemporal data. FACETS 3:326-337. doi:10.1139/facets-2017-0026"
+)

@@ -115,8 +115,8 @@ alta_lake
 ```
 
 For examples of using and creating `mudata` objects, see
-`vignette("mudata", package = "mudata2")` and `vignette("mudata_create",
-package = "mudata2")`.
+`vignette("mudata2", package = "mudata2")` and
+`vignette("mudata_create", package = "mudata2")`.
 
 ## Why do I need it?
 
@@ -163,8 +163,8 @@ We have used the mudata format in the following situations:
 ## More information
 
 For more examples of mudata usage, see the package vignettes:
-`vignette("mudata", package = "mudata2")` and `vignette("mudata_create",
-package = "mudata2")`
+`vignette("mudata2", package = "mudata2")` and
+`vignette("mudata_create", package = "mudata2")`
 
 ## References
 

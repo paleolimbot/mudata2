@@ -4,7 +4,7 @@ author: "Dewey Dunnington"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{mudata}
+  %\VignetteIndexEntry{mudata2}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

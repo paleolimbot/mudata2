@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mudata2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -80,6 +80,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -90,9 +93,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="../articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -100,7 +100,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/paleolimbot/mudata">
+  <a href="https://github.com/paleolimbot/mudata2">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -132,83 +132,11 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-create-mudata-objects" class="hasAnchor"><a href="#section-create-mudata-objects" class="anchor"></a>Create mudata objects</h2>
+          <p class="section-desc"><p>Create mudata objects from existing tables</p></p>
         </th>
       </tr>
       <tr>
-        
-        <td>
-          <p><code><a href="alta_lake.html">alta_lake</a></code> </p>
-        </td>
-        <td><p>Alta Lake Gravity Core Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="as_mudata.html">as_mudata()</a></code> <code><a href="as_mudata.html">as.mudata()</a></code> </p>
-        </td>
-        <td><p>Coerce objects to mudata</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="autoplot.mudata.html">autoplot(<i>&lt;mudata&gt;</i>)</a></code> <code><a href="autoplot.mudata.html">plot(<i>&lt;mudata&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Autoplot a mudata object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="biplot.mudata.html">biplot(<i>&lt;mudata&gt;</i>)</a></code> <code><a href="biplot.mudata.html">autobiplot(<i>&lt;mudata&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Biplot a mudata object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="collect.mudata.html">collect(<i>&lt;mudata&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Collect all mudata components</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="distinct_params.html">distinct_params()</a></code> <code><a href="distinct_params.html">distinct_locations()</a></code> <code><a href="distinct_params.html">distinct_datasets()</a></code> <code><a href="distinct_params.html">distinct_columns()</a></code> <code><a href="distinct_params.html">unique_params()</a></code> <code><a href="distinct_params.html">unique_locations()</a></code> <code><a href="distinct_params.html">unique_datasets()</a></code> <code><a href="distinct_params.html">unique_columns()</a></code> <code><a href="distinct_params.html">src_tbls(<i>&lt;mudata&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Get distinct params, locations, and datasets from a mudata object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filterers.html">filter_datasets()</a></code> <code><a href="filterers.html">filter_data()</a></code> <code><a href="filterers.html">filter_locations()</a></code> <code><a href="filterers.html">filter_params()</a></code> </p>
-        </td>
-        <td><p>Subset a mudata object by complex expression</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="is_mudata.html">is_mudata()</a></code> <code><a href="is_mudata.html">is.mudata()</a></code> </p>
-        </td>
-        <td><p>Test if an object is a mudata object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="kentvillegreenwood.html">kentvillegreenwood</a></code> </p>
-        </td>
-        <td><p>Kentville/Greenwood Climate Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="long_ggplot.html">long_ggplot()</a></code> <code><a href="long_ggplot.html">long_plot()</a></code> <code><a href="long_ggplot.html">long_plot_base()</a></code> </p>
-        </td>
-        <td><p>Smart plotting of parameter-long data frames</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="long_lake.html">long_lake</a></code> </p>
-        </td>
-        <td><p>Long Lake Lake Gravity/Percussion Core Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="long_pairs.html">long_pairs()</a></code> <code><a href="long_pairs.html">long_biplot()</a></code> <code><a href="long_pairs.html">autobiplot()</a></code> </p>
-        </td>
-        <td><p>Biplot a parameter-long data frame</p></td>
-      </tr><tr>
         
         <td>
           <p><code><a href="mudata.html">mudata()</a></code> </p>
@@ -217,75 +145,49 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="mudata2-package.html">mudata2-package</a></code> </p>
-        </td>
-        <td><p>A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mudata_prepare_column.html">mudata_prepare_column()</a></code> <code><a href="mudata_prepare_column.html">mudata_prepare_tbl()</a></code> <code><a href="mudata_prepare_column.html">mudata_parse_column()</a></code> <code><a href="mudata_prepare_column.html">mudata_parse_tbl()</a></code> </p>
-        </td>
-        <td><p>Prepare mudata table columns for writing</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mutate_data.html">mutate_data()</a></code> <code><a href="mutate_data.html">mutate_params()</a></code> <code><a href="mutate_data.html">mutate_locations()</a></code> <code><a href="mutate_data.html">mutate_datasets()</a></code> <code><a href="mutate_data.html">mutate_columns()</a></code> <code><a href="mutate_data.html">mutate_tbl()</a></code> </p>
-        </td>
-        <td><p>Modify mudata tables</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="new_mudata.html">new_mudata()</a></code> <code><a href="new_mudata.html">validate_mudata()</a></code> </p>
-        </td>
-        <td><p>Validate, create a mudata object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ns_climate.html">ns_climate</a></code> </p>
-        </td>
-        <td><p>Nova Scotia Long-Term Climate Data</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="parallel_gather.html">parallel_gather()</a></code> </p>
         </td>
         <td><p>Melt multiple sets of columns in parallel</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-inspect-mudata-objects" class="hasAnchor"><a href="#section-inspect-mudata-objects" class="anchor"></a>Inspect mudata objects</h2>
+          <p class="section-desc"><p>Inspect the contents of mudata objects</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
-          <p><code><a href="pocmaj.html">pocmaj</a></code> </p>
+          <p><code><a href="distinct_params.html">distinct_params()</a></code> <code><a href="distinct_params.html">distinct_locations()</a></code> <code><a href="distinct_params.html">distinct_datasets()</a></code> <code><a href="distinct_params.html">distinct_columns()</a></code> <code><a href="distinct_params.html">src_tbls(<i>&lt;mudata&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Pockwock Lake/Lake Major Elemental Sample Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pocmajsum.html">pocmajsum</a></code> </p>
-        </td>
-        <td><p>Pre-summarised Sample Data</p></td>
+        <td><p>Get distinct params, locations, and datasets from a mudata object</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="print.mudata.html">print(<i>&lt;mudata&gt;</i>)</a></code> <code><a href="print.mudata.html">summary(<i>&lt;mudata&gt;</i>)</a></code> </p>
         </td>
         <td><p>Print a mudata object</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-subset-and-extract-componets-from-mudata-objects" class="hasAnchor"><a href="#section-subset-and-extract-componets-from-mudata-objects" class="anchor"></a>Subset and extract componets from mudata objects</h2>
+          <p class="section-desc"><p>Filter, subset, and extract components from mudata objects</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="tbl_data.html">tbl_data()</a></code> <code><a href="tbl_data.html">tbl_data_wide()</a></code> <code><a href="tbl_data.html">tbl_params()</a></code> <code><a href="tbl_data.html">tbl_locations()</a></code> <code><a href="tbl_data.html">tbl_datasets()</a></code> <code><a href="tbl_data.html">tbl_columns()</a></code> <code><a href="tbl_data.html">tbl_columns()</a></code> <code><a href="tbl_data.html">tbl(<i>&lt;mudata&gt;</i>)</a></code> <code><a href="tbl_data.html">x_columns()</a></code> </p>
+        </td>
+        <td><p>Access components of a mudata object</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="rbind.mudata.html">rbind(<i>&lt;mudata&gt;</i>)</a></code> </p>
+          <p><code><a href="filterers.html">filter_datasets()</a></code> <code><a href="filterers.html">filter_data()</a></code> <code><a href="filterers.html">filter_locations()</a></code> <code><a href="filterers.html">filter_params()</a></code> </p>
         </td>
-        <td><p>Combine mudata objects</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="renamers.html">rename_locations()</a></code> <code><a href="renamers.html">rename_params()</a></code> <code><a href="renamers.html">rename_datasets()</a></code> <code><a href="renamers.html">rename_columns()</a></code> </p>
-        </td>
-        <td><p>Rename identifiers in a mudata object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="second_lake_temp.html">second_lake_temp</a></code> </p>
-        </td>
-        <td><p>Second Lake Thermistor String Data</p></td>
+        <td><p>Subset a mudata object by complex expression</p></td>
       </tr><tr>
         
         <td>
@@ -298,12 +200,26 @@
           <p><code><a href="subset.mudata.html">subset(<i>&lt;mudata&gt;</i>)</a></code> </p>
         </td>
         <td><p>Subset a MuData object</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-modify-mudata-objects" class="hasAnchor"><a href="#section-modify-mudata-objects" class="anchor"></a>Modify mudata objects</h2>
+          <p class="section-desc"><p>Update the contents of a mudata object</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="mutate_data.html">mutate_data()</a></code> <code><a href="mutate_data.html">mutate_params()</a></code> <code><a href="mutate_data.html">mutate_locations()</a></code> <code><a href="mutate_data.html">mutate_datasets()</a></code> <code><a href="mutate_data.html">mutate_columns()</a></code> <code><a href="mutate_data.html">mutate_tbl()</a></code> </p>
+        </td>
+        <td><p>Modify mudata tables</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="tbl_data.html">tbl_data()</a></code> <code><a href="tbl_data.html">tbl_data_wide()</a></code> <code><a href="tbl_data.html">tbl_params()</a></code> <code><a href="tbl_data.html">tbl_locations()</a></code> <code><a href="tbl_data.html">tbl_datasets()</a></code> <code><a href="tbl_data.html">tbl_columns()</a></code> <code><a href="tbl_data.html">tbl_columns()</a></code> <code><a href="tbl_data.html">tbl(<i>&lt;mudata&gt;</i>)</a></code> <code><a href="tbl_data.html">x_columns()</a></code> </p>
+          <p><code><a href="renamers.html">rename_locations()</a></code> <code><a href="renamers.html">rename_params()</a></code> <code><a href="renamers.html">rename_datasets()</a></code> <code><a href="renamers.html">rename_columns()</a></code> </p>
         </td>
-        <td><p>Access components of a mudata object</p></td>
+        <td><p>Rename identifiers in a mudata object</p></td>
       </tr><tr>
         
         <td>
@@ -319,9 +235,119 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="rbind.mudata.html">rbind(<i>&lt;mudata&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Combine mudata objects</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-read-and-write-mudata-objects" class="hasAnchor"><a href="#section-read-and-write-mudata-objects" class="anchor"></a>Read and write mudata objects</h2>
+          <p class="section-desc"><p>Read and write mudata objects from JSON, ZIP, and CSV</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
           <p><code><a href="write_mudata.html">write_mudata()</a></code> <code><a href="write_mudata.html">read_mudata()</a></code> <code><a href="write_mudata.html">write_mudata_zip()</a></code> <code><a href="write_mudata.html">read_mudata_zip()</a></code> <code><a href="write_mudata.html">write_mudata_dir()</a></code> <code><a href="write_mudata.html">read_mudata_dir()</a></code> <code><a href="write_mudata.html">write_mudata_json()</a></code> <code><a href="write_mudata.html">to_mudata_json()</a></code> <code><a href="write_mudata.html">read_mudata_json()</a></code> <code><a href="write_mudata.html">from_mudata_json()</a></code> </p>
         </td>
         <td><p>Read/Write mudata objects</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-example-datasets" class="hasAnchor"><a href="#section-example-datasets" class="anchor"></a>Example datasets</h2>
+          <p class="section-desc"><p>Datasets with which to test and illustrate the mudata format</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="alta_lake.html">alta_lake</a></code> </p>
+        </td>
+        <td><p>Alta Lake Gravity Core Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="long_lake.html">long_lake</a></code> </p>
+        </td>
+        <td><p>Long Lake Lake Gravity/Percussion Core Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ns_climate.html">ns_climate</a></code> </p>
+        </td>
+        <td><p>Nova Scotia Long-Term Climate Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pocmaj.html">pocmaj</a></code> </p>
+        </td>
+        <td><p>Pockwock Lake/Lake Major Elemental Sample Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pocmajsum.html">pocmajsum</a></code> </p>
+        </td>
+        <td><p>Pre-summarised Sample Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="second_lake_temp.html">second_lake_temp</a></code> </p>
+        </td>
+        <td><p>Second Lake Thermistor String Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="kentvillegreenwood.html">kentvillegreenwood</a></code> </p>
+        </td>
+        <td><p>Kentville/Greenwood Climate Data</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-low-level-read-write-details" class="hasAnchor"><a href="#section-low-level-read-write-details" class="anchor"></a>Low-level read/write details</h2>
+          <p class="section-desc"><p>Nitty-gritty details for reading and writing mudata objects</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="update_columns_table.html">update_columns_table()</a></code> </p>
+        </td>
+        <td><p>Update the columns table</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="mudata_prepare_column.html">mudata_prepare_column()</a></code> <code><a href="mudata_prepare_column.html">mudata_prepare_tbl()</a></code> <code><a href="mudata_prepare_column.html">mudata_parse_column()</a></code> <code><a href="mudata_prepare_column.html">mudata_parse_tbl()</a></code> </p>
+        </td>
+        <td><p>Prepare mudata table columns for writing</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-s-details-for-mudata-objects" class="hasAnchor"><a href="#section-s-details-for-mudata-objects" class="anchor"></a>S3 details for mudata objects</h2>
+          <p class="section-desc"><p>Inspect object details for mudata objects</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="as_mudata.html">as_mudata()</a></code> <code><a href="as_mudata.html">as.mudata()</a></code> </p>
+        </td>
+        <td><p>Coerce objects to mudata</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="is_mudata.html">is_mudata()</a></code> <code><a href="is_mudata.html">is.mudata()</a></code> </p>
+        </td>
+        <td><p>Test if an object is a mudata object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="new_mudata.html">new_mudata()</a></code> <code><a href="new_mudata.html">validate_mudata()</a></code> </p>
+        </td>
+        <td><p>Validate, create a mudata object</p></td>
       </tr>
     </tbody>
     </table>
@@ -330,7 +356,14 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-create-mudata-objects">Create mudata objects</a></li>
+      <li><a href="#section-inspect-mudata-objects">Inspect mudata objects</a></li>
+      <li><a href="#section-subset-and-extract-componets-from-mudata-objects">Subset and extract componets from mudata objects</a></li>
+      <li><a href="#section-modify-mudata-objects">Modify mudata objects</a></li>
+      <li><a href="#section-read-and-write-mudata-objects">Read and write mudata objects</a></li>
+      <li><a href="#section-example-datasets">Example datasets</a></li>
+      <li><a href="#section-low-level-read-write-details">Low-level read/write details</a></li>
+      <li><a href="#section-s-details-for-mudata-objects">S3 details for mudata objects</a></li>
     </ul>
   </div>
 </div>

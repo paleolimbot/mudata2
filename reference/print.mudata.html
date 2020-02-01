@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mudata2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -82,6 +82,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -92,9 +95,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="../articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -102,7 +102,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/paleolimbot/mudata">
+  <a href="https://github.com/paleolimbot/mudata2">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -121,7 +121,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Print a mudata object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata/blob/master/R/mudata.R'><code>R/mudata.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata2/blob/master/R/mudata.R'><code>R/mudata.R</code></a></small>
     <div class="hidden name"><code>print.mudata.Rd</code></div>
     </div>
 
@@ -172,7 +172,20 @@
 #&gt; 3 ecclimate KENTVILLE CDA CS maxtemp 1999-07-03  26.4 &lt;NA&gt; 
 #&gt; 4 ecclimate KENTVILLE CDA CS maxtemp 1999-07-04  28.6 &lt;NA&gt; 
 #&gt; 5 ecclimate KENTVILLE CDA CS maxtemp 1999-07-05  26   &lt;NA&gt; 
-#&gt; 6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'>
+#&gt; 6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>kentvillegreenwood</span>)</div><div class='output co'>#&gt; # A tibble: 22 x 7
+#&gt;    param        location         dataset   mean_value sd_value     n  n_NA
+#&gt;    &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;int&gt;
+#&gt;  1 cooldegdays  GREENWOOD A      ecclimate      2.31     2.35     62     0
+#&gt;  2 cooldegdays  KENTVILLE CDA CS ecclimate      2.66     2.33     62     0
+#&gt;  3 dirofmaxgust GREENWOOD A      ecclimate     22.8      6.14     62    33
+#&gt;  4 dirofmaxgust KENTVILLE CDA CS ecclimate    NaN      NaN        62    62
+#&gt;  5 heatdegdays  GREENWOOD A      ecclimate      0.447    0.878    62     0
+#&gt;  6 heatdegdays  KENTVILLE CDA CS ecclimate      0.279    0.672    62     0
+#&gt;  7 maxtemp      GREENWOOD A      ecclimate     26.1      3.40     62     0
+#&gt;  8 maxtemp      KENTVILLE CDA CS ecclimate     25.8      3.64     62     0
+#&gt;  9 meantemp     GREENWOOD A      ecclimate     19.9      2.90     62     0
+#&gt; 10 meantemp     KENTVILLE CDA CS ecclimate     20.4      2.72     62     0
+#&gt; # … with 12 more rows</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

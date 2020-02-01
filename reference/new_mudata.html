@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Validate, create a mudata object — new_mudata" />
-<meta property="og:description" content="Validates a mudata object by calling stop when an error is found;
+<meta property="og:description" content="Validates a mudata object by calling rlang::abort when an error is found;
 creates a mudata object from a list. Validation is generally performed
 when objects are created using mudata, or when objects are read/writen
 using read_mudata and write_mudata." />
@@ -72,7 +72,7 @@ using read_mudata and write_mudata." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mudata2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -85,6 +85,9 @@ using read_mudata and write_mudata." />
   </a>
 </li>
 <li>
+  <a href="../articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -95,9 +98,6 @@ using read_mudata and write_mudata." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="../articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -105,7 +105,7 @@ using read_mudata and write_mudata." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/paleolimbot/mudata">
+  <a href="https://github.com/paleolimbot/mudata2">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -124,12 +124,12 @@ using read_mudata and write_mudata." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Validate, create a mudata object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata/blob/master/R/mudata.R'><code>R/mudata.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata2/blob/master/R/mudata.R'><code>R/mudata.R</code></a></small>
     <div class="hidden name"><code>new_mudata.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Validates a mudata object by calling <a href='https://rdrr.io/r/base/stop.html'>stop</a> when an error is found;
+    <p>Validates a mudata object by calling <a href='https://rlang.r-lib.org/reference/abort.html'>rlang::abort</a> when an error is found;
 creates a mudata object from a <a href='https://rdrr.io/r/base/list.html'>list</a>. Validation is generally performed
 when objects are created using <a href='mudata.html'>mudata</a>, or when objects are read/writen
 using <a href='write_mudata.html'>read_mudata</a> and <a href='write_mudata.html'>write_mudata</a>.</p>
@@ -137,8 +137,12 @@ using <a href='write_mudata.html'>read_mudata</a> and <a href='write_mudata.html
 
     <pre class="usage"><span class='fu'>new_mudata</span>(<span class='no'>md</span>, <span class='no'>x_columns</span>)
 
-<span class='fu'>validate_mudata</span>(<span class='no'>md</span>, <span class='kw'>check_unique</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>check_references</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>action</span> <span class='kw'>=</span> <span class='no'>stop</span>)</pre>
+<span class='fu'>validate_mudata</span>(
+  <span class='no'>md</span>,
+  <span class='kw'>check_unique</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>check_references</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>action</span> <span class='kw'>=</span> <span class='no'>abort</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

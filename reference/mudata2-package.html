@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data — mudata2-package • mudata2</title>
+<title>mudata2: Interchange Tools for Multi-Parameter Spatiotemporal Data — mudata2-package • mudata2</title>
 
 
 <!-- jquery -->
@@ -35,18 +35,12 @@
 
 
 
-<meta property="og:title" content="A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data — mudata2-package" />
-<meta property="og:description" content="The 'mudata' package for R is a set of tools to create, manipulate, and
-visualize multi-parameter, spatiotemporal data. Data of this type includes
-all data where multiple parameters (e.g. wind speed, precipitation,
-temperature) are measured along common axes (e.g. time, depth) at discrete
-locations (e.g. climate stations). These data include long-term climate data
-collected from climate stations, paleolimnological data, ice core data,
-long-term water quality monitoring data, and ocean core data among many
-others. Data of this type is often voluminous and difficult to
-organize/document given its multidimensional nature. The (mostly) universal
-data (mudata) format is an attempt to organize these data in a common way to
-facilitate their documentation and comparison." />
+<meta property="og:title" content="mudata2: Interchange Tools for Multi-Parameter Spatiotemporal Data — mudata2-package" />
+<meta property="og:description" content="Formatting and structuring multi-parameter spatiotemporal data
+  is often a time-consuming task. This package offers functions and data structures 
+  designed to easily organize and visualize these data for applications in geology, 
+  paleolimnology, dendrochronology, and paleoclimate. See Dunnington and Spooner (2018)
+  &amp;lt;doi:10.1139/facets-2017-0026&amp;gt;." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -79,7 +73,7 @@ facilitate their documentation and comparison." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mudata2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -92,6 +86,9 @@ facilitate their documentation and comparison." />
   </a>
 </li>
 <li>
+  <a href="../articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -102,9 +99,6 @@ facilitate their documentation and comparison." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="../articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -112,7 +106,7 @@ facilitate their documentation and comparison." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/paleolimbot/mudata">
+  <a href="https://github.com/paleolimbot/mudata2">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -130,75 +124,40 @@ facilitate their documentation and comparison." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A (Mostly) Universal Data Format for Multi-Parameter, Spatiotemporal Data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata/blob/master/R/package_doc.R'><code>R/package_doc.R</code></a></small>
+    <h1>mudata2: Interchange Tools for Multi-Parameter Spatiotemporal Data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata2/blob/master/R/mudata2-package.R'><code>R/mudata2-package.R</code></a></small>
     <div class="hidden name"><code>mudata2-package.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The 'mudata' package for R is a set of tools to create, manipulate, and
-visualize multi-parameter, spatiotemporal data. Data of this type includes
-all data where multiple parameters (e.g. wind speed, precipitation,
-temperature) are measured along common axes (e.g. time, depth) at discrete
-locations (e.g. climate stations). These data include long-term climate data
-collected from climate stations, paleolimnological data, ice core data,
-long-term water quality monitoring data, and ocean core data among many
-others. Data of this type is often voluminous and difficult to
-organize/document given its multidimensional nature. The (mostly) universal
-data (mudata) format is an attempt to organize these data in a common way to
-facilitate their documentation and comparison.</p>
+    <p>Formatting and structuring multi-parameter spatiotemporal data
+  is often a time-consuming task. This package offers functions and data structures 
+  designed to easily organize and visualize these data for applications in geology, 
+  paleolimnology, dendrochronology, and paleoclimate. See Dunnington and Spooner (2018)
+  &lt;doi:10.1139/facets-2017-0026&gt;.</p>
     </div>
 
 
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The (mostly) universal data format is a collection of five (or more) tables,
-one of which contains the data in a parameter-long form (see
-<a href='https://tidyr.tidyverse.org/reference/gather.html'>gather</a>). The easiest way to visualize a mudata object is to
-inspect the sample datasets within the package (<a href='ns_climate.html'>ns_climate</a>,
-<a href='kentvillegreenwood.html'>kentvillegreenwood</a>, <a href='alta_lake.html'>alta_lake</a>, <a href='long_lake.html'>long_lake</a>, and
-<a href='second_lake_temp.html'>second_lake_temp</a>).</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Dunnington DW and Spooner IS (2018). "Using a linked table-based
-structure to encode self-describing multiparameter spatiotemporal data".
-FACETS. doi:10.1139/facets-2017-0026
-<a href='http://www.facetsjournal.com/doi/10.1139/facets-2017-0026'>http://www.facetsjournal.com/doi/10.1139/facets-2017-0026</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='mudata.html'>mudata</a>, <a href='write_mudata.html'>read_mudata</a></p></div>
+    <div class='dont-index'><p>Useful links:</p><ul>
+<li><p><a href='https://paleolimbot.github.io/mudata2'>https://paleolimbot.github.io/mudata2</a></p></li>
+<li><p><a href='https://github.com/paleolimbot/mudata2'>https://github.com/paleolimbot/mudata2</a></p></li>
+<li><p>Report bugs at <a href='https://github.com/paleolimbot/mudata2/issues'>https://github.com/paleolimbot/mudata2/issues</a></p></li>
+</ul>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>kentvillegreenwood</span>)</div><div class='output co'>#&gt; A mudata object aligned along "date"
-#&gt;   distinct_datasets():  "ecclimate"
-#&gt;   distinct_locations(): "GREENWOOD A", "KENTVILLE CDA CS"
-#&gt;   distinct_params():    "cooldegdays", "dirofmaxgust" ... and 9 more
-#&gt;   src_tbls():           "data", "locations" ... and 3 more
-#&gt; 
-#&gt; tbl_data() %&gt;% head():
-#&gt; # A tibble: 6 x 6
-#&gt;   dataset   location         param   date       value flags
-#&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;   &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;
-#&gt; 1 ecclimate KENTVILLE CDA CS maxtemp 1999-07-01  28.5 &lt;NA&gt; 
-#&gt; 2 ecclimate KENTVILLE CDA CS maxtemp 1999-07-02  30.7 &lt;NA&gt; 
-#&gt; 3 ecclimate KENTVILLE CDA CS maxtemp 1999-07-03  26.4 &lt;NA&gt; 
-#&gt; 4 ecclimate KENTVILLE CDA CS maxtemp 1999-07-04  28.6 &lt;NA&gt; 
-#&gt; 5 ecclimate KENTVILLE CDA CS maxtemp 1999-07-05  26   &lt;NA&gt; 
-#&gt; 6 ecclimate KENTVILLE CDA CS maxtemp 1999-07-06  25.3 &lt;NA&gt; </div><div class='input'><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/autoplot.html'>autoplot</a></span>(<span class='no'>kentvillegreenwood</span>)</div><div class='output co'>#&gt; <span class='message'>Using x = "date", y = "value"</span></div><div class='output co'>#&gt; <span class='message'>Using first 9 facets of 11. Use max_facets = FALSE to plot all facets</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 125 rows containing missing values (geom_path).</span></div><div class='img'><img src='mudata2-package-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+</div>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#details">Details</a></li>
-      <li><a href="#references">References</a></li>
       <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
     <h2>Author</h2>
-    <p><strong>Maintainer</strong>: Dewey Dunnington <a href='mailto:dewey@fishandwhistle.net'>dewey@fishandwhistle.net</a> (0000-0002-9415-4582)</p>
+    <p><strong>Maintainer</strong>: Dewey Dunnington <a href='mailto:dewey@fishandwhistle.net'>dewey@fishandwhistle.net</a> (<a href='https://orcid.org/0000-0002-9415-4582'>ORCID</a>)</p>
   </div>
 </div>
 

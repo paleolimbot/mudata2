@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">mudata2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -48,6 +48,9 @@
   </a>
 </li>
 <li>
+  <a href="articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -58,9 +61,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -68,7 +68,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/paleolimbot/mudata">
+  <a href="https://github.com/paleolimbot/mudata2">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -103,7 +103,7 @@
 <div id="what-is-mudata" class="section level2">
 <h2 class="hasAnchor">
 <a href="#what-is-mudata" class="anchor"></a>What is mudata?</h2>
-<p>The <a href="http://www.facetsjournal.com/doi/10.1139/facets-2017-0026">mudata format</a> is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term “mudata” refers to a (mostly) universal data structure; the term “multi-parameter spatiotemporal data” is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).</p>
+<p>The <a href="https://www.facetsjournal.com/doi/10.1139/facets-2017-0026">mudata format</a> is a data table in a specific form, with data dictionaries for locations, parameters, and datasets contained in the data table. The term “mudata” refers to a (mostly) universal data structure; the term “multi-parameter spatiotemporal data” is a mouthful, but just means that you measured a bunch of things (parameters) in a bunch of places (locations) at a bunch of different times. The best example of this is historical climate data, because it is usually set up in such a way that there are climate stations (locations) that measure some things (parameters, like temperature, precipitation, wind, etc.) at various points in time. This package is designed primarily for climate data and sediment core data, however the format can be applied to many other types of data where parameters are measured along one or more common axes (time, depth, etc.).</p>
 <p>A few examples from this package can be found in the <code>ns_climate</code>, <code>second_lake_temp</code>, and <code>alta_lake</code> datasets:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">ns_climate</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; A mudata object aligned along "date"</span></a>
@@ -156,7 +156,7 @@
 <a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; 4 alta_lake16 ALGC2    As     1.75 2003.  60    NA   ppm       1 Zone 3</span></a>
 <a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; 5 alta_lake16 ALGC2    As     2.5  1998.  43.4  NA   ppm       1 Zone 3</span></a>
 <a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt; 6 alta_lake16 ALGC2    As     3.5  1982.  42    NA   ppm       1 Zone 3</span></a></code></pre></div>
-<p>For examples of using and creating <code>mudata</code> objects, see the <a href="https://cran.r-project.org/package=mudata2/vignettes/mudata.html">mudata</a> and <a href="https://cran.r-project.org/package=mudata2/vignettes/mudata_create.html">mudata_create</a> vignettes.</p>
+<p>For examples of using and creating <code>mudata</code> objects, see <code><a href="articles/mudata2.html">vignette("mudata2", package = "mudata2")</a></code> and <code><a href="articles/mudata_create.html">vignette("mudata_create", package = "mudata2")</a></code>.</p>
 </div>
 <div id="why-do-i-need-it" class="section level2">
 <h2 class="hasAnchor">
@@ -176,7 +176,12 @@
 <div id="more-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#more-information" class="anchor"></a>More information</h2>
-<p>For more examples of mudata usage, see the package vignettes: <code><a href="articles/mudata.html">vignette("mudata", package = "mudata2")</a></code>, and <code><a href="articles/mudata_create.html">vignette("mudata_create", package = "mudata2")</a></code></p>
+<p>For more examples of mudata usage, see the package vignettes: <code><a href="articles/mudata2.html">vignette("mudata2", package = "mudata2")</a></code> and <code><a href="articles/mudata_create.html">vignette("mudata_create", package = "mudata2")</a></code></p>
+</div>
+<div id="references" class="section level2">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
+<p>Dunnington DW and Spooner IS (2018). “Using a linked table-based structure to encode self-describing multiparameter spatiotemporal data”. FACETS. <a href="https://doi.org/10.1139/facets-2017-0026">doi:10.1139/facets-2017-0026</a></p>
 </div>
 </div>
   </div>
@@ -187,9 +192,9 @@
 <ul class="list-unstyled">
 <li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=mudata2">https://​cloud.r-project.org/​package=mudata2</a>
 </li>
-<li>Browse source code at <br><a href="https://github.com/paleolimbot/mudata">https://​github.com/​paleolimbot/​mudata</a>
+<li>Browse source code at <br><a href="https://github.com/paleolimbot/mudata2">https://​github.com/​paleolimbot/​mudata2</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/paleolimbot/mudata/issues">https://​github.com/​paleolimbot/​mudata/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/paleolimbot/mudata2/issues">https://​github.com/​paleolimbot/​mudata2/​issues</a>
 </li>
 </ul>
 </div>
@@ -197,6 +202,12 @@
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></li>
+</ul>
+</div>
+<div class="citation">
+<h2>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html">Citing mudata2</a></li>
 </ul>
 </div>
 <div class="developers">
@@ -209,9 +220,9 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=mudata2"><img src="http://cranlogs.r-pkg.org/badges/mudata2"></a></li>
-<li><a href="https://travis-ci.org/paleolimbot/mudata"><img src="https://travis-ci.org/paleolimbot/mudata.svg?branch=master" alt="Travis-CI Build Status"></a></li>
-<li><a href="https://codecov.io/github/paleolimbot/mudata?branch=master"><img src="https://img.shields.io/codecov/c/github/paleolimbot/mudata/master.svg" alt="Coverage Status"></a></li>
+<li><a href="https://cran.r-project.org/package=mudata2"><img src="https://cranlogs.r-pkg.org/badges/mudata2"></a></li>
+<li><a href="https://travis-ci.org/paleolimbot/mudata2"><img src="https://travis-ci.org/paleolimbot/mudata2.svg?branch=master" alt="Travis-CI Build Status"></a></li>
+<li><a href="https://codecov.io/github/paleolimbot/mudata2?branch=master"><img src="https://img.shields.io/codecov/c/github/paleolimbot/mudata2/master.svg" alt="Coverage Status"></a></li>
 <li><a href="https://www.tidyverse.org/lifecycle/#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://doi.org/10.1139/facets-2017-0026"><img src="https://img.shields.io/static/v1?label=DOI&amp;message=10.1139%2Ffacets-2017-0026&amp;color=blue" alt="DOI"></a></li>
 </ul>

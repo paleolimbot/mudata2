@@ -70,7 +70,7 @@ Nova Scotia-New Brunswick Border Region, Canada." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">mudata2</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -83,6 +83,9 @@ Nova Scotia-New Brunswick Border Region, Canada." />
   </a>
 </li>
 <li>
+  <a href="../articles/mudata2.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -93,9 +96,6 @@ Nova Scotia-New Brunswick Border Region, Canada." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/mudata.html">Using mudata objects</a>
-    </li>
-    <li>
       <a href="../articles/mudata_create.html">Creating mudata objects</a>
     </li>
   </ul>
@@ -103,7 +103,7 @@ Nova Scotia-New Brunswick Border Region, Canada." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/paleolimbot/mudata">
+  <a href="https://github.com/paleolimbot/mudata2">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -122,7 +122,7 @@ Nova Scotia-New Brunswick Border Region, Canada." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Long Lake Lake Gravity/Percussion Core Data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/paleolimbot/mudata2/blob/master/R/data.R'><code>R/data.R</code></a></small>
     <div class="hidden name"><code>long_lake.Rd</code></div>
     </div>
 
@@ -141,11 +141,26 @@ Nova Scotia-New Brunswick Border Region, Canada.</p>
 
     <p>Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal
 sequestration and release in the Cumberland Basin Marshes, Atlantic Canada. FACETS 2:440-460.
-doi: 10.1139/facets-2017-0004</p>
+<a href='https://doi.org/10.1139/facets-2017-0004'>doi:10.1139/facets-2017-0004</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>ggplot2</span>)
-<span class='fu'><a href='https://ggplot2.tidyverse.org/reference/autoplot.html'>autoplot</a></span>(<span class='no'>long_lake</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"depth"</span>) + <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_reverse</a></span>()</div><div class='output co'>#&gt; <span class='message'>Using x = "value"</span></div><div class='output co'>#&gt; <span class='message'>Using first 9 facets of 17. Use max_facets = FALSE to plot all facets</span></div><div class='img'><img src='long_lake-1.png' alt='' width='700' height='433' /></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>long_lake</span>)</div><div class='output co'>#&gt; A mudata object aligned along "depth"
+#&gt;   distinct_datasets():  "long_lake17"
+#&gt;   distinct_locations(): "LL GC10", "LL PC2"
+#&gt;   distinct_params():    "14C_age", "As" ... and 15 more
+#&gt;   src_tbls():           "data", "locations" ... and 3 more
+#&gt; 
+#&gt; tbl_data() %&gt;% head():
+#&gt; # A tibble: 6 x 12
+#&gt;   dataset location param depth value    sd units zone      n n_detect min_value
+#&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt;    &lt;int&gt;     &lt;dbl&gt;
+#&gt; 1 long_l… LL GC10  As     0.75  26   12.5  ppm   Unit…     3        3        NA
+#&gt; 2 long_l… LL GC10  As     2.25  30   NA    ppm   Unit…     1        1        NA
+#&gt; 3 long_l… LL GC10  As     3.75  26   NA    ppm   Unit…     1        1        NA
+#&gt; 4 long_l… LL GC10  As     5.25  25.3  6.51 ppm   Unit…     3        3        NA
+#&gt; 5 long_l… LL GC10  As     6.75  24   NA    ppm   Unit…     1        1        NA
+#&gt; 6 long_l… LL GC10  As     8.25  37.3 14.0  ppm   Unit…     3        3        NA
+#&gt; # … with 1 more variable: max_value &lt;dbl&gt;</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

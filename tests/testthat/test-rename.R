@@ -52,21 +52,23 @@ test_that("rename functions throw errors", {
   expect_error(rename_columns(kentvillegreenwood, bad = column), "Cannot rename required mudata columns")
   
   # test renaming of things that don't exist
-  expect_error(rename_datasets(kentvillegreenwood, bad = not_a_dataset), "object 'not_a_dataset' not found")
-  expect_error(rename_locations(kentvillegreenwood, bad = not_a_location), "object 'not_a_location' not found")
-  expect_error(rename_params(kentvillegreenwood, bad = not_a_param), "object 'not_a_param' not found")
-  expect_error(rename_columns(kentvillegreenwood, bad = not_a_col), "object 'not_a_col' not found")
+  expect_error(rename_datasets(kentvillegreenwood, bad = not_a_dataset), class = "no_such_item")
+  expect_error(rename_locations(kentvillegreenwood, bad = not_a_location), class = "no_such_item")
+  expect_error(rename_params(kentvillegreenwood, bad = not_a_param), class = "no_such_item")
+  expect_error(rename_columns(kentvillegreenwood, bad = not_a_col), class = "no_such_item")
   
   # test renaming of things to things that already exist
   kg2 <- kentvillegreenwood %>%
     rename_datasets(ec2 = ecclimate) %>%
     rbind(kentvillegreenwood)
   
-  expect_message(rename_datasets(kg2, ecclimate = ec2), "Possible duplicated values in x")
-  expect_message(rename_locations(kg2, `GREENWOOD A` = `KENTVILLE CDA CS`), 
-                 "Possible duplicated values in x")
-  expect_message(rename_params(kg2, maxtemp = mintemp), "Possible duplicated values in x")
-  expect_message(rename_columns(kg2, date = flags), "Possible duplicated values in x")
+  expect_error(rename_datasets(kg2, ecclimate = ec2), class = "item_not_unique")
+  expect_error(
+    rename_locations(kg2, `GREENWOOD A` = `KENTVILLE CDA CS`), 
+    class = "item_not_unique"
+  )
+  expect_error(rename_params(kg2, maxtemp = mintemp), class = "item_not_unique")
+  expect_error(rename_columns(kg2, date = flags), class = "item_not_unique")
 })
 
 test_that("rename works when some values are factors", {

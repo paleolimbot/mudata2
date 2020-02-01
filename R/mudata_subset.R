@@ -338,6 +338,21 @@ filter_params.default <- function(.data, ...) {
   filter_data(.data, paste(.data$dataset, .data$param, sep = "/////") %in% params)
 }
 
+.vars_rename <- function(names, type, ...) {
+  tryCatch(
+    tidyselect::vars_rename(names, ...),
+    error = function(e) {
+      if (inherits(e, "vctrs_error_subscript_oob")) {
+        rlang::abort(glue::glue("No such {type}: `{e$i}`"), parent = e, class = "no_such_item")
+      } else if(inherits(e, "vctrs_error_names_must_be_unique")) {
+        rlang::abort(glue::glue("{type}s must be unique"), class = "item_not_unique")
+      } else {
+        rlang::abort(glue::glue("Error during {type} renaming: {e}"))
+      }
+    }
+  )
+}
+
 .tidyselect_vars <- function(x, type) {
   singular <- type
   plural <- paste0(type, "s")

@@ -31,7 +31,7 @@ rename_locations.default <- function(.data, ...) {
   # quo-ify locations
   locations <- quos(...)
   # use tidyselect to get location names
-  locations <- tidyselect::vars_rename(.tidyselect_vars(.data, "location"), !!!locations)
+  locations <- .vars_rename(.tidyselect_vars(.data, "location"), "location", !!!locations)
   new_locations <- names(locations)
 
   # rename datasets using rename_locations_base
@@ -55,7 +55,7 @@ rename_params.default <- function(.data, ...) {
   # quo-ify params
   params <- quos(...)
   # use tidyselect to get location names
-  params <- tidyselect::vars_rename(.tidyselect_vars(.data, "param"), !!!params)
+  params <- .vars_rename(.tidyselect_vars(.data, "param"), "param", !!!params)
   new_params <- names(params)
 
   # rename datasets using rename_params_base
@@ -79,7 +79,7 @@ rename_datasets.default <- function(.data, ...) {
   # quo-ify datasets
   datasets <- quos(...)
   # use tidyselect to get dataset names
-  datasets <- tidyselect::vars_rename(.tidyselect_vars(.data, "dataset"), !!!datasets)
+  datasets <- .vars_rename(.tidyselect_vars(.data, "dataset"), "dataset", !!!datasets)
   new_datasets <- names(datasets)
 
   # rename datasets using rename_dataset
@@ -103,7 +103,7 @@ rename_columns.default <- function(.data, ...) {
   # quo-ify datasets
   columns <- quos(...)
   # use tidyselect to get dataset names
-  columns <- tidyselect::vars_rename(distinct_columns(.data), !!!columns)
+  columns <- .vars_rename(distinct_columns(.data), "column", !!!columns)
   new_columns <- names(columns)
   
   # rename datasets using rename_dataset

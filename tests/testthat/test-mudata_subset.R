@@ -131,6 +131,7 @@ test_that("subsets with factorized columns work", {
   kg2$locations$dataset <- factor(kg2$locations$dataset)
   kg2$params$dataset <- factor(kg2$params$dataset)
   kg2$columns$dataset <- factor(kg2$columns$dataset)
+  kg2$datasets$dataset <- factor(kg2$datasets$dataset)
   
   expect_identical(
     kg2 %>% select_params(ends_with("temp")) %>% distinct_params(),

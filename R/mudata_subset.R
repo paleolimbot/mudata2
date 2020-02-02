@@ -277,24 +277,19 @@ filter_data.default <- function(.data, ...) {
   # lazily filter data
   dta <- dplyr::filter(.data$data, !!!filter_args)
   
-  # redefine params, locations, datasets to reflect subsetted data
-  params <- dplyr::distinct(dta, .data$param)$param
-  locations <- dplyr::distinct(dta, .data$location)$location
-  datasets <- dplyr::distinct(dta, .data$dataset)$dataset
-  
-  pm <- dplyr::filter(.data$params, .data$param %in% params, .data$dataset %in% datasets)
-  lc <- dplyr::filter(.data$locations, .data$location %in% locations, .data$dataset %in% datasets)
-  cl <- dplyr::filter(.data$columns, .data$dataset %in% datasets, .data$dataset %in% datasets)
-  ds <- dplyr::filter(.data$datasets, .data$dataset %in% datasets)
+  pm <- dplyr::semi_join(.data$params, dta, by = c("dataset", "param"))
+  lc <- dplyr::semi_join(.data$locations, dta, by = c("dataset", "location"))
+  cl <- dplyr::semi_join(.data$columns, dta, by = "dataset")
+  ds <- dplyr::semi_join(.data$datasets, dta, by = "dataset")
   
   # keep class of original
   new_mudata(
     list(
-      data=dta,
-      locations=lc, 
-      params=pm,
-      datasets=ds, 
-      columns=cl
+      data = dta,
+      locations = lc, 
+      params = pm,
+      datasets = ds, 
+      columns = cl
     ), 
     x_columns = x_columns(.data)
   )

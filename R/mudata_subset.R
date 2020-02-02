@@ -274,9 +274,13 @@ filter_data.default <- function(.data, ...) {
   filter_args <- quos(...)
   if(length(filter_args) == 0) return(.data)
   
-  # lazily filter data
+  # filter data
   dta <- dplyr::filter(.data$data, !!!filter_args)
-  
+  filter_data_base(.data, dta)
+}
+
+# syncs data with other tables
+filter_data_base <- function(.data, dta) {
   pm <- dplyr::semi_join(.data$params, dta, by = c("dataset", "param"))
   lc <- dplyr::semi_join(.data$locations, dta, by = c("dataset", "location"))
   cl <- dplyr::semi_join(.data$columns, dta, by = "dataset")
@@ -304,14 +308,9 @@ filter_locations <- function(.data, ...) {
 #' @rdname filterers
 #' @export
 filter_locations.default <- function(.data, ...) {
-  filter_args <- quos(...)
-  if(length(filter_args) == 0) return(.data)
-  
-  locations <- .data$locations %>%
-    dplyr::filter(!!!filter_args) %>%
-    dplyr::mutate(.id = paste(.data$dataset, .data$location, sep = "/////")) %>%
-    dplyr::pull(".id")
-  filter_data(.data, paste(.data$dataset, .data$location, sep = "/////") %in% locations)
+  new_locations <- dplyr::filter(.data$locations, ...)
+  new_data <- dplyr::semi_join(.data$data, new_locations, by = c("dataset", "location"))
+  filter_data_base(.data, new_data)
 }
 
 #' @rdname filterers
@@ -323,14 +322,9 @@ filter_params <- function(.data, ...) {
 #' @rdname filterers
 #' @export
 filter_params.default <- function(.data, ...) {
-  filter_args <- quos(...)
-  if(length(filter_args) == 0) return(.data)
-  
-  params <- .data$params %>%
-    dplyr::filter(!!!filter_args) %>%
-    dplyr::mutate(.id = paste(.data$dataset, .data$param, sep = "/////")) %>%
-    dplyr::pull(".id")
-  filter_data(.data, paste(.data$dataset, .data$param, sep = "/////") %in% params)
+  new_params <- dplyr::filter(.data$params, ...)
+  new_data <- dplyr::semi_join(.data$data, new_params, by = c("dataset", "param"))
+  filter_data_base(.data, new_data)
 }
 
 .vars_rename <- function(names, type, ...) {

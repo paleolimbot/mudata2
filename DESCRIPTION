@@ -31,8 +31,6 @@ Depends:
     R (>= 3.2.0)
 Suggests: 
     testthat (>= 2.1.0),
-    RSQLite,
-    dbplyr,
     sf (>= 0.5.5),
     covr,
     hms,

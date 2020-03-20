@@ -65,7 +65,7 @@ distinct_columns.default <- function(x, table = names(x), ...) {
 #' @rdname distinct_params
 #' @importFrom dplyr src_tbls
 #' @export
-src_tbls.mudata <- function(x) {
+src_tbls.mudata <- function(x, ...) {
   names(x)
 }
 

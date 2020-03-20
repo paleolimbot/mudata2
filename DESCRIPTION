@@ -40,7 +40,7 @@ License: GPL-2
 URL: https://paleolimbot.github.io/mudata2, https://github.com/paleolimbot/mudata2
 BugReports: https://github.com/paleolimbot/mudata2/issues
 LazyData: true
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

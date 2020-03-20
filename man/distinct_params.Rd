@@ -28,7 +28,7 @@ distinct_columns(x, ...)
 
 \method{distinct_columns}{default}(x, table = names(x), ...)
 
-\method{src_tbls}{mudata}(x)
+\method{src_tbls}{mudata}(x, ...)
 }
 \arguments{
 \item{x}{A mudata object}

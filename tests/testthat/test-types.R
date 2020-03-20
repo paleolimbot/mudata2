@@ -305,15 +305,7 @@ test_that("objects generate the correct type strings", {
   expect_equal(generate_type_str(parse_json("{}")), "json")
   expect_equal(generate_type_str(parse_wkt("POINT(0 0)")), "wkt")
   expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = 3857)), "wkt(crs=3857)")
-  hard_crs <- sf::st_crs(3857)
-  hard_crs$epsg <- NA
-  hard_crs_proj4 <- hard_crs$proj4string
-  expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = hard_crs)), 
-               sprintf("wkt(crs='%s')", hard_crs_proj4))
-  hard_crs$epsg <- NULL
-  hard_crs_proj4 <- hard_crs$proj4string
-  expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = hard_crs)), 
-               sprintf("wkt(crs='%s')", hard_crs_proj4))
+  expect_equal(generate_type_str(parse_wkt("POINT(0 0)", crs = sf::NA_crs_)),  "wkt")
 })
 
 test_that("datetimes with timezones generate the correct strings", {

@@ -90,14 +90,10 @@ generate_type_str <- function(x, default = "guess") {
   # type strings for wkt, datetime columns require some information from the object
   if(type_string == "wkt") {
     crs <- sf::st_crs(x)
-    if(is.na(crs)) {
-      # don't do anything for NA crs 
-    } else if(is.null(crs$epsg)) {
-      type_string <- sprintf("wkt(crs='%s')", crs$proj4string)
+    if(is.na(crs) || is.null(crs$epsg) || is.na(crs$epsg)) {
+      # don't do anything for NA crs or undefined epsg
     } else if(!is.na(crs$epsg)) {
       type_string <- sprintf("wkt(crs=%s)", crs$epsg)
-    } else if(!is.na(crs$proj4string)) {
-      type_string <- sprintf("wkt(crs='%s')", crs$proj4string)
     }
   }
   

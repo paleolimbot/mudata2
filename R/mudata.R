@@ -406,7 +406,7 @@ as_mudata.list <- function(x, ...) {
     dplyr::group_by_all() %>%
     dplyr::tally() %>%
     dplyr::ungroup() %>%
-    dplyr::select(.data$n) %>%
+    dplyr::select("n") %>%
     dplyr::distinct()
   
   if(!identical(lengths[[1]], 1L)) {

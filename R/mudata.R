@@ -164,7 +164,7 @@ mudata <- function(data, locations=NULL, params=NULL, datasets=NULL, columns=NUL
               more_tbls)
   
   # coerce to tbls using dplyr
-  mdlist <- lapply(mdlist, dplyr::as.tbl)
+  mdlist <- lapply(mdlist, tibble::as_tibble)
   
   # create object using new_mudata
   md <- new_mudata(mdlist, x_columns = x_columns)
@@ -406,7 +406,7 @@ as_mudata.list <- function(x, ...) {
     dplyr::group_by_all() %>%
     dplyr::tally() %>%
     dplyr::ungroup() %>%
-    dplyr::select(.data$n) %>%
+    dplyr::select("n") %>%
     dplyr::distinct()
   
   if(!identical(lengths[[1]], 1L)) {

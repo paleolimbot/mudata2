@@ -455,8 +455,7 @@ update_columns_table <- function(md, quiet = FALSE) {
   
   # join with columns to see if any types need to be updated
   generated_cols_joined <- md$columns %>%
-    dplyr::left_join(generated_cols, by = c("dataset", "table", "column"),
-                     prefix = c(".x", ".y"))
+    dplyr::left_join(generated_cols, by = c("dataset", "table", "column"))
   
   # check that type.x and type.y are the same, if type was already in the columns table
   if("type" %in% colnames(md$columns)) {
@@ -471,8 +470,7 @@ update_columns_table <- function(md, quiet = FALSE) {
     
     # overwrite the type column in md$columns, add new column data
     md$columns <- generated_cols %>%
-      dplyr::left_join(md$columns, by = c("dataset", "table", "column"),
-                       prefix = c(".x", ".y")) %>%
+      dplyr::left_join(md$columns, by = c("dataset", "table", "column")) %>%
       dplyr::mutate(type = type.x) %>%
       dplyr::select(-type.y, -type.x)
   } else {

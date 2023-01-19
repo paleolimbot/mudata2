@@ -91,19 +91,19 @@ characters are \verb{[A-Za-z0-9_.-]} and others will be stripped).
 }
 \examples{
 # read/write to directory
-outfile <- tempfile(fileext=".mudata")
+outfile <- tempfile(fileext = ".mudata")
 write_mudata(kentvillegreenwood, outfile)
 md <- read_mudata(outfile)
 unlink(outfile)
 
 # read/write to zip
-outfile <- tempfile(fileext=".zip")
+outfile <- tempfile(fileext = ".zip")
 write_mudata(kentvillegreenwood, outfile)
 md <- read_mudata(outfile)
 unlink(outfile)
 
 # read/write to JSON
-outfile <- tempfile(fileext=".json")
+outfile <- tempfile(fileext = ".json")
 write_mudata(kentvillegreenwood, outfile)
 md <- read_mudata(outfile)
 unlink(outfile)

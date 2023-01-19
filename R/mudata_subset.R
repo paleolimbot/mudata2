@@ -1,6 +1,6 @@
 
 #' Combine mudata objects
-#' 
+#'
 #' This implmentation of [rbind] combines component tables using [bind_rows][dplyr::bind_rows]
 #' and [distinct][dplyr::distinct]. When combined object use different datasets, or when subsets of
 #' the same object are recombined, this function works well. When this is not the case, it
@@ -13,14 +13,14 @@
 #'
 #' @return A mudata object
 #' @export
-#' 
+#'
 #' @examples
 #' rbind(
-#'   kentvillegreenwood %>% 
-#'     select_params(maxtemp) %>% 
+#'   kentvillegreenwood %>%
+#'     select_params(maxtemp) %>%
 #'     select_locations(starts_with("KENT")),
-#'   kentvillegreenwood %>% 
-#'     select_params(mintemp) %>% 
+#'   kentvillegreenwood %>%
+#'     select_params(mintemp) %>%
 #'     select_locations(starts_with("GREEN"))
 #' )
 #'
@@ -38,13 +38,13 @@ rbind.mudata <- function(..., validate = TRUE) {
 }
 
 #' Subset a MuData object
-#' 
+#'
 #' This object uses standard evalutation to subset a [mudata] object using
 #' character vectors of datasets, params, and locations. The result is subsetted such
 #' that all rows in the data table are documented in the other tables (provided)
 #' they were to begin with. It is preferred to use [select_locations],
 #' [select_params], and [select_datasets] to subset a mudata object,
-#' or [filter_data], [filter_locations], [filter_params], 
+#' or [filter_data], [filter_locations], [filter_params],
 #' and [filter_datasets] to subset by row while maintaining internal
 #' consistency.
 #'
@@ -53,40 +53,40 @@ rbind.mudata <- function(..., validate = TRUE) {
 #' @param params  Vector of parameters to include
 #' @param locations Vector of locations to include
 #' @param ... Used to [filter][dplyr::filter] the data table
-#' 
-#' @seealso 
-#' [select_locations], [select_params], [select_datasets], [filter_data], 
+#'
+#' @seealso
+#' [select_locations], [select_params], [select_datasets], [filter_data],
 #' [filter_locations], [filter_params], and [filter_datasets]
 #'
 #' @return A subsetted mudata object
 #' @export
-#' 
-#' @examples 
+#'
+#' @examples
 #' subset(kentvillegreenwood, params = c("mintemp", "maxtemp"))
 #'
-subset.mudata <- function(x, ..., datasets = NULL, params = NULL, 
+subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
                           locations = NULL) {
   # enquos ...
   filter_args <- quos(...)
-  
+
   # filter data
   new_x <- filter_data(x, !!!filter_args)
-  if(!is.null(datasets)) {
+  if (!is.null(datasets)) {
     new_x <- filter_data(new_x, .data$dataset %in% datasets)
   }
-  if(!is.null(locations)) {
+  if (!is.null(locations)) {
     new_x <- filter_data(new_x, .data$location %in% locations)
   }
-  if(!is.null(params)) {
+  if (!is.null(params)) {
     new_x <- filter_data(new_x, .data$param %in% params)
   }
-  
+
   # return filtered object
   new_x
 }
 
 #' Subset a mudata object by identifier
-#' 
+#'
 #' These functions use dplyr-like selection syntax to quickly subset a mudata
 #' object by param, location, or dataset. Params, locations, an datasets can also
 #' be renamed using keyword arguments, identical to dplyr selection syntax.
@@ -100,7 +100,7 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 #'   ggplot2.
 #'
 #' @seealso
-#' [select][dplyr::select], [rename_locations], [distinct_locations], 
+#' [select][dplyr::select], [rename_locations], [distinct_locations],
 #' [filter_locations]
 #'
 #' @rdname selecters
@@ -109,12 +109,14 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 #'
 #' @examples
 #' # renaming can be handy when locations are verbosely named
-#' ns_climate %>% 
-#'   select_locations(sable_island = starts_with("SABLE"),
-#'                    nappan = starts_with("NAPPAN"), 
-#'                    baddeck = starts_with("BADDECK")) %>% 
+#' ns_climate %>%
+#'   select_locations(
+#'     sable_island = starts_with("SABLE"),
+#'     nappan = starts_with("NAPPAN"),
+#'     baddeck = starts_with("BADDECK")
+#'   ) %>%
 #'   select_params(ends_with("temp"))
-#'   
+#'
 #' # can also use quoted values
 #' long_lake %>%
 #'   select_params("Pb", "As", "Cr")
@@ -122,16 +124,16 @@ subset.mudata <- function(x, ..., datasets = NULL, params = NULL,
 #' # can also use negative values to remove params/datasets/locations
 #' long_lake %>%
 #'   select_params(-Pb)
-#'   
+#'
 #' # to get around non-standard evaluation, use one_of()
 #' my_params <- c("Pb", "As", "Cr")
 #' long_lake %>%
 #'   select_params(one_of(my_params))
-#' 
+#'
 select_datasets <- function(.data, ...) {
   UseMethod("select_datasets")
 }
- 
+
 #' @rdname selecters
 #' @export
 select_datasets.default <- function(.data, ..., .factor = FALSE) {
@@ -143,15 +145,15 @@ select_datasets.default <- function(.data, ..., .factor = FALSE) {
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$dataset %in% datasets)
   # rename datasets using rename_dataset
-  if(any(new_datasets != datasets)) {
+  if (any(new_datasets != datasets)) {
     renamer <- datasets[new_datasets != datasets]
     md_out <- rename_datasets_base(md_out, stats::setNames(names(renamer), renamer))
   }
-  
-  if(.factor) {
+
+  if (.factor) {
     md_out <- .factorize(md_out, "dataset", new_datasets)
   }
-  
+
   md_out
 }
 
@@ -172,15 +174,15 @@ select_locations.default <- function(.data, ..., .factor = FALSE) {
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$location %in% locations)
   # rename datasets using rename_locations_base
-  if(any(new_locations != locations)) {
+  if (any(new_locations != locations)) {
     renamer <- locations[new_locations != locations]
     md_out <- rename_locations_base(md_out, stats::setNames(names(renamer), renamer))
-  } 
-  
-  if(.factor) {
+  }
+
+  if (.factor) {
     md_out <- .factorize(md_out, "location", new_locations)
   }
-  
+
   md_out
 }
 
@@ -201,21 +203,21 @@ select_params.default <- function(.data, ..., .factor = FALSE) {
   # use subset() to do the subsetting
   md_out <- filter_data(.data, .data$param %in% params)
   # rename datasets using rename_params_base
-  if(any(new_params != params)) {
+  if (any(new_params != params)) {
     renamer <- params[new_params != params]
     md_out <- rename_params_base(md_out, stats::setNames(names(renamer), renamer))
   }
-  
-  if(.factor) {
+
+  if (.factor) {
     md_out <- .factorize(md_out, "param", new_params)
   }
-  
+
   md_out
 }
 
 
 #' Subset a mudata object by complex expression
-#' 
+#'
 #' These methods allow more complex selection criteria than [select_datasets] and
 #' family, which only use the identifier values. These methods first subset
 #' the required table using the provided expression, then subset other tables
@@ -223,7 +225,7 @@ select_params.default <- function(.data, ..., .factor = FALSE) {
 #'
 #' @param .data A [mudata] object
 #' @param ... Objects passed to [filter][dplyr::filter] on the appropriate table
-#' 
+#'
 #' @seealso
 #' [filter][dplyr::filter], [select_locations]
 #'
@@ -244,7 +246,7 @@ select_params.default <- function(.data, ..., .factor = FALSE) {
 #' library(lubridate)
 #' ns_climate %>%
 #'   filter_data(month(date) == 6)
-#' 
+#'
 filter_datasets <- function(.data, ...) {
   UseMethod("filter_datasets")
 }
@@ -253,8 +255,10 @@ filter_datasets <- function(.data, ...) {
 #' @export
 filter_datasets.default <- function(.data, ...) {
   filter_args <- quos(...)
-  if(length(filter_args) == 0) return(.data)
-  
+  if (length(filter_args) == 0) {
+    return(.data)
+  }
+
   datasets <- .data$datasets %>%
     dplyr::filter(!!!filter_args) %>%
     dplyr::distinct(.data$dataset) %>%
@@ -272,8 +276,10 @@ filter_data <- function(.data, ...) {
 #' @export
 filter_data.default <- function(.data, ...) {
   filter_args <- quos(...)
-  if(length(filter_args) == 0) return(.data)
-  
+  if (length(filter_args) == 0) {
+    return(.data)
+  }
+
   # filter data
   dta <- dplyr::filter(.data$data, !!!filter_args)
   filter_data_base(.data, dta)
@@ -285,16 +291,16 @@ filter_data_base <- function(.data, dta) {
   lc <- dplyr::semi_join(.data$locations, dta, by = c("dataset", "location"))
   cl <- dplyr::semi_join(.data$columns, dta, by = "dataset")
   ds <- dplyr::semi_join(.data$datasets, dta, by = "dataset")
-  
+
   # keep class of original
   new_mudata(
     list(
       data = dta,
-      locations = lc, 
+      locations = lc,
       params = pm,
-      datasets = ds, 
+      datasets = ds,
       columns = cl
-    ), 
+    ),
     x_columns = x_columns(.data)
   )
 }
@@ -333,7 +339,7 @@ filter_params.default <- function(.data, ...) {
     error = function(e) {
       if (inherits(e, "vctrs_error_subscript_oob")) {
         rlang::abort(glue::glue("No such {type}: `{e$i}`"), parent = e, class = "no_such_item")
-      } else if(inherits(e, "vctrs_error_names_must_be_unique")) {
+      } else if (inherits(e, "vctrs_error_names_must_be_unique")) {
         rlang::abort(glue::glue("{type}s must be unique"), class = "item_not_unique")
       } else {
         rlang::abort(glue::glue("Error during {type} renaming: {e}"))
@@ -351,11 +357,10 @@ filter_params.default <- function(.data, ...) {
 }
 
 .factorize <- function(md, column, levels) {
-  for(tbl in src_tbls(md)) {
-    if(column %in% colnames(md[[tbl]])) {
+  for (tbl in src_tbls(md)) {
+    if (column %in% colnames(md[[tbl]])) {
       md[[tbl]][[column]] <- factor(md[[tbl]][[column]], levels = levels)
     }
   }
   md
 }
-

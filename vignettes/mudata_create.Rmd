@@ -81,7 +81,7 @@ pocmajlong <- pocmajwide %>%
 The (first six rows of the) data now look like this:
 
 ```{r, echo=FALSE}
-knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
+knitr::kable(head(pocmajlong), row.names = FALSE, digits = 0)
 ```
 
 The last important thing to consider is the axis on which the data are aligned. This sounds complicated but isn't: these axes are the same axes you might use to plot the data, in this case `depth`. The `mudata()` constructor needs to know which column this is, either by explicitly passing `x_columns = "depth"` or by placing the column between "param" and "value". In most cases (like this one) it can be guessed (you'll see a message telling you which columns were assigned this value).
@@ -116,15 +116,15 @@ Then (also as above), we need to `gather()` the data to get it into long form. B
 
 ```{r}
 pocmajlong <- parallel_gather(
-  pocmajwide, 
+  pocmajwide,
   key = "param",
-  value = c(Ca, Ti, V), 
+  value = c(Ca, Ti, V),
   sd = c(Ca_sd, Ti_sd, V_sd)
 )
 ```
 
 ```{r, echo=FALSE}
-knitr::kable(head(pocmajlong), row.names = FALSE, digits=0)
+knitr::kable(head(pocmajlong), row.names = FALSE, digits = 0)
 ```
 
 The data is now ready to be fed to the `mudata()` constructor:
@@ -157,7 +157,7 @@ md %>%
 # location table with metadata
 md %>%
   update_locations(
-    "MAJ-1", 
+    "MAJ-1",
     latitude = -64.298, longitude = 44.819, lake = "Lake Major"
   ) %>%
   update_locations(
@@ -186,7 +186,7 @@ All together, the param/location/dataset documentation looks like this:
 md_doc <- md %>%
   update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
   update_locations(
-    "MAJ-1", 
+    "MAJ-1",
     latitude = -63.486, longitude = 44.732, lake = "Lake Major"
   ) %>%
   update_locations(
@@ -212,7 +212,7 @@ Then, you can use `update_columns()` to add information about various columns to
 md_doc %>%
   tbl_columns()
 
-# columns with metadata 
+# columns with metadata
 md_doc %>%
   update_columns("depth", description = "Depth in sediment core (cm)") %>%
   update_columns("sd", description = "Standard deviation uncertainty of n=3 values") %>%
@@ -226,7 +226,7 @@ You'll notice there's a `type` column that is also automatically generated, whic
 md_doc <- md %>%
   update_params(method = "Portable XRF Spectrometer (Olympus X-50)") %>%
   update_locations(
-    "MAJ-1", 
+    "MAJ-1",
     latitude = -63.486, longitude = 44.732, lake = "Lake Major"
   ) %>%
   update_locations(

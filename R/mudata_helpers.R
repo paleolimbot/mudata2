@@ -104,8 +104,10 @@ tbl_data_wide.default <- function(x, key = "param", value = "value", ...) {
   value_quo <- enquo(value)
   x %>%
     tbl_data() %>%
-    dplyr::select(one_of(c("dataset", "location", "param", x_columns(x))), 
-                  !!key_quo, !!value_quo) %>%
+    dplyr::select(
+      one_of(c("dataset", "location", "param", x_columns(x))),
+      !!key_quo, !!value_quo
+    ) %>%
     tidyr::spread(key = !!key_quo, value = !!value_quo, ...)
 }
 
@@ -201,12 +203,12 @@ update_datasets <- function(x, ...) {
 #' @rdname update_datasets
 #' @export
 update_datasets.default <- function(x, datasets, ...) {
-  if(missing(datasets)) {
+  if (missing(datasets)) {
     datasets <- distinct_datasets(x, table = "datasets")
   }
   # find rows to update
   rows <- x$datasets$dataset %in% datasets
-  if(any(rows)) {
+  if (any(rows)) {
     .update_rows(x, "datasets", rows, ...)
   } else {
     bad_datasets <- paste0("'", datasets, "'", collapse = ", ")
@@ -223,15 +225,15 @@ update_locations <- function(x, ...) {
 #' @rdname update_datasets
 #' @export
 update_locations.default <- function(x, locations, datasets, ...) {
-  if(missing(datasets)) {
+  if (missing(datasets)) {
     datasets <- distinct_datasets(x, table = "locations")
   }
-  if(missing(locations)) {
+  if (missing(locations)) {
     locations <- distinct_locations(x, table = "locations")
   }
   # find rows to update
   rows <- (x$locations$dataset %in% datasets) & (x$locations$location %in% locations)
-  if(any(rows)) {
+  if (any(rows)) {
     .update_rows(x, "locations", rows, ...)
   } else {
     bad_locations <- paste0("'", locations, "'", collapse = ", ")
@@ -249,15 +251,15 @@ update_params <- function(x, ...) {
 #' @rdname update_datasets
 #' @export
 update_params.default <- function(x, params, datasets, ...) {
-  if(missing(datasets)) {
+  if (missing(datasets)) {
     datasets <- distinct_datasets(x, table = "params")
   }
-  if(missing(params)) {
+  if (missing(params)) {
     params <- distinct_params(x, table = "params")
   }
   # find rows to update
   rows <- (x$params$dataset %in% datasets) & (x$params$param %in% params)
-  if(any(rows)) {
+  if (any(rows)) {
     .update_rows(x, "params", rows, ...)
   } else {
     bad_params <- paste0("'", params, "'", collapse = ", ")
@@ -275,22 +277,26 @@ update_columns <- function(x, ...) {
 #' @rdname update_datasets
 #' @export
 update_columns.default <- function(x, columns, tables, datasets, ...) {
-  if(missing(datasets)) {
+  if (missing(datasets)) {
     datasets <- distinct_datasets(x, table = "columns")
   }
-  if(missing(tables)) {
-    tables <- x$columns %>% dplyr::select("table") %>% dplyr::distinct() %>%
+  if (missing(tables)) {
+    tables <- x$columns %>%
+      dplyr::select("table") %>%
+      dplyr::distinct() %>%
       dplyr::pull("table")
   }
-  if(missing(columns)) {
-    columns <- x$columns %>% dplyr::select("column") %>% dplyr::distinct() %>%
+  if (missing(columns)) {
+    columns <- x$columns %>%
+      dplyr::select("column") %>%
+      dplyr::distinct() %>%
       dplyr::pull("column")
   }
   # find rows to update
   rows <- (x$columns$dataset %in% datasets) & (x$columns$table %in% tables) &
     (x$columns$column %in% columns)
-  
-  if(any(rows)) {
+
+  if (any(rows)) {
     .update_rows(x, "columns", rows, ...)
   } else {
     bad_columns <- paste0("'", columns, "'", collapse = ", ")
@@ -309,20 +315,21 @@ update_columns.default <- function(x, columns, tables, datasets, ...) {
   vals <- tibble::tibble(...)
   # no rows mean there is nothing to update
   # this gets handled by wrapper functions
-  if(nrow(vals) == 0) {
+  if (nrow(vals) == 0) {
     return(x) # nocov
   }
-  
-  if(nrow(vals) != 1) {
+
+  if (nrow(vals) != 1) {
     abort("values to update must all be of length 1")
   }
-  
+
   # bind vals to end of table with dummy dataset, to ensure types are correct
   # and all columns exist
   new_tbl <- dplyr::bind_rows(x[[tbl]], dplyr::mutate(vals, .dummy_variable. = TRUE))
   new_tbl[c(rows, FALSE), names(vals)] <- vals
   # one more cmd hack
-  .dummy_variable. <- NULL; rm(.dummy_variable.)
+  .dummy_variable. <- NULL
+  rm(.dummy_variable.)
   x[[tbl]] <- new_tbl %>%
     dplyr::filter(is.na(.dummy_variable.)) %>%
     dplyr::select(-.dummy_variable.)
@@ -341,9 +348,9 @@ update_columns.default <- function(x, columns, tables, datasets, ...) {
 #'
 #' @examples
 #' library(lubridate)
-#' second_lake_temp %>% 
+#' second_lake_temp %>%
 #'   mutate_data(datetime = with_tz(datetime, "America/Halifax"))
-#' 
+#'
 mutate_data <- function(x, ...) {
   mutate_tbl(x, "data", ...)
 }
@@ -384,4 +391,3 @@ mutate_tbl.default <- function(x, tbl, ...) {
   x[[tbl]] <- dplyr::mutate(x[[tbl]], ...)
   x
 }
-

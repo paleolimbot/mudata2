@@ -1,18 +1,26 @@
 
 test_that("distinct_* functions return the correct values", {
-  expect_equal(distinct_params(kentvillegreenwood),
-               sort(unique(kentvillegreenwood$data$param)))
-  expect_equal(distinct_locations(kentvillegreenwood),
-               sort(unique(kentvillegreenwood$data$location)))
+  expect_equal(
+    distinct_params(kentvillegreenwood),
+    sort(unique(kentvillegreenwood$data$param))
+  )
+  expect_equal(
+    distinct_locations(kentvillegreenwood),
+    sort(unique(kentvillegreenwood$data$location))
+  )
   expect_equal(distinct_datasets(kentvillegreenwood), "ecclimate")
-  expect_equal(distinct_columns(kentvillegreenwood, "data"),
-               sort(c("dataset", "location", "param", "date", "value", "flags")))
+  expect_equal(
+    distinct_columns(kentvillegreenwood, "data"),
+    sort(c("dataset", "location", "param", "date", "value", "flags"))
+  )
 })
 
 test_that("dplyr tbl interface works with mudata objects", {
   expect_equal(src_tbls(kentvillegreenwood), names(kentvillegreenwood))
-  expect_identical(dplyr::tbl(kentvillegreenwood, "datasets"), 
-                   kentvillegreenwood %>% tbl_datasets())
+  expect_identical(
+    dplyr::tbl(kentvillegreenwood, "datasets"),
+    kentvillegreenwood %>% tbl_datasets()
+  )
 })
 
 test_that("distinct_* functions always return character vectors", {
@@ -25,7 +33,7 @@ test_that("distinct_* functions always return character vectors", {
   kg2$locations$dataset <- factor(kg2$locations$dataset)
   kg2$params$dataset <- factor(kg2$params$dataset)
   kg2$columns$dataset <- factor(kg2$columns$dataset)
-  
+
   expect_type(kg2 %>% distinct_params(), "character")
   expect_type(kg2 %>% distinct_datasets(), "character")
   expect_type(kg2 %>% distinct_locations(), "character")
@@ -58,7 +66,7 @@ test_that("update_datasets() function works as expected", {
   expect_identical(colnames(updated_url), c("dataset", "url"))
   expect_identical(updated_url$url, "new_url")
   expect_equal(nrow(updated_url), 1)
-  
+
   # adding a field
   updated_newkey <- kentvillegreenwood %>%
     update_datasets(newkey = "newval") %>%
@@ -66,19 +74,19 @@ test_that("update_datasets() function works as expected", {
   expect_identical(colnames(updated_newkey), c("dataset", "url", "newkey"))
   expect_identical(updated_newkey$newkey, "newval")
   expect_equal(nrow(updated_newkey), 1)
-  
+
   # check that missing dataset is filled in
   expect_identical(
     update_datasets(kentvillegreenwood, "ecclimate", newkey = "newval"),
     update_datasets(kentvillegreenwood, newkey = "newval")
   )
-  
+
   # check nonexistent dataset
   expect_error(
     update_datasets(kentvillegreenwood, "not_a_dataset", newkey = "newval"),
     "Zero rows were found for dataset"
   )
-  
+
   # check bad values
   expect_error(
     update_datasets(kentvillegreenwood, newkey = c("newval1", "newval2")),
@@ -97,7 +105,7 @@ test_that("update_locations() function works as expected", {
     updated_prov %>% dplyr::filter(location == "GREENWOOD A") %>% dplyr::pull(province),
     "Nova Scotia"
   )
-  
+
   # check column create
   new_key <- kentvillegreenwood %>%
     update_locations("GREENWOOD A", newkey = "newval") %>%
@@ -107,14 +115,16 @@ test_that("update_locations() function works as expected", {
     new_key %>% dplyr::filter(location == "GREENWOOD A") %>% dplyr::pull(newkey),
     "newval"
   )
-  
+
   # check that missing location is filled in
   expect_identical(
     update_locations(kentvillegreenwood, newkey = "newval"),
-    update_locations(kentvillegreenwood, locations = distinct_locations(kentvillegreenwood),
-                    newkey = "newval")
+    update_locations(kentvillegreenwood,
+      locations = distinct_locations(kentvillegreenwood),
+      newkey = "newval"
+    )
   )
-  
+
   # check that bad datasets, locations throw an error
   expect_error(
     update_locations(kentvillegreenwood, "not_a_location", newkey = "newval"),
@@ -124,7 +134,6 @@ test_that("update_locations() function works as expected", {
     update_locations(kentvillegreenwood, datasets = "not_a_dataset", newkey = "newval"),
     "Zero rows were found for locations"
   )
-  
 })
 
 test_that("update_params() function works as expected", {
@@ -137,7 +146,7 @@ test_that("update_params() function works as expected", {
     updated_label %>% dplyr::filter(param == "maxtemp") %>% dplyr::pull(label),
     "newlabel"
   )
-  
+
   # check column create
   new_key <- kentvillegreenwood %>%
     update_params("maxtemp", newkey = "newval") %>%
@@ -147,14 +156,16 @@ test_that("update_params() function works as expected", {
     new_key %>% dplyr::filter(param == "maxtemp") %>% dplyr::pull(newkey),
     "newval"
   )
-  
+
   # check that missing param is filled in
   expect_identical(
     update_params(kentvillegreenwood, newkey = "newval"),
-    update_params(kentvillegreenwood, params = distinct_params(kentvillegreenwood),
-                 newkey = "newval")
+    update_params(kentvillegreenwood,
+      params = distinct_params(kentvillegreenwood),
+      newkey = "newval"
+    )
   )
-  
+
   # check that bad datasets, locations throw an error
   expect_error(
     update_params(kentvillegreenwood, "not_a_param", newkey = "newval"),
@@ -176,7 +187,7 @@ test_that("update_columns() works as expected", {
     updated_type %>% dplyr::filter(table == "data", column == "flags") %>% dplyr::pull(type),
     "newtype"
   )
-  
+
   # check new value
   new_key <- kentvillegreenwood %>%
     update_columns("flags", tables = "data", unit = "newunit") %>%
@@ -186,16 +197,17 @@ test_that("update_columns() works as expected", {
     new_key %>% dplyr::filter(table == "data", column == "flags") %>% dplyr::pull(unit),
     "newunit"
   )
-  
+
   # check default filled in table, columns
   expect_identical(
     update_columns(kentvillegreenwood, newkey = "newval"),
     update_columns(kentvillegreenwood,
-                   tables = names(kentvillegreenwood),
-                   columns = distinct_columns(kentvillegreenwood),
-                   newkey = "newval")
+      tables = names(kentvillegreenwood),
+      columns = distinct_columns(kentvillegreenwood),
+      newkey = "newval"
+    )
   )
-  
+
   # check that bad values throw an error
   expect_error(
     update_columns(kentvillegreenwood, tables = "not_a_table", newkey = "newval"),
@@ -220,7 +232,7 @@ test_that("mutate shortcuts work", {
       sl2
     }
   )
-  
+
   expect_identical(
     second_lake_temp %>% mutate_params(param_upper = toupper(param)),
     {
@@ -229,7 +241,7 @@ test_that("mutate shortcuts work", {
       sl2
     }
   )
-  
+
   expect_identical(
     second_lake_temp %>% mutate_locations(loc_upper = toupper(location)),
     {
@@ -238,7 +250,7 @@ test_that("mutate shortcuts work", {
       sl2
     }
   )
-  
+
   expect_identical(
     second_lake_temp %>% mutate_datasets(ds_upper = toupper(dataset)),
     {
@@ -247,7 +259,7 @@ test_that("mutate shortcuts work", {
       sl2
     }
   )
-  
+
   expect_identical(
     second_lake_temp %>% mutate_columns(ds_upper = toupper(dataset)),
     {

@@ -7,7 +7,7 @@ library(stringr)
 locs_tidy <- ecclimatelocs %>%
   set_names(., tolower(names(.)) %>% str_replace("\\s\\(.*?\\)$", "") %>% str_replace_all("\\s", "_")) %>%
   .[unique(names(.))] %>%
-  as_tibble() 
+  as_tibble()
 
 ns_locs <- locs_tidy %>%
   mutate(total_years = last_year - first_year) %>%
@@ -17,8 +17,10 @@ ns_locs <- locs_tidy %>%
 
 ns_data_monthly <- getClimateData(ns_locs$station_id, timeframe = "monthly")
 ns_data_monthly_flags <- tibble(station_id = ns_locs$station_id) %>%
-  mutate(raw = map(station_id, getClimateDataRaw, timeframe = "monthly", 
-                   flag.info = TRUE, .cache = "ec.cache", .quiet = TRUE)) %>%
+  mutate(raw = map(station_id, getClimateDataRaw,
+    timeframe = "monthly",
+    flag.info = TRUE, .cache = "ec.cache", .quiet = TRUE
+  )) %>%
   mutate(flags = map(raw, "flags")) %>%
   pull(flags) %>%
   bind_rows() %>%
@@ -48,8 +50,8 @@ ns_climate_locs <- locs_tidy %>%
 
 ns_climate_params <- tibble(
   label = names(ns_data_monthly),
-  param = tolower(label) %>% 
-    str_replace("\\s\\(.*?\\)$", "") %>% 
+  param = tolower(label) %>%
+    str_replace("\\s\\(.*?\\)$", "") %>%
     str_replace_all("[^a-z0-9]+", "_")
 ) %>%
   filter(param %in% unique(nslong$param)) %>%
@@ -78,4 +80,3 @@ ns_climate <- mudata(
 
 devtools::use_data(ns_climate, overwrite = TRUE)
 unlink("ec.cache", recursive = TRUE)
-

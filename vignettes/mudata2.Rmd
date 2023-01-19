@@ -138,7 +138,7 @@ ns_climate %>% tbl_data_wide()
 The `tbl_data_wide()` function isn't limited to parameter-wide data - data can be anything-wide (Edzer Pebesma has a [great discussion on this](https://www.jstatsoft.org/article/view/v051i07/)). Using `tbl_data_wide()` is identical to using `tbl_data()` and `tidyr::spread()`, with context-specific defaults.
 
 ```{r}
-ns_climate %>% 
+ns_climate %>%
   select_params(mean_temp) %>%
   filter_data(year(date) == 1960) %>%
   tbl_data_wide(key = location)
@@ -171,13 +171,13 @@ We can then use this data with **ggplot2** to lead us to the conclusion that thr
 ```{r, warning = FALSE, fig.width = 7, fig.height = 5}
 library(ggplot2)
 ggplot(
-  temp_1960, 
+  temp_1960,
   aes(
-    x = date, 
-    y = mean_temp, 
-    ymin = extr_min_temp, 
+    x = date,
+    y = mean_temp,
+    ymin = extr_min_temp,
     ymax = extr_max_temp,
-    col = location, 
+    col = location,
     fill = location
   )
 ) +

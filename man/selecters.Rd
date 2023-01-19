@@ -42,12 +42,14 @@ be renamed using keyword arguments, identical to dplyr selection syntax.
 }
 \examples{
 # renaming can be handy when locations are verbosely named
-ns_climate \%>\% 
-  select_locations(sable_island = starts_with("SABLE"),
-                   nappan = starts_with("NAPPAN"), 
-                   baddeck = starts_with("BADDECK")) \%>\% 
+ns_climate \%>\%
+  select_locations(
+    sable_island = starts_with("SABLE"),
+    nappan = starts_with("NAPPAN"),
+    baddeck = starts_with("BADDECK")
+  ) \%>\%
   select_params(ends_with("temp"))
-  
+
 # can also use quoted values
 long_lake \%>\%
   select_params("Pb", "As", "Cr")
@@ -55,7 +57,7 @@ long_lake \%>\%
 # can also use negative values to remove params/datasets/locations
 long_lake \%>\%
   select_params(-Pb)
-  
+
 # to get around non-standard evaluation, use one_of()
 my_params <- c("Pb", "As", "Cr")
 long_lake \%>\%

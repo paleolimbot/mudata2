@@ -24,11 +24,11 @@ and \link[dplyr:distinct]{distinct}, no duplicate information exists. This shoul
 }
 \examples{
 rbind(
-  kentvillegreenwood \%>\% 
-    select_params(maxtemp) \%>\% 
+  kentvillegreenwood \%>\%
+    select_params(maxtemp) \%>\%
     select_locations(starts_with("KENT")),
-  kentvillegreenwood \%>\% 
-    select_params(mintemp) \%>\% 
+  kentvillegreenwood \%>\%
+    select_params(mintemp) \%>\%
     select_locations(starts_with("GREEN"))
 )
 

@@ -39,7 +39,7 @@ Modify mudata tables
 }
 \examples{
 library(lubridate)
-second_lake_temp \%>\% 
+second_lake_temp \%>\%
   mutate_data(datetime = with_tz(datetime, "America/Halifax"))
 
 }

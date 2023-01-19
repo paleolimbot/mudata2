@@ -22,16 +22,19 @@ temp_data <- list.files("data-raw/second_lake_temp/", "\\.xlsx$", full.names = T
 #   geom_line() +
 #   facet_wrap(~depth, ncol = 1)
 
-second_lake_temp <- mudata(temp_data, dataset_id = "second_lake_temp", 
-                           x_columns = c("datetime", "depth")) %>%
+second_lake_temp <- mudata(temp_data,
+  dataset_id = "second_lake_temp",
+  x_columns = c("datetime", "depth")
+) %>%
   update_datasets("second_lake_temp",
-                  title = "A multi-proxy comparative paleolimnological study of anthropogenic impact between First and Second Lake, Lower Sackville, Nova Scotia",
-                  type = "B.Sc.H. Thesis",
-                  author = "Misiuk, Benjamin",
-                  address = "Wolfville, NS",
-                  year = 2014,
-                  school = "Acadia University",
-                  url = "http://openarchive.acadiau.ca/cdm/singleitem/collection/HTheses/id/1010/rec/1") %>%
+    title = "A multi-proxy comparative paleolimnological study of anthropogenic impact between First and Second Lake, Lower Sackville, Nova Scotia",
+    type = "B.Sc.H. Thesis",
+    author = "Misiuk, Benjamin",
+    address = "Wolfville, NS",
+    year = 2014,
+    school = "Acadia University",
+    url = "http://openarchive.acadiau.ca/cdm/singleitem/collection/HTheses/id/1010/rec/1"
+  ) %>%
   update_locations("Second Lake", latitude = 44.78510913, longitude = -63.66417714) %>%
   update_params("temp", method = "Thermistor", unit = "degees Celcius") %>%
   update_columns_table() %>%

@@ -34,7 +34,8 @@ Suggests:
     covr,
     hms,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggplot2
 License: GPL-2
 URL: https://paleolimbot.github.io/mudata2, https://github.com/paleolimbot/mudata2
 BugReports: https://github.com/paleolimbot/mudata2/issues

@@ -96,12 +96,6 @@ write_mudata(kentvillegreenwood, outfile)
 md <- read_mudata(outfile)
 unlink(outfile)
 
-# read/write to zip
-outfile <- tempfile(fileext = ".zip")
-write_mudata(kentvillegreenwood, outfile)
-md <- read_mudata(outfile)
-unlink(outfile)
-
 # read/write to JSON
 outfile <- tempfile(fileext = ".json")
 write_mudata(kentvillegreenwood, outfile)

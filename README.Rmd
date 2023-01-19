@@ -17,10 +17,9 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![](https://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
-[![Travis-CI Build Status](https://travis-ci.org/paleolimbot/mudata2.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata2)
-[![Coverage Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata2/master.svg)](https://codecov.io/github/paleolimbot/mudata2?branch=master)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![DOI](https://img.shields.io/static/v1?label=DOI&message=10.1139%2Ffacets-2017-0026&color=blue)](https://doi.org/10.1139/facets-2017-0026)
+[![R-CMD-check](https://github.com/paleolimbot/mudata2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/paleolimbot/mudata2/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/paleolimbot/mudata2/branch/master/graph/badge.svg)](https://app.codecov.io/gh/paleolimbot/mudata2?branch=master)
 <!-- badges: end -->
 
 The **mudata2** package provides tools to read, write, and document multi-parameter spatiotemporal data. 

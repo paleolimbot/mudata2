@@ -6,13 +6,10 @@
 <!-- badges: start -->
 
 [![](https://cranlogs.r-pkg.org/badges/mudata2)](https://cran.r-project.org/package=mudata2)
-[![Travis-CI Build
-Status](https://travis-ci.org/paleolimbot/mudata2.svg?branch=master)](https://travis-ci.org/paleolimbot/mudata2)
-[![Coverage
-Status](https://img.shields.io/codecov/c/github/paleolimbot/mudata2/master.svg)](https://codecov.io/github/paleolimbot/mudata2?branch=master)
-[![Lifecycle:
-stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![DOI](https://img.shields.io/static/v1?label=DOI&message=10.1139%2Ffacets-2017-0026&color=blue)](https://doi.org/10.1139/facets-2017-0026)
+[![R-CMD-check](https://github.com/paleolimbot/mudata2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/paleolimbot/mudata2/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/paleolimbot/mudata2/branch/master/graph/badge.svg)](https://app.codecov.io/gh/paleolimbot/mudata2?branch=master)
 <!-- badges: end -->
 
 The **mudata2** package provides tools to read, write, and document
@@ -63,15 +60,16 @@ ns_climate
 #>   src_tbls():           "data", "locations" ... and 3 more
 #> 
 #> tbl_data() %>% head():
-#> # A tibble: 6 x 7
-#>   dataset        location       param      date       value flag  flag_text
-#>   <chr>          <chr>          <chr>      <date>     <dbl> <chr> <chr>    
-#> 1 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-01-01    NA M     Missing  
-#> 2 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-02-01    NA M     Missing  
-#> 3 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-03-01    NA M     Missing  
-#> 4 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-04-01    NA M     Missing  
-#> 5 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-05-01    NA M     Missing  
-#> 6 ecclimate_mon… SABLE ISLAND … mean_max_… 1897-06-01    NA M     Missing
+#> # A tibble: 6 × 7
+#>   dataset           location          param       date       value flag  flag_…¹
+#>   <chr>             <chr>             <chr>       <date>     <dbl> <chr> <chr>  
+#> 1 ecclimate_monthly SABLE ISLAND 6454 mean_max_t… 1897-01-01    NA M     Missing
+#> 2 ecclimate_monthly SABLE ISLAND 6454 mean_max_t… 1897-02-01    NA M     Missing
+#> 3 ecclimate_monthly SABLE ISLAND 6454 mean_max_t… 1897-03-01    NA M     Missing
+#> 4 ecclimate_monthly SABLE ISLAND 6454 mean_max_t… 1897-04-01    NA M     Missing
+#> 5 ecclimate_monthly SABLE ISLAND 6454 mean_max_t… 1897-05-01    NA M     Missing
+#> 6 ecclimate_monthly SABLE ISLAND 6454 mean_max_t… 1897-06-01    NA M     Missing
+#> # … with abbreviated variable name ¹​flag_text
 ```
 
 ``` r
@@ -83,7 +81,7 @@ second_lake_temp
 #>   src_tbls():           "data", "locations" ... and 3 more
 #> 
 #> tbl_data() %>% head():
-#> # A tibble: 6 x 6
+#> # A tibble: 6 × 6
 #>   dataset          location    param datetime            depth value
 #>   <chr>            <chr>       <chr> <dttm>              <dbl> <dbl>
 #> 1 second_lake_temp Second Lake temp  2013-07-10 07:14:56     0  23.9
@@ -99,11 +97,11 @@ alta_lake
 #> A mudata object aligned along "depth", "age"
 #>   distinct_datasets():  "alta_lake16"
 #>   distinct_locations(): "ALGC2"
-#>   distinct_params():    "As", "C" ... and 12 more
+#>   distinct_params():    "As", "C", "C/N" ... and 11 more
 #>   src_tbls():           "data", "locations" ... and 3 more
 #> 
 #> tbl_data() %>% head():
-#> # A tibble: 6 x 10
+#> # A tibble: 6 × 10
 #>   dataset     location param depth   age value stdev units     n zone  
 #>   <chr>       <chr>    <chr> <dbl> <dbl> <dbl> <dbl> <chr> <int> <chr> 
 #> 1 alta_lake16 ALGC2    As     0.25 2015.  23    NA   ppm       1 Zone 3
@@ -131,34 +129,33 @@ interpret the results (and to correctly choose the analysis).
 
 We have used the mudata format in the following situations:
 
-  - **Data from two or more sources need to be combined**: Rather than
-    choose the format of one source or the other, we convert both
-    sources to a mudata object, then combine them. The mudata format can
-    handle almost any kind of data with minimal metadata loss, so not
-    only is the data combined, but any contextual information provided
-    with the data is kept. One of the projects that inspired continuing
-    development on this package was collecting 10 years drinking water
-    quality data from tens of communities around Atlantic Canada.
-    Because no community ever provided the same information in the same
-    format, we converted each community’s data to mudata, then combined
-    them prior to analysis.
+- **Data from two or more sources need to be combined**: Rather than
+  choose the format of one source or the other, we convert both sources
+  to a mudata object, then combine them. The mudata format can handle
+  almost any kind of data with minimal metadata loss, so not only is the
+  data combined, but any contextual information provided with the data
+  is kept. One of the projects that inspired continuing development on
+  this package was collecting 10 years drinking water quality data from
+  tens of communities around Atlantic Canada. Because no community ever
+  provided the same information in the same format, we converted each
+  community’s data to mudata, then combined them prior to analysis.
 
-  - **Data need to be archived**: One of the first uses of this package
-    was to respond to a request along the lines of “send me all your
-    data in addition to the report”. We had collected tens of sediment
-    cores, sectioned them in to many slices, and measured 30-40
-    elemental concentrations for each. We needed a way to report the
-    data, how we measured the elemental concentrations, and from where
-    we had collected the cores. The mudata format is able to do all of
-    these things, with the added bonus that our clients could read our
-    data from both R and Excel.
+- **Data need to be archived**: One of the first uses of this package
+  was to respond to a request along the lines of “send me all your data
+  in addition to the report”. We had collected tens of sediment cores,
+  sectioned them in to many slices, and measured 30-40 elemental
+  concentrations for each. We needed a way to report the data, how we
+  measured the elemental concentrations, and from where we had collected
+  the cores. The mudata format is able to do all of these things, with
+  the added bonus that our clients could read our data from both R and
+  Excel.
 
-  - **Somebody sends you data in mudata format**: This probably only
-    applies so far to the people to whom we have sent data, but if you
-    happen to be one of them, you can use `read_mudata()`, the various
-    subsetting functions (like `select_locations()`), and
-    `tbl_data()`/`tbl_data_wide()` to extract the data you need and be
-    on your way.
+- **Somebody sends you data in mudata format**: This probably only
+  applies so far to the people to whom we have sent data, but if you
+  happen to be one of them, you can use `read_mudata()`, the various
+  subsetting functions (like `select_locations()`), and
+  `tbl_data()`/`tbl_data_wide()` to extract the data you need and be on
+  your way.
 
 ## More information
 

@@ -21,6 +21,6 @@ print(long_lake)
 \references{
 Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal
 sequestration and release in the Cumberland Basin Marshes, Atlantic Canada. FACETS 2:440-460.
-\href{https://doi.org/10.1139/facets-2017-0004}{doi:10.1139/facets-2017-0004}
+doi:10.1139/facets-2017-0004
 }
 \keyword{datasets}

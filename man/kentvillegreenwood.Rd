@@ -8,7 +8,7 @@
 A \link{mudata} object
 }
 \source{
-Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
+Environment Canada via the 'rclimateca' package. \url{https://climate.weather.gc.ca/}
 }
 \usage{
 kentvillegreenwood

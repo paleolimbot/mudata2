@@ -11,7 +11,7 @@ Formatting and structuring multi-parameter spatiotemporal data is often a time-c
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://paleolimbot.github.io/mudata2}
+  \item \url{https://paleolimbot.github.io/mudata2/}
   \item \url{https://github.com/paleolimbot/mudata2}
   \item Report bugs at \url{https://github.com/paleolimbot/mudata2/issues}
 }

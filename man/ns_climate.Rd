@@ -8,7 +8,7 @@
 A \link{mudata} object
 }
 \source{
-Environment Canada: \url{http://climate.weather.gc.ca/}
+Environment Canada: \url{https://climate.weather.gc.ca/}
 }
 \usage{
 ns_climate

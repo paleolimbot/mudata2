@@ -37,7 +37,7 @@ Suggests:
     rmarkdown,
     ggplot2
 License: GPL-2
-URL: https://paleolimbot.github.io/mudata2, https://github.com/paleolimbot/mudata2
+URL: https://paleolimbot.github.io/mudata2/, https://github.com/paleolimbot/mudata2
 BugReports: https://github.com/paleolimbot/mudata2/issues
 LazyData: true
 RoxygenNote: 7.2.3

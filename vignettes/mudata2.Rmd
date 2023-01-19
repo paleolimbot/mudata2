@@ -18,7 +18,7 @@ The **mudata2** package is designed to be used as little as possible. That is, i
 - Pick your locations using `select_locations()` or `filter_locations()`
 - Extract the data using `tbl_data()` or `tbl_data_wide()`
 
-In this vignette we will use the `ns_climate` dataset within the **mudata2** package, which is a collection of monthly climate observations from [Nova Scotia](https://www.wikipedia.org/wiki/Nova_Scotia) (Canada), sourced from [Environment Canada](http://climate.weather.gc.ca/) using the [rclimateca](https://github.com/paleolimbot/rclimateca) package.
+In this vignette we will use the `ns_climate` dataset within the **mudata2** package, which is a collection of monthly climate observations from [Nova Scotia](https://en.wikipedia.org/wiki/Nova_Scotia) (Canada), sourced from [Environment Canada](https://climate.weather.gc.ca/) using the [rclimateca](https://github.com/paleolimbot/rclimateca) package.
 
 ```{r}
 library(mudata2)

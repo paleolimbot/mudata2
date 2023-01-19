@@ -9,7 +9,7 @@
 #' @references
 #' Dunnington DW, Spooner IS, White CE, et al (2016) A geochemical perspective on the impact of
 #' development at Alta Lake, British Columbia, Canada. J Paleolimnol 56:315-330.
-#' [doi:10.1007/s10933-016-9919-x](https://doi.org/10.1007/s10933-016-9919-x)
+#' doi:10.1007/s10933-016-9919-x
 #'
 #' @examples
 #' print(alta_lake)
@@ -26,7 +26,7 @@
 #' @references
 #' Dunnington DW, White H, Spooner IS, et al (2017) A paleolimnological archive of metal
 #' sequestration and release in the Cumberland Basin Marshes, Atlantic Canada. FACETS 2:440-460.
-#' [doi:10.1139/facets-2017-0004](https://doi.org/10.1139/facets-2017-0004)
+#' doi:10.1139/facets-2017-0004
 
 #'
 #' @examples
@@ -55,7 +55,7 @@
 #'
 #' @format A [mudata] object
 #'
-#' @source Environment Canada via the 'rclimateca' package. <http://climate.weather.gc.ca/>
+#' @source Environment Canada via the 'rclimateca' package. <https://climate.weather.gc.ca/>
 #'
 #' @examples
 #' print(kentvillegreenwood)
@@ -68,7 +68,7 @@
 #'
 #' @format A [mudata] object
 #'
-#' @source Environment Canada: <http://climate.weather.gc.ca/>
+#' @source Environment Canada: <https://climate.weather.gc.ca/>
 #'
 #' @examples
 #' print(ns_climate)
@@ -85,7 +85,7 @@
 #' @references
 #' Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic
 #' impact between First and Second Lake, Lower Sackville, Nova Scotia.
-#' B.Sc.H. Thesis, Acadia University. <http://scholar.acadiau.ca/islandora/object/theses:1148>
+#' B.Sc.H. Thesis, Acadia University. <https://scholar.acadiau.ca/islandora/object/theses:1148>
 #'
 #' @examples
 #' print(second_lake_temp)

@@ -21,6 +21,6 @@ print(second_lake_temp)
 \references{
 Misiuk B (2014) A multi-proxy comparative paleolimnological study of anthropogenic
 impact between First and Second Lake, Lower Sackville, Nova Scotia.
-B.Sc.H. Thesis, Acadia University. \url{http://scholar.acadiau.ca/islandora/object/theses:1148}
+B.Sc.H. Thesis, Acadia University. \url{https://scholar.acadiau.ca/islandora/object/theses:1148}
 }
 \keyword{datasets}

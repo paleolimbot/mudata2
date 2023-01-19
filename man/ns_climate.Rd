@@ -4,7 +4,9 @@
 \name{ns_climate}
 \alias{ns_climate}
 \title{Nova Scotia Long-Term Climate Data}
-\format{A \link{mudata} object}
+\format{
+A \link{mudata} object
+}
 \source{
 Environment Canada: \url{http://climate.weather.gc.ca/}
 }

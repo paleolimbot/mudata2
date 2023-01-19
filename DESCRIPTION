@@ -13,7 +13,6 @@ Description: Formatting and structuring multi-parameter spatiotemporal data
   paleolimnology, dendrochronology, and paleoclimate. See Dunnington and Spooner (2018)
   <doi:10.1139/facets-2017-0026>.
 Imports: 
-    ggplot2,
     dplyr (>= 0.7),
     jsonlite (>= 1.2),
     tibble,
@@ -30,7 +29,7 @@ Imports:
 Depends:
     R (>= 3.2.0)
 Suggests: 
-    testthat (>= 2.1.0),
+    testthat (>= 3.0.0),
     sf (>= 0.5.5),
     covr,
     hms,
@@ -40,7 +39,8 @@ License: GPL-2
 URL: https://paleolimbot.github.io/mudata2, https://github.com/paleolimbot/mudata2
 BugReports: https://github.com/paleolimbot/mudata2/issues
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

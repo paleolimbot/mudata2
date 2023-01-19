@@ -1,6 +1,4 @@
 
-context("mudata subsetting")
-
 pocmaj_data <- pocmajsum %>%
   dplyr::select(core, depth, Ca, Ti, V) %>%
   tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
@@ -74,8 +72,8 @@ test_that("recombined subsetted objects are the same as the original", {
   mdparamsub <- subset(md, params="Ca")
   mdparamsub2 <- subset(md, params=c("V", "Ti"))
   
-  expect_that(nrow(rbind(mdlocsub, mdlocsub2)$data), equals(nrow(md$data)))
-  expect_that(nrow(rbind(mdparamsub, mdparamsub2)$data), equals(nrow(md$data)))
+  expect_equal(nrow(rbind(mdlocsub, mdlocsub2)$data), nrow(md$data))
+  expect_equal(nrow(rbind(mdparamsub, mdparamsub2)$data), nrow(md$data))
 })
 
 test_that("filter_* functions work as expected", {
@@ -142,21 +140,21 @@ test_that("subsets with factorized columns work", {
 test_that("maintaining order using .factor = TRUE works", {
   kgtemp <- kentvillegreenwood %>% select_params(mt = mintemp, meantemp, maxtemp, .factor = TRUE)
   expect_equal(distinct_params(kgtemp), c("mt", "meantemp", "maxtemp"))
-  expect_is(kgtemp$data$param, "factor")
-  expect_is(kgtemp$params$param, "factor")
+  expect_s3_class(kgtemp$data$param, "factor")
+  expect_s3_class(kgtemp$params$param, "factor")
   
   kgloc <- kentvillegreenwood %>% select_locations(Kentville = `KENTVILLE CDA CS`, Greenwood = `GREENWOOD A`,
                                                    .factor = TRUE)
   expect_equal(distinct_locations(kgloc), c("Kentville", "Greenwood"))
-  expect_is(kgloc$data$location, "factor")
-  expect_is(kgloc$locations$location, "factor")
+  expect_s3_class(kgloc$data$location, "factor")
+  expect_s3_class(kgloc$locations$location, "factor")
   
   kgds <- kentvillegreenwood %>% select_datasets(everything(), .factor = TRUE)
-  expect_is(kgds$data$dataset, "factor")
-  expect_is(kgds$params$dataset, "factor")
-  expect_is(kgds$locations$dataset, "factor")
-  expect_is(kgds$datasets$dataset, "factor")
-  expect_is(kgds$columns$dataset, "factor")
+  expect_s3_class(kgds$data$dataset, "factor")
+  expect_s3_class(kgds$params$dataset, "factor")
+  expect_s3_class(kgds$locations$dataset, "factor")
+  expect_s3_class(kgds$datasets$dataset, "factor")
+  expect_s3_class(kgds$columns$dataset, "factor")
 })
 
 test_that("param table gets filtered properly when there are multiple datasets", {

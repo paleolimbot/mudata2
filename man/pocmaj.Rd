@@ -4,7 +4,9 @@
 \name{pocmaj}
 \alias{pocmaj}
 \title{Pockwock Lake/Lake Major Elemental Sample Data}
-\format{A \code{data.frame} containing multi-qualifier concentration data}
+\format{
+A \code{data.frame} containing multi-qualifier concentration data
+}
 \usage{
 pocmaj
 }

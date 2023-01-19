@@ -1,6 +1,4 @@
 
-context("mudata constructor")
-
 pocmaj_data <- pocmajsum %>%
   dplyr::select(core, depth, Ca, Ti, V) %>%
   tidyr::gather(Ca, Ti, V, key = "param", value = "value") %>%
@@ -8,21 +6,21 @@ pocmaj_data <- pocmajsum %>%
 
 test_that("mudata constructor creates a mudata object", {
   md <- mudata(pocmaj_data)
-  expect_that(md, is_a("mudata"))
+  expect_s3_class(md, "mudata")
 })
 
 test_that("default dataset/location actually changes the default dataset/location name", {
   md <- mudata(pocmaj_data, dataset_id = "otherdataset")
-  expect_that(md$datasets$dataset, equals("otherdataset"))
-  expect_that(length(unique(md$data$dataset)), equals(1))
-  expect_that(unique(md$data$dataset), equals("otherdataset"))
+  expect_equal(md$datasets$dataset, "otherdataset")
+  expect_equal(length(unique(md$data$dataset)), 1)
+  expect_equal(unique(md$data$dataset), "otherdataset")
   
   pocmaj_data <- pocmaj_data[pocmaj_data$location == "POC-2",]
   pocmaj_data$location <- NULL
   md <- mudata(pocmaj_data, location_id = "otherlocation")
-  expect_that(md$locations$location, equals("otherlocation"))
-  expect_that(length(unique(md$data$location)), equals(1))
-  expect_that(unique(md$data$location), equals("otherlocation"))
+  expect_equal(md$locations$location, "otherlocation")
+  expect_equal(length(unique(md$data$location)), 1)
+  expect_equal(unique(md$data$location), "otherlocation")
 })
 
 test_that("x_columns are correctly assigned/identified", {
@@ -46,15 +44,15 @@ test_that("x_columns are correctly assigned/identified", {
 
 test_that("passing invalid inputs throws an error", {
   # invalid types
-  expect_that(mudata(data=NULL), throws_error("Table 'data' is not a data\\.frame"))
-  expect_that(mudata(pocmaj_data, locations=list()), 
-              throws_error("Table 'locations' is not a data\\.frame"))
-  expect_that(mudata(pocmaj_data, params=list()), 
-              throws_error("Table 'params' is not a data\\.frame"))
-  expect_that(mudata(pocmaj_data, columns=list()), 
-              throws_error("Table 'columns' is not a data\\.frame"))
-  expect_that(mudata(pocmaj_data, datasets=list()), 
-              throws_error("Table 'datasets' is not a data\\.frame"))
+  expect_error(mudata(data=NULL), "Table 'data' is not a data\\.frame")
+  expect_error(mudata(pocmaj_data, locations=list()), 
+              "Table 'locations' is not a data\\.frame")
+  expect_error(mudata(pocmaj_data, params=list()), 
+              "Table 'params' is not a data\\.frame")
+  expect_error(mudata(pocmaj_data, columns=list()), 
+              "Table 'columns' is not a data\\.frame")
+  expect_error(mudata(pocmaj_data, datasets=list()), 
+              "Table 'datasets' is not a data\\.frame")
   
   # zero-row data objects should be ok if all columns are present
   expect_silent(mudata(data.frame(dataset = character(0), location = character(0), 
@@ -134,27 +132,27 @@ test_that("duplicate data is detected", {
   
   # skip aggregation
   md <- mudata(pocmaj_not_summarised, validate = FALSE)
-  expect_that(validate_mudata(md), 
-              throws_error("Duplicate data in data table"))
+  expect_error(validate_mudata(md), 
+              "Duplicate data in data table")
 })
 
 test_that("duplicate location metadata are detected", {
   data("kentvillegreenwood")
-  expect_is(validate_mudata(kentvillegreenwood), "mudata")
+  expect_s3_class(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$locations <- rbind(kentvillegreenwood$locations, kentvillegreenwood$locations[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate locations in locations table")
 })
 
 test_that("duplicate param metadata are detected", {
   data("kentvillegreenwood")
-  expect_is(validate_mudata(kentvillegreenwood), "mudata")
+  expect_s3_class(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$params <- rbind(kentvillegreenwood$params, kentvillegreenwood$params[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate params in params table")
 })
 
 test_that("duplicate dataset metadata are detected", {
   data("kentvillegreenwood")
-  expect_is(validate_mudata(kentvillegreenwood), "mudata")
+  expect_s3_class(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$datasets <- rbind(kentvillegreenwood$datasets, kentvillegreenwood$datasets[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate datasets in datasets table")
 })
@@ -162,7 +160,7 @@ test_that("duplicate dataset metadata are detected", {
 
 test_that("duplicate column metadata are detected", {
   data("kentvillegreenwood")
-  expect_is(validate_mudata(kentvillegreenwood), "mudata")
+  expect_s3_class(validate_mudata(kentvillegreenwood), "mudata")
   kentvillegreenwood$columns <- rbind(kentvillegreenwood$columns, kentvillegreenwood$columns[1,])
   expect_error(validate_mudata(kentvillegreenwood), "Duplicate columns in columns table")
 })
@@ -222,7 +220,7 @@ test_that("validate checks correctly for internal consistency", {
 
 test_that("printing of a mudata actually prints things", {
   md <- mudata(pocmaj_data)
-  expect_output(expect_is(print(md), "mudata"))
+  expect_output(expect_s3_class(print(md), "mudata"))
 })
 
 test_that("zero-length vectors can be printed", {
@@ -233,13 +231,13 @@ test_that("zero-length vectors can be printed", {
 
 test_that("mudata summaries are tibbles", {
   md <- mudata(pocmaj_data)
-  expect_is(summary(md), "tbl_df")
+  expect_s3_class(summary(md), "tbl_df")
   expect_equal(summary(md) %>% colnames(), 
                c("param", "location", "dataset", "mean_value", "sd_value", "n", "n_NA"))
   
   # check with value as non-numeric
   md$data$value <- as.character(md$data$value)
-  expect_is(summary(md), "tbl_df")
+  expect_s3_class(summary(md), "tbl_df")
   expect_equal(summary(md) %>% colnames(), 
                c("param", "location", "dataset", "n"))
   
@@ -258,7 +256,7 @@ test_that("grouped data frames don't cause problems in the mudata constructor", 
   
   md2 <- new_mudata(lapply(md2, dplyr::ungroup), x_columns = attr(md2, "x_columns"))
   expect_silent(validate_mudata(md2))
-  expect_is(validate_mudata(md2), "mudata")
+  expect_s3_class(validate_mudata(md2), "mudata")
   
   expect_true(all(mapply(function(x, y) identical(as.data.frame(x), as.data.frame(y)), md, md2)))
 })
@@ -267,7 +265,7 @@ test_that("grouped data frames don't cause problems in the validate method", {
   md <- mudata(pocmaj_data)
   md$data <- dplyr::group_by(md$data, location, param)
   expect_silent(validate_mudata(md))
-  expect_is(validate_mudata(md), "mudata")
+  expect_s3_class(validate_mudata(md), "mudata")
 })
 
 test_that("coersion methods work as expected", {

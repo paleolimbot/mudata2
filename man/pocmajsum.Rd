@@ -4,7 +4,9 @@
 \name{pocmajsum}
 \alias{pocmajsum}
 \title{Pre-summarised Sample Data}
-\format{A \code{data.frame} containing multi-qualifier data}
+\format{
+A \code{data.frame} containing multi-qualifier data
+}
 \usage{
 pocmajsum
 }

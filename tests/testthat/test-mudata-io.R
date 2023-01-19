@@ -1,6 +1,4 @@
 
-context("mudata read/write")
-
 # expect identical mudata function
 expect_equal_mudata <- function(md1, md2) {
   
@@ -44,7 +42,7 @@ test_that("read/write zip functions work", {
   outfile <- tempfile(fileext = ".zip")
   write_mudata_zip(kentvillegreenwood, outfile)
   md2 <- read_mudata_zip(outfile)
-  expect_is(md2, 'mudata')
+  expect_s3_class(md2, 'mudata')
   expect_true(all(sapply(kentvillegreenwood, nrow) == sapply(md2, nrow)))
   expect_equal_mudata(kentvillegreenwood, md2)
   unlink(outfile)
@@ -208,19 +206,19 @@ test_that("autodetection of read function filename extension works", {
   outfile_json <- tempfile(fileext = ".json")
   write_mudata(kentvillegreenwood, outfile_json)
   expect_true(file.exists(outfile_json))
-  expect_is(read_mudata_json(outfile_json), 'mudata')
+  expect_s3_class(read_mudata_json(outfile_json), 'mudata')
   unlink(outfile_json)
 
   outfile_zip <- tempfile(fileext = ".zip")
   write_mudata(kentvillegreenwood, outfile_zip)
   expect_true(file.exists(outfile_zip))
-  expect_is(read_mudata_zip(outfile_zip), 'mudata')
+  expect_s3_class(read_mudata_zip(outfile_zip), 'mudata')
   unlink(outfile_zip)
   
   outfile_dir <- tempfile()
   expect_message(write_mudata(kentvillegreenwood, outfile_dir),
                  "Using write_mudata_dir.*")
-  expect_is(read_mudata(outfile_dir), "mudata")
+  expect_s3_class(read_mudata(outfile_dir), "mudata")
   unlink(outfile_dir, recursive = TRUE)
 })
 
@@ -257,8 +255,8 @@ test_that("retyping on read/write works", {
   write_mudata_zip(kg2, outfile)
   
   md2 <- read_mudata_zip(outfile)
-  expect_is(md2, 'mudata')
-  expect_is(md2$data$date, "POSIXct")
+  expect_s3_class(md2, 'mudata')
+  expect_s3_class(md2$data$date, "POSIXct")
   unlink(outfile)
 })
 
@@ -323,17 +321,17 @@ test_that("mudata_prepare_tbl works as intended", {
   
   prepared <- mudata_prepare_tbl(test_df)
   # the last few columns should be character by default
-  expect_is(prepared$c6, "character")
-  expect_is(prepared$c7, "character")
-  expect_is(prepared$c8, "character")
-  expect_is(prepared$c9, "character")
+  expect_type(prepared$c6, "character")
+  expect_type(prepared$c7, "character")
+  expect_type(prepared$c8, "character")
+  expect_type(prepared$c9, "character")
   
   prepared_json <- mudata_prepare_tbl(test_df, format = "json")
   # the last few columns should be character usually
-  expect_is(prepared_json$c6, "character")
-  expect_is(prepared_json$c7, "list")
-  expect_is(prepared_json$c8, "character")
-  expect_is(prepared_json$c9, "character")
+  expect_type(prepared_json$c6, "character")
+  expect_type(prepared_json$c7, "list")
+  expect_type(prepared_json$c8, "character")
+  expect_type(prepared_json$c9, "character")
   
   # prepared csv should be same as defaults
   prepared_csv <- mudata_prepare_tbl(test_df, format = "csv")
@@ -604,7 +602,7 @@ test_that("mudata_read guesses column types when columns table is missing", {
   write_mudata_dir(ns_climate, tf)
   unlink(file.path(tf, "columns.csv"))
   new_md <- read_mudata_dir(tf)
-  expect_is(new_md %>% tbl_data() %>% dplyr::pull(date), "Date")
+  expect_s3_class(new_md %>% tbl_data() %>% dplyr::pull(date), "Date")
   
   unlink(tf, recursive = TRUE)
 })

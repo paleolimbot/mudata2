@@ -4,7 +4,9 @@
 \name{alta_lake}
 \alias{alta_lake}
 \title{Alta Lake Gravity Core Data}
-\format{A \link{mudata} object}
+\format{
+A \link{mudata} object
+}
 \usage{
 alta_lake
 }

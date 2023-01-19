@@ -1,6 +1,4 @@
 
-context("renaming functions")
-
 # ---- forward-facing rename functions ----
 
 test_that("rename functions work as expected", {
@@ -98,8 +96,8 @@ test_that("rename works when some values are factors", {
 
 test_that("rename_cols_base function works", {
   df <- data.frame(a=1, b=2, c=3, d=4)
-  expect_that(names(rename_cols_base(df, a="letter_a", b="letter_b")),
-              equals(c("letter_a", "letter_b", "c", "d")))
+  expect_equal(names(rename_cols_base(df, a="letter_a", b="letter_b")),
+              c("letter_a", "letter_b", "c", "d"))
 })
 
 test_that("rename_cols_base outputs a message when no names are found", {
@@ -115,10 +113,10 @@ test_that("rename_cols_base outputs a warning when duplicate names are created",
 
 test_that("rename_values_base function works", {
   x <- c("fish", "fish", "fish", "whistle")
-  expect_that(rename_values_base(x, fish="newfish"), equals(c("newfish", "newfish", "newfish", "whistle")))
-  expect_that(rename_values_base(x, whistle="newwhistle"), equals(c("fish", "fish", "fish", "newwhistle")))
-  expect_that(rename_values_base(x, fish="newfish", default_value="not a fish"), 
-              equals(c("newfish", "newfish", "newfish", "not a fish")))
+  expect_equal(rename_values_base(x, fish="newfish"), c("newfish", "newfish", "newfish", "whistle"))
+  expect_equal(rename_values_base(x, whistle="newwhistle"), c("fish", "fish", "fish", "newwhistle"))
+  expect_equal(rename_values_base(x, fish="newfish", default_value="not a fish"), 
+              c("newfish", "newfish", "newfish", "not a fish"))
 })
 
 test_that("rename_values_base outputs a message if values are not found", {
@@ -144,8 +142,8 @@ test_that("rename_values_base works on factors", {
 test_that("mudata rename works", {
   data("kentvillegreenwood")
   md2 <- rename_datasets_base(kentvillegreenwood, ecclimate="avalley")
-  expect_that(unique(c(md2$data$dataset, md2$locations$dataset, 
-                       md2$params$dataset, md2$datasets$dataset)), equals("avalley"))
+  expect_equal(unique(c(md2$data$dataset, md2$locations$dataset, 
+                       md2$params$dataset, md2$datasets$dataset)), "avalley")
   
   md2 <- rename_locations_base(kentvillegreenwood, "GREENWOOD A"="Greenwood")
   expect_true("Greenwood" %in% unique(c(md2$data$location, md2$locations$location)))

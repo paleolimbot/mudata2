@@ -1,6 +1,4 @@
 
-context("mudata helper functions")
-
 test_that("distinct_* functions return the correct values", {
   expect_equal(distinct_params(kentvillegreenwood),
                sort(unique(kentvillegreenwood$data$param)))
@@ -28,9 +26,9 @@ test_that("distinct_* functions always return character vectors", {
   kg2$params$dataset <- factor(kg2$params$dataset)
   kg2$columns$dataset <- factor(kg2$columns$dataset)
   
-  expect_is(kg2 %>% distinct_params(), "character")
-  expect_is(kg2 %>% distinct_datasets(), "character")
-  expect_is(kg2 %>% distinct_locations(), "character")
+  expect_type(kg2 %>% distinct_params(), "character")
+  expect_type(kg2 %>% distinct_datasets(), "character")
+  expect_type(kg2 %>% distinct_locations(), "character")
 })
 
 test_that("accessors return the correct values", {

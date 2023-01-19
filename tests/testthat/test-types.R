@@ -1,6 +1,4 @@
 
-context("type parsing")
-
 test_that("bare types are parsed correctly", {
   expect_equal(parse_type_base("a_type")$type, "a_type")
   expect_equal(parse_type_base("a_type2")$type, "a_type2")
@@ -185,22 +183,22 @@ test_that("types that are not in allowed types throw an error", {
 
 test_that("as_* functions produce the expected output type", {
   # parsetype returns a list
-  expect_is(parse_type("character"), "list")
-  expect_is(parse_type("datetime"), "list")
-  expect_is(parse_type("wkt"), "list")
-  expect_is(parse_type("json"), "list")
+  expect_type(parse_type("character"), "list")
+  expect_type(parse_type("datetime"), "list")
+  expect_type(parse_type("wkt"), "list")
+  expect_type(parse_type("json"), "list")
   
   # as_col_spec returns a collector
-  expect_is(as_col_spec("character"), "collector")
-  expect_is(as_col_spec("datetime"), "collector")
-  expect_is(as_col_spec("wkt"), "collector_character")
-  expect_is(as_col_spec("json"), "collector_character")
-  expect_is(as_col_spec("date"), "collector_date")
-  expect_is(as_col_spec("logical"), "collector_logical")
-  expect_is(as_col_spec("double"), "collector_double")
-  expect_is(as_col_spec("guess"), "collector_guess")
-  expect_is(as_col_spec("integer"), "collector_integer")
-  expect_is(as_col_spec("time"), "collector_time")
+  expect_s3_class(as_col_spec("character"), "collector")
+  expect_s3_class(as_col_spec("datetime"), "collector")
+  expect_s3_class(as_col_spec("wkt"), "collector_character")
+  expect_s3_class(as_col_spec("json"), "collector_character")
+  expect_s3_class(as_col_spec("date"), "collector_date")
+  expect_s3_class(as_col_spec("logical"), "collector_logical")
+  expect_s3_class(as_col_spec("double"), "collector_double")
+  expect_s3_class(as_col_spec("guess"), "collector_guess")
+  expect_s3_class(as_col_spec("integer"), "collector_integer")
+  expect_s3_class(as_col_spec("time"), "collector_time")
   
   # as_parser returns a parsing function that can be called with character(0)
   all_parsers <- sapply(c(allowed_types_readr, allowed_types_extra), function(type) {
@@ -234,7 +232,7 @@ test_that("json parsing works as intended", {
   expect_warning(parse_json(c("{'invalid_json'='not valid'}", json_test)),
                  "1 parsing failures in parse_json()")
   
-  expect_is(attr(suppressWarnings(parse_json("{'invalid_json'='not valid'}")), "problems"),
+  expect_s3_class(attr(suppressWarnings(parse_json("{'invalid_json'='not valid'}")), "problems"),
             "data.frame")
   # json parsing failure should just return the invalid string
   expect_identical(suppressWarnings(parse_json("{'invalid_json'='not valid'}"))[[1]], 
@@ -244,19 +242,19 @@ test_that("json parsing works as intended", {
   expect_identical(parse_json(character(0)) %>% unclass(), list())
   
   # expect class
-  expect_is(parse_json('{}'), "json_column")
+  expect_s3_class(parse_json('{}'), "json_column")
 })
 
 test_that("wkt parsing returns an sf::sfc", {
   wkt_test <- c("POINT(0 0)", "POINT(1 1)", "POINT(2 2)")
-  expect_is(parse_wkt(wkt_test), "sfc")
+  expect_s3_class(parse_wkt(wkt_test), "sfc")
   expect_length(parse_wkt(wkt_test), 3)
 })
 
 test_that("wkt parsing works when there are parsing errors/NA values", {
   wkt_test <- c("POINT(0 0)", "", "NA", NA, "POINT(1 1)", "POINT(2 2)")
   result_na <- parse_wkt(wkt_test)
-  expect_is(result_na, "sfc")
+  expect_s3_class(result_na, "sfc")
   expect_length(result_na, 6)
   expect_identical(result_na[[2]], sf::st_point())
   expect_identical(result_na[[3]], sf::st_point())
@@ -266,7 +264,7 @@ test_that("wkt parsing works when there are parsing errors/NA values", {
   wkt_test_invalid <- c("typo here", "POINT(0 0)", "", "NA", NA, "POINT(1 1)", 
                         "not wkt", "also not wkt", "POINT(2 2)")
   result_invalid <- suppressWarnings(parse_wkt(wkt_test_invalid))
-  expect_is(result_invalid, "sfc")
+  expect_s3_class(result_invalid, "sfc")
   expect_length(result_invalid, 9)
   # nas as null
   expect_identical(result_invalid[[3]], sf::st_point())
@@ -282,7 +280,7 @@ test_that("wkt parsing works when there are parsing errors/NA values", {
 })
 
 test_that("wkt parsing works with zero-length input", {
-  expect_is(parse_wkt(character(0)), "sfc")
+  expect_s3_class(parse_wkt(character(0)), "sfc")
   expect_length(parse_wkt(character(0)), 0)
 })
 
@@ -334,7 +332,7 @@ test_that("generate_type_str generates expected output", {
   )
   
   type_table <- generate_type_tbl(test_df)
-  expect_is(type_table, "data.frame")
+  expect_s3_class(type_table, "data.frame")
   expect_equal(colnames(type_table), c("column", "type"))
   expect_equal(ncol(test_df), nrow(type_table))
   

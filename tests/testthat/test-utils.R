@@ -1,6 +1,4 @@
 
-context("utility functions")
-
 test_that("parallel_gather produces the expected output", {
 
   # melt manually using gather() and bind_cols()

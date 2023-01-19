@@ -4,7 +4,9 @@
 \name{kentvillegreenwood}
 \alias{kentvillegreenwood}
 \title{Kentville/Greenwood Climate Data}
-\format{A \link{mudata} object}
+\format{
+A \link{mudata} object
+}
 \source{
 Environment Canada via the 'rclimateca' package. \url{http://climate.weather.gc.ca/}
 }

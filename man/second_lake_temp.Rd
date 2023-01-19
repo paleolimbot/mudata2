@@ -4,7 +4,9 @@
 \name{second_lake_temp}
 \alias{second_lake_temp}
 \title{Second Lake Thermistor String Data}
-\format{A \link{mudata} object}
+\format{
+A \link{mudata} object
+}
 \usage{
 second_lake_temp
 }

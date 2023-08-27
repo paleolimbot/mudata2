@@ -24,7 +24,7 @@ A gathered data frame.
 }
 \description{
 Essentially this is a wrapper around \link[tidyr:gather]{gather} that
-is able to \link[dplyr:bind]{bind_cols} with several gather operations. This is useful when a wide
+is able to \link[dplyr:bind_cols]{bind_cols} with several gather operations. This is useful when a wide
 data frame contains uncertainty or flag information in paired columns.
 }
 \examples{
